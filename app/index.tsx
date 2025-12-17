@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Alert, Image, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, Dimensions, Alert, Platform, ActivityIndicator, AppState, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { SocialButton } from '../components/SocialButton';
 import { supabase } from '../lib/supabase';
+import { SocialButton } from '../components/SocialButton';
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri } from 'expo-auth-session';
 
@@ -12,77 +12,138 @@ WebBrowser.maybeCompleteAuthSession();
 const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  useEffect(() => {
+    checkSession();
+
+    // 1. Listen for auth state changes (e.g. after successful login in same tab)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        // Use a small timeout to ensure navigation is ready
+        setTimeout(() => {
+          router.replace('/(tabs)');
+        }, 100);
+      }
+    });
+
+    // 2. Listen for AppState changes (e.g. when user returns from browser popup on mobile)
+    const appStateSubscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        checkSession();
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      appStateSubscription.remove();
+    };
+  }, []);
+
+  const checkSession = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setTimeout(() => {
+          router.replace('/(tabs)');
+        }, 100);
+      } else {
+        setCheckingSession(false);
+      }
+    } catch (error) {
+      setCheckingSession(false);
+    }
+  };
 
   const performOAuth = async (provider: 'google' | 'apple') => {
     try {
       setLoading(true);
       
-      // Fix for "origins don't match" on web
-      // On web, we want to redirect back to the current window origin
-      const redirectUrl = Platform.OS === 'web' 
-        ? (typeof window !== 'undefined' ? window.location.origin : '')
-        : makeRedirectUri({
-            path: 'auth/callback',
-          });
-
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: provider,
-        options: {
-          redirectTo: redirectUrl,
-          skipBrowserRedirect: true,
-        },
-      });
-
-      if (error) throw error;
-
-      if (data?.url) {
-        const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+      // Separate logic for Web vs Native to avoid "origins don't match" error
+      if (Platform.OS === 'web') {
+        // ON WEB: Use standard Supabase redirect (no popup)
+        // This avoids the iframe/CORS issues in the preview environment
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: {
+            redirectTo: window.location.origin,
+            skipBrowserRedirect: false, // Let it redirect the current tab
+          },
+        });
         
-        if (result.type === 'success' && result.url) {
-          Alert.alert('Success', 'Authentication flow completed.');
+        if (error) throw error;
+        // The page will redirect, so no need to do anything else here
+        
+      } else {
+        // ON MOBILE: Use WebBrowser auth session (System Browser)
+        const redirectTo = makeRedirectUri({ scheme: 'myapp' });
+        
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: {
+            redirectTo,
+            skipBrowserRedirect: true, // Get the URL to open manually
+          },
+        });
+
+        if (error) throw error;
+
+        if (data?.url) {
+          const result = await WebBrowser.openAuthSessionAsync(
+            data.url,
+            redirectTo
+          );
+
+          if (result.type === 'success') {
+            checkSession();
+          }
         }
       }
-    } catch (error: any) {
-      Alert.alert('Authentication Error', error.message);
-    } finally {
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Login Error', error.message);
+      }
       setLoading(false);
+    } finally {
+      // On web, we might redirect away, so this might not run, which is fine.
+      if (Platform.OS !== 'web') {
+        setLoading(false);
+      }
     }
   };
 
+  if (checkingSession) {
+    return (
+      <View style={[styles.container, styles.center]}>
+        <ActivityIndicator size="large" color="#FACC15" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/* Background: Mostly white as requested */}
-      <View style={styles.backgroundContainer}>
-        <LinearGradient
-          colors={['#FFFFFF', '#FFFFFF', '#F8FAFC', '#F1F5F9']}
-          locations={[0, 0.6, 0.85, 1]}
-          style={styles.gradient}
-        />
-      </View>
+      {/* Background with subtle gradient */}
+      <LinearGradient
+        colors={['#FFFFFF', '#F3F4F6']}
+        style={styles.background}
+      />
 
-      <SafeAreaView style={styles.contentContainer}>
-        {/* Top Section: Logo */}
-        <View style={styles.topSection}>
-          <View style={styles.logoContainer}>
-            {/* 
-              TODO: Replace the uri below with the actual image URL you provided.
-              I've used a placeholder since I cannot access the uploaded file directly.
-            */}
-            <Image 
-              source={{ uri: 'https://img-wrapper.vercel.app/image?url=https://placehold.co/400x400/png' }} 
-              style={styles.logoImage}
-              resizeMode="contain"
-            />
-            <Text style={styles.appName}>My AnimeDex</Text>
-          </View>
+      <View style={styles.contentContainer}>
+        {/* Logo Section */}
+        <View style={styles.logoContainer}>
+          <Image 
+            source={{ uri: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=300&auto=format&fit=crop' }} 
+            style={styles.logo}
+          />
+          <Text style={styles.appName}>My AnimeDex</Text>
+          <Text style={styles.tagline}>Track, Discover, Watch.</Text>
         </View>
 
-        {/* Bottom Section: Buttons & Text */}
+        {/* Bottom Section */}
         <View style={styles.bottomSection}>
-          
-          {/* Buttons pushed lower */}
-          <View style={styles.buttonsContainer}>
+          <View style={styles.buttonContainer}>
             <SocialButton 
               provider="apple" 
               onPress={() => performOAuth('apple')}
@@ -95,15 +156,16 @@ export default function LoginScreen() {
             />
           </View>
 
-          {/* Text at the very bottom with reduced font size */}
-          <View style={styles.welcomeTextContainer}>
-            <Text style={styles.welcomeTitle}>Welcome to My AnimeDex</Text>
-            <Text style={styles.welcomeSubtitle}>
-              Track anime, manage watch status, and favorite titles.
-            </Text>
-          </View>
+          {/* Manual Refresh Link */}
+          <TouchableOpacity onPress={checkSession} style={styles.refreshLink}>
+            <Text style={styles.refreshText}>Already logged in? Click here to refresh</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.footerText}>
+            By continuing, you agree to our Terms of Service and Privacy Policy.
+          </Text>
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
@@ -113,65 +175,66 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  backgroundContainer: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: -1,
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  gradient: {
-    flex: 1,
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   contentContainer: {
     flex: 1,
-    justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingBottom: 30, // Increased bottom padding
-  },
-  topSection: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center', // Centers logo vertically in the top space
-    paddingTop: height * 0.05,
+    justifyContent: 'space-between',
+    paddingTop: height * 0.15,
+    paddingBottom: 40,
   },
   logoContainer: {
     alignItems: 'center',
   },
-  logoImage: {
+  logo: {
     width: 120,
     height: 120,
-    marginBottom: 20,
+    borderRadius: 30,
+    marginBottom: 24,
   },
   appName: {
-    fontSize: 24,
-    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 32,
+    fontFamily: 'Poppins_700Bold',
     color: '#111827',
-    letterSpacing: -0.5,
+    marginBottom: 8,
+  },
+  tagline: {
+    fontSize: 16,
+    fontFamily: 'Inter_500Medium',
+    color: '#6B7280',
   },
   bottomSection: {
     width: '100%',
-    justifyContent: 'flex-end',
-    paddingBottom: 20,
   },
-  buttonsContainer: {
-    width: '100%',
-    marginBottom: 30, // Spacing between buttons and text
+  buttonContainer: {
+    marginBottom: 16,
   },
-  welcomeTextContainer: {
+  refreshLink: {
     alignItems: 'center',
-    paddingHorizontal: 10,
+    marginBottom: 24,
+    padding: 8,
   },
-  welcomeTitle: {
-    fontSize: 18, // Reduced from 28
-    fontFamily: 'Poppins_700Bold',
-    color: '#111827',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  welcomeSubtitle: {
-    fontSize: 12, // Reduced from 14
+  refreshText: {
+    fontSize: 13,
     fontFamily: 'Inter_500Medium',
-    color: '#6B7280',
+    color: '#FACC15',
+    textDecorationLine: 'underline',
+  },
+  footerText: {
+    fontSize: 11,
+    fontFamily: 'Inter_400Regular',
+    color: '#9CA3AF',
     textAlign: 'center',
-    lineHeight: 18,
-    maxWidth: '90%',
+    lineHeight: 16,
   },
 });
