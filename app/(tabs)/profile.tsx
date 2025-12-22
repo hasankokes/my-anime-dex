@@ -1,13 +1,15 @@
 import React, { useState, useCallback } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  Image, 
-  ScrollView, 
-  Switch, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Switch,
   Alert,
+  Modal,
+  TextInput,
   ActivityIndicator
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,6 +18,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { Profile, UserAnimeStats } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -27,6 +30,11 @@ export default function ProfileScreen() {
     favorites_count: 0,
     days_watched: 0
   });
+
+  // Edit State
+  const [isEditing, setIsEditing] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -80,7 +88,7 @@ export default function ProfileScreen() {
         setStats({
           watched_count: watchedCount || 0,
           favorites_count: favCount || 0,
-          days_watched: 12 
+          days_watched: 12
         });
       }
     } catch (error) {
@@ -98,6 +106,100 @@ export default function ProfileScreen() {
       Alert.alert('Error', error.message);
     } else {
       router.replace('/');
+    }
+  };
+
+  const startEditing = () => {
+    setNewUsername(profile?.username || '');
+    setIsEditing(true);
+  };
+
+  const pickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled) {
+        uploadAvatar(result.assets[0].uri);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Error picking image');
+    }
+  };
+
+  const uploadAvatar = async (uri: string) => {
+    try {
+      setUploading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('No user on the session!');
+
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const arrayBuffer = await new Response(blob).arrayBuffer();
+
+      const fileExt = uri.split('.').pop()?.toLowerCase() || 'jpg';
+      const fileName = `${session.user.id}/${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, arrayBuffer, {
+          contentType: blob.type,
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+
+      // Update profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: data.publicUrl })
+        .eq('id', session.user.id);
+
+      if (updateError) throw updateError;
+
+      setProfile(prev => prev ? { ...prev, avatar_url: data.publicUrl } : null);
+      Alert.alert('Success', 'Profile picture updated!');
+
+    } catch (error) {
+      Alert.alert('Error', (error as Error).message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const saveProfile = async () => {
+    try {
+      setLoading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('No user!');
+
+      if (newUsername.length < 3) {
+        Alert.alert('Error', 'Username must be at least 3 characters');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ username: newUsername })
+        .eq('id', session.user.id);
+
+      if (error) throw error;
+
+      setProfile(prev => prev ? { ...prev, username: newUsername } : null);
+      setIsEditing(false);
+      Alert.alert('Success', 'Profile updated!');
+
+    } catch (error) {
+      Alert.alert('Error', (error as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -196,7 +298,7 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        
+
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
@@ -210,19 +312,29 @@ export default function ProfileScreen() {
 
         {/* Profile Info */}
         <View style={styles.profileInfoContainer}>
-          <View style={styles.avatarWrapper}>
+          <TouchableOpacity onPress={pickImage} disabled={uploading} style={styles.avatarWrapper}>
             <View style={[styles.avatarContainer, { backgroundColor: colors.card }]}>
-              <Image 
-                source={{ uri: profile?.avatar_url || 'https://via.placeholder.com/150' }} 
-                style={styles.avatar} 
-              />
+              {uploading ? (
+                <ActivityIndicator size="small" color="#FACC15" style={{ flex: 1 }} />
+              ) : (
+                <Image
+                  source={{ uri: profile?.avatar_url || 'https://via.placeholder.com/150' }}
+                  style={styles.avatar}
+                />
+              )}
             </View>
-            <TouchableOpacity style={[styles.editBadge, { backgroundColor: colors.border, borderColor: colors.card }]}>
-              <MaterialIcons name="edit" size={14} color="#FFFFFF" />
+            <View style={[styles.editBadge, { backgroundColor: colors.border, borderColor: colors.card }]}>
+              <MaterialIcons name="camera-alt" size={14} color="#FFFFFF" />
+            </View>
+          </TouchableOpacity>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Text style={[styles.username, { color: colors.text }]}>{profile?.username || 'User'}</Text>
+            <TouchableOpacity onPress={startEditing}>
+              <MaterialIcons name="edit" size={18} color={colors.subtext} />
             </TouchableOpacity>
           </View>
 
-          <Text style={[styles.username, { color: colors.text }]}>{profile?.username || 'User'}</Text>
           <Text style={styles.memberInfo}>
             Member since {new Date(profile?.member_since || Date.now()).getFullYear()} • Lvl {profile?.level || 1}
           </Text>
@@ -247,11 +359,11 @@ export default function ProfileScreen() {
         </View>
 
         {/* Dev Tool: Seed Data */}
-        <TouchableOpacity 
-          style={[styles.seedButton, { backgroundColor: colors.card, borderColor: colors.border }]} 
+        <TouchableOpacity
+          style={[styles.seedButton, { backgroundColor: colors.card, borderColor: colors.border }]}
           onPress={seedSampleData}
         >
-          <Ionicons name="database-outline" size={20} color={colors.text} style={{ marginRight: 8 }} />
+          <Ionicons name="server-outline" size={20} color={colors.text} style={{ marginRight: 8 }} />
           <Text style={[styles.seedButtonText, { color: colors.text }]}>Seed Sample Data (Dev)</Text>
         </TouchableOpacity>
 
@@ -261,12 +373,12 @@ export default function ProfileScreen() {
             <Ionicons name="star" size={20} color="#FACC15" style={{ marginRight: 8 }} />
             <Text style={[styles.subTitle, { color: colors.text }]}>Ad-supported Free</Text>
           </View>
-          
+
           <Text style={[styles.subDescription, { color: colors.subtext }]}>
             Ad-supported. Upgrade to unlock offline viewing and exclusive themes.
           </Text>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.upgradeButton}
             onPress={() => router.push('/subscription')}
           >
@@ -279,7 +391,7 @@ export default function ProfileScreen() {
 
         {/* App Settings */}
         <Text style={[styles.sectionHeader, { color: colors.text }]}>App Settings</Text>
-        
+
         <View style={[styles.settingsContainer, { backgroundColor: colors.card }]}>
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
@@ -288,7 +400,7 @@ export default function ProfileScreen() {
               </View>
               <Text style={[styles.settingLabel, { color: colors.text }]}>Dark Mode</Text>
             </View>
-            <Switch 
+            <Switch
               value={isDark}
               onValueChange={toggleTheme}
               trackColor={{ false: '#374151', true: '#FACC15' }}
@@ -312,6 +424,55 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Support & Legal */}
+        <Text style={[styles.sectionHeader, { color: colors.text }]}>Support & Legal</Text>
+
+        <View style={[styles.settingsContainer, { backgroundColor: colors.card }]}>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push('/settings/help')}
+          >
+            <View style={styles.settingLeft}>
+              <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
+                <Ionicons name="help-buoy-outline" size={20} color={colors.text} />
+              </View>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>Help & Support</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+          </TouchableOpacity>
+
+          <View style={[styles.settingDivider, { backgroundColor: colors.border }]} />
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push('/settings/privacy')}
+          >
+            <View style={styles.settingLeft}>
+              <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
+                <Ionicons name="lock-closed-outline" size={20} color={colors.text} />
+              </View>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>Privacy Policy</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+          </TouchableOpacity>
+
+          <View style={[styles.settingDivider, { backgroundColor: colors.border }]} />
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push('/settings/terms')}
+          >
+            <View style={styles.settingLeft}>
+              <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
+                <Ionicons name="document-text-outline" size={20} color={colors.text} />
+              </View>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>Terms of Service</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+          </TouchableOpacity>
+        </View>
+
         {/* Log Out */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
           <Ionicons name="log-out-outline" size={20} color="#EF4444" style={{ marginRight: 8 }} />
@@ -321,6 +482,51 @@ export default function ProfileScreen() {
         <Text style={styles.versionText}>App Version 2.4.0 (Build 391)</Text>
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      {/* Edit Modal */}
+      <Modal
+        visible={isEditing}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setIsEditing(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Edit Profile</Text>
+
+            <Text style={[styles.inputLabel, { color: colors.subtext }]}>Username</Text>
+            <TextInput
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.inputBg,
+                  color: colors.text,
+                  borderColor: colors.border
+                }
+              ]}
+              value={newUsername}
+              onChangeText={setNewUsername}
+              placeholder="Enter username"
+              placeholderTextColor={colors.subtext}
+            />
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: colors.border }]}
+                onPress={() => setIsEditing(false)}
+              >
+                <Text style={{ color: colors.text }}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: '#FACC15' }]}
+                onPress={saveProfile}
+              >
+                <Text style={{ color: '#000', fontWeight: 'bold' }}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -556,5 +762,50 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Inter_400Regular',
     color: '#6B7280',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    borderRadius: 24,
+    padding: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins_700Bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontFamily: 'Inter_500Medium',
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    fontSize: 16,
+    fontFamily: 'Inter_400Regular',
+    marginBottom: 24,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+    padding: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -85,8 +85,11 @@ export const jikanApi = {
         return fetchWithRetry(`${BASE_URL}/anime/${id}`);
     },
 
-    searchAnime: async (query: string, page = 1): Promise<JikanResponse<Anime[]>> => {
-        return fetchWithRetry(`${BASE_URL}/anime?q=${encodeURIComponent(query)}&page=${page}`);
+    searchAnime: async (query: string, page = 1, genres?: string): Promise<JikanResponse<Anime[]>> => {
+        let url = `${BASE_URL}/anime?page=${page}`;
+        if (query) url += `&q=${encodeURIComponent(query)}`;
+        if (genres) url += `&genres=${genres}`;
+        return fetchWithRetry(url);
     },
 
     getSeasonNow: async (page = 1): Promise<JikanResponse<Anime[]>> => {

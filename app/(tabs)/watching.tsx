@@ -1,14 +1,16 @@
 import React, { useState, useCallback } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  FlatList, 
-  Image, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
   Dimensions,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
+  TextInput,
+  Alert
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +20,48 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
+
+const WatchingListItem = ({
+  item,
+  onPress
+}: {
+  item: AnimeListItem;
+  onPress: () => void;
+}) => {
+  const { colors } = useTheme();
+
+  const percentage = item.total_episodes > 0
+    ? Math.round((item.current_episode / item.total_episodes) * 100)
+    : 0;
+
+  return (
+    <TouchableOpacity
+      style={[styles.card, { backgroundColor: colors.card }]}
+      activeOpacity={0.9}
+      onPress={onPress}
+    >
+      <Image source={{ uri: item.anime_image }} style={styles.cardImage} />
+
+      <View style={styles.cardContent}>
+        <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>{item.anime_title}</Text>
+        <Text style={styles.episodeInfo} numberOfLines={1}>
+          Ep {item.current_episode} / {item.total_episodes || '?'}
+        </Text>
+
+        <View style={styles.progressRow}>
+          <Text style={[styles.currentEpisode, { color: colors.text }]}>
+            Episode {item.current_episode}
+          </Text>
+          <Text style={[styles.percentage, { color: colors.subtext }]}>{percentage}%</Text>
+        </View>
+
+        <View style={[styles.progressBarBackground, { backgroundColor: colors.border }]}>
+          <View style={[styles.progressBarFill, { width: `${percentage}%` }]} />
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 export default function WatchingScreen() {
   const router = useRouter();
@@ -50,7 +94,7 @@ export default function WatchingScreen() {
         .select('avatar_url')
         .eq('id', session.user.id)
         .single();
-      
+
       if (profileData) {
         setAvatarUrl(profileData.avatar_url);
       }
@@ -73,10 +117,12 @@ export default function WatchingScreen() {
     fetchData();
   };
 
+
+
   const handleCardPress = (item: AnimeListItem) => {
     router.push({
       pathname: '/anime/[id]',
-      params: { 
+      params: {
         id: item.anime_id,
         title: item.anime_title,
         image: item.anime_image,
@@ -86,34 +132,11 @@ export default function WatchingScreen() {
   };
 
   const renderItem = ({ item }: { item: AnimeListItem }) => {
-    const percentage = item.total_episodes > 0 
-      ? Math.round((item.current_episode / item.total_episodes) * 100) 
-      : 0;
-
     return (
-      <TouchableOpacity 
-        style={[styles.card, { backgroundColor: colors.card }]} 
-        activeOpacity={0.9}
+      <WatchingListItem
+        item={item}
         onPress={() => handleCardPress(item)}
-      >
-        <Image source={{ uri: item.anime_image }} style={styles.cardImage} />
-        
-        <View style={styles.cardContent}>
-          <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>{item.anime_title}</Text>
-          <Text style={styles.episodeInfo} numberOfLines={1}>
-            Ep {item.current_episode} / {item.total_episodes || '?'}
-          </Text>
-          
-          <View style={styles.progressRow}>
-            <Text style={[styles.currentEpisode, { color: colors.text }]}>Episode {item.current_episode}</Text>
-            <Text style={[styles.percentage, { color: colors.subtext }]}>{percentage}%</Text>
-          </View>
-
-          <View style={[styles.progressBarBackground, { backgroundColor: colors.border }]}>
-            <View style={[styles.progressBarFill, { width: `${percentage}%` }]} />
-          </View>
-        </View>
-      </TouchableOpacity>
+      />
     );
   };
 
@@ -127,9 +150,9 @@ export default function WatchingScreen() {
             <Ionicons name="search" size={24} color={colors.text} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.avatarContainer, { backgroundColor: colors.card }]}>
-            <Image 
-              source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }} 
-              style={styles.avatar} 
+            <Image
+              source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
+              style={styles.avatar}
             />
           </TouchableOpacity>
         </View>
@@ -253,6 +276,7 @@ const styles = StyleSheet.create({
   currentEpisode: {
     fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
+    marginRight: 8,
   },
   percentage: {
     fontSize: 12,

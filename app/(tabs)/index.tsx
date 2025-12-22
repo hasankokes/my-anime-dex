@@ -10,7 +10,8 @@ import {
   Dimensions,
   TextInput,
   Keyboard,
-  StatusBar
+  StatusBar,
+  ScrollView // Added for category tabs
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,6 +25,20 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { colors, isDark } = useTheme();
 
+  // Categories
+  const CATEGORIES = [
+    { id: null, name: 'All' },
+    { id: 1, name: 'Action' },
+    { id: 2, name: 'Adventure' },
+    { id: 4, name: 'Comedy' },
+    { id: 8, name: 'Drama' },
+    { id: 10, name: 'Fantasy' },
+    { id: 24, name: 'Sci-Fi' },
+    { id: 14, name: 'Horror' },
+    { id: 22, name: 'Romance' },
+    { id: 36, name: 'Slice of Life' },
+  ];
+
   const [animes, setAnimes] = useState<Anime[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -35,9 +50,10 @@ export default function HomeScreen() {
   const [searchText, setSearchText] = useState(''); // Text in input
   const [activeQuery, setActiveQuery] = useState(''); // Text actually searched
   const [isSearching, setIsSearching] = useState(false); // UI mode
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
   // Fetch Logic
-  const fetchAnimes = async (pageNum: number, shouldRefresh = false, query = activeQuery) => {
+  const fetchAnimes = async (pageNum: number, shouldRefresh = false, query = activeQuery, currCategory = selectedCategory) => {
     if (!shouldRefresh && !hasNextPage) return;
 
     try {
@@ -49,12 +65,21 @@ export default function HomeScreen() {
         setLoading(true);
       }
 
-      console.log(`[Home] Fetching: Page ${pageNum}, Query: "${query}"`);
+      console.log(`[Home] Fetching: Page ${pageNum}, Query: "${query}", Category: ${currCategory}`);
 
       let response;
+      // Priority: Search Query > Category Filter > Top Anime
       if (query.trim().length > 0) {
-        response = await jikanApi.searchAnime(query, pageNum);
+        // Search takes precedence, but we could combine if API Supported it easily. 
+        // For now, let's say Search ignores category tabs to avoid confusion or empty results.
+        // OR: Pass category if selected. Let's pass if selected for better UX.
+        const genreParam = currCategory ? currCategory.toString() : undefined;
+        response = await jikanApi.searchAnime(query, pageNum, genreParam);
+      } else if (currCategory) {
+        // Category selected, no search text
+        response = await jikanApi.searchAnime('', pageNum, currCategory.toString());
       } else {
+        // Default: Top Anime
         response = await jikanApi.getTopAnime(pageNum);
       }
 
@@ -88,12 +113,12 @@ export default function HomeScreen() {
   }, []);
 
   const onRefresh = useCallback(() => {
-    fetchAnimes(1, true, activeQuery);
-  }, [activeQuery]);
+    fetchAnimes(1, true, activeQuery, selectedCategory);
+  }, [activeQuery, selectedCategory]);
 
   const loadMore = () => {
     if (!loadingMore && !loading && hasNextPage) {
-      fetchAnimes(page + 1, false, activeQuery);
+      fetchAnimes(page + 1, false, activeQuery, selectedCategory);
     }
   };
 
@@ -114,7 +139,7 @@ export default function HomeScreen() {
       setIsSearching(true);
       setPage(1);
       setHasNextPage(true);
-      fetchAnimes(1, true, query);
+      fetchAnimes(1, true, query, selectedCategory);
     } else {
       // Empty query submitted -> Go back to Top Anime
       cancelSearch();
@@ -128,7 +153,16 @@ export default function HomeScreen() {
     setIsSearching(false);
     setPage(1);
     setHasNextPage(true);
-    fetchAnimes(1, true, '');
+    fetchAnimes(1, true, '', selectedCategory);
+  };
+
+  const handleCategorySelect = (categoryId: number | null) => {
+    if (selectedCategory === categoryId) return;
+
+    setSelectedCategory(categoryId);
+    setPage(1);
+    setHasNextPage(true);
+    fetchAnimes(1, true, activeQuery, categoryId);
   };
 
   const renderHeader = () => (
@@ -170,6 +204,41 @@ export default function HomeScreen() {
           Results for "{activeQuery}"
         </Text>
       )}
+
+      {/* Categories */}
+      <View style={styles.categoriesContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesContent}
+        >
+          {CATEGORIES.map((cat) => (
+            <TouchableOpacity
+              key={cat.id || 'all'}
+              onPress={() => handleCategorySelect(cat.id)}
+              style={[
+                styles.categoryTab,
+                {
+                  backgroundColor: selectedCategory === cat.id ? '#FACC15' : colors.card,
+                  borderColor: selectedCategory === cat.id ? '#FACC15' : colors.border
+                }
+              ]}
+            >
+              <Text
+                style={[
+                  styles.categoryText,
+                  {
+                    color: selectedCategory === cat.id ? '#000000' : colors.subtext,
+                    fontWeight: selectedCategory === cat.id ? '700' : '400'
+                  }
+                ]}
+              >
+                {cat.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
     </View>
   );
 
@@ -270,5 +339,23 @@ const styles = StyleSheet.create({
   footerLoader: {
     paddingVertical: 20,
     alignItems: 'center',
+  },
+  categoriesContainer: {
+    marginTop: 16,
+  },
+  categoriesContent: {
+    paddingRight: 16,
+    gap: 12,
+  },
+  categoryTab: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    marginRight: 8,
+  },
+  categoryText: {
+    fontSize: 14,
+    fontFamily: 'Inter_500Medium',
   },
 });

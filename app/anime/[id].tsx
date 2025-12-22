@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
@@ -16,8 +16,6 @@ const STATUS_OPTIONS = [
   { label: 'Watching', value: 'watching', icon: 'play-circle-outline' },
   { label: 'Completed', value: 'completed', icon: 'checkmark-circle-outline' },
   { label: 'Plan to Watch', value: 'plan_to_watch', icon: 'calendar-outline' },
-  { label: 'Dropped', value: 'dropped', icon: 'close-circle-outline' },
-  { label: 'Paused', value: 'paused', icon: 'pause-circle-outline' },
   { label: 'Remove from List', value: 'remove', icon: 'trash-outline', color: '#EF4444' },
 ];
 
@@ -33,6 +31,7 @@ export default function AnimeDetailsScreen() {
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [episodeInput, setEpisodeInput] = useState('0'); // Local state for modal input
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,7 +52,10 @@ export default function AnimeDetailsScreen() {
             .eq('anime_id', id)
             .single();
 
-          if (entry) setUserEntry(entry);
+          if (entry) {
+            setUserEntry(entry);
+            setEpisodeInput(entry.current_episode?.toString() || '0');
+          }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -141,13 +143,16 @@ export default function AnimeDetailsScreen() {
           .from('user_anime_list')
           .upsert({
             ...userEntry,
-            ...payload
+            ...payload,
+            current_episode: status === 'completed' ? (anime.episodes || 0) : parseInt(episodeInput, 10), // Logic: If compled -> Max, else input
           }, { onConflict: 'user_id, anime_id' })
           .select()
           .single();
 
         if (error) throw error;
         setUserEntry(newEntry);
+        // If success update input too
+        setEpisodeInput(newEntry.current_episode?.toString() || '0');
       }
     } catch (error) {
       console.error('Error updating status:', error);
@@ -354,6 +359,30 @@ export default function AnimeDetailsScreen() {
                 )}
               </TouchableOpacity>
             ))}
+
+            {/* Episode Input Section */}
+            <View style={{ marginTop: 24 }}>
+              <Text style={[styles.modalTitle, { fontSize: 16, marginBottom: 8, color: colors.text }]}>Episodes Watched</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TextInput
+                  style={[
+                    styles.modalInput,
+                    {
+                      color: colors.text,
+                      backgroundColor: colors.inputBg,
+                      borderColor: colors.border
+                    }
+                  ]}
+                  value={episodeInput}
+                  onChangeText={setEpisodeInput}
+                  keyboardType="number-pad"
+                  placeholder="0"
+                />
+                <Text style={{ color: colors.subtext, marginLeft: 12 }}>
+                  / {anime.episodes || '?'}
+                </Text>
+              </View>
+            </View>
           </View>
         </TouchableOpacity>
       </Modal>
@@ -557,5 +586,14 @@ const styles = StyleSheet.create({
   modalOptionText: {
     fontSize: 16,
     fontFamily: 'Inter_500Medium',
+  },
+  modalInput: {
+    flex: 1,
+    height: 48,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    fontFamily: 'Inter_600SemiBold',
   },
 });
