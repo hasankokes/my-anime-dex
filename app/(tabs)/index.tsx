@@ -1,268 +1,221 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TextInput, 
-  TouchableOpacity, 
-  Image, 
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
   Dimensions,
-  FlatList
+  TextInput,
+  Keyboard,
+  StatusBar
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { Anime, jikanApi } from '../../lib/jikan';
+import { AnimeCard } from '../../components/AnimeCard';
 import { useTheme } from '../../context/ThemeContext';
-
-const { width } = Dimensions.get('window');
-
-// Mock Data
-const CATEGORIES = ['All', 'Shounen', 'Romance', 'Isekai', 'Action', 'Fantasy'];
-
-const TRENDING_DATA = [
-  {
-    id: '1',
-    title: 'Chainsaw Man',
-    genre: 'Action',
-    seasons: '1 Season',
-    image: 'https://images.unsplash.com/photo-1620336655052-b57972f3a260?q=80&w=800&auto=format&fit=crop', 
-    rank: 1,
-    totalEpisodes: 12
-  },
-  {
-    id: '2',
-    title: 'Cyberpunk',
-    genre: 'Sci-Fi',
-    seasons: '1 Season',
-    image: 'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=800&auto=format&fit=crop', 
-    rank: 2,
-    totalEpisodes: 10
-  },
-];
-
-const RECOMMENDED_DATA = [
-  {
-    id: '1',
-    title: 'Jujutsu Kaisen',
-    genre: 'Action',
-    seasons: '2 Seasons',
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1620336655055-088d06e36bf0?q=80&w=600&auto=format&fit=crop',
-    tagColor: '#374151',
-    tagTextColor: '#FACC15',
-    totalEpisodes: 24
-  },
-  {
-    id: '2',
-    title: 'One Piece',
-    genre: 'Adv.',
-    seasons: '21 Seasons',
-    isNewEp: true,
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop', 
-    tagColor: '#1E3A8A',
-    tagTextColor: '#93C5FD',
-    totalEpisodes: 1000
-  },
-  {
-    id: '3',
-    title: 'Neon Genesis',
-    genre: 'Mecha',
-    seasons: '1 Season',
-    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600&auto=format&fit=crop', 
-    tagColor: '#4C1D95',
-    tagTextColor: '#D8B4FE',
-    totalEpisodes: 26
-  },
-  {
-    id: '4',
-    title: 'Violet Evergarden',
-    genre: 'Drama',
-    seasons: '1 Season',
-    rating: 4.5,
-    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=600&auto=format&fit=crop', 
-    tagColor: '#831843',
-    tagTextColor: '#FBCFE8',
-    totalEpisodes: 13
-  },
-];
 
 export default function HomeScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { colors, isDark } = useTheme();
-  const [activeCategory, setActiveCategory] = useState('All');
 
-  const handleAnimePress = (item: any) => {
-    router.push({
-      pathname: '/anime/[id]',
-      params: { 
-        id: item.id, 
-        title: item.title, 
-        image: item.image,
-        totalEpisodes: item.totalEpisodes || 12
+  const [animes, setAnimes] = useState<Anime[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // Search State
+  const [searchText, setSearchText] = useState(''); // Text in input
+  const [activeQuery, setActiveQuery] = useState(''); // Text actually searched
+  const [isSearching, setIsSearching] = useState(false); // UI mode
+
+  // Fetch Logic
+  const fetchAnimes = async (pageNum: number, shouldRefresh = false, query = activeQuery) => {
+    if (!shouldRefresh && !hasNextPage) return;
+
+    try {
+      if (shouldRefresh) {
+        setRefreshing(true);
+      } else if (pageNum > 1) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
       }
-    });
+
+      console.log(`[Home] Fetching: Page ${pageNum}, Query: "${query}"`);
+
+      let response;
+      if (query.trim().length > 0) {
+        response = await jikanApi.searchAnime(query, pageNum);
+      } else {
+        response = await jikanApi.getTopAnime(pageNum);
+      }
+
+      const { data, pagination } = response;
+
+      if (shouldRefresh) {
+        setAnimes(data);
+      } else {
+        setAnimes(prev => {
+          const existingIds = new Set(prev.map(a => a.mal_id));
+          const newItems = data.filter(a => !existingIds.has(a.mal_id));
+          return [...prev, ...newItems];
+        });
+      }
+
+      setHasNextPage(pagination?.has_next_page || false);
+      setPage(pageNum);
+
+    } catch (error) {
+      console.error('Error fetching animes:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+      setLoadingMore(false);
+    }
   };
 
-  const renderCategory = ({ item }: { item: string }) => {
-    const isActive = activeCategory === item;
-    return (
-      <TouchableOpacity 
-        style={[
-          styles.categoryPill, 
-          { 
-            backgroundColor: isActive ? colors.primary : colors.card,
-            borderColor: isActive ? colors.primary : colors.border
-          }
-        ]}
-        onPress={() => setActiveCategory(item)}
-      >
-        <Text style={[
-          styles.categoryText, 
-          { color: isActive ? '#111827' : colors.subtext }
-        ]}>
-          {item}
+  // Initial load
+  useEffect(() => {
+    fetchAnimes(1);
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    fetchAnimes(1, true, activeQuery);
+  }, [activeQuery]);
+
+  const loadMore = () => {
+    if (!loadingMore && !loading && hasNextPage) {
+      fetchAnimes(page + 1, false, activeQuery);
+    }
+  };
+
+  // 1. Text Change -> JUST UPDATE STATE, NO FETCH
+  const handleTextChange = (text: string) => {
+    setSearchText(text);
+  };
+
+  // 2. Submit -> TRIGGER FETCH
+  const performSearch = () => {
+    const query = searchText.trim();
+    if (query === activeQuery) return; // Don't research same thing
+
+    Keyboard.dismiss();
+    setActiveQuery(query);
+
+    if (query.length > 0) {
+      setIsSearching(true);
+      setPage(1);
+      setHasNextPage(true);
+      fetchAnimes(1, true, query);
+    } else {
+      // Empty query submitted -> Go back to Top Anime
+      cancelSearch();
+    }
+  };
+
+  const cancelSearch = () => {
+    Keyboard.dismiss();
+    setSearchText('');
+    setActiveQuery('');
+    setIsSearching(false);
+    setPage(1);
+    setHasNextPage(true);
+    fetchAnimes(1, true, '');
+  };
+
+  const renderHeader = () => (
+    <View style={styles.headerContainer}>
+      {/* Welcome Text */}
+      {!isSearching && (
+        <View style={styles.branding}>
+          <Text style={[styles.greeting, { color: colors.subtext }]}>Welcome Back,</Text>
+          <Text style={[styles.appName, { color: colors.text }]}>My AnimeDex</Text>
+        </View>
+      )}
+
+      {/* Search Bar */}
+      <View style={[styles.searchBar, { backgroundColor: colors.inputBg }]}>
+        <TouchableOpacity onPress={performSearch}>
+          <Ionicons name="search" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
+        </TouchableOpacity>
+
+        <TextInput
+          placeholder="Search anime..."
+          placeholderTextColor={colors.subtext}
+          style={[styles.searchInput, { color: colors.text }]}
+          value={searchText}
+          onChangeText={handleTextChange} // Only updates variable
+          onSubmitEditing={performSearch} // Triggers API
+          returnKeyType="search"
+          autoCapitalize="none"
+        />
+
+        {(searchText.length > 0 || isSearching) && (
+          <TouchableOpacity onPress={cancelSearch}>
+            <Ionicons name="close-circle" size={20} color={colors.subtext} />
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {isSearching && (
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          Results for "{activeQuery}"
         </Text>
-      </TouchableOpacity>
+      )}
+    </View>
+  );
+
+  const renderFooter = () => {
+    if (!loadingMore) return <View style={{ height: 20 }} />;
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color="#FACC15" />
+      </View>
     );
   };
 
-  const renderTrendingCard = ({ item }: { item: typeof TRENDING_DATA[0] }) => (
-    <TouchableOpacity 
-      style={[styles.trendingCard, { backgroundColor: colors.card }]} 
-      activeOpacity={0.9}
-      onPress={() => handleAnimePress(item)}
-    >
-      <Image source={{ uri: item.image }} style={styles.trendingImage} />
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.9)']}
-        style={styles.gradientOverlay}
-      />
-      
-      <View style={styles.trendingBadge}>
-        <Text style={styles.trendingBadgeText}>#{item.rank} TRENDING</Text>
+  if (loading && !refreshing) {
+    return (
+      <View style={[styles.container, styles.center, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color="#FACC15" />
       </View>
-
-      <View style={styles.trendingContent}>
-        <Text style={styles.trendingTitle}>{item.title}</Text>
-        <Text style={styles.trendingSubtitle}>{item.genre} • {item.seasons}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+    );
+  }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        
-        {/* Header */}
-        <View style={styles.header}>
-          <View>
-            <Text style={[styles.greeting, { color: colors.subtext }]}>Welcome Back,</Text>
-            <Text style={[styles.appName, { color: colors.text }]}>My AnimeDex</Text>
-          </View>
-          <TouchableOpacity style={styles.notificationButton}>
-            <Ionicons name="notifications" size={24} color={colors.text} />
-            <View style={styles.notificationDot} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <View style={[styles.searchBar, { backgroundColor: colors.inputBg }]}>
-            <Ionicons name="search" size={20} color={colors.subtext} style={styles.searchIcon} />
-            <TextInput 
-              placeholder="Search anime, characters..."
-              placeholderTextColor={colors.subtext}
-              style={[styles.searchInput, { color: colors.text }]}
-            />
-            <TouchableOpacity>
-               <Ionicons name="options-outline" size={20} color={colors.subtext} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Categories */}
-        <View style={styles.categoriesContainer}>
-          <FlatList
-            data={CATEGORIES}
-            renderItem={renderCategory}
-            keyExtractor={(item) => item}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 20 }}
+    <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
+      <FlatList
+        data={animes}
+        renderItem={({ item }) => (
+          <AnimeCard
+            anime={item}
+            onPress={() => router.push(`/anime/${item.mal_id}`)}
           />
-        </View>
-
-        {/* Trending Section */}
-        <View style={styles.sectionHeader}>
-          <View>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Trending Now</Text>
-            <Text style={[styles.sectionSubtitle, { color: colors.subtext }]}>Top hits this week</Text>
-          </View>
-          <TouchableOpacity style={[styles.seeAllButton, { backgroundColor: colors.card }]}>
-            <Text style={styles.seeAllText}>See all</Text>
-          </TouchableOpacity>
-        </View>
-
-        <FlatList
-          data={TRENDING_DATA}
-          renderItem={renderTrendingCard}
-          keyExtractor={(item) => item.id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 20 }}
-          style={styles.trendingList}
-        />
-
-        {/* Recommended Section */}
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Recommended for You</Text>
-          <TouchableOpacity>
-            <Ionicons name="filter" size={20} color={colors.subtext} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.gridContainer}>
-          {RECOMMENDED_DATA.map((item) => (
-            <TouchableOpacity 
-              key={item.id} 
-              style={styles.gridItem} 
-              activeOpacity={0.8}
-              onPress={() => handleAnimePress(item)}
-            >
-              <View style={[styles.posterContainer, { backgroundColor: colors.card }]}>
-                <Image source={{ uri: item.image }} style={styles.posterImage} />
-                
-                {item.isNewEp && (
-                  <View style={styles.newEpBadge}>
-                    <Text style={styles.newEpText}>New Ep</Text>
-                  </View>
-                )}
-                
-                {item.rating && (
-                  <View style={styles.ratingBadge}>
-                    <Ionicons name="star" size={10} color="#FACC15" style={{ marginRight: 2 }} />
-                    <Text style={styles.ratingText}>{item.rating}</Text>
-                  </View>
-                )}
-              </View>
-              
-              <Text style={[styles.animeTitle, { color: colors.text }]} numberOfLines={1}>{item.title}</Text>
-              
-              <View style={styles.metaRow}>
-                <View style={[styles.genreTag, { backgroundColor: isDark ? item.tagColor : colors.inputBg }]}>
-                  <Text style={[styles.genreText, { color: isDark ? item.tagTextColor : colors.text }]}>{item.genre}</Text>
-                </View>
-                <Text style={[styles.seasonsText, { color: colors.subtext }]}>{item.seasons}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <View style={{ height: 20 }} />
-      </ScrollView>
-    </SafeAreaView>
+        )}
+        keyExtractor={(item) => item.mal_id.toString()}
+        numColumns={2}
+        columnWrapperStyle={styles.columnWrapper}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={renderHeader}
+        ListFooterComponent={renderFooter}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FACC15" />
+        }
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="handled"
+      />
+    </View>
   );
 }
 
@@ -270,224 +223,52 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollContent: {
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  listContent: {
+    paddingHorizontal: 20,
     paddingBottom: 20,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 10,
+  headerContainer: {
     marginBottom: 20,
+    marginTop: 10,
+  },
+  branding: {
+    marginBottom: 16,
   },
   greeting: {
     fontSize: 14,
     fontFamily: 'Inter_500Medium',
   },
   appName: {
-    fontSize: 22,
+    fontSize: 24,
     fontFamily: 'Poppins_700Bold',
-  },
-  notificationButton: {
-    position: 'relative',
-    padding: 4,
-  },
-  notificationDot: {
-    position: 'absolute',
-    top: 4,
-    right: 6,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#FACC15',
-    borderWidth: 1,
-    borderColor: '#0F0F0F',
-  },
-  searchContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 24,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 16,
     paddingHorizontal: 16,
-    height: 52,
-  },
-  searchIcon: {
-    marginRight: 12,
+    height: 50,
   },
   searchInput: {
     flex: 1,
+    height: '100%',
     fontFamily: 'Inter_400Regular',
-    fontSize: 14,
-  },
-  categoriesContainer: {
-    marginBottom: 24,
-  },
-  categoryPill: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 12,
-    borderWidth: 1,
-  },
-  categoryText: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 14,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    paddingHorizontal: 20,
-    marginBottom: 16,
+    fontSize: 15,
   },
   sectionTitle: {
+    marginTop: 16,
     fontSize: 18,
-    fontFamily: 'Poppins_700Bold',
+    fontFamily: 'Poppins_600SemiBold',
   },
-  sectionSubtitle: {
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
-    marginTop: 2,
-  },
-  seeAllButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  seeAllText: {
-    fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
-    color: '#FACC15',
-  },
-  trendingList: {
-    marginBottom: 32,
-  },
-  trendingCard: {
-    width: width * 0.75,
-    height: 180,
-    marginRight: 16,
-    borderRadius: 20,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  trendingImage: {
-    width: '100%',
-    height: '100%',
-  },
-  gradientOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: '80%',
-  },
-  trendingBadge: {
-    position: 'absolute',
-    top: 12,
-    left: 12,
-    backgroundColor: '#FACC15',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  trendingBadgeText: {
-    fontSize: 10,
-    fontFamily: 'Inter_700Bold',
-    color: '#111827',
-  },
-  trendingContent: {
-    position: 'absolute',
-    bottom: 16,
-    left: 16,
-  },
-  trendingTitle: {
-    fontSize: 20,
-    fontFamily: 'Poppins_700Bold',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  trendingSubtitle: {
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
-    color: '#E5E7EB',
-  },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 20,
+  columnWrapper: {
     justifyContent: 'space-between',
   },
-  gridItem: {
-    width: (width - 56) / 2,
-    marginBottom: 24,
-  },
-  posterContainer: {
-    width: '100%',
-    aspectRatio: 0.7,
-    borderRadius: 16,
-    overflow: 'hidden',
-    marginBottom: 10,
-    position: 'relative',
-  },
-  posterImage: {
-    width: '100%',
-    height: '100%',
-  },
-  newEpBadge: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    backgroundColor: '#FACC15',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  newEpText: {
-    fontSize: 10,
-    fontFamily: 'Inter_700Bold',
-    color: '#111827',
-  },
-  ratingBadge: {
-    position: 'absolute',
-    bottom: 8,
-    right: 8,
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    flexDirection: 'row',
+  footerLoader: {
+    paddingVertical: 20,
     alignItems: 'center',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: 6,
-  },
-  ratingText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontFamily: 'Inter_600SemiBold',
-  },
-  animeTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 4,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  genreTag: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    marginRight: 8,
-  },
-  genreText: {
-    fontSize: 10,
-    fontFamily: 'Inter_600SemiBold',
-  },
-  seasonsText: {
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
   },
 });

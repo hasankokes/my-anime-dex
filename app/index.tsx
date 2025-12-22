@@ -1,35 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, Alert, Platform, ActivityIndicator, AppState, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, Alert, Platform, ActivityIndicator, AppState, TouchableOpacity, TextInput, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../lib/supabase';
 import { SocialButton } from '../components/SocialButton';
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri } from 'expo-auth-session';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen() {
+  console.log('[LoginScreen] Rendering...');
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
 
   useEffect(() => {
     checkSession();
 
-    // 1. Listen for auth state changes (e.g. after successful login in same tab)
+    // 1. Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        // Use a small timeout to ensure navigation is ready
         setTimeout(() => {
           router.replace('/(tabs)');
         }, 100);
       }
     });
 
-    // 2. Listen for AppState changes (e.g. when user returns from browser popup on mobile)
+    // 2. Listen for AppState changes
     const appStateSubscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState === 'active') {
         checkSession();
@@ -44,7 +50,19 @@ export default function LoginScreen() {
 
   const checkSession = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      // Create a promise that rejects after 2 seconds to prevent hanging
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Session check timeout')), 2000)
+      );
+
+      // Race against the timeout
+      const response = await Promise.race([
+        supabase.auth.getSession(),
+        timeoutPromise
+      ]) as any;
+
+      const { data: { session } } = response;
+
       if (session) {
         setTimeout(() => {
           router.replace('/(tabs)');
@@ -53,38 +71,62 @@ export default function LoginScreen() {
         setCheckingSession(false);
       }
     } catch (error) {
+      console.log('[Auth] Session check failed or timed out:', error);
       setCheckingSession(false);
+    }
+  };
+
+  const performEmailAuth = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        Alert.alert('Success', 'Account created! Please check your email for confirmation settings.');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Authentication Error', error.message);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const performOAuth = async (provider: 'google' | 'apple') => {
     try {
       setLoading(true);
-      
-      // Separate logic for Web vs Native to avoid "origins don't match" error
+
       if (Platform.OS === 'web') {
-        // ON WEB: Use standard Supabase redirect (no popup)
-        // This avoids the iframe/CORS issues in the preview environment
         const { error } = await supabase.auth.signInWithOAuth({
           provider,
           options: {
             redirectTo: window.location.origin,
-            skipBrowserRedirect: false, // Let it redirect the current tab
+            skipBrowserRedirect: false,
           },
         });
-        
         if (error) throw error;
-        // The page will redirect, so no need to do anything else here
-        
       } else {
-        // ON MOBILE: Use WebBrowser auth session (System Browser)
         const redirectTo = makeRedirectUri({ scheme: 'myapp' });
-        
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider,
           options: {
             redirectTo,
-            skipBrowserRedirect: true, // Get the URL to open manually
+            skipBrowserRedirect: true,
           },
         });
 
@@ -96,18 +138,33 @@ export default function LoginScreen() {
             redirectTo
           );
 
-          if (result.type === 'success') {
+          if (result.type === 'success' && result.url) {
+            const url = new URL(result.url);
+            const code = url.searchParams.get('code');
+            const access_token = new URLSearchParams(url.hash.substring(1)).get('access_token');
+            const refresh_token = new URLSearchParams(url.hash.substring(1)).get('refresh_token');
+
+            if (code) {
+              const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
+              if (sessionError) throw sessionError;
+            } else if (access_token && refresh_token) {
+              const { error: sessionError } = await supabase.auth.setSession({
+                access_token,
+                refresh_token,
+              });
+              if (sessionError) throw sessionError;
+            }
+
             checkSession();
           }
         }
       }
     } catch (error) {
+      console.error('[Auth] Error:', error);
       if (error instanceof Error) {
         Alert.alert('Login Error', error.message);
       }
-      setLoading(false);
     } finally {
-      // On web, we might redirect away, so this might not run, which is fine.
       if (Platform.OS !== 'web') {
         setLoading(false);
       }
@@ -124,48 +181,105 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Background with subtle gradient */}
       <LinearGradient
         colors={['#FFFFFF', '#F3F4F6']}
         style={styles.background}
       />
 
-      <View style={styles.contentContainer}>
-        {/* Logo Section */}
-        <View style={styles.logoContainer}>
-          <Image 
-            source={{ uri: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=300&auto=format&fit=crop' }} 
-            style={styles.logo}
-          />
-          <Text style={styles.appName}>My AnimeDex</Text>
-          <Text style={styles.tagline}>Track, Discover, Watch.</Text>
-        </View>
-
-        {/* Bottom Section */}
-        <View style={styles.bottomSection}>
-          <View style={styles.buttonContainer}>
-            <SocialButton 
-              provider="apple" 
-              onPress={() => performOAuth('apple')}
-              isLoading={loading}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={[styles.contentContainer, { paddingTop: height * 0.15 }]}>
+          {/* Logo Section */}
+          <View style={styles.logoContainer}>
+            <Image
+              source={{ uri: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=300&auto=format&fit=crop' }}
+              style={styles.logo}
             />
-            <SocialButton 
-              provider="google" 
-              onPress={() => performOAuth('google')}
-              isLoading={loading}
-            />
+            <Text style={styles.appName}>My AnimeDex</Text>
+            <Text style={styles.tagline}>Track, Discover, Watch.</Text>
           </View>
 
-          {/* Manual Refresh Link */}
-          <TouchableOpacity onPress={checkSession} style={styles.refreshLink}>
-            <Text style={styles.refreshText}>Already logged in? Click here to refresh</Text>
-          </TouchableOpacity>
+          {/* Email/Password Section */}
+          <View style={styles.formContainer}>
+            <View style={styles.inputContainer}>
+              <Ionicons name="mail-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="#9CA3AF"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#9CA3AF"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+            </View>
 
-          <Text style={styles.footerText}>
-            By continuing, you agree to our Terms of Service and Privacy Policy.
-          </Text>
-        </View>
-      </View>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={performEmailAuth}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFF" />
+              ) : (
+                <Text style={styles.primaryButtonText}>
+                  {isSignUp ? 'Create Account' : 'Sign In'}
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)} style={styles.toggleLink}>
+              <Text style={styles.toggleText}>
+                {isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Social Section */}
+          <View style={styles.bottomSection}>
+            <View style={styles.dividerContainer}>
+              <View style={styles.divider} />
+              <Text style={styles.dividerText}>or</Text>
+              <View style={styles.divider} />
+            </View>
+
+            <View style={styles.buttonContainer}>
+              <SocialButton
+                provider="apple"
+                onPress={() => performOAuth('apple')}
+                isLoading={loading}
+              />
+              <SocialButton
+                provider="google"
+                onPress={() => performOAuth('google')}
+                isLoading={loading}
+              />
+            </View>
+
+            {/* Manual Refresh Link */}
+            <TouchableOpacity onPress={checkSession} style={styles.refreshLink}>
+              <Text style={styles.refreshText}>Check Session</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.footerText}>
+              By continuing, you agree to our Terms of Service and Privacy Policy.
+            </Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -187,14 +301,14 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   contentContainer: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: 24,
-    justifyContent: 'space-between',
-    paddingTop: height * 0.15,
+    justifyContent: 'center',
     paddingBottom: 40,
   },
   logoContainer: {
     alignItems: 'center',
+    marginBottom: 40,
   },
   logo: {
     width: 120,
@@ -229,6 +343,75 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_500Medium',
     color: '#FACC15',
     textDecorationLine: 'underline',
+  },
+  formContainer: {
+    width: '100%',
+    marginBottom: 24,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 16,
+    height: 56,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+  },
+  inputIcon: {
+    marginRight: 12,
+  },
+  input: {
+    flex: 1,
+    height: '100%',
+    fontFamily: 'Inter_400Regular',
+    fontSize: 16,
+    color: '#111827',
+  },
+  primaryButton: {
+    backgroundColor: '#FACC15',
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 16,
+    shadowColor: "#FACC15",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  primaryButtonText: {
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 16,
+    color: '#000000',
+  },
+  toggleLink: {
+    alignItems: 'center',
+    padding: 8,
+  },
+  toggleText: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 14,
+    color: '#4B5563',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E5E7EB',
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    color: '#9CA3AF',
   },
   footerText: {
     fontSize: 11,

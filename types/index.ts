@@ -21,4 +21,5 @@ export interface AnimeListItem {
   is_favorite: boolean;
   current_episode: number;
   total_episodes: number;
+  score: number | null;
 }

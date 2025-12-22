@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { Stack } from 'expo-router';
 import { useFrameworkReady } from '../hooks/useFrameworkReady';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
@@ -33,7 +34,12 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    return null;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <Text style={{ marginTop: 20 }}>Loading Application Resources...</Text>
+        <ActivityIndicator size="small" color="#000" />
+      </View>
+    );
   }
 
   return (
@@ -42,14 +48,14 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
-        
-        <Stack.Screen 
-          name="subscription" 
-          options={{ 
+
+        <Stack.Screen
+          name="subscription"
+          options={{
             presentation: 'modal',
             headerShown: false,
             animation: 'slide_from_bottom'
-          }} 
+          }}
         />
       </Stack>
     </ThemeProvider>

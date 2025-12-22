@@ -1,38 +1,45 @@
 import React, { useState, useCallback } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  FlatList, 
-  Image, 
-  TouchableOpacity, 
-  Dimensions,
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
+  Dimensions,
+  Modal,
+  ScrollView
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, Feather } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { AnimeListItem } from '../../types';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
-
-const { width } = Dimensions.get('window');
-const COLUMN_count = 2;
-const GAP = 16;
-const PADDING = 20;
-const ITEM_WIDTH = (width - (PADDING * 2) - GAP) / COLUMN_count;
+import { AnimeCard } from '../../components/AnimeCard';
 
 const FILTERS = ['All', 'Watching', 'Completed', 'Plan to Watch'];
+const SORT_OPTIONS = [
+  { label: 'Date Added (Newest)', value: 'updated_at', ascending: false },
+  { label: 'Date Added (Oldest)', value: 'updated_at', ascending: true },
+  { label: 'Title (A-Z)', value: 'anime_title', ascending: true },
+  { label: 'Title (Z-A)', value: 'anime_title', ascending: false },
+  { label: 'Score (Highest)', value: 'score', ascending: false }, // Assuming score exists in DB or we add it later
+];
 
 export default function FavoritesScreen() {
   const router = useRouter();
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   const [activeFilter, setActiveFilter] = useState('All');
   const [favorites, setFavorites] = useState<AnimeListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Sorting State
+  const [modalVisible, setModalVisible] = useState(false);
+  const [sortBy, setSortBy] = useState('updated_at');
+  const [sortAscending, setSortAscending] = useState(false);
 
   const fetchFavorites = async () => {
     try {
@@ -59,6 +66,9 @@ export default function FavoritesScreen() {
         }
       }
 
+      // Apply Sorting
+      query = query.order(sortBy, { ascending: sortAscending });
+
       const { data, error } = await query;
       if (error) throw error;
       setFavorites(data || []);
@@ -73,7 +83,7 @@ export default function FavoritesScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchFavorites();
-    }, [activeFilter])
+    }, [activeFilter, sortBy, sortAscending])
   );
 
   const onRefresh = () => {
@@ -81,25 +91,23 @@ export default function FavoritesScreen() {
     fetchFavorites();
   };
 
-  const handleCardPress = (item: AnimeListItem) => {
-    router.push({
-      pathname: '/anime/[id]',
-      params: { 
-        id: item.anime_id,
-        title: item.anime_title,
-        image: item.anime_image,
-        totalEpisodes: item.total_episodes
-      }
-    });
+  const handleCardPress = (id: string) => {
+    router.push(`/anime/${id}`);
+  };
+
+  const applySort = (field: string, ascending: boolean) => {
+    setSortBy(field);
+    setSortAscending(ascending);
+    setModalVisible(false);
   };
 
   const renderFilter = ({ item }: { item: string }) => {
     const isActive = activeFilter === item;
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         style={[
-          styles.filterPill, 
-          { 
+          styles.filterPill,
+          {
             backgroundColor: isActive ? colors.primary : colors.card,
             borderColor: isActive ? colors.primary : colors.border
           }
@@ -110,7 +118,7 @@ export default function FavoritesScreen() {
         }}
       >
         <Text style={[
-          styles.filterText, 
+          styles.filterText,
           { color: isActive ? '#111827' : colors.subtext }
         ]}>
           {item}
@@ -119,41 +127,41 @@ export default function FavoritesScreen() {
     );
   };
 
-  const renderCard = ({ item }: { item: AnimeListItem }) => (
-    <TouchableOpacity 
-      style={[styles.card, { backgroundColor: colors.card }]} 
-      activeOpacity={0.9}
-      onPress={() => handleCardPress(item)}
-    >
-      <Image source={{ uri: item.anime_image }} style={styles.cardImage} />
-      
-      <View style={styles.heartContainer}>
-        <Ionicons name="heart" size={18} color="#FACC15" />
-      </View>
+  const renderCard = ({ item }: { item: AnimeListItem }) => {
+    // Adapter to match AnimeCard's expected Anime interface
+    const animeAdapter: any = {
+      mal_id: item.anime_id,
+      title: item.anime_title,
+      title_english: item.anime_title,
+      images: {
+        jpg: {
+          large_image_url: item.anime_image
+        }
+      },
+      episodes: item.total_episodes,
+      score: item.score,
+      type: 'TV'
+    };
 
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.9)']}
-        style={styles.gradient}
+    return (
+      <AnimeCard
+        anime={animeAdapter as any}
+        onPress={() => handleCardPress(item.anime_id)}
       />
-
-      <View style={styles.cardContent}>
-        <Text style={styles.cardTitle} numberOfLines={2}>{item.anime_title}</Text>
-        <Text style={styles.cardSubtitle}>
-          {item.status.replace('_', ' ')} 
-          {item.status === 'watching' ? ` • Ep ${item.current_episode}` : ''}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.background }]}>
         <Text style={[styles.headerTitle, { color: colors.text }]}>Your Favorites</Text>
-        <TouchableOpacity style={[styles.filterButton, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <TouchableOpacity
+          style={[styles.filterButton, { backgroundColor: colors.card, borderColor: colors.border }]}
+          onPress={() => setModalVisible(true)}
+        >
           <Feather name="filter" size={18} color={colors.text} />
-          <Text style={[styles.filterButtonText, { color: colors.text }]}>Filter</Text>
+          <Text style={[styles.filterButtonText, { color: colors.text }]}>Sort</Text>
         </TouchableOpacity>
       </View>
 
@@ -195,6 +203,52 @@ export default function FavoritesScreen() {
           }
         />
       )}
+
+      {/* Sorting Modal */}
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setModalVisible(false)}
+        >
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>Sort By</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Ionicons name="close" size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            {SORT_OPTIONS.map((option, index) => {
+              const isActive = sortBy === option.value && sortAscending === option.ascending;
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.sortOption,
+                    isActive && { backgroundColor: '#FEF9C3' }
+                  ]}
+                  onPress={() => applySort(option.value, option.ascending)}
+                >
+                  <Text style={[
+                    styles.sortOptionText,
+                    { color: isActive ? '#000' : colors.text }
+                  ]}>
+                    {option.label}
+                  </Text>
+                  {isActive && <Ionicons name="checkmark" size={20} color="#CA8A04" />}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
     </SafeAreaView>
   );
 }
@@ -255,62 +309,6 @@ const styles = StyleSheet.create({
   },
   columnWrapper: {
     justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  card: {
-    width: ITEM_WIDTH,
-    height: ITEM_WIDTH * 1.5,
-    borderRadius: 20,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  cardImage: {
-    width: '100%',
-    height: '100%',
-  },
-  heartContainer: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
-  },
-  gradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: '60%',
-    zIndex: 5,
-  },
-  cardContent: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 12,
-    zIndex: 10,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins_700Bold',
-    color: '#FFFFFF',
-    marginBottom: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  cardSubtitle: {
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
-    color: '#E5E7EB',
-    opacity: 0.9,
-    textTransform: 'capitalize',
   },
   emptyContainer: {
     alignItems: 'center',
@@ -328,5 +326,40 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 4,
     maxWidth: 250,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    maxHeight: '50%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins_600SemiBold',
+  },
+  sortOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+    paddingHorizontal: 12,
+    borderRadius: 12,
+  },
+  sortOptionText: {
+    fontSize: 16,
+    fontFamily: 'Inter_500Medium',
   },
 });
