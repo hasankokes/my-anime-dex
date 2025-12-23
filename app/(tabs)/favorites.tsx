@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 120, // Increased to clear floating tab bar
     minHeight: 300,
   },
   columnWrapper: {

@@ -107,6 +107,71 @@ export default function AnimeDetailsScreen() {
     }
   };
 
+  const handleEpisodeUpdate = async () => {
+    if (!anime) return;
+    const newEp = parseInt(episodeInput, 10);
+    const totalepisodes = anime.episodes || 0;
+
+    if (isNaN(newEp)) {
+      setEpisodeInput(userEntry?.current_episode?.toString() || '0');
+      return;
+    }
+
+    // Validate
+    let validatedEp = newEp;
+    if (validatedEp < 0) validatedEp = 0;
+    if (totalepisodes > 0 && validatedEp > totalepisodes) validatedEp = totalepisodes;
+
+    // Auto Status Logic
+    let newStatus = userEntry?.status || 'watching';
+    if (totalepisodes > 0 && validatedEp === totalepisodes) {
+      newStatus = 'completed';
+    } else if (validatedEp > 0 && validatedEp < totalepisodes && newStatus !== 'watching') {
+      newStatus = 'watching';
+    }
+
+    setEpisodeInput(validatedEp.toString());
+
+    // Only update if changed
+    if (validatedEp === userEntry?.current_episode && newStatus === userEntry?.status) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        // Optionally alert user or just revert
+        return;
+      }
+
+      const payload = {
+        user_id: session.user.id,
+        anime_id: anime.mal_id.toString(),
+        anime_title: anime.title_english || anime.title,
+        anime_image: anime.images.jpg.large_image_url,
+        status: newStatus,
+        total_episodes: anime.episodes || 0,
+        current_episode: validatedEp,
+        score: anime.score,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { data: newEntry, error } = await supabase
+        .from('user_anime_list')
+        .upsert({
+          ...userEntry,
+          ...payload
+        }, { onConflict: 'user_id, anime_id' })
+        .select()
+        .single();
+
+      if (error) throw error;
+      setUserEntry(newEntry);
+
+    } catch (error) {
+      console.error('Error updating episode:', error);
+      setEpisodeInput(userEntry?.current_episode?.toString() || '0');
+    }
+  };
+
   const updateStatus = async (status: string) => {
     if (!anime) return;
     setShowStatusModal(false);
@@ -138,20 +203,21 @@ export default function AnimeDetailsScreen() {
           .eq('anime_id', anime.mal_id.toString());
         if (error) throw error;
         setUserEntry(null);
+        setEpisodeInput('0');
       } else {
         const { data: newEntry, error } = await supabase
           .from('user_anime_list')
           .upsert({
             ...userEntry,
             ...payload,
-            current_episode: status === 'completed' ? (anime.episodes || 0) : parseInt(episodeInput, 10), // Logic: If compled -> Max, else input
+            // If manual status update, keep existing episode count unless 'completed' -> max
+            current_episode: status === 'completed' ? (anime.episodes || 0) : (userEntry?.current_episode || 0),
           }, { onConflict: 'user_id, anime_id' })
           .select()
           .single();
 
         if (error) throw error;
         setUserEntry(newEntry);
-        // If success update input too
         setEpisodeInput(newEntry.current_episode?.toString() || '0');
       }
     } catch (error) {
@@ -258,6 +324,27 @@ export default function AnimeDetailsScreen() {
             ))}
           </View>
 
+          {/* Episode Progress (New Location) */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Episodes Watched</Text>
+            <View style={[styles.episodeInputContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <TextInput
+                style={[styles.episodeInput, { color: colors.text }]}
+                value={episodeInput}
+                onChangeText={setEpisodeInput}
+                onEndEditing={handleEpisodeUpdate}
+                keyboardType="number-pad"
+                placeholder="0"
+                placeholderTextColor={colors.subtext}
+                returnKeyType="done"
+                onSubmitEditing={handleEpisodeUpdate}
+              />
+              <Text style={{ color: colors.subtext, fontSize: 16 }}>
+                / {anime.episodes || '?'}
+              </Text>
+            </View>
+          </View>
+
           {/* Synopsis */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>Synopsis</Text>
@@ -360,29 +447,7 @@ export default function AnimeDetailsScreen() {
               </TouchableOpacity>
             ))}
 
-            {/* Episode Input Section */}
-            <View style={{ marginTop: 24 }}>
-              <Text style={[styles.modalTitle, { fontSize: 16, marginBottom: 8, color: colors.text }]}>Episodes Watched</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <TextInput
-                  style={[
-                    styles.modalInput,
-                    {
-                      color: colors.text,
-                      backgroundColor: colors.inputBg,
-                      borderColor: colors.border
-                    }
-                  ]}
-                  value={episodeInput}
-                  onChangeText={setEpisodeInput}
-                  keyboardType="number-pad"
-                  placeholder="0"
-                />
-                <Text style={{ color: colors.subtext, marginLeft: 12 }}>
-                  / {anime.episodes || '?'}
-                </Text>
-              </View>
-            </View>
+
           </View>
         </TouchableOpacity>
       </Modal>
@@ -403,7 +468,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   heroContainer: {
-    height: height * 0.45,
+    height: height * 0.35, // Reduced from 0.45
     width: '100%',
     position: 'relative',
   },
@@ -440,109 +505,109 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   contentContainer: {
-    marginTop: -40,
+    marginTop: -30, // Adjusted overlap
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
-    paddingHorizontal: 24,
-    paddingTop: 32,
+    paddingHorizontal: 20, // Reduced padding
+    paddingTop: 24, // Reduced padding
     minHeight: 500,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 16,
+    marginBottom: 12, // Reduced margin
   },
   titleColumn: {
     flex: 1,
-    marginRight: 16,
+    marginRight: 12,
   },
   title: {
-    fontSize: 22,
+    fontSize: 20, // Slightly smaller
     fontFamily: 'Poppins_700Bold',
-    lineHeight: 28,
+    lineHeight: 26,
   },
   jpTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Inter_400Regular',
-    marginTop: 4,
+    marginTop: 2,
   },
   scoreBox: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
   scoreText: {
     color: '#FFFFFF',
     fontFamily: 'Inter_700Bold',
-    fontSize: 16,
+    fontSize: 14,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 16,
+    gap: 6, // Reduced gap
+    marginBottom: 12, // Reduced margin
   },
   tag: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 6,
   },
   tagText: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: 'Inter_500Medium',
   },
   genresContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 24,
+    gap: 6,
+    marginBottom: 16, // Reduced margin
   },
   genreText: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     color: '#FACC15',
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 16, // Reduced margin
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   synopsisText: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: 'Inter_400Regular',
-    lineHeight: 24,
+    lineHeight: 22,
   },
   infoGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 32,
+    padding: 12, // Reduced padding
+    marginBottom: 24, // Reduced margin
   },
   infoItem: {
     alignItems: 'center',
     flex: 1,
   },
   infoLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: 'Inter_500Medium',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   infoValue: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Inter_600SemiBold',
   },
   actionButton: {
     flexDirection: 'row',
     backgroundColor: '#FACC15',
-    height: 56,
-    borderRadius: 28,
+    height: 50, // Reduced height
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: "#FACC15",
@@ -557,7 +622,7 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     fontFamily: 'Poppins_600SemiBold',
-    fontSize: 16,
+    fontSize: 15,
     color: '#000000',
     marginLeft: 8,
   },
@@ -588,12 +653,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_500Medium',
   },
   modalInput: {
-    flex: 1,
-    height: 48,
+    // Removed
+  },
+  episodeInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 10,
     paddingHorizontal: 16,
+    height: 44,
+    // maxWidth: 200, // Removed to allow full width
+    alignSelf: 'flex-start', // Keep it from stretching full width if not needed, but allow growth
+    minWidth: 120,
+  },
+  episodeInput: {
     fontSize: 16,
     fontFamily: 'Inter_600SemiBold',
-  },
+    minWidth: 30,
+    marginRight: 4,
+  }
 });

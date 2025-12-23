@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingBottom: 120, // Increased to clear floating tab bar
   },
   header: {
     flexDirection: 'row',

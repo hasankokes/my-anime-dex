@@ -11,11 +11,12 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: [
-          styles.tabBar, 
-          { 
-            backgroundColor: colors.tabBar,
-            borderTopColor: colors.border,
-            borderTopWidth: isDark ? 0 : 1
+          styles.tabBar,
+          {
+            backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)', // Slight transparency
+            borderTopWidth: 0,
+            shadowColor: "#000", // Ensure shadow is visible
+            shadowOpacity: 0.3,
           }
         ],
         tabBarShowLabel: true,
@@ -29,11 +30,11 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-              <Ionicons 
-                name={focused ? "home" : "home-outline"} 
-                size={24} 
-                color={focused ? '#111827' : color} 
+            <View style={styles.iconContainer}>
+              <Ionicons
+                name={focused ? "home" : "home-outline"}
+                size={24}
+                color={focused ? '#FACC15' : color}
               />
             </View>
           ),
@@ -44,11 +45,11 @@ export default function TabLayout() {
         options={{
           title: 'Favorites',
           tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-              <Ionicons 
-                name={focused ? "heart" : "heart-outline"} 
-                size={24} 
-                color={focused ? '#111827' : color} 
+            <View style={styles.iconContainer}>
+              <Ionicons
+                name={focused ? "heart" : "heart-outline"}
+                size={24}
+                color={focused ? '#FACC15' : color}
               />
             </View>
           ),
@@ -59,11 +60,11 @@ export default function TabLayout() {
         options={{
           title: 'Watching',
           tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-              <Ionicons 
-                name={focused ? "play-circle" : "play-circle-outline"} 
-                size={24} 
-                color={focused ? '#111827' : color} 
+            <View style={styles.iconContainer}>
+              <Ionicons
+                name={focused ? "play-circle" : "play-circle-outline"}
+                size={24}
+                color={focused ? '#FACC15' : color}
               />
             </View>
           ),
@@ -74,11 +75,11 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-              <Ionicons 
-                name={focused ? "person" : "person-outline"} 
-                size={24} 
-                color={focused ? '#111827' : color} 
+            <View style={styles.iconContainer}>
+              <Ionicons
+                name={focused ? "person" : "person-outline"}
+                size={24}
+                color={focused ? '#FACC15' : color}
               />
             </View>
           ),
@@ -90,25 +91,33 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    elevation: 0,
-    shadowOpacity: 0,
-    height: 85, 
-    paddingBottom: 20,
-    paddingTop: 10,
+    position: 'absolute',
+    bottom: 25,
+    left: 20,
+    right: 20,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    height: 80,
+    borderRadius: 40,
+    borderTopWidth: 0,
+    // Padding adjustments to center content vertically
+    paddingTop: 8,
+    paddingBottom: 8,
   },
   tabLabel: {
     fontFamily: 'Inter_500Medium',
-    fontSize: 11,
-    marginTop: 4,
+    fontSize: 10,
+    marginTop: 4, // More space between icon and text
+    paddingBottom: 4,
   },
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 50,
-    height: 32,
-    borderRadius: 16,
-  },
-  activeIconContainer: {
-    backgroundColor: '#FACC15',
+    width: 44,
+    height: 44,
+    marginBottom: 2,
   },
 });
