@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
+import { ReviewSection } from '../../components/ReviewSection';
 
 const { width, height } = Dimensions.get('window');
 
@@ -406,6 +407,11 @@ export default function AnimeDetailsScreen() {
               </>
             )}
           </TouchableOpacity>
+
+          <View style={{ height: 24 }} />
+
+          {/* Reviews Section */}
+          <ReviewSection animeId={id as string} />
 
         </View>
       </ScrollView>

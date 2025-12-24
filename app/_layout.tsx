@@ -7,8 +7,46 @@ import { Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins
 import { Ionicons, Feather, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider } from '../context/ThemeContext';
+import { AuthProvider, useAuth } from '../context/AuthProvider';
+import { useRouter, useSegments } from 'expo-router';
+import { NetworkProvider } from '../context/NetworkContext';
+import { OfflineBanner } from '../components/OfflineBanner';
 
 SplashScreen.preventAutoHideAsync();
+
+const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+  const { session, loading } = useAuth();
+  const segments = useSegments() as string[];
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+
+    // Debug logging
+    console.log(`[AuthGuard] Session: ${!!session}, Loading: ${loading}, Segments: ${JSON.stringify(segments)}`);
+
+    // In Expo Router, the root index route often has an empty segment array or ['index']
+    const inPublicArea = segments.length === 0 || segments[0] === 'index';
+
+    if (!session && !inPublicArea) {
+      console.log('[AuthGuard] Redirecting to Login');
+      router.replace('/');
+    } else if (session && inPublicArea) {
+      console.log('[AuthGuard] Redirecting to Home');
+      router.replace('/(tabs)');
+    }
+  }, [session, loading, segments]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#FACC15" />
+      </View>
+    );
+  }
+
+  return <>{children}</>;
+};
 
 export default function RootLayout() {
   useFrameworkReady();
@@ -44,20 +82,27 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
+      <NetworkProvider>
+        <AuthProvider>
+          <AuthGuard>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
 
-        <Stack.Screen
-          name="subscription"
-          options={{
-            presentation: 'modal',
-            headerShown: false,
-            animation: 'slide_from_bottom'
-          }}
-        />
-      </Stack>
+              <Stack.Screen
+                name="subscription"
+                options={{
+                  presentation: 'modal',
+                  headerShown: false,
+                  animation: 'slide_from_bottom'
+                }}
+              />
+            </Stack>
+          </AuthGuard>
+          <OfflineBanner />
+        </AuthProvider>
+      </NetworkProvider>
     </ThemeProvider>
   );
 }

@@ -19,6 +19,7 @@ import { supabase } from '../../lib/supabase';
 import { Profile, UserAnimeStats } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import * as ImagePicker from 'expo-image-picker';
+import { PREDEFINED_AVATARS } from '../../lib/constants';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -33,6 +34,7 @@ export default function ProfileScreen() {
 
   // Edit State
   const [isEditing, setIsEditing] = useState(false);
+  const [isAvatarModalVisible, setIsAvatarModalVisible] = useState(false);
   const [newUsername, setNewUsername] = useState('');
   const [uploading, setUploading] = useState(false);
 
@@ -124,10 +126,36 @@ export default function ProfileScreen() {
       });
 
       if (!result.canceled) {
+        setIsAvatarModalVisible(false); // Close modal if open
         uploadAvatar(result.assets[0].uri);
       }
     } catch (error) {
       Alert.alert('Error', 'Error picking image');
+    }
+  };
+
+  const selectPredefinedAvatar = async (url: string) => {
+    try {
+      setUploading(true);
+      setIsAvatarModalVisible(false);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('No user on the session!');
+
+      // Update profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: url })
+        .eq('id', session.user.id);
+
+      if (updateError) throw updateError;
+
+      setProfile(prev => prev ? { ...prev, avatar_url: url } : null);
+      Alert.alert('Success', 'Profile picture updated!');
+
+    } catch (error) {
+      Alert.alert('Error', (error as Error).message);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -305,14 +333,12 @@ export default function ProfileScreen() {
             <Ionicons name="chevron-back" size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.text }]}>Profile</Text>
-          <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="ellipsis-horizontal" size={24} color={colors.text} />
-          </TouchableOpacity>
+
         </View>
 
         {/* Profile Info */}
         <View style={styles.profileInfoContainer}>
-          <TouchableOpacity onPress={pickImage} disabled={uploading} style={styles.avatarWrapper}>
+          <TouchableOpacity onPress={() => setIsAvatarModalVisible(true)} disabled={uploading} style={styles.avatarWrapper}>
             <View style={[styles.avatarContainer, { backgroundColor: colors.card }]}>
               {uploading ? (
                 <ActivityIndicator size="small" color="#FACC15" style={{ flex: 1 }} />
@@ -351,21 +377,10 @@ export default function ProfileScreen() {
             <Text style={[styles.statValue, { color: colors.text }]}>{stats.favorites_count}</Text>
             <Text style={[styles.statLabel, { color: colors.subtext }]}>Favs</Text>
           </View>
-          <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
-          <View style={styles.statItem}>
-            <Text style={[styles.statValue, { color: colors.text }]}>{stats.days_watched}d</Text>
-            <Text style={[styles.statLabel, { color: colors.subtext }]}>Time</Text>
-          </View>
+
         </View>
 
-        {/* Dev Tool: Seed Data */}
-        <TouchableOpacity
-          style={[styles.seedButton, { backgroundColor: colors.card, borderColor: colors.border }]}
-          onPress={seedSampleData}
-        >
-          <Ionicons name="server-outline" size={20} color={colors.text} style={{ marginRight: 8 }} />
-          <Text style={[styles.seedButtonText, { color: colors.text }]}>Seed Sample Data (Dev)</Text>
-        </TouchableOpacity>
+
 
         {/* Subscription Card */}
         <View style={[styles.subscriptionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -524,6 +539,51 @@ export default function ProfileScreen() {
                 <Text style={{ color: '#000', fontWeight: 'bold' }}>Save</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Avatar Selection Modal */}
+      <Modal
+        visible={isAvatarModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setIsAvatarModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.card, maxHeight: '80%' }]}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <Text style={[styles.modalTitle, { color: colors.text, marginBottom: 0 }]}>Choose Avatar</Text>
+              <TouchableOpacity onPress={() => setIsAvatarModalVisible(false)}>
+                <Ionicons name="close" size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+              <TouchableOpacity
+                style={[styles.webOptionButton, { borderColor: colors.border, marginBottom: 20 }]}
+                onPress={pickImage}
+              >
+                <Ionicons name="images-outline" size={24} color={colors.text} style={{ marginRight: 10 }} />
+                <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>Upload from Gallery</Text>
+              </TouchableOpacity>
+
+              <Text style={[styles.sectionHeader, { marginLeft: 0, fontSize: 16, marginBottom: 12, color: colors.text }]}>
+                Or choose a character:
+              </Text>
+
+              <View style={styles.avatarGrid}>
+                {PREDEFINED_AVATARS.map((url, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => selectPredefinedAvatar(url)}
+                    style={styles.gridAvatarContainer}
+                  >
+                    <Image source={{ uri: url }} style={styles.gridAvatar} />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -807,5 +867,32 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  webOptionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+  },
+  avatarGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  gridAvatarContainer: {
+    width: '30%',
+    aspectRatio: 1,
+    borderRadius: 50,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  gridAvatar: {
+    width: '100%',
+    height: '100%',
   },
 });

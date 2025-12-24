@@ -11,7 +11,8 @@ import {
   TextInput,
   Keyboard,
   StatusBar,
-  ScrollView // Added for category tabs
+  ScrollView,
+  Image // Added for Trending Card
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,11 +20,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
 import { AnimeCard } from '../../components/AnimeCard';
 import { useTheme } from '../../context/ThemeContext';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useNetwork } from '../../context/NetworkContext';
 
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { colors, isDark } = useTheme();
+  const { isConnected, isInternetReachable } = useNetwork();
 
   // Categories
   const CATEGORIES = [
@@ -40,7 +44,9 @@ export default function HomeScreen() {
   ];
 
   const [animes, setAnimes] = useState<Anime[]>([]);
+  const [trendingAnimes, setTrendingAnimes] = useState<Anime[]>([]); // Trending State
   const [loading, setLoading] = useState(true);
+  const [trendingLoading, setTrendingLoading] = useState(true); // Trending Loading
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -55,6 +61,15 @@ export default function HomeScreen() {
   // Fetch Logic
   const fetchAnimes = async (pageNum: number, shouldRefresh = false, query = activeQuery, currCategory = selectedCategory) => {
     if (!shouldRefresh && !hasNextPage) return;
+
+    // Offline Check
+    const isOnline = isConnected && isInternetReachable !== false;
+    if (!isOnline) {
+      setLoading(false);
+      setRefreshing(false);
+      setLoadingMore(false);
+      return;
+    }
 
     try {
       if (shouldRefresh) {
@@ -107,13 +122,33 @@ export default function HomeScreen() {
     }
   };
 
+  // Fetch Trending Logic
+  const fetchTrending = async () => {
+    try {
+      setTrendingLoading(true);
+      const isOnline = isConnected && isInternetReachable !== false;
+      if (!isOnline) {
+        setTrendingLoading(false);
+        return;
+      }
+      const response = await jikanApi.getTopAiringAnime(1);
+      setTrendingAnimes(response.data || []);
+    } catch (error) {
+      console.error('Error fetching trending:', error);
+    } finally {
+      setTrendingLoading(false);
+    }
+  };
+
   // Initial load
   useEffect(() => {
     fetchAnimes(1);
+    fetchTrending();
   }, []);
 
   const onRefresh = useCallback(() => {
     fetchAnimes(1, true, activeQuery, selectedCategory);
+    fetchTrending(); // Refresh trending too
   }, [activeQuery, selectedCategory]);
 
   const loadMore = () => {
@@ -205,8 +240,55 @@ export default function HomeScreen() {
         </Text>
       )}
 
+      {/* Trending Now Section */}
+      {!isSearching && (
+        <View style={styles.trendingContainer}>
+          <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 12, marginTop: 4 }]}>
+            Trending Now
+          </Text>
+          {trendingLoading ? (
+            <ActivityIndicator size="small" color="#FACC15" style={{ height: 200 }} />
+          ) : (
+            <FlatList
+              data={trendingAnimes.slice(0, 10)} // Top 10 for carousel
+              keyExtractor={(item) => `trending-${item.mal_id}`}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 12, paddingRight: 20 }}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[styles.trendingCard, { backgroundColor: colors.card }]}
+                  onPress={() => router.push(`/anime/${item.mal_id}`)}
+                >
+                  <Image
+                    source={{ uri: item.images.jpg.large_image_url }}
+                    style={styles.trendingImage}
+                  />
+                  <LinearGradient
+                    colors={['transparent', 'rgba(0,0,0,0.8)']}
+                    style={styles.trendingGradient}
+                  />
+                  <View style={styles.trendingInfo}>
+                    <Text style={styles.trendingTitle} numberOfLines={2}>
+                      {item.title_english || item.title}
+                    </Text>
+                    <View style={styles.trendingMeta}>
+                      <Ionicons name="star" size={12} color="#FACC15" />
+                      <Text style={styles.trendingScore}>{item.score}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
+          )}
+        </View>
+      )}
+
       {/* Categories */}
       <View style={styles.categoriesContainer}>
+        <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 12, marginTop: 0 }]}>
+          Categories
+        </Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -239,7 +321,9 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
       </View>
-    </View>
+
+
+    </View >
   );
 
   const renderFooter = () => {
@@ -298,7 +382,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 120, // Increased to clear floating tab bar
   },
   headerContainer: {
     marginBottom: 20,
@@ -345,17 +429,66 @@ const styles = StyleSheet.create({
   },
   categoriesContent: {
     paddingRight: 16,
-    gap: 12,
+    gap: 8, // Reduced from 12
   },
   categoryTab: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 12, // Slightly more compact padding
+    paddingVertical: 6,
+    borderRadius: 16,
     borderWidth: 1,
-    marginRight: 8,
+    marginRight: 6, // Reduced from 8
   },
   categoryText: {
     fontSize: 14,
     fontFamily: 'Inter_500Medium',
+  },
+
+  trendingContainer: {
+    marginTop: 24,
+    marginBottom: 8,
+  },
+  trendingCard: {
+    width: 140,
+    height: 220,
+    borderRadius: 16,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  trendingImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  trendingGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+  },
+  trendingInfo: {
+    position: 'absolute',
+    bottom: 12,
+    left: 12,
+    right: 12,
+  },
+  trendingTitle: {
+    color: '#FFF',
+    fontSize: 13,
+    fontFamily: 'Poppins_600SemiBold',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
+    marginBottom: 4,
+  },
+  trendingMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  trendingScore: {
+    color: '#FFF',
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
   },
 });

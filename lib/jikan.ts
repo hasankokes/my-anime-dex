@@ -94,5 +94,9 @@ export const jikanApi = {
 
     getSeasonNow: async (page = 1): Promise<JikanResponse<Anime[]>> => {
         return fetchWithRetry(`${BASE_URL}/seasons/now?page=${page}`);
+    },
+
+    getTopAiringAnime: async (page = 1): Promise<JikanResponse<Anime[]>> => {
+        return fetchWithRetry(`${BASE_URL}/top/anime?filter=airing&page=${page}`);
     }
 };

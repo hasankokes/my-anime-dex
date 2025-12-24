@@ -8,6 +8,7 @@ import { SocialButton } from '../components/SocialButton';
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri } from 'expo-auth-session';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PREDEFINED_AVATARS } from '../lib/constants';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -26,14 +27,8 @@ export default function LoginScreen() {
   useEffect(() => {
     checkSession();
 
-    // 1. Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setTimeout(() => {
-          router.replace('/(tabs)');
-        }, 100);
-      }
-    });
+    // 1. Listen for auth state changes - Removed redundant listener/redirect that conflicts with AuthGuard
+
 
     // 2. Listen for AppState changes
     const appStateSubscription = AppState.addEventListener('change', (nextAppState) => {
@@ -43,7 +38,7 @@ export default function LoginScreen() {
     });
 
     return () => {
-      subscription.unsubscribe();
+      // subscription.unsubscribe(); // Removed above
       appStateSubscription.remove();
     };
   }, []);
@@ -64,9 +59,7 @@ export default function LoginScreen() {
       const { data: { session } } = response;
 
       if (session) {
-        setTimeout(() => {
-          router.replace('/(tabs)');
-        }, 100);
+        console.log('[LoginScreen] Session found, letting AuthGuard handle redirect');
       } else {
         setCheckingSession(false);
       }
@@ -85,11 +78,26 @@ export default function LoginScreen() {
     try {
       setLoading(true);
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const randomAvatar = PREDEFINED_AVATARS[Math.floor(Math.random() * PREDEFINED_AVATARS.length)];
+
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              avatar_url: randomAvatar
+            }
+          }
         });
+
         if (error) throw error;
+
+        // Optional: If you want to ensure the profile is updated immediately even if the trigger is slow or missing
+        if (data.user) {
+          // We attempt to update, but ignore error if profile doesn't exist yet (trigger might be racing)
+          await supabase.from('profiles').update({ avatar_url: randomAvatar }).eq('id', data.user.id);
+        }
+
         Alert.alert('Success', 'Account created! Please check your email for confirmation settings.');
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -121,7 +129,16 @@ export default function LoginScreen() {
         });
         if (error) throw error;
       } else {
-        const redirectTo = makeRedirectUri({ scheme: 'myapp' });
+        const redirectTo = makeRedirectUri({
+          scheme: 'myapp',
+        });
+
+        Alert.alert(
+          'Config Required',
+          `Please add this URI to Supabase:\n${redirectTo}\n\nRunning in local/dev mode likely requires this specific URI.`
+        );
+        console.log('[LoginScreen] Redirect URI:', redirectTo);
+
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider,
           options: {
@@ -138,7 +155,12 @@ export default function LoginScreen() {
             redirectTo
           );
 
+
+          console.log('[LoginScreen] WebBrowser result:', JSON.stringify(result));
+          Alert.alert('Debug WebBrowser', JSON.stringify(result));
+
           if (result.type === 'success' && result.url) {
+            Alert.alert('Debug', `Auth URL received: ${result.url}`);
             const url = new URL(result.url);
             const code = url.searchParams.get('code');
             const access_token = new URLSearchParams(url.hash.substring(1)).get('access_token');
@@ -155,6 +177,25 @@ export default function LoginScreen() {
               if (sessionError) throw sessionError;
             }
 
+            // Safety: Ensure profile exists (in case trigger failed or user already existed)
+            try {
+              const { data: { user } } = await supabase.auth.getUser();
+              if (user) {
+                const { data: profile } = await supabase.from('profiles').select('id').eq('id', user.id).single();
+                if (!profile) {
+                  await supabase.from('profiles').insert({
+                    id: user.id,
+                    username: user.user_metadata.full_name || user.email?.split('@')[0] || 'User',
+                    avatar_url: user.user_metadata.avatar_url
+                  });
+                }
+              }
+            } catch (e) {
+              console.log('[LoginScreen] Profile safety check failed:', e);
+            }
+
+            Alert.alert('Debug', 'Session exchanged successfully. checking session...');
+
             checkSession();
           }
         }
@@ -162,7 +203,7 @@ export default function LoginScreen() {
     } catch (error) {
       console.error('[Auth] Error:', error);
       if (error instanceof Error) {
-        Alert.alert('Login Error', error.message);
+        Alert.alert('Login Error', `${error.message}\nType: ${error.name}`);
       }
     } finally {
       if (Platform.OS !== 'web') {

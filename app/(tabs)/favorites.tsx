@@ -18,6 +18,8 @@ import { AnimeListItem } from '../../types';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 import { AnimeCard } from '../../components/AnimeCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNetwork } from '../../context/NetworkContext';
 
 const FILTERS = ['All', 'Watching', 'Completed', 'Plan to Watch'];
 const SORT_OPTIONS = [
@@ -31,6 +33,7 @@ const SORT_OPTIONS = [
 export default function FavoritesScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const { isConnected, isInternetReachable } = useNetwork();
   const [activeFilter, setActiveFilter] = useState('All');
   const [favorites, setFavorites] = useState<AnimeListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,10 +47,39 @@ export default function FavoritesScreen() {
   const fetchFavorites = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
+
+      const isOnline = isConnected && isInternetReachable !== false;
+
+      // 1. Try to load from Cache first if offline or just for speed?
+      // Strategy: Network-first, fall back to cache.
+
       if (!session) {
         setLoading(false);
         return;
       }
+
+      const CACHE_KEY = `favorites_cache_${session.user.id}`;
+
+      if (!isOnline) {
+        // Offline Mode: Load from Cache
+        console.log('[Favorites] Offline mode, loading from cache');
+        const cached = await AsyncStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          // Only filter locally if needed, but for simplicity let's assume cache is raw list
+          // But we apply filters/sort in SQL usually.
+          // Simplification: Can't easily filter/sort cached SQL data perfectly without client logic.
+          // For now, just show what we have.
+          setFavorites(parsed);
+        }
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
+
+      // Online Mode
+      // ... existing SQL query setup ...
+
 
       let query = supabase
         .from('user_anime_list')
@@ -71,7 +103,15 @@ export default function FavoritesScreen() {
 
       const { data, error } = await query;
       if (error) throw error;
+
       setFavorites(data || []);
+
+      // Cache the Fresh Data (Only if 'All' filter to keep it simple, or cache everything?)
+      // Best to cache the "raw" list if possible, but here we query with filters.
+      // Improvement: Cache the result of the current view.
+      if (activeFilter === 'All' && data) {
+        await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      }
     } catch (error) {
       console.error('Error fetching favorites:', error);
     } finally {
