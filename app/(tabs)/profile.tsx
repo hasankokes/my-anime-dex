@@ -27,6 +27,7 @@ export default function ProfileScreen() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [stats, setStats] = useState<UserAnimeStats>({
     watched_count: 0,
+    watching_count: 0,
     favorites_count: 0,
     days_watched: 0
   });
@@ -45,6 +46,34 @@ export default function ProfileScreen() {
     }, [])
   );
 
+  const getLevelProgress = (xp: number = 0, level: number = 1) => {
+    let requiredXp = 30;
+    let previousLevelXp = 0;
+
+    if (level < 10) {
+      // Levels 1-9 (moving to 10)
+      // Level 1 starts at 0. Next level at 30.
+      // XP for level L = (L-1) * 30
+      previousLevelXp = (level - 1) * 30;
+      requiredXp = 30;
+    } else {
+      // Levels 10+
+      // XP for level 10 = 9 * 30 = 270.
+      // XP for level L (>=10) = 270 + (L-10) * 50
+      previousLevelXp = 270 + (level - 10) * 50;
+      requiredXp = 50;
+    }
+
+    const currentLevelProgress = xp - previousLevelXp;
+    const progressPercent = Math.min(Math.max(currentLevelProgress / requiredXp, 0), 1);
+
+    return {
+      current: currentLevelProgress,
+      total: requiredXp,
+      percent: progressPercent
+    };
+  };
+
   const fetchProfile = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -55,10 +84,12 @@ export default function ProfileScreen() {
           username: 'Otaku_King_99',
           avatar_url: 'https://images.unsplash.com/photo-1565588383637-643334c4d9fa?q=80&w=400&auto=format&fit=crop',
           level: 42,
+          xp: 1870, // Mock XP
           member_since: new Date().toISOString()
         });
         setStats({
           watched_count: 1240,
+          watching_count: 5,
           favorites_count: 35,
           days_watched: 12
         });
@@ -80,6 +111,12 @@ export default function ProfileScreen() {
         .eq('user_id', session.user.id)
         .eq('status', 'completed');
 
+      const { count: watchingCount } = await supabase
+        .from('user_anime_list')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', session.user.id)
+        .eq('status', 'watching');
+
       const { count: favCount } = await supabase
         .from('user_anime_list')
         .select('*', { count: 'exact', head: true })
@@ -90,6 +127,7 @@ export default function ProfileScreen() {
         setProfile(profileData);
         setStats({
           watched_count: watchedCount || 0,
+          watching_count: watchingCount || 0,
           favorites_count: favCount || 0,
           days_watched: 12
         });
@@ -414,13 +452,35 @@ export default function ProfileScreen() {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.memberInfo}>
-            Member since {new Date(profile?.member_since || Date.now()).getFullYear()} • Lvl {profile?.level || 1}
-          </Text>
+          <View style={{ alignItems: 'center', width: '100%', paddingHorizontal: 40, marginTop: 8 }}>
+            <Text style={[styles.memberInfo, { marginBottom: 8 }]}>
+              Level {profile?.level || 1} • {getLevelProgress(profile?.xp || 0, profile?.level || 1).current}/{getLevelProgress(profile?.xp || 0, profile?.level || 1).total} XP
+            </Text>
+
+            <View style={{
+              width: '100%',
+              height: 12,
+              backgroundColor: colors.border,
+              borderRadius: 6,
+              overflow: 'hidden'
+            }}>
+              <View style={{
+                width: `${getLevelProgress(profile?.xp || 0, profile?.level || 1).percent * 100}%`,
+                height: '100%',
+                backgroundColor: '#FACC15',
+                borderRadius: 6
+              }} />
+            </View>
+          </View>
         </View>
 
         {/* Stats Row */}
         <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={[styles.statValue, { color: colors.text }]}>{stats.watching_count}</Text>
+            <Text style={[styles.statLabel, { color: colors.subtext }]}>Watching</Text>
+          </View>
+          <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
           <View style={styles.statItem}>
             <Text style={[styles.statValue, { color: colors.text }]}>{stats.watched_count.toLocaleString()}</Text>
             <Text style={[styles.statLabel, { color: colors.subtext }]}>Watched</Text>

@@ -3,11 +3,13 @@ export interface Profile {
   username: string | null;
   avatar_url: string | null;
   level: number;
+  xp?: number;
   member_since: string;
 }
 
 export interface UserAnimeStats {
   watched_count: number;
+  watching_count: number;
   favorites_count: number;
   days_watched: number;
 }
