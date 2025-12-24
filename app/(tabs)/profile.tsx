@@ -19,7 +19,6 @@ import { supabase } from '../../lib/supabase';
 import { Profile, UserAnimeStats } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import * as ImagePicker from 'expo-image-picker';
-import { PREDEFINED_AVATARS } from '../../lib/constants';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -37,6 +36,8 @@ export default function ProfileScreen() {
   const [isAvatarModalVisible, setIsAvatarModalVisible] = useState(false);
   const [newUsername, setNewUsername] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [randomAvatars, setRandomAvatars] = useState<string[]>([]);
+  const [loadingAvatars, setLoadingAvatars] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -132,6 +133,58 @@ export default function ProfileScreen() {
     } catch (error) {
       Alert.alert('Error', 'Error picking image');
     }
+  };
+
+  const takePhoto = async () => {
+    try {
+      const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+      if (permissionResult.granted === false) {
+        Alert.alert('Permission Required', 'You need to allow access to your camera to take photos.');
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled) {
+        setIsAvatarModalVisible(false);
+        uploadAvatar(result.assets[0].uri);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Error taking photo');
+    }
+  };
+
+  const fetchRandomCharacters = async () => {
+    try {
+      setLoadingAvatars(true);
+      // Random page between 1 and 100 (top 2000 characters) to ensure quality
+      const randomPage = Math.floor(Math.random() * 100) + 1;
+
+      const response = await fetch(`https://api.jikan.moe/v4/characters?page=${randomPage}&limit=20&order_by=favorites&sort=desc`);
+      const data = await response.json();
+
+      if (data.data) {
+        const characters = data.data
+          .map((char: any) => char.images?.jpg?.image_url)
+          .filter((url: string) => url)
+          .slice(0, 9);
+        setRandomAvatars(characters);
+      }
+    } catch (error) {
+      console.log('Error fetching avatars:', error);
+    } finally {
+      setLoadingAvatars(false);
+    }
+  };
+
+  const openAvatarModal = () => {
+    setIsAvatarModalVisible(true);
+    fetchRandomCharacters();
   };
 
   const selectPredefinedAvatar = async (url: string) => {
@@ -338,7 +391,7 @@ export default function ProfileScreen() {
 
         {/* Profile Info */}
         <View style={styles.profileInfoContainer}>
-          <TouchableOpacity onPress={() => setIsAvatarModalVisible(true)} disabled={uploading} style={styles.avatarWrapper}>
+          <TouchableOpacity onPress={openAvatarModal} disabled={uploading} style={styles.avatarWrapper}>
             <View style={[styles.avatarContainer, { backgroundColor: colors.card }]}>
               {uploading ? (
                 <ActivityIndicator size="small" color="#FACC15" style={{ flex: 1 }} />
@@ -560,29 +613,50 @@ export default function ProfileScreen() {
             </View>
 
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-              <TouchableOpacity
-                style={[styles.webOptionButton, { borderColor: colors.border, marginBottom: 20 }]}
-                onPress={pickImage}
-              >
-                <Ionicons name="images-outline" size={24} color={colors.text} style={{ marginRight: 10 }} />
-                <Text style={{ color: colors.text, fontFamily: 'Poppins_600SemiBold' }}>Upload from Gallery</Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'row', gap: 10, marginBottom: 20 }}>
+                <TouchableOpacity
+                  style={[styles.webOptionButton, { borderColor: colors.border, flex: 1, marginBottom: 0 }]}
+                  onPress={pickImage}
+                >
+                  <Ionicons name="images-outline" size={24} color={colors.text} style={{ marginRight: 10 }} />
+                  <Text style={{ color: colors.text, fontFamily: 'Poppins_600SemiBold', fontSize: 12 }}>Gallery</Text>
+                </TouchableOpacity>
 
-              <Text style={[styles.sectionHeader, { marginLeft: 0, fontSize: 16, marginBottom: 12, color: colors.text }]}>
-                Or choose a character:
-              </Text>
-
-              <View style={styles.avatarGrid}>
-                {PREDEFINED_AVATARS.map((url, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => selectPredefinedAvatar(url)}
-                    style={styles.gridAvatarContainer}
-                  >
-                    <Image source={{ uri: url }} style={styles.gridAvatar} />
-                  </TouchableOpacity>
-                ))}
+                <TouchableOpacity
+                  style={[styles.webOptionButton, { borderColor: colors.border, flex: 1, marginBottom: 0 }]}
+                  onPress={takePhoto}
+                >
+                  <Ionicons name="camera-outline" size={24} color={colors.text} style={{ marginRight: 10 }} />
+                  <Text style={{ color: colors.text, fontFamily: 'Poppins_600SemiBold', fontSize: 12 }}>Camera</Text>
+                </TouchableOpacity>
               </View>
+
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <Text style={[styles.sectionHeader, { marginLeft: 0, fontSize: 16, marginBottom: 0, color: colors.text }]}>
+                  Random Characters
+                </Text>
+                <TouchableOpacity onPress={fetchRandomCharacters} disabled={loadingAvatars}>
+                  <Ionicons name="refresh" size={20} color={colors.text} />
+                </TouchableOpacity>
+              </View>
+
+              {loadingAvatars ? (
+                <View style={{ height: 200, justifyContent: 'center', alignItems: 'center' }}>
+                  <ActivityIndicator size="large" color="#FACC15" />
+                </View>
+              ) : (
+                <View style={styles.avatarGrid}>
+                  {randomAvatars.map((url, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => selectPredefinedAvatar(url)}
+                      style={styles.gridAvatarContainer}
+                    >
+                      <Image source={{ uri: url }} style={styles.gridAvatar} />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
             </ScrollView>
           </View>
         </View>
@@ -885,8 +959,8 @@ const styles = StyleSheet.create({
   },
   gridAvatarContainer: {
     width: '30%',
-    aspectRatio: 1,
-    borderRadius: 50,
+    aspectRatio: 0.7,
+    borderRadius: 12,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'transparent',
