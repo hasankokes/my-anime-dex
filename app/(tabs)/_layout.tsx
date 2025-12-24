@@ -13,7 +13,7 @@ export default function TabLayout() {
         tabBarStyle: [
           styles.tabBar,
           {
-            backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)', // Slight transparency
+            backgroundColor: isDark ? 'rgba(17, 24, 39, 0.95)' : 'rgba(255, 255, 255, 0.95)', // Slight transparency
             borderTopWidth: 0,
             shadowColor: "#000", // Ensure shadow is visible
             shadowOpacity: 0.3,
