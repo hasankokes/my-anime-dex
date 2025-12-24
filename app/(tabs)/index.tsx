@@ -12,7 +12,8 @@ import {
   Keyboard,
   StatusBar,
   ScrollView,
-  Image // Added for Trending Card
+  Image,
+  Alert
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -22,12 +23,30 @@ import { AnimeCard } from '../../components/AnimeCard';
 import { useTheme } from '../../context/ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNetwork } from '../../context/NetworkContext';
+import { useAuth } from '../../context/AuthProvider';
+import { supabase } from '../../lib/supabase';
 
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, toggleTheme } = useTheme();
   const { isConnected, isInternetReachable } = useNetwork();
+  const { session } = useAuth();
+  const flatListRef = useRef<FlatList>(null);
+
+  // Profile Avatar State
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (session?.user) {
+      // Fetch profile to get avatar
+      supabase.from('profiles').select('avatar_url').eq('id', session.user.id).single()
+        .then(({ data }) => {
+          if (data?.avatar_url) setAvatarUrl(data.avatar_url);
+        });
+    }
+  }, [session]);
+
 
   // Categories
   const CATEGORIES = [
@@ -57,6 +76,7 @@ export default function HomeScreen() {
   const [activeQuery, setActiveQuery] = useState(''); // Text actually searched
   const [isSearching, setIsSearching] = useState(false); // UI mode
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const searchInputRef = useRef<TextInput>(null);
 
   // Fetch Logic
   const fetchAnimes = async (pageNum: number, shouldRefresh = false, query = activeQuery, currCategory = selectedCategory) => {
@@ -85,16 +105,11 @@ export default function HomeScreen() {
       let response;
       // Priority: Search Query > Category Filter > Top Anime
       if (query.trim().length > 0) {
-        // Search takes precedence, but we could combine if API Supported it easily. 
-        // For now, let's say Search ignores category tabs to avoid confusion or empty results.
-        // OR: Pass category if selected. Let's pass if selected for better UX.
         const genreParam = currCategory ? currCategory.toString() : undefined;
         response = await jikanApi.searchAnime(query, pageNum, genreParam);
       } else if (currCategory) {
-        // Category selected, no search text
         response = await jikanApi.searchAnime('', pageNum, currCategory.toString());
       } else {
-        // Default: Top Anime
         response = await jikanApi.getTopAnime(pageNum);
       }
 
@@ -127,11 +142,15 @@ export default function HomeScreen() {
     try {
       setTrendingLoading(true);
       const isOnline = isConnected && isInternetReachable !== false;
+      console.log('[Home] Fetching Trending. Online:', isOnline);
+
       if (!isOnline) {
         setTrendingLoading(false);
+        console.log('[Home] Trending fetch skipped - Offline');
         return;
       }
       const response = await jikanApi.getTopAiringAnime(1);
+      console.log('[Home] Trending Response Items:', response?.data?.length);
       setTrendingAnimes(response.data || []);
     } catch (error) {
       console.error('Error fetching trending:', error);
@@ -157,15 +176,13 @@ export default function HomeScreen() {
     }
   };
 
-  // 1. Text Change -> JUST UPDATE STATE, NO FETCH
   const handleTextChange = (text: string) => {
     setSearchText(text);
   };
 
-  // 2. Submit -> TRIGGER FETCH
   const performSearch = () => {
     const query = searchText.trim();
-    if (query === activeQuery) return; // Don't research same thing
+    if (query === activeQuery) return;
 
     Keyboard.dismiss();
     setActiveQuery(query);
@@ -176,7 +193,6 @@ export default function HomeScreen() {
       setHasNextPage(true);
       fetchAnimes(1, true, query, selectedCategory);
     } else {
-      // Empty query submitted -> Go back to Top Anime
       cancelSearch();
     }
   };
@@ -200,29 +216,74 @@ export default function HomeScreen() {
     fetchAnimes(1, true, activeQuery, categoryId);
   };
 
+  const scrollToTop = () => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
+
+  // --- Fixed Header Component ---
+  const FixedHeader = () => (
+    <View style={[styles.fixedHeader, { paddingTop: insets.top + 2, backgroundColor: colors.background, paddingBottom: 0 }]}>
+      {/* Left: Logo + Brand */}
+      <TouchableOpacity style={styles.headerLeft} onPress={scrollToTop}>
+        <Image
+          source={require('../../assets/images/header-logo.png')}
+          style={styles.headerLogo}
+          resizeMode="contain"
+        />
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={[styles.headerBrandText, { color: colors.text }]}>MY ANIME</Text>
+          <Text style={[styles.headerBrandText, { color: '#FACC15' }]}>DEX</Text>
+        </View>
+      </TouchableOpacity>
+
+      {/* Right: Controls */}
+      <View style={styles.headerRight}>
+        {/* Search Icon */}
+        <TouchableOpacity style={styles.iconButton} onPress={() => {
+          // Logic to focus search or toggle search view
+          // If already searching, maybe focus input. If not, focus input.
+          if (searchInputRef.current) {
+            searchInputRef.current.focus();
+          }
+        }}>
+          <Ionicons name="search-outline" size={24} color={colors.text} />
+        </TouchableOpacity>
+
+        {/* Theme Toggle */}
+        <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
+          {/* Changed to nicer outline icons based on user feedback */}
+          <Ionicons name={isDark ? "moon-outline" : "sunny-outline"} size={24} color={colors.text} />
+        </TouchableOpacity>
+
+        {/* Profile */}
+        <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/(tabs)/profile')}>
+          <Image
+            source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
+            style={styles.headerProfileImage}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+
   const renderHeader = () => (
     <View style={styles.headerContainer}>
-      {/* Welcome Text */}
-      {!isSearching && (
-        <View style={styles.branding}>
-          <Text style={[styles.greeting, { color: colors.subtext }]}>Welcome Back,</Text>
-          <Text style={[styles.appName, { color: colors.text }]}>My AnimeDex</Text>
-        </View>
-      )}
 
-      {/* Search Bar */}
+      {/* Search Bar (Visible in scrollable area) */}
       <View style={[styles.searchBar, { backgroundColor: colors.inputBg }]}>
         <TouchableOpacity onPress={performSearch}>
           <Ionicons name="search" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
         </TouchableOpacity>
 
         <TextInput
+          ref={searchInputRef}
           placeholder="Search anime..."
           placeholderTextColor={colors.subtext}
           style={[styles.searchInput, { color: colors.text }]}
           value={searchText}
-          onChangeText={handleTextChange} // Only updates variable
-          onSubmitEditing={performSearch} // Triggers API
+          onChangeText={handleTextChange}
+          onSubmitEditing={performSearch}
           returnKeyType="search"
           autoCapitalize="none"
         />
@@ -250,7 +311,7 @@ export default function HomeScreen() {
             <ActivityIndicator size="small" color="#FACC15" style={{ height: 200 }} />
           ) : (
             <FlatList
-              data={trendingAnimes.slice(0, 10)} // Top 10 for carousel
+              data={trendingAnimes.slice(0, 10)}
               keyExtractor={(item) => `trending-${item.mal_id}`}
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -321,8 +382,6 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
       </View>
-
-
     </View >
   );
 
@@ -344,8 +403,10 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <FixedHeader />
       <FlatList
+        ref={flatListRef}
         data={animes}
         renderItem={({ item }) => (
           <AnimeCard
@@ -356,7 +417,7 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.mal_id.toString()}
         numColumns={2}
         columnWrapperStyle={styles.columnWrapper}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingTop: 0 }]}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
@@ -380,6 +441,53 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  fixedHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingLeft: 4, // Reduced to near zero (small buffer)
+    paddingRight: 20,
+    // Removed paddingVertical to rely on specific paddings
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+    zIndex: 10,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 0,
+  },
+  headerLogo: {
+    width: 110, // Increased further
+    height: 70, // Increased further
+    marginRight: -20, // Adjust overlap
+    marginLeft: -10, // Pull closer to edge
+  },
+  headerBrandText: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 20,
+    letterSpacing: 0.5,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8, // Reduced gap between icons
+  },
+  iconButton: {
+    padding: 4,
+  },
+  profileButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  headerProfileImage: {
+    width: '100%',
+    height: '100%',
+  },
   listContent: {
     paddingHorizontal: 20,
     paddingBottom: 120, // Increased to clear floating tab bar
@@ -388,17 +496,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 10,
   },
-  branding: {
-    marginBottom: 16,
-  },
-  greeting: {
-    fontSize: 14,
-    fontFamily: 'Poppins_500Medium',
-  },
-  appName: {
-    fontSize: 24,
-    fontFamily: 'Poppins_700Bold',
-  },
+  // branding styles removed (greeting, appName etc) as they are now in FixedHeader
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -442,7 +540,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins_500Medium',
   },
-
   trendingContainer: {
     marginTop: 24,
     marginBottom: 8,

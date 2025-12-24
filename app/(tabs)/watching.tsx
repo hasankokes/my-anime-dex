@@ -10,9 +10,10 @@ import {
   ActivityIndicator,
   RefreshControl,
   TextInput,
-  Alert
+  Alert,
+  Keyboard
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { AnimeListItem } from '../../types';
@@ -65,11 +66,36 @@ const WatchingListItem = ({
 
 export default function WatchingScreen() {
   const router = useRouter();
-  const { colors } = useTheme();
+  const { colors, toggleTheme, isDark } = useTheme(); // Added toggleTheme, isDark
+  const insets = useSafeAreaInsets(); // Added insets
   const [watchingList, setWatchingList] = useState<AnimeListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const flatListRef = React.useRef<FlatList>(null); // Added ref
+  // Search State
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = React.useRef<TextInput>(null);
+
+  // Filtered List
+  const filteredList = watchingList.filter(item =>
+    item.anime_title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const toggleSearch = () => {
+    if (isSearchVisible) {
+      // Close search
+      setIsSearchVisible(false);
+      setSearchQuery('');
+      Keyboard.dismiss();
+    } else {
+      // Open search
+      setIsSearchVisible(true);
+      // Wait for render then focus
+      setTimeout(() => searchInputRef.current?.focus(), 100);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -117,8 +143,6 @@ export default function WatchingScreen() {
     fetchData();
   };
 
-
-
   const handleCardPress = (item: AnimeListItem) => {
     router.push({
       pathname: '/anime/[id]',
@@ -140,23 +164,69 @@ export default function WatchingScreen() {
     );
   };
 
-  return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.background }]}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Watching</Text>
-        <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="search" size={24} color={colors.text} />
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.avatarContainer, { backgroundColor: colors.card }]}>
-            <Image
-              source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
-              style={styles.avatar}
-            />
+  const scrollToTop = () => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
+
+  // --- Fixed Header Component ---
+  const FixedHeader = () => (
+    <View style={[styles.fixedHeader, { paddingTop: insets.top + 2, backgroundColor: colors.background, paddingBottom: 0 }]}>
+      {isSearchVisible ? (
+        // Search Mode Header
+        <View style={styles.searchHeaderContainer}>
+          <Ionicons name="search-outline" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
+          <TextInput
+            ref={searchInputRef}
+            style={[styles.searchInput, { color: colors.text }]}
+            placeholder="Search watching..."
+            placeholderTextColor={colors.subtext}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <TouchableOpacity onPress={toggleSearch} style={{ padding: 4 }}>
+            <Ionicons name="close" size={24} color={colors.text} />
           </TouchableOpacity>
         </View>
-      </View>
+      ) : (
+        <>
+          {/* Left: Logo + Brand */}
+          <TouchableOpacity style={styles.headerLeft} onPress={scrollToTop}>
+            <Image
+              source={require('../../assets/images/header-logo.png')}
+              style={styles.headerLogo}
+              resizeMode="contain"
+            />
+            <Text style={[styles.headerBrandText, { color: colors.text, marginLeft: 0 }]}>WATCHING</Text>
+          </TouchableOpacity>
+
+          {/* Right: Controls */}
+          <View style={styles.headerRight}>
+            {/* Search Icon */}
+            <TouchableOpacity style={styles.iconButton} onPress={toggleSearch}>
+              <Ionicons name="search-outline" size={24} color={colors.text} />
+            </TouchableOpacity>
+
+            {/* Theme Toggle */}
+            <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
+              <Ionicons name={isDark ? "moon-outline" : "sunny-outline"} size={24} color={colors.text} />
+            </TouchableOpacity>
+
+            {/* Profile */}
+            <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/(tabs)/profile')}>
+              <Image
+                source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
+                style={styles.headerProfileImage}
+              />
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
+    </View>
+  );
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <FixedHeader />
 
       {/* List */}
       {loading ? (
@@ -165,7 +235,8 @@ export default function WatchingScreen() {
         </View>
       ) : (
         <FlatList
-          data={watchingList}
+          ref={flatListRef}
+          data={filteredList} // Use filtered list
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
@@ -175,14 +246,18 @@ export default function WatchingScreen() {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="play-circle-outline" size={48} color={colors.subtext} />
-              <Text style={[styles.emptyText, { color: colors.subtext }]}>Nothing being watched</Text>
-              <Text style={[styles.emptySubText, { color: colors.subtext }]}>Start watching an anime to track your progress here.</Text>
+              <Ionicons name={searchQuery ? "search" : "play-circle-outline"} size={48} color={colors.subtext} />
+              <Text style={[styles.emptyText, { color: colors.subtext }]}>
+                {searchQuery ? 'No results found' : 'Nothing being watched'}
+              </Text>
+              {!searchQuery && (
+                <Text style={[styles.emptySubText, { color: colors.subtext }]}>Start watching an anime to track your progress here.</Text>
+              )}
             </View>
           }
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -195,42 +270,70 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
+  fixedHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingLeft: 4,
+    paddingRight: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+    zIndex: 10,
+    // Removed fixed height to match index.tsx mechanics (padding + content)
   },
-  headerTitle: {
-    fontSize: 32,
-    fontFamily: 'Poppins_700Bold',
-    letterSpacing: -0.5,
-  },
-  headerActions: {
+  searchHeaderContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    height: '100%',
+  },
+  searchInput: {
+    flex: 1,
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 16,
+    height: '100%',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 0,
+  },
+  headerLogo: {
+    width: 110,
+    height: 70,
+    marginRight: -20,
+    marginLeft: -10, // Reverted to -10 now that padding is corrected
+  },
+  headerBrandText: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 20, // Matched to Home screen
+    letterSpacing: 0.5,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   iconButton: {
     padding: 4,
   },
-  avatarContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  profileButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     overflow: 'hidden',
-    borderWidth: 2,
-    borderColor: '#FACC15',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
-  avatar: {
+  headerProfileImage: {
     width: '100%',
     height: '100%',
   },
   listContent: {
     paddingHorizontal: 20,
-    paddingBottom: 120, // Increased to clear floating tab bar
+    paddingBottom: 120,
     minHeight: 300,
+    paddingTop: 10,
   },
   card: {
     flexDirection: 'row',

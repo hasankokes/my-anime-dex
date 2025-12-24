@@ -235,7 +235,7 @@ export default function LoginScreen() {
           {/* Logo Section */}
           <View style={styles.logoContainer}>
             <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=300&auto=format&fit=crop' }}
+              source={require('../assets/images/header-logo.png')}
               style={styles.logo}
             />
             <Text style={styles.appName}>My AnimeDex</Text>
@@ -352,9 +352,9 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logo: {
-    width: 120,
-    height: 120,
-    borderRadius: 30,
+    width: 200, // Increased size for visibility
+    height: 200,
+    resizeMode: 'contain',
     marginBottom: 24,
   },
   appName: {

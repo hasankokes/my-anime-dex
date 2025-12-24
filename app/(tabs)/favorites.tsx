@@ -9,14 +9,18 @@ import {
   RefreshControl,
   Dimensions,
   Modal,
-  ScrollView
+  ScrollView,
+  Image,
+  TextInput,
+  Keyboard
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { AnimeListItem } from '../../types';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthProvider'; // Added useAuth import
 import { AnimeCard } from '../../components/AnimeCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNetwork } from '../../context/NetworkContext';
@@ -27,31 +31,36 @@ const SORT_OPTIONS = [
   { label: 'Date Added (Oldest)', value: 'updated_at', ascending: true },
   { label: 'Title (A-Z)', value: 'anime_title', ascending: true },
   { label: 'Title (Z-A)', value: 'anime_title', ascending: false },
-  { label: 'Score (Highest)', value: 'score', ascending: false }, // Assuming score exists in DB or we add it later
+  { label: 'Score (Highest)', value: 'score', ascending: false },
 ];
 
 export default function FavoritesScreen() {
   const router = useRouter();
-  const { colors } = useTheme();
+  const { colors, toggleTheme, isDark } = useTheme();
+  const { avatarUrl } = useAuth(); // Added avatarUrl from auth context
+  const insets = useSafeAreaInsets();
   const { isConnected, isInternetReachable } = useNetwork();
+
   const [activeFilter, setActiveFilter] = useState('All');
   const [favorites, setFavorites] = useState<AnimeListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Search State
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = React.useRef<TextInput>(null);
+
   // Sorting State
   const [modalVisible, setModalVisible] = useState(false);
   const [sortBy, setSortBy] = useState('updated_at');
   const [sortAscending, setSortAscending] = useState(false);
+  const flatListRef = React.useRef<FlatList>(null);
 
   const fetchFavorites = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-
       const isOnline = isConnected && isInternetReachable !== false;
-
-      // 1. Try to load from Cache first if offline or just for speed?
-      // Strategy: Network-first, fall back to cache.
 
       if (!session) {
         setLoading(false);
@@ -61,25 +70,14 @@ export default function FavoritesScreen() {
       const CACHE_KEY = `favorites_cache_${session.user.id}`;
 
       if (!isOnline) {
-        // Offline Mode: Load from Cache
-        console.log('[Favorites] Offline mode, loading from cache');
         const cached = await AsyncStorage.getItem(CACHE_KEY);
         if (cached) {
-          const parsed = JSON.parse(cached);
-          // Only filter locally if needed, but for simplicity let's assume cache is raw list
-          // But we apply filters/sort in SQL usually.
-          // Simplification: Can't easily filter/sort cached SQL data perfectly without client logic.
-          // For now, just show what we have.
-          setFavorites(parsed);
+          setFavorites(JSON.parse(cached));
         }
         setLoading(false);
         setRefreshing(false);
         return;
       }
-
-      // Online Mode
-      // ... existing SQL query setup ...
-
 
       let query = supabase
         .from('user_anime_list')
@@ -98,7 +96,6 @@ export default function FavoritesScreen() {
         }
       }
 
-      // Apply Sorting
       query = query.order(sortBy, { ascending: sortAscending });
 
       const { data, error } = await query;
@@ -106,9 +103,6 @@ export default function FavoritesScreen() {
 
       setFavorites(data || []);
 
-      // Cache the Fresh Data (Only if 'All' filter to keep it simple, or cache everything?)
-      // Best to cache the "raw" list if possible, but here we query with filters.
-      // Improvement: Cache the result of the current view.
       if (activeFilter === 'All' && data) {
         await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(data));
       }
@@ -131,6 +125,10 @@ export default function FavoritesScreen() {
     fetchFavorites();
   };
 
+  const filteredFavorites = favorites.filter(item =>
+    item.anime_title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const handleCardPress = (id: string) => {
     router.push(`/anime/${id}`);
   };
@@ -148,8 +146,8 @@ export default function FavoritesScreen() {
         style={[
           styles.filterPill,
           {
-            backgroundColor: isActive ? colors.primary : colors.card,
-            borderColor: isActive ? colors.primary : colors.border
+            backgroundColor: isActive ? '#FACC15' : colors.card,
+            borderColor: isActive ? '#FACC15' : colors.border
           }
         ]}
         onPress={() => {
@@ -159,7 +157,7 @@ export default function FavoritesScreen() {
       >
         <Text style={[
           styles.filterText,
-          { color: isActive ? '#111827' : colors.subtext }
+          { color: isActive ? '#000000' : colors.subtext, fontWeight: isActive ? '700' : '500' }
         ]}>
           {item}
         </Text>
@@ -168,21 +166,15 @@ export default function FavoritesScreen() {
   };
 
   const renderCard = ({ item }: { item: AnimeListItem }) => {
-    // Adapter to match AnimeCard's expected Anime interface
     const animeAdapter: any = {
       mal_id: item.anime_id,
       title: item.anime_title,
       title_english: item.anime_title,
-      images: {
-        jpg: {
-          large_image_url: item.anime_image
-        }
-      },
+      images: { jpg: { large_image_url: item.anime_image } },
       episodes: item.total_episodes,
       score: item.score,
       type: 'TV'
     };
-
     return (
       <AnimeCard
         anime={animeAdapter as any}
@@ -191,30 +183,104 @@ export default function FavoritesScreen() {
     );
   };
 
-  return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.background }]}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Your Favorites</Text>
-        <TouchableOpacity
-          style={[styles.filterButton, { backgroundColor: colors.card, borderColor: colors.border }]}
-          onPress={() => setModalVisible(true)}
-        >
-          <Feather name="filter" size={18} color={colors.text} />
-          <Text style={[styles.filterButtonText, { color: colors.text }]}>Sort</Text>
-        </TouchableOpacity>
-      </View>
+  // --- Fixed Header Logic ---
+  const toggleSearch = () => {
+    if (isSearchVisible) {
+      setIsSearchVisible(false);
+      setSearchQuery('');
+      Keyboard.dismiss();
+    } else {
+      setIsSearchVisible(true);
+      setTimeout(() => searchInputRef.current?.focus(), 100);
+    }
+  };
 
-      {/* Filter Tabs */}
-      <View style={styles.filterContainer}>
-        <FlatList
-          data={FILTERS}
-          renderItem={renderFilter}
-          keyExtractor={(item) => item}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 20 }}
-        />
+  const scrollToTop = () => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
+
+  const FixedHeader = () => (
+    <View style={[styles.fixedHeader, { paddingTop: insets.top + 2, backgroundColor: colors.background, paddingBottom: 0 }]}>
+      {isSearchVisible ? (
+        <View style={styles.searchHeaderContainer}>
+          <Ionicons name="search-outline" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
+          <TextInput
+            ref={searchInputRef}
+            style={[styles.searchInput, { color: colors.text }]}
+            placeholder="Search favorites..."
+            placeholderTextColor={colors.subtext}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <TouchableOpacity onPress={toggleSearch} style={{ padding: 4 }}>
+            <Ionicons name="close" size={24} color={colors.text} />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <>
+          <TouchableOpacity style={styles.headerLeft} onPress={scrollToTop}>
+            <Image
+              source={require('../../assets/images/header-logo.png')}
+              style={styles.headerLogo}
+              resizeMode="contain"
+            />
+            <Text style={[styles.headerBrandText, { color: colors.text, marginLeft: 0 }]}>FAVORITES</Text>
+          </TouchableOpacity>
+
+          <View style={styles.headerRight}>
+            <TouchableOpacity style={styles.iconButton} onPress={toggleSearch}>
+              <Ionicons name="search-outline" size={24} color={colors.text} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
+              <Ionicons name={isDark ? "moon-outline" : "sunny-outline"} size={24} color={colors.text} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/(tabs)/profile')}>
+              <Image
+                source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
+                style={styles.headerProfileImage}
+              />
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
+    </View>
+  );
+
+  const getSortLabel = () => {
+    const opt = SORT_OPTIONS.find(o => o.value === sortBy && o.ascending === sortAscending);
+    return opt ? opt.label : 'Sort By';
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <FixedHeader />
+
+      {/* Sort & Filter Section (Above Tabs) */}
+      <View style={{ paddingTop: 10 }}>
+        {/* Sort Row */}
+        <View style={styles.sortRowContainer}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Lists</Text>
+          <TouchableOpacity
+            style={[styles.sortButton, { borderColor: colors.border, backgroundColor: colors.card }]}
+            onPress={() => setModalVisible(true)}
+          >
+            <Feather name="filter" size={14} color={colors.subtext} />
+            <Text style={[styles.sortButtonText, { color: colors.subtext }]}>{getSortLabel()}</Text>
+            <Feather name="chevron-down" size={14} color={colors.subtext} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Filter Tabs */}
+        <View style={styles.filterContainer}>
+          <FlatList
+            data={FILTERS}
+            renderItem={renderFilter}
+            keyExtractor={(item) => item}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 20 }}
+          />
+        </View>
       </View>
 
       {/* Grid Content */}
@@ -224,7 +290,8 @@ export default function FavoritesScreen() {
         </View>
       ) : (
         <FlatList
-          data={favorites}
+          ref={flatListRef}
+          data={filteredFavorites}
           renderItem={renderCard}
           keyExtractor={(item) => item.id}
           numColumns={2}
@@ -236,9 +303,13 @@ export default function FavoritesScreen() {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="heart-dislike-outline" size={48} color={colors.subtext} />
-              <Text style={[styles.emptyText, { color: colors.subtext }]}>No favorites found</Text>
-              <Text style={[styles.emptySubText, { color: colors.subtext }]}>Add anime to your favorites to see them here.</Text>
+              <Ionicons name={searchQuery ? "search" : "heart-dislike-outline"} size={48} color={colors.subtext} />
+              <Text style={[styles.emptyText, { color: colors.subtext }]}>
+                {searchQuery ? 'No favorites found' : 'No favorites yet'}
+              </Text>
+              {!searchQuery && (
+                <Text style={[styles.emptySubText, { color: colors.subtext }]}>Add anime to your favorites to see them here.</Text>
+              )}
             </View>
           }
         />
@@ -289,7 +360,7 @@ export default function FavoritesScreen() {
         </TouchableOpacity>
       </Modal>
 
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -302,50 +373,112 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
+  fixedHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingLeft: 4,
+    paddingRight: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+    zIndex: 10,
+    // Removed fixed height to match index.tsx mechanics
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 0,
+  },
+  headerLogo: {
+    width: 110,
+    height: 70,
+    marginRight: -20,
+    marginLeft: -10, // Reverted to match Home exactly
+  },
+  headerBrandText: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 20,
+    letterSpacing: 0.5,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  iconButton: {
+    padding: 4,
+  },
+  profileButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  headerProfileImage: {
+    width: '100%',
+    height: '100%',
+  },
+  searchHeaderContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: '100%',
+  },
+  searchInput: {
+    flex: 1,
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 16,
+    height: '100%',
+  },
+
+  // Sort & Filter Styles
+  sortRowContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    marginBottom: 12,
   },
-  headerTitle: {
-    fontSize: 28,
+  sectionTitle: {
+    fontSize: 18,
     fontFamily: 'Poppins_700Bold',
-    letterSpacing: -0.5,
   },
-  filterButton: {
+  sortButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    gap: 8,
+    gap: 6,
   },
-  filterButtonText: {
-    fontFamily: 'Poppins_600SemiBold',
-    fontSize: 14,
+  sortButtonText: {
+    fontSize: 12,
+    fontFamily: 'Poppins_500Medium',
   },
   filterContainer: {
-    marginBottom: 20,
-    height: 44,
+    marginBottom: 8,
+    height: 40,
   },
   filterPill: {
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    borderRadius: 24,
-    marginRight: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 10,
     borderWidth: 1,
   },
   filterText: {
     fontFamily: 'Poppins_500Medium',
-    fontSize: 14,
+    fontSize: 13,
   },
+
   listContent: {
     paddingHorizontal: 20,
-    paddingBottom: 120, // Increased to clear floating tab bar
+    paddingBottom: 120,
     minHeight: 300,
+    paddingTop: 10,
   },
   columnWrapper: {
     justifyContent: 'space-between',
