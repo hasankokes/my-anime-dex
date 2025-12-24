@@ -56,6 +56,38 @@ export default function AnimeDetailsScreen() {
           if (entry) {
             setUserEntry(entry);
             setEpisodeInput(entry.current_episode?.toString() || '0');
+
+            // --- Self-Healing Logic: Check for stale data and update silently ---
+            const needsUpdate =
+              (animeData.episodes && entry.total_episodes !== animeData.episodes) ||
+              (animeData.score && entry.score !== animeData.score) ||
+              (animeData.images?.jpg?.large_image_url && entry.anime_image !== animeData.images.jpg.large_image_url);
+
+            if (needsUpdate) {
+              console.log('[AnimeDetails] Metadata out of sync, healing...', {
+                oldEps: entry.total_episodes,
+                newEps: animeData.episodes,
+              });
+
+              // Silent update
+              supabase
+                .from('user_anime_list')
+                .update({
+                  total_episodes: animeData.episodes || entry.total_episodes,
+                  score: animeData.score || entry.score,
+                  anime_image: animeData.images?.jpg?.large_image_url || entry.anime_image,
+                  anime_title: animeData.title_english || animeData.title || entry.anime_title, // Keep title fresh too
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('id', entry.id)
+                .then(({ error: updateError }) => {
+                  if (updateError) {
+                    console.error('[AnimeDetails] Failed to heal metadata:', updateError);
+                  } else {
+                    console.log('[AnimeDetails] Metadata healed successfully.');
+                  }
+                });
+            }
           }
         }
       } catch (error) {

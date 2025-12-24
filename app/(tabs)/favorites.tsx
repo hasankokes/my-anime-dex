@@ -224,7 +224,10 @@ export default function FavoritesScreen() {
               style={styles.headerLogo}
               resizeMode="contain"
             />
-            <Text style={[styles.headerBrandText, { color: colors.text, marginLeft: 0 }]}>FAVORITES</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={[styles.headerBrandText, { color: colors.text, marginLeft: 0 }]}>FAVORI</Text>
+              <Text style={[styles.headerBrandText, { color: '#FACC15', marginLeft: 0 }]}>TES</Text>
+            </View>
           </TouchableOpacity>
 
           <View style={styles.headerRight}>

@@ -196,7 +196,10 @@ export default function WatchingScreen() {
               style={styles.headerLogo}
               resizeMode="contain"
             />
-            <Text style={[styles.headerBrandText, { color: colors.text, marginLeft: 0 }]}>WATCHING</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={[styles.headerBrandText, { color: colors.text, marginLeft: 0 }]}>WATCH</Text>
+              <Text style={[styles.headerBrandText, { color: '#FACC15', marginLeft: 0 }]}>ING</Text>
+            </View>
           </TouchableOpacity>
 
           {/* Right: Controls */}
