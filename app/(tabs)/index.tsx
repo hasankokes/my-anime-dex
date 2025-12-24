@@ -252,7 +252,7 @@ export default function HomeScreen() {
         {/* Theme Toggle */}
         <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
           {/* Changed to nicer outline icons based on user feedback */}
-          <Ionicons name={isDark ? "moon-outline" : "sunny-outline"} size={24} color={colors.text} />
+          <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
         </TouchableOpacity>
 
         {/* Profile */}

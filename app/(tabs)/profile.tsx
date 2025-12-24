@@ -524,7 +524,7 @@ export default function ProfileScreen() {
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
-                <Ionicons name={isDark ? "moon" : "sunny"} size={20} color={colors.text} />
+                <Ionicons name={isDark ? "sunny" : "moon"} size={20} color={colors.text} />
               </View>
               <Text style={[styles.settingLabel, { color: colors.text }]}>Dark Mode</Text>
             </View>

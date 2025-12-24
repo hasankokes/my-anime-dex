@@ -211,7 +211,7 @@ export default function WatchingScreen() {
 
             {/* Theme Toggle */}
             <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
-              <Ionicons name={isDark ? "moon-outline" : "sunny-outline"} size={24} color={colors.text} />
+              <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
             </TouchableOpacity>
 
             {/* Profile */}

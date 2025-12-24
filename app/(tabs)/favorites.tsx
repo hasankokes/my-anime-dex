@@ -235,7 +235,7 @@ export default function FavoritesScreen() {
               <Ionicons name="search-outline" size={24} color={colors.text} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
-              <Ionicons name={isDark ? "moon-outline" : "sunny-outline"} size={24} color={colors.text} />
+              <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/(tabs)/profile')}>
               <Image
