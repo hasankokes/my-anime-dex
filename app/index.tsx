@@ -231,15 +231,15 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={[styles.contentContainer, { paddingTop: height * 0.15 }]}>
+        <ScrollView contentContainerStyle={[styles.contentContainer, { paddingTop: height * 0.08 }]}>
           {/* Logo Section */}
           <View style={styles.logoContainer}>
             <Image
               source={require('../assets/images/header-logo.png')}
               style={styles.logo}
             />
-            <Text style={styles.appName}>My AnimeDex</Text>
-            <Text style={styles.tagline}>Track, Discover, Watch.</Text>
+
+            <Text style={styles.tagline}>Track   Discover   Watch</Text>
           </View>
 
           {/* Email/Password Section */}
@@ -298,11 +298,7 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.buttonContainer}>
-              <SocialButton
-                provider="apple"
-                onPress={() => performOAuth('apple')}
-                isLoading={loading}
-              />
+
               <SocialButton
                 provider="google"
                 onPress={() => performOAuth('google')}
@@ -310,10 +306,7 @@ export default function LoginScreen() {
               />
             </View>
 
-            {/* Manual Refresh Link */}
-            <TouchableOpacity onPress={checkSession} style={styles.refreshLink}>
-              <Text style={styles.refreshText}>Check Session</Text>
-            </TouchableOpacity>
+
 
             <Text style={styles.footerText}>
               By continuing, you agree to our Terms of Service and Privacy Policy.
@@ -349,24 +342,19 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 60,
   },
   logo: {
-    width: 200, // Increased size for visibility
-    height: 200,
+    width: 280, // Increased size for visibility (approx 40% increased from 200)
+    height: 280,
     resizeMode: 'contain',
-    marginBottom: 24,
-  },
-  appName: {
-    fontSize: 32,
-    fontFamily: 'Poppins_700Bold',
-    color: '#111827',
-    marginBottom: 8,
+    marginBottom: 0,
   },
   tagline: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Poppins_500Medium',
     color: '#6B7280',
+    marginTop: -20,
   },
   bottomSection: {
     width: '100%',

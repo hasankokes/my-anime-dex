@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, ActivityIndicator, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 interface SocialButtonProps {
@@ -25,12 +25,19 @@ export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, i
         <ActivityIndicator color={isApple ? '#FFF' : '#000'} />
       ) : (
         <>
-          <Ionicons
-            name={isApple ? "logo-apple" : "logo-google"}
-            size={24}
-            color={isApple ? "white" : "black"}
-            style={styles.icon}
-          />
+          {isApple ? (
+            <Ionicons
+              name="logo-apple"
+              size={24}
+              color="white"
+              style={styles.icon}
+            />
+          ) : (
+            <Image
+              source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/512px-Google_%22G%22_logo.svg.png' }}
+              style={[styles.icon, { width: 24, height: 24 }]}
+            />
+          )}
           <Text style={[styles.text, isApple ? styles.appleText : styles.googleText]}>
             Continue with {isApple ? 'Apple' : 'Google'}
           </Text>
