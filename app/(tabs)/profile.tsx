@@ -19,6 +19,7 @@ import { supabase } from '../../lib/supabase';
 import { Profile, UserAnimeStats } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import * as ImagePicker from 'expo-image-picker';
+import { getRank, getLevelProgress } from '../../lib/levelSystem';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -46,33 +47,7 @@ export default function ProfileScreen() {
     }, [])
   );
 
-  const getLevelProgress = (xp: number = 0, level: number = 1) => {
-    let requiredXp = 30;
-    let previousLevelXp = 0;
 
-    if (level < 10) {
-      // Levels 1-9 (moving to 10)
-      // Level 1 starts at 0. Next level at 30.
-      // XP for level L = (L-1) * 30
-      previousLevelXp = (level - 1) * 30;
-      requiredXp = 30;
-    } else {
-      // Levels 10+
-      // XP for level 10 = 9 * 30 = 270.
-      // XP for level L (>=10) = 270 + (L-10) * 50
-      previousLevelXp = 270 + (level - 10) * 50;
-      requiredXp = 50;
-    }
-
-    const currentLevelProgress = xp - previousLevelXp;
-    const progressPercent = Math.min(Math.max(currentLevelProgress / requiredXp, 0), 1);
-
-    return {
-      current: currentLevelProgress,
-      total: requiredXp,
-      percent: progressPercent
-    };
-  };
 
   const fetchProfile = async () => {
     try {
@@ -428,9 +403,17 @@ export default function ProfileScreen() {
         </View>
 
         {/* Profile Info */}
+        {/* Profile Info */}
         <View style={styles.profileInfoContainer}>
           <TouchableOpacity onPress={openAvatarModal} disabled={uploading} style={styles.avatarWrapper}>
-            <View style={[styles.avatarContainer, { backgroundColor: colors.card }]}>
+            <View style={[
+              styles.avatarContainer,
+              {
+                backgroundColor: colors.card,
+                borderColor: getRank(profile?.level || 1).colorHex,
+                borderWidth: getRank(profile?.level || 1).borderWidth,
+              }
+            ]}>
               {uploading ? (
                 <ActivityIndicator size="small" color="#FACC15" style={{ flex: 1 }} />
               ) : (
@@ -453,7 +436,14 @@ export default function ProfileScreen() {
           </View>
 
           <View style={{ alignItems: 'center', width: '100%', paddingHorizontal: 40, marginTop: 8 }}>
-            <Text style={[styles.memberInfo, { marginBottom: 8 }]}>
+            <Text style={[
+              styles.rankTitle,
+              { color: getRank(profile?.level || 1).colorHex, marginBottom: 4 }
+            ]}>
+              {getRank(profile?.level || 1).name}
+            </Text>
+
+            <Text style={[styles.memberInfo, { marginBottom: 8, color: getRank(profile?.level || 1).colorHex }]}>
               Level {profile?.level || 1} • {getLevelProgress(profile?.xp || 0, profile?.level || 1).current}/{getLevelProgress(profile?.xp || 0, profile?.level || 1).total} XP
             </Text>
 
@@ -467,7 +457,7 @@ export default function ProfileScreen() {
               <View style={{
                 width: `${getLevelProgress(profile?.xp || 0, profile?.level || 1).percent * 100}%`,
                 height: '100%',
-                backgroundColor: '#FACC15',
+                backgroundColor: getRank(profile?.level || 1).colorHex,
                 borderRadius: 6
               }} />
             </View>
@@ -793,6 +783,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontFamily: 'Poppins_700Bold',
     marginBottom: 4,
+  },
+  rankTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins_700Bold',
+    letterSpacing: 1,
   },
   memberInfo: {
     fontSize: 14,

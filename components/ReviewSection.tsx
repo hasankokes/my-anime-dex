@@ -16,6 +16,7 @@ import { supabase } from '../lib/supabase';
 import { StarRating } from './StarRating';
 import { useTheme } from '../context/ThemeContext';
 import { formatDistanceToNow } from 'date-fns';
+import { calculateLevelFromXp } from '../lib/levelSystem';
 
 type Review = {
     id: string;
@@ -133,10 +134,33 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                     return [data, ...others];
                 });
                 setMyReview(data);
+
+                // --- AWARD XP LOGIC ---
+                // Fetch current profile to get current XP
+                const { data: profileData, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('xp')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (!profileError && profileData) {
+                    const currentXp = profileData.xp || 0;
+                    const newXp = currentXp + 2;
+                    const newLevel = calculateLevelFromXp(newXp);
+
+                    // Update profile
+                    await supabase
+                        .from('profiles')
+                        .update({ xp: newXp, level: newLevel })
+                        .eq('id', session.user.id);
+
+                    console.log(`Awarded 2 XP. New XP: ${newXp}, New Level: ${newLevel}`);
+                }
+                // ----------------------
             }
 
             setModalVisible(false);
-            Alert.alert('Success', 'Review published!');
+            Alert.alert('Success', 'Review published! (+2 XP)');
 
         } catch (error) {
             console.error('Error submitting review:', error);
