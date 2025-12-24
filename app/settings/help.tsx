@@ -100,12 +100,12 @@ const styles = StyleSheet.create({
     },
     question: {
         fontSize: 16,
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Poppins_600SemiBold',
         marginBottom: 8,
     },
     answer: {
         fontSize: 14,
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_500Medium',
         lineHeight: 20,
     },
     contactButton: {
@@ -118,13 +118,13 @@ const styles = StyleSheet.create({
     },
     contactButtonText: {
         color: '#000',
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Poppins_600SemiBold',
         fontSize: 16,
     },
     version: {
         textAlign: 'center',
         fontSize: 12,
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_500Medium',
         marginBottom: 20,
     }
 });

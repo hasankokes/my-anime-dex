@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
   },
   appName: {
     fontSize: 24,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: '100%',
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     fontSize: 15,
   },
   sectionTitle: {
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
   },
 
   trendingContainer: {
@@ -489,6 +489,6 @@ const styles = StyleSheet.create({
   trendingScore: {
     color: '#FFF',
     fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
   },
 });

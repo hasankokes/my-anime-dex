@@ -565,7 +565,7 @@ export default function ProfileScreen() {
                 onPress={pickImage}
               >
                 <Ionicons name="images-outline" size={24} color={colors.text} style={{ marginRight: 10 }} />
-                <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>Upload from Gallery</Text>
+                <Text style={{ color: colors.text, fontFamily: 'Poppins_600SemiBold' }}>Upload from Gallery</Text>
               </TouchableOpacity>
 
               <Text style={[styles.sectionHeader, { marginLeft: 0, fontSize: 16, marginBottom: 12, color: colors.text }]}>
@@ -662,7 +662,7 @@ const styles = StyleSheet.create({
   },
   memberInfo: {
     fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     color: '#FACC15',
   },
   statsContainer: {
@@ -682,7 +682,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     marginTop: 2,
   },
   statDivider: {
@@ -701,7 +701,7 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
   },
   seedButtonText: {
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
     fontSize: 14,
   },
   subscriptionCard: {
@@ -739,7 +739,7 @@ const styles = StyleSheet.create({
   },
   subDescription: {
     fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     lineHeight: 20,
     marginBottom: 20,
     paddingRight: 20,
@@ -754,7 +754,7 @@ const styles = StyleSheet.create({
   },
   upgradeButtonText: {
     fontSize: 14,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
     color: '#111827',
   },
   sectionHeader: {
@@ -799,11 +799,11 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     fontSize: 15,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
   },
   settingSubLabel: {
     fontSize: 12,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     color: '#FACC15',
   },
   logoutButton: {
@@ -814,13 +814,13 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     fontSize: 16,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
     color: '#EF4444',
   },
   versionText: {
     textAlign: 'center',
     fontSize: 12,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     color: '#6B7280',
   },
   modalOverlay: {
@@ -846,7 +846,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     marginBottom: 8,
   },
   input: {
@@ -854,7 +854,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     fontSize: 16,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     marginBottom: 24,
   },
   modalButtons: {

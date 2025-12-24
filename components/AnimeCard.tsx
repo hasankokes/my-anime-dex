@@ -95,19 +95,19 @@ const styles = StyleSheet.create({
     scoreText: {
         color: '#FFF',
         fontSize: 12,
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Poppins_600SemiBold',
     },
     info: {
         paddingHorizontal: 4,
     },
     title: {
         fontSize: 14,
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Poppins_600SemiBold',
         marginBottom: 4,
         lineHeight: 20,
     },
     subtitle: {
         fontSize: 12,
-        fontFamily: 'Inter_500Medium',
+        fontFamily: 'Poppins_500Medium',
     }
 });

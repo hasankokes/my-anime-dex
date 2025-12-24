@@ -10,13 +10,13 @@ interface SocialButtonProps {
 
 export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, isLoading }) => {
   const isApple = provider === 'apple';
-  
+
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[
-        styles.button, 
+        styles.button,
         isApple ? styles.appleButton : styles.googleButton
-      ]} 
+      ]}
       onPress={onPress}
       activeOpacity={0.8}
       disabled={isLoading}
@@ -25,10 +25,10 @@ export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, i
         <ActivityIndicator color={isApple ? '#FFF' : '#000'} />
       ) : (
         <>
-          <Ionicons 
-            name={isApple ? "logo-apple" : "logo-google"} 
-            size={24} 
-            color={isApple ? "white" : "black"} 
+          <Ionicons
+            name={isApple ? "logo-apple" : "logo-google"}
+            size={24}
+            color={isApple ? "white" : "black"}
             style={styles.icon}
           />
           <Text style={[styles.text, isApple ? styles.appleText : styles.googleText]}>
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
   },
   appleText: {
     color: '#FFFFFF',

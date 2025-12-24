@@ -1,13 +1,13 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  Image, 
-  ScrollView, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
   Dimensions,
-  Platform 
+  Platform
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -33,7 +33,7 @@ export default function SubscriptionScreen() {
 
   return (
     <View style={styles.container}>
-      
+
       {/* Background Collage */}
       <View style={styles.collageContainer}>
         <View style={styles.collageGrid}>
@@ -49,8 +49,8 @@ export default function SubscriptionScreen() {
 
       {/* Close Button */}
       <SafeAreaView style={styles.safeAreaHeader}>
-        <TouchableOpacity 
-          style={styles.closeButton} 
+        <TouchableOpacity
+          style={styles.closeButton}
           onPress={() => router.back()}
           activeOpacity={0.7}
         >
@@ -58,8 +58,8 @@ export default function SubscriptionScreen() {
         </TouchableOpacity>
       </SafeAreaView>
 
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent} 
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.contentContainer}>
@@ -81,7 +81,7 @@ export default function SubscriptionScreen() {
             <View style={styles.bestValueBadge}>
               <Text style={styles.bestValueText}>BEST VALUE</Text>
             </View>
-            
+
             <Text style={styles.planName}>Annual Plan</Text>
             <View style={styles.priceRow}>
               <Text style={styles.priceSymbol}>$</Text>
@@ -93,7 +93,7 @@ export default function SubscriptionScreen() {
 
           {/* Benefits Section */}
           <Text style={styles.benefitsTitle}>PRO BENEFITS</Text>
-          
+
           <View style={styles.benefitItem}>
             <View style={styles.iconContainer}>
               <Ionicons name="ban" size={20} color="#854D0E" />
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   premiumText: {
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Poppins_700Bold',
     fontSize: 12,
     color: '#111827',
     letterSpacing: 1,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   },
   subheadline: {
     fontSize: 15,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     color: '#4B5563',
     textAlign: 'center',
     marginBottom: 32,
@@ -273,12 +273,12 @@ const styles = StyleSheet.create({
   },
   bestValueText: {
     fontSize: 10,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Poppins_700Bold',
     color: '#111827',
   },
   planName: {
     fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     color: '#4B5563',
     marginBottom: 8,
   },
@@ -301,18 +301,18 @@ const styles = StyleSheet.create({
   },
   pricePeriod: {
     fontSize: 16,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     color: '#6B7280',
   },
   priceSubtext: {
     fontSize: 13,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
     color: '#FACC15', // Yellow text
   },
   benefitsTitle: {
     alignSelf: 'flex-start',
     fontSize: 12,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Poppins_700Bold',
     color: '#6B7280',
     letterSpacing: 1,
     marginBottom: 16,
@@ -342,13 +342,13 @@ const styles = StyleSheet.create({
   },
   benefitTitle: {
     fontSize: 15,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
     color: '#111827',
     marginBottom: 2,
   },
   benefitDesc: {
     fontSize: 13,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     color: '#6B7280',
   },
   footer: {
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
   },
   ctaButtonText: {
     fontSize: 16,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Poppins_700Bold',
     color: '#111827',
     marginRight: 8,
   },
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
   },
   footerLinkText: {
     fontSize: 12,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     color: '#6B7280',
   },
 });

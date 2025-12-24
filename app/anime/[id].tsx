@@ -357,7 +357,7 @@ export default function AnimeDetailsScreen() {
             </Text>
             {anime.synopsis && anime.synopsis.length > 200 && (
               <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} style={{ marginTop: 8 }}>
-                <Text style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold' }}>
+                <Text style={{ color: colors.primary, fontFamily: 'Poppins_600SemiBold' }}>
                   {isExpanded ? 'Read Less' : 'Read More'}
                 </Text>
               </TouchableOpacity>
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
   },
   jpTitle: {
     fontSize: 13,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     marginTop: 2,
   },
   scoreBox: {
@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     color: '#FFFFFF',
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Poppins_700Bold',
     fontSize: 14,
   },
   tagsContainer: {
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
   },
   tagText: {
     fontSize: 11,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
   },
   genresContainer: {
     flexDirection: 'row',
@@ -573,7 +573,7 @@ const styles = StyleSheet.create({
   },
   genreText: {
     fontSize: 12,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     color: '#FACC15',
   },
   section: {
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
   },
   synopsisText: {
     fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     lineHeight: 22,
   },
   infoGrid: {
@@ -602,12 +602,12 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 11,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     marginBottom: 2,
   },
   infoValue: {
     fontSize: 13,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
   },
   actionButton: {
     flexDirection: 'row',
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
   },
   modalOptionText: {
     fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
   },
   modalInput: {
     // Removed
@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
   },
   episodeInput: {
     fontSize: 16,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
     minWidth: 30,
     marginRight: 4,
   }

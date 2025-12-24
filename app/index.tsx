@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     color: '#6B7280',
   },
   bottomSection: {
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   },
   refreshText: {
     fontSize: 13,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     color: '#FACC15',
     textDecorationLine: 'underline',
   },
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: '100%',
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     fontSize: 16,
     color: '#111827',
   },
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   toggleText: {
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     fontSize: 14,
     color: '#4B5563',
   },
@@ -450,13 +450,13 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     marginHorizontal: 16,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     fontSize: 14,
     color: '#9CA3AF',
   },
   footerText: {
     fontSize: 11,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     color: '#9CA3AF',
     textAlign: 'center',
     lineHeight: 16,

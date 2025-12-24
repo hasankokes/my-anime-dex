@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         textAlign: 'center',
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_500Medium',
         paddingVertical: 20,
     },
     addButton: {
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     addButtonText: {
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Poppins_600SemiBold',
         color: '#000',
         fontSize: 14,
     },
@@ -328,15 +328,15 @@ const styles = StyleSheet.create({
         borderRadius: 16,
     },
     username: {
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Poppins_600SemiBold',
         fontSize: 13,
     },
     date: {
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_500Medium',
         fontSize: 11,
     },
     comment: {
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_500Medium',
         fontSize: 14,
         lineHeight: 20,
     },
@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
         minHeight: 100,
         textAlignVertical: 'top',
         fontSize: 15,
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_500Medium',
         marginBottom: 24,
     },
     submitButton: {

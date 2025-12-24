@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   },
   episodeInfo: {
     fontSize: 12,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     color: '#FACC15',
     marginBottom: 12,
   },
@@ -275,12 +275,12 @@ const styles = StyleSheet.create({
   },
   currentEpisode: {
     fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
     marginRight: 8,
   },
   percentage: {
     fontSize: 12,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
   },
   progressBarBackground: {
     height: 6,
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   },
   emptySubText: {
     fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     textAlign: 'center',
     marginTop: 4,
     maxWidth: 250,

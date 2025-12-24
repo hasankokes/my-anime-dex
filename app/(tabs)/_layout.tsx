@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   tabLabel: {
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     fontSize: 10,
     marginTop: 4, // More space between icon and text
     paddingBottom: 4,

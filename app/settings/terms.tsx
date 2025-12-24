@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     },
     lastUpdated: {
         fontSize: 12,
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_500Medium',
         marginBottom: 20,
     },
     heading: {
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     },
     paragraph: {
         fontSize: 14,
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_500Medium',
         lineHeight: 22,
         marginBottom: 16,
     },

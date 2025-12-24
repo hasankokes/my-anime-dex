@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         color: '#FECACA',
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_500Medium',
         fontSize: 12,
     }
 });

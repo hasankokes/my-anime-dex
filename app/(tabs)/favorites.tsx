@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   filterButtonText: {
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Poppins_600SemiBold',
     fontSize: 14,
   },
   filterContainer: {
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   filterText: {
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
     fontSize: 14,
   },
   listContent: {
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   },
   emptySubText: {
     fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Poppins_500Medium',
     textAlign: 'center',
     marginTop: 4,
     maxWidth: 250,
@@ -400,6 +400,6 @@ const styles = StyleSheet.create({
   },
   sortOptionText: {
     fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Poppins_500Medium',
   },
 });
