@@ -4,10 +4,12 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function TermsScreen() {
     const router = useRouter();
     const { colors } = useTheme();
+    const { t } = useLanguage();
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -15,34 +17,34 @@ export default function TermsScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.title, { color: colors.text }]}>Terms of Service</Text>
+                <Text style={[styles.title, { color: colors.text }]}>{t('terms.title')}</Text>
             </View>
 
             <ScrollView contentContainerStyle={styles.content}>
-                <Text style={[styles.lastUpdated, { color: colors.subtext }]}>Last Updated: December 22, 2025</Text>
+                <Text style={[styles.lastUpdated, { color: colors.subtext }]}>{t('terms.lastUpdated')}</Text>
 
                 <Text style={[styles.paragraph, { color: colors.text }]}>
-                    Please read these Terms of Service ("Terms", "Terms of Service") carefully before using the MyAnimeDex application operated by us.
+                    {t('terms.intro')}
                 </Text>
 
-                <Text style={[styles.heading, { color: colors.text }]}>1. Acceptance of Terms</Text>
+                <Text style={[styles.heading, { color: colors.text }]}>{t('terms.sections.acceptance.title')}</Text>
                 <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service.
+                    {t('terms.sections.acceptance.content')}
                 </Text>
 
-                <Text style={[styles.heading, { color: colors.text }]}>2. Accounts</Text>
+                <Text style={[styles.heading, { color: colors.text }]}>{t('terms.sections.accounts.title')}</Text>
                 <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    When you create an account with us, you must provide us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms.
+                    {t('terms.sections.accounts.content')}
                 </Text>
 
-                <Text style={[styles.heading, { color: colors.text }]}>3. Content</Text>
+                <Text style={[styles.heading, { color: colors.text }]}>{t('terms.sections.content.title')}</Text>
                 <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    Our Service allows you to track, view, and share information about Anime. You are responsible for the content that you post to the Service, including its legality, reliability, and appropriateness.
+                    {t('terms.sections.content.content')}
                 </Text>
 
-                <Text style={[styles.heading, { color: colors.text }]}>4. Termination</Text>
+                <Text style={[styles.heading, { color: colors.text }]}>{t('terms.sections.termination.title')}</Text>
                 <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.
+                    {t('terms.sections.termination.content')}
                 </Text>
 
                 <View style={{ height: 40 }} />

@@ -4,27 +4,21 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function HelpScreen() {
     const router = useRouter();
     const { colors } = useTheme();
+    const { t } = useLanguage();
 
     const faqs = [
         {
-            question: 'How do I track anime?',
-            answer: 'Go to the Home or Search screen, click on an anime card, and use the "Add to List" button. You can choose status like Watching, Completed, etc.'
+            question: t('help.faq.q1'),
+            answer: t('help.faq.a1')
         },
         {
-            question: 'Where does the data come from?',
-            answer: 'We use the Jikan API (Unofficial MyAnimeList API) to provide you with the latest anime data.'
-        },
-        {
-            question: 'How do I change the theme?',
-            answer: 'Go to your Profile page and toggle the "Dark Mode" switch in the App Settings section.'
-        },
-        {
-            question: 'Is this app free?',
-            answer: 'Yes! The core features are free. We offer a subscription for exclusive themes and ad-free experience.'
+            question: t('help.faq.q2'),
+            answer: t('help.faq.a2')
         }
     ];
 
@@ -38,11 +32,11 @@ export default function HelpScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.title, { color: colors.text }]}>Help & Support</Text>
+                <Text style={[styles.title, { color: colors.text }]}>{t('settings.support')}</Text>
             </View>
 
             <ScrollView contentContainerStyle={styles.content}>
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>Frequently Asked Questions</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('help.faq.title')}</Text>
 
                 {faqs.map((faq, index) => (
                     <View key={index} style={[styles.faqItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -60,7 +54,7 @@ export default function HelpScreen() {
                     <Text style={styles.contactButtonText}>Email Support</Text>
                 </TouchableOpacity>
 
-                <Text style={[styles.version, { color: colors.subtext }]}>Version 2.4.0 (Build 391)</Text>
+                <Text style={[styles.version, { color: colors.subtext }]}>{t('settings.appVersion')} 2.4.0 (Build 391)</Text>
             </ScrollView>
         </SafeAreaView>
     );

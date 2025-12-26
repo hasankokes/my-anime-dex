@@ -20,10 +20,12 @@ import { Profile, UserAnimeStats } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import * as ImagePicker from 'expo-image-picker';
 import { getRank, getLevelProgress } from '../../lib/levelSystem';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { colors, isDark, toggleTheme } = useTheme();
+  const { t, language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [stats, setStats] = useState<UserAnimeStats>({
@@ -507,7 +509,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* App Settings */}
-        <Text style={[styles.sectionHeader, { color: colors.text }]}>App Settings</Text>
+        <Text style={[styles.sectionHeader, { color: colors.text }]}>{t('settings.title')}</Text>
 
         <View style={[styles.settingsContainer, { backgroundColor: colors.card }]}>
           <View style={styles.settingItem}>
@@ -515,7 +517,7 @@ export default function ProfileScreen() {
               <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
                 <Ionicons name={isDark ? "sunny" : "moon"} size={20} color={colors.text} />
               </View>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Dark Mode</Text>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>{t('settings.theme')}</Text>
             </View>
             <Switch
               value={isDark}
@@ -527,14 +529,28 @@ export default function ProfileScreen() {
 
           <View style={[styles.settingDivider, { backgroundColor: colors.border }]} />
 
-          <TouchableOpacity style={styles.settingItem}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push('/settings/language')}
+          >
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
                 <MaterialIcons name="translate" size={20} color={colors.text} />
               </View>
               <View>
-                <Text style={[styles.settingLabel, { color: colors.text }]}>Language</Text>
-                <Text style={styles.settingSubLabel}>English (US)</Text>
+                <Text style={[styles.settingLabel, { color: colors.text }]}>{t('settings.language')}</Text>
+                <Text style={styles.settingSubLabel}>
+                  {
+                    {
+                      'en': 'English (US)',
+                      'tr': 'Türkçe',
+                      'ja': '日本語',
+                      'ru': 'Русский',
+                      'de': 'Deutsch',
+                      'ar': 'العربية'
+                    }[language] || 'English (US)'
+                  }
+                </Text>
               </View>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
@@ -554,7 +570,7 @@ export default function ProfileScreen() {
               <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
                 <Ionicons name="help-buoy-outline" size={20} color={colors.text} />
               </View>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Help & Support</Text>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>{t('settings.support')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
           </TouchableOpacity>
@@ -569,7 +585,7 @@ export default function ProfileScreen() {
               <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
                 <Ionicons name="lock-closed-outline" size={20} color={colors.text} />
               </View>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Privacy Policy</Text>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>{t('settings.privacy')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
           </TouchableOpacity>
@@ -584,7 +600,7 @@ export default function ProfileScreen() {
               <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
                 <Ionicons name="document-text-outline" size={20} color={colors.text} />
               </View>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Terms of Service</Text>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>{t('settings.terms')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
           </TouchableOpacity>
@@ -593,10 +609,10 @@ export default function ProfileScreen() {
         {/* Log Out */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
           <Ionicons name="log-out-outline" size={20} color="#EF4444" style={{ marginRight: 8 }} />
-          <Text style={styles.logoutText}>Log Out</Text>
+          <Text style={styles.logoutText}>{t('settings.logout')}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.versionText}>App Version 2.4.0 (Build 391)</Text>
+        <Text style={styles.versionText}>{t('settings.appVersion')} 2.4.0 (Build 391)</Text>
         <View style={{ height: 40 }} />
       </ScrollView>
 

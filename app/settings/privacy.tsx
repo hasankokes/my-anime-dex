@@ -4,10 +4,12 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function PrivacyScreen() {
     const router = useRouter();
     const { colors } = useTheme();
+    const { t } = useLanguage();
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -15,31 +17,24 @@ export default function PrivacyScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.title, { color: colors.text }]}>Privacy Policy</Text>
+                <Text style={[styles.title, { color: colors.text }]}>{t('privacy.title')}</Text>
             </View>
 
             <ScrollView contentContainerStyle={styles.content}>
-                <Text style={[styles.lastUpdated, { color: colors.subtext }]}>Last Updated: December 22, 2025</Text>
+                <Text style={[styles.lastUpdated, { color: colors.subtext }]}>{t('privacy.lastUpdated')}</Text>
 
                 <Text style={[styles.paragraph, { color: colors.text }]}>
-                    Your privacy is important to us. It is MyAnimeDex's policy to respect your privacy regarding any information we may collect from you across our application.
+                    {t('privacy.intro')}
                 </Text>
 
-                <Text style={[styles.heading, { color: colors.text }]}>1. Information We Collect</Text>
+                <Text style={[styles.heading, { color: colors.text }]}>{t('privacy.sections.collection.title')}</Text>
                 <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent.
-
-                    - **Account Data**: We collect your email address and authentication details via Supabase to secure your account.
-                    - **Usage Data**: We may collect anonymous usage data to improve app performance.
+                    {t('privacy.sections.collection.content')}
                 </Text>
 
-                <Text style={[styles.heading, { color: colors.text }]}>2. Use of Data</Text>
+                <Text style={[styles.heading, { color: colors.text }]}>{t('privacy.sections.usage.title')}</Text>
                 <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    We use the collected data for various purposes:
-                    - To provide and maintain our Service
-                    - To notify you about changes to our Service
-                    - To allow you to participate in interactive features
-                    - To provide customer support
+                    {t('privacy.sections.usage.content')}
                 </Text>
 
                 <Text style={[styles.heading, { color: colors.text }]}>3. Third-Party Services</Text>
@@ -47,9 +42,9 @@ export default function PrivacyScreen() {
                     We use third-party services like Jikan API for anime data. Please review their privacy policies as well.
                 </Text>
 
-                <Text style={[styles.heading, { color: colors.text }]}>4. Security</Text>
+                <Text style={[styles.heading, { color: colors.text }]}>{t('privacy.sections.security.title')}</Text>
                 <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    We value your trust in providing us your Personal Information, thus we strive to use commercially acceptable means of protecting it. But remember that no method of transmission over the internet is 100% secure.
+                    {t('privacy.sections.security.content')}
                 </Text>
 
                 <View style={{ height: 40 }} />

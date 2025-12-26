@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from '../context/AuthProvider';
 import { useRouter, useSegments } from 'expo-router';
 import { NetworkProvider } from '../context/NetworkContext';
 import { OfflineBanner } from '../components/OfflineBanner';
+import { LanguageProvider } from '../context/LanguageContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -74,25 +75,27 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <NetworkProvider>
-        <AuthProvider>
-          <AuthGuard>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
+        <LanguageProvider>
+          <AuthProvider>
+            <AuthGuard>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
 
-              <Stack.Screen
-                name="subscription"
-                options={{
-                  presentation: 'modal',
-                  headerShown: false,
-                  animation: 'slide_from_bottom'
-                }}
-              />
-            </Stack>
-          </AuthGuard>
-          <OfflineBanner />
-        </AuthProvider>
+                <Stack.Screen
+                  name="subscription"
+                  options={{
+                    presentation: 'modal',
+                    headerShown: false,
+                    animation: 'slide_from_bottom'
+                  }}
+                />
+              </Stack>
+            </AuthGuard>
+            <OfflineBanner />
+          </AuthProvider>
+        </LanguageProvider>
       </NetworkProvider>
     </ThemeProvider>
   );

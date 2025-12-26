@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, Dimensions, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNetwork } from '../context/NetworkContext';
+import { useLanguage } from '../context/LanguageContext';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 
 const { width } = Dimensions.get('window');
 
 export const OfflineBanner = () => {
     const { isConnected, isInternetReachable } = useNetwork();
+    const { t } = useLanguage();
     const insets = useSafeAreaInsets();
     const [visible, setVisible] = useState(false);
 
@@ -26,8 +28,10 @@ export const OfflineBanner = () => {
             <View style={styles.content}>
                 <Ionicons name="cloud-offline" size={20} color="#FFFFFF" style={styles.icon} />
                 <View style={styles.textContainer}>
-                    <Text style={styles.title}>No Internet Connection</Text>
-                    <Text style={styles.subtitle}>Some features may be unavailable.</Text>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.title}>{t('offline.title')}</Text>
+                        <Text style={styles.subtitle}>{t('offline.message')}</Text>
+                    </View>
                 </View>
             </View>
         </Animated.View>
