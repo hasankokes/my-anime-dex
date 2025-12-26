@@ -21,17 +21,12 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (loading) return;
 
-    // Debug logging
-    console.log(`[AuthGuard] Session: ${!!session}, Loading: ${loading}, Segments: ${JSON.stringify(segments)}`);
-
     // In Expo Router, the root index route often has an empty segment array or ['index']
     const inPublicArea = segments.length === 0 || segments[0] === 'index';
 
     if (!session && !inPublicArea) {
-      console.log('[AuthGuard] Redirecting to Login');
       router.replace('/');
     } else if (session && inPublicArea) {
-      console.log('[AuthGuard] Redirecting to Home');
       router.replace('/(tabs)');
     }
   }, [session, loading, segments]);

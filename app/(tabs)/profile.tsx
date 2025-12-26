@@ -120,9 +120,8 @@ export default function ProfileScreen() {
     const { error } = await supabase.auth.signOut();
     if (error) {
       Alert.alert('Error', error.message);
-    } else {
-      router.replace('/');
     }
+    // No manual redirect needed - AuthGuard will handle it when session becomes null
   };
 
   const startEditing = () => {

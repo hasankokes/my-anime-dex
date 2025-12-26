@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, Alert, Platform, ActivityIndicator, AppState, TouchableOpacity, TextInput, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, Alert, Platform, ActivityIndicator, AppState, TouchableOpacity, TextInput, KeyboardAvoidingView, ScrollView, useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,14 +15,17 @@ WebBrowser.maybeCompleteAuthSession();
 const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen() {
-  console.log('[LoginScreen] Rendering...');
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
+  const [authMessage, setAuthMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   useEffect(() => {
     checkSession();
@@ -109,6 +112,38 @@ export default function LoginScreen() {
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert('Authentication Error', error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleForgotPassword = async () => {
+    setAuthMessage(null);
+    if (!email) {
+      setAuthMessage({ type: 'error', text: 'Please enter your email address to reset your password.' });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const redirectUrl = makeRedirectUri({
+        scheme: 'myapp',
+        path: 'reset-password',
+      });
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl,
+      });
+
+      if (error) throw error;
+
+      setAuthMessage({
+        type: 'success',
+        text: 'Check your email! We sent you a password reset link.'
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        setAuthMessage({ type: 'error', text: error.message });
       }
     } finally {
       setLoading(false);
@@ -214,16 +249,16 @@ export default function LoginScreen() {
 
   if (checkingSession) {
     return (
-      <View style={[styles.container, styles.center]}>
+      <View style={[styles.container, styles.center, isDark && styles.containerDark]}>
         <ActivityIndicator size="large" color="#FACC15" />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDark && styles.containerDark]}>
       <LinearGradient
-        colors={['#FFFFFF', '#F3F4F6']}
+        colors={isDark ? ['#111827', '#1F2937'] : ['#FFFFFF', '#F3F4F6']}
         style={styles.background}
       />
 
@@ -244,29 +279,48 @@ export default function LoginScreen() {
 
           {/* Email/Password Section */}
           <View style={styles.formContainer}>
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
+            {authMessage && (
+              <View style={[
+                styles.messageContainer,
+                authMessage.type === 'error' ? (isDark ? styles.errorContainerDark : styles.errorContainer) : (isDark ? styles.successContainerDark : styles.successContainer)
+              ]}>
+                <Text style={[styles.messageText, isDark && styles.messageTextDark]}>{authMessage.text}</Text>
+              </View>
+            )}
+
+            <View style={[styles.inputContainer, isDark && styles.inputContainerDark]}>
+              <Ionicons name="mail-outline" size={20} color={isDark ? '#9CA3AF' : '#9CA3AF'} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, isDark && styles.inputDark]}
                 placeholder="Email"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
               />
             </View>
-            <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
+            <View style={[styles.inputContainer, isDark && styles.inputContainerDark]}>
+              <Ionicons name="lock-closed-outline" size={20} color={isDark ? '#9CA3AF' : '#9CA3AF'} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, isDark && styles.inputDark]}
                 placeholder="Password"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
               />
             </View>
+
+            {!isSignUp && (
+              <TouchableOpacity
+                onPress={handleForgotPassword}
+                style={styles.forgotPasswordContainer}
+                disabled={loading}
+              >
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               style={styles.primaryButton}
@@ -283,7 +337,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)} style={styles.toggleLink}>
-              <Text style={styles.toggleText}>
+              <Text style={[styles.toggleText, isDark && styles.textLight]}>
                 {isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up'}
               </Text>
             </TouchableOpacity>
@@ -322,6 +376,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  containerDark: {
+    backgroundColor: '#111827',
   },
   center: {
     justifyContent: 'center',
@@ -388,6 +445,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 16,
   },
+  inputContainerDark: {
+    backgroundColor: '#374151',
+    borderColor: '#4B5563',
+  },
   inputIcon: {
     marginRight: 12,
   },
@@ -397,6 +458,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_500Medium',
     fontSize: 16,
     color: '#111827',
+  },
+  inputDark: {
+    color: '#F9FAFB',
   },
   primaryButton: {
     backgroundColor: '#FACC15',
@@ -426,6 +490,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#4B5563',
   },
+  textLight: {
+    color: '#D1D5DB',
+  },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -448,5 +515,50 @@ const styles = StyleSheet.create({
     color: '#9CA3AF',
     textAlign: 'center',
     lineHeight: 16,
+  },
+  forgotPasswordContainer: {
+    alignSelf: 'flex-end',
+    marginBottom: 24,
+    marginTop: -8,
+  },
+  forgotPasswordText: {
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 14,
+    color: '#FACC15',
+  },
+  messageContainer: {
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    width: '100%',
+  },
+  errorContainer: {
+    backgroundColor: '#FEE2E2',
+    borderWidth: 1,
+    borderColor: '#EF4444',
+  },
+  errorContainerDark: {
+    backgroundColor: '#7F1D1D',
+    borderWidth: 1,
+    borderColor: '#991B1B',
+  },
+  successContainer: {
+    backgroundColor: '#D1FAE5',
+    borderWidth: 1,
+    borderColor: '#10B981',
+  },
+  successContainerDark: {
+    backgroundColor: '#064E3B',
+    borderWidth: 1,
+    borderColor: '#065F46',
+  },
+  messageText: {
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 13,
+    color: '#1F2937',
+    textAlign: 'center',
+  },
+  messageTextDark: {
+    color: '#F9FAFB',
   },
 });
