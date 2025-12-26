@@ -23,7 +23,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     if (loading) return;
 
     // In Expo Router, the root index route often has an empty segment array or ['index']
-    const inPublicArea = segments.length === 0 || segments[0] === 'index';
+    const inPublicArea = segments.length === 0 || segments[0] === 'index' || segments[0] === 'reset-password';
 
     if (!session && !inPublicArea) {
       router.replace('/');
