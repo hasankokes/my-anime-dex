@@ -92,32 +92,32 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
-    bottom: 25,
-    left: 20,
-    right: 20,
+    bottom: 15, // Lowered from 25
+    left: 50, // Increased from 20 to make it narrower
+    right: 50, // Increased from 20 to make it narrower
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
-    height: 80,
-    borderRadius: 40,
+    height: 70, // Increased slightly to show text descenders
+    borderRadius: 35,
     borderTopWidth: 0,
     // Padding adjustments to center content vertically
     paddingTop: 8,
-    paddingBottom: 8,
+    paddingBottom: 10, // Increased padding to clear descenders (g, y, j, p, q)
   },
   tabLabel: {
     fontFamily: 'Poppins_500Medium',
     fontSize: 10,
-    marginTop: 4, // More space between icon and text
-    paddingBottom: 4,
+    marginTop: 0, // Brought text closer to icon
+    paddingBottom: 0,
   },
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     width: 44,
-    height: 44,
-    marginBottom: 2,
+    height: 30, // Reduced height to compact the layout
+    marginBottom: 0, // Removed bottom margin
   },
 });

@@ -192,10 +192,10 @@ export default function LoginScreen() {
 
 
           console.log('[LoginScreen] WebBrowser result:', JSON.stringify(result));
-          Alert.alert('Debug WebBrowser', JSON.stringify(result));
+
 
           if (result.type === 'success' && result.url) {
-            Alert.alert('Debug', `Auth URL received: ${result.url}`);
+
             const url = new URL(result.url);
             const code = url.searchParams.get('code');
             const access_token = new URLSearchParams(url.hash.substring(1)).get('access_token');
@@ -229,7 +229,7 @@ export default function LoginScreen() {
               console.log('[LoginScreen] Profile safety check failed:', e);
             }
 
-            Alert.alert('Debug', 'Session exchanged successfully. checking session...');
+
 
             checkSession();
           }

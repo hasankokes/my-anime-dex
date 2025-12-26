@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
+import * as Linking from 'expo-linking';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
@@ -88,6 +90,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         return () => subscription.unsubscribe();
+    }, []);
+
+    // Handle deep links for Supabase Auth on Native
+    useEffect(() => {
+        if (Platform.OS === 'web') return;
+
+        const handleDeepLink = async (event: { url: string }) => {
+            const urlStr = event.url;
+            if (!urlStr) return;
+
+            try {
+                const url = new URL(urlStr);
+                const code = url.searchParams.get('code');
+                const fragment = url.hash.substring(1);
+                const params = new URLSearchParams(fragment);
+                const access_token = params.get('access_token');
+                const refresh_token = params.get('refresh_token');
+
+                if (code) {
+                    await supabase.auth.exchangeCodeForSession(code);
+                } else if (access_token && refresh_token) {
+                    await supabase.auth.setSession({
+                        access_token,
+                        refresh_token,
+                    });
+                }
+            } catch (e) {
+                console.log('Deep link parse error:', e);
+            }
+        };
+
+        Linking.getInitialURL().then((url) => {
+            if (url) handleDeepLink({ url });
+        });
+
+        const sub = Linking.addEventListener('url', handleDeepLink);
+        return () => sub.remove();
     }, []);
 
     return (
