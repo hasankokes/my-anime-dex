@@ -18,6 +18,15 @@
         "backgroundColor": "#ffffff"
       }
     },
+    "splash": {
+      "image": "./assets/images/splash-light.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "dark": {
+        "image": "./assets/images/splash-dark.png",
+        "backgroundColor": "#1A1A1A"
+      }
+    },
     "web": {
       "bundler": "metro",
       "output": "single"
