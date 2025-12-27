@@ -266,7 +266,7 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={[styles.contentContainer, { paddingTop: height * 0.08 }]}>
+        <ScrollView contentContainerStyle={[styles.contentContainer, { paddingTop: height * 0.05 }]}>
           {/* Logo Section */}
           <View style={styles.logoContainer}>
             <Image
@@ -275,6 +275,21 @@ export default function LoginScreen() {
             />
 
             <Text style={styles.tagline}>Track   Discover   Watch</Text>
+          </View>
+
+          {/* Social Section (Moved to Top) */}
+          <View style={styles.buttonContainer}>
+            <SocialButton
+              provider="google"
+              onPress={() => performOAuth('google')}
+              isLoading={loading}
+            />
+          </View>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>or</Text>
+            <View style={styles.divider} />
           </View>
 
           {/* Email/Password Section */}
@@ -343,25 +358,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Social Section */}
           <View style={styles.bottomSection}>
-            <View style={styles.dividerContainer}>
-              <View style={styles.divider} />
-              <Text style={styles.dividerText}>or</Text>
-              <View style={styles.divider} />
-            </View>
-
-            <View style={styles.buttonContainer}>
-
-              <SocialButton
-                provider="google"
-                onPress={() => performOAuth('google')}
-                isLoading={loading}
-              />
-            </View>
-
-
-
             <Text style={styles.footerText}>
               By continuing, you agree to our Terms of Service and Privacy Policy.
             </Text>
@@ -399,7 +396,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 60,
+    marginBottom: 50,
   },
   logo: {
     width: 280, // Increased size for visibility (approx 40% increased from 200)
@@ -411,7 +408,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Poppins_500Medium',
     color: '#6B7280',
-    marginTop: -20,
+    marginTop: -40,
   },
   bottomSection: {
     width: '100%',

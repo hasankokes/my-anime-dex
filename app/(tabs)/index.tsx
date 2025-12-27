@@ -231,7 +231,7 @@ export default function HomeScreen() {
           resizeMode="contain"
         />
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={[styles.headerBrandText, { color: colors.text }]}>MY ANIME</Text>
+          <Text style={[styles.headerBrandText, { color: colors.text }]}>ANIME</Text>
           <Text style={[styles.headerBrandText, { color: '#FACC15' }]}>DEX</Text>
         </View>
       </TouchableOpacity>
@@ -419,7 +419,7 @@ export default function HomeScreen() {
         columnWrapperStyle={styles.columnWrapper}
         contentContainerStyle={[styles.listContent, { paddingTop: 0 }]}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={renderHeader}
+        ListHeaderComponent={renderHeader()}
         ListFooterComponent={renderFooter}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // Reduced gap between icons
+    gap: 4, // Reduced gap between icons
   },
   iconButton: {
     padding: 4,

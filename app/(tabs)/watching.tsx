@@ -229,7 +229,7 @@ export default function WatchingScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <FixedHeader />
+      {FixedHeader()}
 
       {/* List */}
       {loading ? (
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 4,
   },
   iconButton: {
     padding: 4,

@@ -256,7 +256,7 @@ export default function FavoritesScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <FixedHeader />
+      {FixedHeader()}
 
       {/* Sort & Filter Section (Above Tabs) */}
       <View style={{ paddingTop: 10 }}>
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 4,
   },
   iconButton: {
     padding: 4,

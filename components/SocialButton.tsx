@@ -34,7 +34,7 @@ export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, i
             />
           ) : (
             <Image
-              source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/512px-Google_%22G%22_logo.svg.png' }}
+              source={require('../assets/images/google-logo.png')}
               style={[styles.icon, { width: 24, height: 24 }]}
             />
           )}
