@@ -508,6 +508,24 @@ export default function ProfileScreen() {
           <View style={styles.decorativeCircle} />
         </View>
 
+        {/* My Library */}
+        <Text style={[styles.sectionHeader, { color: colors.text }]}>My Library</Text>
+
+        <View style={[styles.settingsContainer, { backgroundColor: colors.card }]}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push('/lists')}
+          >
+            <View style={styles.settingLeft}>
+              <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
+                <Ionicons name="list" size={20} color={colors.text} />
+              </View>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>My Lists</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+          </TouchableOpacity>
+        </View>
+
         {/* App Settings */}
         <Text style={[styles.sectionHeader, { color: colors.text }]}>{t('settings.title')}</Text>
 

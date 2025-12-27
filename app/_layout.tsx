@@ -11,6 +11,7 @@ import { useRouter, useSegments } from 'expo-router';
 import { NetworkProvider } from '../context/NetworkContext';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { LanguageProvider } from '../context/LanguageContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -76,30 +77,32 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider>
-      <NetworkProvider>
-        <LanguageProvider>
-          <AuthProvider>
-            <AuthGuard>
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <NetworkProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <AuthGuard>
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
 
-                <Stack.Screen
-                  name="subscription"
-                  options={{
-                    presentation: 'modal',
-                    headerShown: false,
-                    animation: 'slide_from_bottom'
-                  }}
-                />
-              </Stack>
-            </AuthGuard>
-            <OfflineBanner />
-          </AuthProvider>
-        </LanguageProvider>
-      </NetworkProvider>
-    </ThemeProvider>
+                  <Stack.Screen
+                    name="subscription"
+                    options={{
+                      presentation: 'modal',
+                      headerShown: false,
+                      animation: 'slide_from_bottom'
+                    }}
+                  />
+                </Stack>
+              </AuthGuard>
+              <OfflineBanner />
+            </AuthProvider>
+          </LanguageProvider>
+        </NetworkProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

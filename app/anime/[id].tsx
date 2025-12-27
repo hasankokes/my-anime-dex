@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
@@ -33,6 +33,7 @@ export default function AnimeDetailsScreen() {
   const [actionLoading, setActionLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [episodeInput, setEpisodeInput] = useState('0'); // Local state for modal input
+  const [showListModal, setShowListModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -440,6 +441,14 @@ export default function AnimeDetailsScreen() {
             )}
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={[styles.actionButton, { marginTop: 12, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border }]}
+            onPress={() => setShowListModal(true)}
+          >
+            <Ionicons name="list" size={20} color={colors.text} />
+            <Text style={[styles.actionButtonText, { color: colors.text }]}>Save to Custom List</Text>
+          </TouchableOpacity>
+
           <View style={{ height: 24 }} />
 
           {/* Reviews Section */}
@@ -490,7 +499,122 @@ export default function AnimeDetailsScreen() {
         </TouchableOpacity>
       </Modal>
 
+      {/* Add to Custom List Modal */}
+      <CustomListModal
+        visible={showListModal}
+        onClose={() => setShowListModal(false)}
+        anime={anime}
+      />
     </View>
+  );
+}
+
+
+
+// --- Custom List Modal Component ---
+function CustomListModal({ visible, onClose, anime }: { visible: boolean, onClose: () => void, anime: Anime }) {
+  const { colors } = useTheme();
+  const router = useRouter(); // Added router for navigation
+  const [lists, setLists] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (visible) fetchLists();
+  }, [visible]);
+
+  const fetchLists = async () => {
+    try {
+      setLoading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase
+        .from('lists')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setLists(data || []);
+    } catch (error) {
+      console.error('Error fetching lists:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const addToList = async (listId: string) => {
+    try {
+      const { error } = await supabase
+        .from('list_items')
+        .insert({
+          list_id: listId,
+          anime_id: anime.mal_id.toString(),
+          anime_title: anime.title_english || anime.title,
+          anime_image: anime.images.jpg.large_image_url,
+          score: anime.score, // Save global score
+        });
+
+      if (error) {
+        if (error.code === '23505') { // Unique violation
+          Alert.alert('Info', 'Anime is already in this list');
+        } else {
+          throw error;
+        }
+      } else {
+        onClose();
+        // Slight delay to ensure modal animation doesn't interfere with Alert
+        setTimeout(() => {
+          Alert.alert('Success', 'Added to list!');
+        }, 300);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to add to list');
+    }
+  }
+
+  return (
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <TouchableOpacity
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <View style={[styles.modalContent, { backgroundColor: colors.card, maxHeight: '60%' }]}>
+          <Text style={[styles.modalTitle, { color: colors.text }]}>Add to List</Text>
+          {loading ? (
+            <ActivityIndicator color="#FACC15" />
+          ) : lists.length > 0 ? (
+            <FlatList
+              data={lists}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[styles.modalOption, { borderBottomColor: colors.border }]}
+                  onPress={() => addToList(item.id)}
+                >
+                  <Ionicons name="list" size={20} color={colors.subtext} style={{ marginRight: 12 }} />
+                  <Text style={[styles.modalOptionText, { color: colors.text }]}>{item.title}</Text>
+                  <Ionicons name="add-circle-outline" size={20} color={colors.subtext} style={{ marginLeft: 'auto' }} />
+                </TouchableOpacity>
+              )}
+            />
+          ) : (
+            <View style={{ alignItems: 'center', padding: 20 }}>
+              <Text style={{ color: colors.subtext, marginBottom: 10 }}>No lists found.</Text>
+              <TouchableOpacity onPress={() => { onClose(); router.push('/lists/create'); }}>
+                <Text style={{ color: '#FACC15', fontFamily: 'Poppins_600SemiBold' }}>Create a List</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    </Modal>
   );
 }
 
