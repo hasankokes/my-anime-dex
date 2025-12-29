@@ -57,3 +57,28 @@ if (heroImage) { // Check if element exists to avoid errors on privacy page
         heroImage.style.transform = `translateX(${x}px) translateY(${y}px)`;
     });
 }
+
+// Mobile Menu Logic
+const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+const mobileMenu = document.querySelector('.mobile-menu');
+const closeMenu = document.querySelector('.close-menu');
+const mobileLinks = document.querySelectorAll('.mobile-menu a');
+
+if (mobileMenuToggle) {
+    mobileMenuToggle.addEventListener('click', () => {
+        mobileMenu.classList.add('active');
+    });
+}
+
+if (closeMenu) {
+    closeMenu.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+    });
+}
+
+// Close menu when a link is clicked
+mobileLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+    });
+});

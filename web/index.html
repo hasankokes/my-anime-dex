@@ -21,18 +21,34 @@
         <a href="index.html" class="logo-link">
             <img src="header-logo.png" alt="MyAnimeDex Logo" class="nav-logo">
         </a>
-        <nav>
+        <nav class="desktop-nav">
             <a href="#features">Features</a>
             <a href="#about">About</a>
             <a href="privacy.html">Privacy</a>
             <a href="#download" class="btn btn-primary">Download App</a>
         </nav>
+
+        <!-- Mobile Menu Toggle -->
+        <div class="mobile-menu-toggle">
+            <ion-icon name="menu-outline"></ion-icon>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="#download" class="btn btn-primary">Download App</a>
+            <div class="close-menu">
+                <ion-icon name="close-outline"></ion-icon>
+            </div>
+        </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Track, Discover, and Share <br> Your <span class="accent">Anime Journey</span></h1>
+            <h1>Track, Discover and Share Your <span class="accent">Anime Journey</span></h1>
             <p>The ultimate mobile companion for anime enthusiasts. Sync seamlessly, get live updates, and explore a
                 world of anime.</p>
             <div class="hero-buttons">
@@ -57,18 +73,10 @@
             </div>
         </div>
         <div class="hero-image">
-            <!-- Placeholder for App Screenshot -->
             <div class="phone-mockup">
                 <div class="phone-screen">
-                    <div class="app-header">
-                        <div class="app-logo">MY ANIME <span class="text-yellow">DEX</span></div>
-                    </div>
-                    <div class="app-grid">
-                        <div class="app-card"></div>
-                        <div class="app-card"></div>
-                        <div class="app-card"></div>
-                        <div class="app-card"></div>
-                    </div>
+                    <img src="ss/screen-dark.png" alt="MyAnimeDex App Screenshot"
+                        style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
             </div>
             <div class="glow-effect"></div>
@@ -115,6 +123,61 @@
                 <h3>Custom Profiles</h3>
                 <p>Express yourself with unique avatars and themes. Show off your collection in style.</p>
             </div>
+
+            <div class="feature-card">
+                <div class="icon-box">
+                    <ion-icon name="share-social-outline"></ion-icon>
+                </div>
+                <h3>Share with Friends</h3>
+                <p>Create your own anime lists and share them with your friends. Let them know what you're watching!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Showcase -->
+    <section id="showcase" class="showcase">
+        <div class="section-header">
+            <h2>App <span class="accent">Showcase</span></h2>
+            <p>Take a closer look at MyAnimeDex.</p>
+        </div>
+
+        <div class="showcase-grid">
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/screen-light.png" alt="Light Mode Screenshot">
+                    </div>
+                </div>
+                <h3>Light Mode</h3>
+            </div>
+
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/watching_dark.png" alt="Tracking List Screenshot">
+                    </div>
+                </div>
+                <h3>Smart Tracking</h3>
+            </div>
+
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/favorites_dark.png" alt="Favorites Screenshot">
+                    </div>
+                </div>
+                <h3>Favorites</h3>
+            </div>
+
+            <!-- Avatar -->
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/avatar.png" alt="Customization Screenshot">
+                    </div>
+                </div>
+                <h3>Customization</h3>
+            </div>
         </div>
     </section>
 
@@ -140,7 +203,7 @@
             <div class="footer-links">
                 <a href="#features">Features</a>
                 <a href="privacy.html">Privacy Policy</a>
-                <a href="#">Contact</a>
+                <a href="mailto:support@myanimedex.com">Contact</a>
             </div>
         </div>
         <div class="copyright">
