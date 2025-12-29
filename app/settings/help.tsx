@@ -19,6 +19,10 @@ export default function HelpScreen() {
         {
             question: t('help.faq.q2'),
             answer: t('help.faq.a2')
+        },
+        {
+            question: t('help.faq.q3'),
+            answer: t('help.faq.a3')
         }
     ];
 

@@ -80,6 +80,8 @@ const translations = {
                 a1: 'You can add anime to your list by navigating to the anime details page and selecting a status (Watching, Completed, Plan to Watch, etc.).',
                 q2: 'Is the app free?',
                 a2: 'Yes, the core features of the app are free to use. We also offer a premium subscription for additional features.',
+                q3: 'How can I create a custom list?',
+                a3: 'You can create a custom list by going to your Profile > Lists tab and tapping the "+" button. To add anime, go to any anime details page, tap "Add to List", and select your custom list.',
             },
             contact: {
                 title: 'Contact Us',
@@ -165,6 +167,8 @@ const translations = {
                 a1: 'Anime detay sayfasına gidip bir durum (İzliyor, Tamamlandı, İzlenecek vb.) seçerek listenize anime ekleyebilirsiniz.',
                 q2: 'Uygulama ücretsiz mi?',
                 a2: 'Evet, uygulamanın temel özellikleri ücretsizdir. Ek özellikler için premium abonelik de sunuyoruz.',
+                q3: 'Kendi listemi nasıl oluşturabilirim?',
+                a3: 'Profil > Listeler sekmesine gidip "+" butonuna tıklayarak özel bir liste oluşturabilirsiniz. Anime eklemek için detay sayfasına gidin, "Listeye Ekle" butonuna tıklayın ve listenizi seçin.',
             },
             contact: {
                 title: 'Bize Ulaşın',
