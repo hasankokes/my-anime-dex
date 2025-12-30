@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Share, Image, Modal, TextInput, TouchableWithoutFeedback, Platform, FlatList } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import * as Linking from 'expo-linking';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
@@ -106,9 +107,20 @@ export default function ListDetailsScreen() {
 
     const handleShare = async () => {
         if (!list) return;
+
+        // Generate Deep Link
+        const url = Linking.createURL(`/lists/${list.id}`);
+
+        // Create a text summary (All Items)
+        const allItems = items.map((item, index) =>
+            `${index + 1}. ${item.anime_title} ${item.user_score ? `(★${item.user_score})` : ''}`
+        ).join('\n');
+
+        const message = `Check out my anime list "${list.title}"! 📺\n\n${list.description ? list.description + '\n\n' : ''}${allItems}\n\nView details in MyAnimeDex:\n${url}`;
+
         try {
             await Share.share({
-                message: `Check out my anime list "${list.title}" on MyAnimeDex!`, // TODO: Add Deep Link
+                message: message,
             });
         } catch (error) {
             // ignore

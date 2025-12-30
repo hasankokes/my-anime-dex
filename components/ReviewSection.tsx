@@ -12,6 +12,7 @@ import {
     Image
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { supabase } from '../lib/supabase';
 import { StarRating } from './StarRating';
 import { useTheme } from '../context/ThemeContext';
@@ -49,6 +50,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const router = useRouter(); // Initialize Router
 
     useEffect(() => {
         fetchReviews();
@@ -179,18 +181,23 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
         return (
             <View style={[styles.reviewCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <View style={styles.reviewHeader}>
-                    <Image
-                        source={{ uri: avatarUrl }}
-                        style={styles.avatar}
-                    />
-                    <View style={{ flex: 1, marginLeft: 10 }}>
-                        <Text style={[styles.username, { color: colors.text }]}>
-                            {username}
-                        </Text>
-                        <Text style={[styles.date, { color: colors.subtext }]}>
-                            {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
-                        </Text>
-                    </View>
+                    <TouchableOpacity
+                        style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
+                        onPress={() => router.push(`/users/${item.user_id}`)}
+                    >
+                        <Image
+                            source={{ uri: avatarUrl }}
+                            style={styles.avatar}
+                        />
+                        <View style={{ flex: 1, marginLeft: 10 }}>
+                            <Text style={[styles.username, { color: colors.text }]}>
+                                {username}
+                            </Text>
+                            <Text style={[styles.date, { color: colors.subtext }]}>
+                                {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                     <StarRating rating={item.rating} onRatingChange={() => { }} readOnly size={14} />
                 </View>
                 {item.comment ? (

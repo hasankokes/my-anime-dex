@@ -437,12 +437,17 @@ export default function ProfileScreen() {
           </View>
 
           <View style={{ alignItems: 'center', width: '100%', paddingHorizontal: 40, marginTop: 8 }}>
-            <Text style={[
-              styles.rankTitle,
-              { color: getRank(profile?.level || 1).colorHex, marginBottom: 4 }
-            ]}>
-              {getRank(profile?.level || 1).name}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 4 }}>
+              <Text style={[
+                styles.rankTitle,
+                { color: getRank(profile?.level || 1).colorHex, marginRight: 8 }
+              ]}>
+                {getRank(profile?.level || 1).name}
+              </Text>
+              <TouchableOpacity onPress={() => router.push('/leaderboard')}>
+                <Ionicons name="trophy" size={20} color={getRank(profile?.level || 1).colorHex} />
+              </TouchableOpacity>
+            </View>
 
             <Text style={[styles.memberInfo, { marginBottom: 8, color: getRank(profile?.level || 1).colorHex }]}>
               Level {profile?.level || 1} • {getLevelProgress(profile?.xp || 0, profile?.level || 1).current}/{getLevelProgress(profile?.xp || 0, profile?.level || 1).total} XP
