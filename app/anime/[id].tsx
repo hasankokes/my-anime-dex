@@ -9,6 +9,8 @@ import { BlurView } from 'expo-blur';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
 import { ReviewSection } from '../../components/ReviewSection';
+import { useRateUs } from '../../hooks/useRateUs';
+import { RateAppSheet } from '../../components/RateAppSheet';
 
 const { width, height } = Dimensions.get('window');
 
@@ -34,6 +36,7 @@ export default function AnimeDetailsScreen() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [episodeInput, setEpisodeInput] = useState('0'); // Local state for modal input
   const [showListModal, setShowListModal] = useState(false);
+  const { trackAddAnime, showRateSheet, handleRate, handleLater } = useRateUs();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,7 +55,7 @@ export default function AnimeDetailsScreen() {
             .select('*')
             .eq('user_id', session.user.id)
             .eq('anime_id', id)
-            .single();
+            .maybeSingle();
 
           if (entry) {
             setUserEntry(entry);
@@ -253,6 +256,11 @@ export default function AnimeDetailsScreen() {
         if (error) throw error;
         setUserEntry(newEntry);
         setEpisodeInput(newEntry.current_episode?.toString() || '0');
+
+        // Track for Rate Us prompt (only for new adds or positive updates, avoiding remove)
+        if (status !== 'remove') {
+          trackAddAnime();
+        }
       }
     } catch (error) {
       console.error('Error updating status:', error);
@@ -499,11 +507,17 @@ export default function AnimeDetailsScreen() {
         </TouchableOpacity>
       </Modal>
 
-      {/* Add to Custom List Modal */}
       <CustomListModal
         visible={showListModal}
         onClose={() => setShowListModal(false)}
         anime={anime}
+      />
+
+      {/* Rate App Sheet */}
+      <RateAppSheet
+        visible={showRateSheet}
+        onRate={handleRate}
+        onClose={handleLater}
       />
     </View>
   );
