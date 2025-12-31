@@ -5,6 +5,7 @@ export interface Profile {
   level: number;
   xp?: number;
   member_since: string;
+  is_pro?: boolean;
 }
 
 export interface UserAnimeStats {

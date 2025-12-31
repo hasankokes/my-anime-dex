@@ -127,7 +127,7 @@ export default function LoginScreen() {
     try {
       setLoading(true);
       const redirectUrl = makeRedirectUri({
-        scheme: 'myapp',
+        scheme: 'myanimedex',
         path: 'reset-password',
       });
 
@@ -165,7 +165,7 @@ export default function LoginScreen() {
         if (error) throw error;
       } else {
         const redirectTo = makeRedirectUri({
-          scheme: 'myapp',
+          scheme: 'myanimedex',
         });
 
         Alert.alert(

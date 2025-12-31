@@ -62,7 +62,8 @@ export default function ProfileScreen() {
           avatar_url: 'https://images.unsplash.com/photo-1565588383637-643334c4d9fa?q=80&w=400&auto=format&fit=crop',
           level: 42,
           xp: 1870, // Mock XP
-          member_since: new Date().toISOString()
+          member_since: new Date().toISOString(),
+          is_pro: false // Default to false for mock
         });
         setStats({
           watched_count: 1240,
@@ -492,26 +493,28 @@ export default function ProfileScreen() {
 
 
         {/* Subscription Card */}
-        <View style={[styles.subscriptionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <View style={styles.subHeader}>
-            <Ionicons name="star" size={20} color="#FACC15" style={{ marginRight: 8 }} />
-            <Text style={[styles.subTitle, { color: colors.text }]}>Ad-supported Free</Text>
+        {!profile?.is_pro && (
+          <View style={[styles.subscriptionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.subHeader}>
+              <Ionicons name="star" size={20} color="#FACC15" style={{ marginRight: 8 }} />
+              <Text style={[styles.subTitle, { color: colors.text }]}>Ad-supported Free</Text>
+            </View>
+
+            <Text style={[styles.subDescription, { color: colors.subtext }]}>
+              Ad-supported. Upgrade to unlock offline viewing and exclusive themes.
+            </Text>
+
+            <TouchableOpacity
+              style={styles.upgradeButton}
+              onPress={() => router.push('/subscription')}
+            >
+              <Ionicons name="diamond-outline" size={18} color="#111827" style={{ marginRight: 8 }} />
+              <Text style={styles.upgradeButtonText}>Purchase Annual Subscription</Text>
+            </TouchableOpacity>
+
+            <View style={styles.decorativeCircle} />
           </View>
-
-          <Text style={[styles.subDescription, { color: colors.subtext }]}>
-            Ad-supported. Upgrade to unlock offline viewing and exclusive themes.
-          </Text>
-
-          <TouchableOpacity
-            style={styles.upgradeButton}
-            onPress={() => router.push('/subscription')}
-          >
-            <Ionicons name="diamond-outline" size={18} color="#111827" style={{ marginRight: 8 }} />
-            <Text style={styles.upgradeButtonText}>Purchase Annual Subscription</Text>
-          </TouchableOpacity>
-
-          <View style={styles.decorativeCircle} />
-        </View>
+        )}
 
         {/* My Library */}
         <Text style={[styles.sectionHeader, { color: colors.text }]}>My Library</Text>
