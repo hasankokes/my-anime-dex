@@ -10,7 +10,8 @@ import {
   Alert,
   Modal,
   TextInput,
-  ActivityIndicator
+  ActivityIndicator,
+  Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -296,6 +297,62 @@ export default function ProfileScreen() {
       Alert.alert('Error', (error as Error).message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResetProgress = async () => {
+    console.log('Reset Progress button pressed');
+
+    const performReset = async () => {
+      try {
+        setLoading(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
+        const { error } = await supabase
+          .from('user_anime_list')
+          .delete()
+          .eq('user_id', session.user.id);
+
+        if (error) throw error;
+
+        if (Platform.OS === 'web') {
+          window.alert('Success: Your progress has been reset.');
+        } else {
+          Alert.alert('Success', 'Your progress has been reset.');
+        }
+        fetchProfile(); // Refresh stats
+      } catch (error) {
+        if (Platform.OS === 'web') {
+          window.alert(`Error: ${(error as Error).message}`);
+        } else {
+          Alert.alert('Error', (error as Error).message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (Platform.OS === 'web') {
+      if (window.confirm('Are you sure you want to delete all your progress? This will remove all anime from your list, including scores and status. This action cannot be undone.')) {
+        performReset();
+      }
+    } else {
+      Alert.alert(
+        'Reset Progress',
+        'Are you sure you want to delete all your progress? This will remove all anime from your list, including scores and status. This action cannot be undone.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: 'Reset',
+            style: 'destructive',
+            onPress: performReset
+          }
+        ]
+      );
     }
   };
 
@@ -627,6 +684,22 @@ export default function ProfileScreen() {
                 <Ionicons name="document-text-outline" size={20} color={colors.text} />
               </View>
               <Text style={[styles.settingLabel, { color: colors.text }]}>{t('settings.terms')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={[styles.sectionHeader, { marginTop: 24, color: '#EF4444' }]}>Danger Zone</Text>
+        <View style={[styles.settingsContainer, { backgroundColor: colors.card, borderColor: '#EF4444', borderWidth: 1 }]}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleResetProgress}
+          >
+            <View style={styles.settingLeft}>
+              <View style={[styles.settingIconContainer, { backgroundColor: '#FEE2E2' }]}>
+                <Ionicons name="trash-outline" size={20} color="#EF4444" />
+              </View>
+              <Text style={[styles.settingLabel, { color: '#EF4444' }]}>Reset Progress</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
           </TouchableOpacity>

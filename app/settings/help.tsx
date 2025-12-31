@@ -40,6 +40,22 @@ export default function HelpScreen() {
             </View>
 
             <ScrollView contentContainerStyle={styles.content}>
+
+                {/* Walkthrough Banner */}
+                <TouchableOpacity
+                    style={[styles.guideBanner, { backgroundColor: colors.card, borderColor: colors.border }]}
+                    onPress={() => router.push('/settings/guide')}
+                >
+                    <View style={[styles.guideIcon, { backgroundColor: '#FEF3C7' }]}>
+                        <Ionicons name="book" size={24} color="#D97706" />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.guideTitle, { color: colors.text }]}>App Usage Guide</Text>
+                        <Text style={[styles.guideSubtitle, { color: colors.subtext }]}>Learn about buttons, lists & more</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+                </TouchableOpacity>
+
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('help.faq.title')}</Text>
 
                 {faqs.map((faq, index) => (
@@ -124,5 +140,30 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: 'Poppins_500Medium',
         marginBottom: 20,
+    },
+    guideBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+        borderRadius: 16,
+        borderWidth: 1,
+        marginBottom: 24,
+    },
+    guideIcon: {
+        width: 48,
+        height: 48,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    guideTitle: {
+        fontSize: 16,
+        fontFamily: 'Poppins_600SemiBold',
+        marginBottom: 2,
+    },
+    guideSubtitle: {
+        fontSize: 12,
+        fontFamily: 'Poppins_500Medium',
     }
 });
