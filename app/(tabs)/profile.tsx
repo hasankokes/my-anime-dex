@@ -300,6 +300,56 @@ export default function ProfileScreen() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const performDelete = async () => {
+      try {
+        setLoading(true);
+        const { error } = await supabase.rpc('delete_user_account');
+
+        if (error) throw error;
+
+        // Force sign out locally to clear session
+        await supabase.auth.signOut();
+
+        if (Platform.OS === 'web') {
+          window.alert('Account deleted successfully. We are sorry to see you go.');
+        } else {
+          Alert.alert('Account Deleted', 'Your account has been permanently deleted.');
+        }
+        // Router will auto-redirect to login due to AuthGuard
+      } catch (error) {
+        if (Platform.OS === 'web') {
+          window.alert(`Error: ${(error as Error).message}`);
+        } else {
+          Alert.alert('Error', (error as Error).message);
+        }
+        setLoading(false);
+      }
+    };
+
+    if (Platform.OS === 'web') {
+      if (window.confirm('CRITICAL: Are you sure you want to delete your account? This action is PERMANENT and CANNOT be undone. All your data will be lost forever.')) {
+        performDelete();
+      }
+    } else {
+      Alert.alert(
+        'Delete Account',
+        'CRITICAL: Are you sure you want to delete your account? This action is PERMANENT and CANNOT be undone. All your data will be lost forever.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: 'Delete Account',
+            style: 'destructive',
+            onPress: performDelete
+          }
+        ]
+      );
+    }
+  };
+
   const handleResetProgress = async () => {
     console.log('Reset Progress button pressed');
 
@@ -697,9 +747,24 @@ export default function ProfileScreen() {
           >
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, { backgroundColor: '#FEE2E2' }]}>
-                <Ionicons name="trash-outline" size={20} color="#EF4444" />
+                <Ionicons name="refresh-outline" size={20} color="#EF4444" />
               </View>
               <Text style={[styles.settingLabel, { color: '#EF4444' }]}>Reset Progress</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+          </TouchableOpacity>
+
+          <View style={[styles.settingDivider, { backgroundColor: '#FEE2E2' }]} />
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleDeleteAccount}
+          >
+            <View style={styles.settingLeft}>
+              <View style={[styles.settingIconContainer, { backgroundColor: '#FEE2E2' }]}>
+                <Ionicons name="trash-outline" size={20} color="#EF4444" />
+              </View>
+              <Text style={[styles.settingLabel, { color: '#EF4444' }]}>Delete Account</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
           </TouchableOpacity>

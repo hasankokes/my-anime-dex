@@ -47,6 +47,11 @@ export default function PrivacyScreen() {
                     {t('privacy.sections.security.content')}
                 </Text>
 
+                <Text style={[styles.heading, { color: colors.text }]}>{t('privacy.sections.deletion.title')}</Text>
+                <Text style={[styles.paragraph, { color: colors.subtext }]}>
+                    {t('privacy.sections.deletion.content')}
+                </Text>
+
                 <View style={{ height: 40 }} />
             </ScrollView>
         </SafeAreaView>

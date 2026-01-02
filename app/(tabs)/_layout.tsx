@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
     bottom: 15, // Lowered from 25
-    marginHorizontal: 50, // Increased from 20 to make it narrower
+    marginHorizontal: 20, // Increased from 20 to make it narrower
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },

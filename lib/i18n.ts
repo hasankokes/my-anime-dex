@@ -69,6 +69,10 @@ const translations = {
                 security: {
                     title: '3. Security of Your Personal Data',
                     content: 'The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure.'
+                },
+                deletion: {
+                    title: '5. Account Deletion',
+                    content: 'You have the right to request the deletion of your account and associated data. You can delete your account directly within the app via Profile > Danger Zone. This action is permanent.'
                 }
             }
         },
@@ -156,6 +160,10 @@ const translations = {
                 security: {
                     title: '3. Kişisel Verilerinizin Güvenliği',
                     content: 'Kişisel Verilerinizin güvenliği Bizim için önemlidir, ancak İnternet üzerinden hiçbir iletim yönteminin veya elektronik depolama yönteminin %100 güvenli olmadığını unutmayın.'
+                },
+                deletion: {
+                    title: '5. Hesap Silme',
+                    content: 'Hesabınızın ve ilişkili verilerin silinmesini talep etme hakkına sahipsiniz. Hesabınızı Profil > Tehlike Bölgesi üzerinden doğrudan uygulama içinden silebilirsiniz. Bu işlem kalıcıdır.'
                 }
             }
         },
