@@ -108,15 +108,18 @@ export default function ListDetailsScreen() {
     const handleShare = async () => {
         if (!list) return;
 
-        // Generate Deep Link
-        const url = Linking.createURL(`/lists/${list.id}`);
+        // Generate Web Link (which will redirect to app)
+        const webUrl = `https://myanimedex.com/?list_id=${list.id}`;
+
+        // Generate Direct App Link (Deep Link)
+        const appUrl = Linking.createURL(`/lists/${list.id}`);
 
         // Create a text summary (All Items)
         const allItems = items.map((item, index) =>
             `${index + 1}. ${item.anime_title} ${item.user_score ? `(★${item.user_score})` : ''}`
         ).join('\n');
 
-        const message = `Check out my anime list "${list.title}"! 📺\n\n${list.description ? list.description + '\n\n' : ''}${allItems}\n\nView details in MyAnimeDex:\n${url}`;
+        const message = `Check out my anime list "${list.title}"! 📺\n\n${list.description ? list.description + '\n\n' : ''}${allItems}\n\nView details:\nUse Link: ${webUrl}\nApp Link: ${appUrl}`;
 
         try {
             await Share.share({

@@ -77,8 +77,37 @@ if (closeMenu) {
 }
 
 // Close menu when a link is clicked
+// Close menu when a link is clicked
 mobileLinks.forEach(link => {
     link.addEventListener('click', () => {
         mobileMenu.classList.remove('active');
     });
 });
+
+// Deep Link Handling
+const urlParams = new URLSearchParams(window.location.search);
+const listId = urlParams.get('list_id');
+
+if (listId) {
+    // Attempt to open the app
+    const appUrl = `myanimedex://lists/${listId}`;
+
+    // Create a temporary link to click (more reliable than window.location in some cases)
+    const link = document.createElement('a');
+    link.href = appUrl;
+    link.click();
+
+    // Show a message/button in case it fails or user doesn't have the app
+    const heroContent = document.querySelector('.hero-content');
+    if (heroContent) {
+        // Replace hero content with "Opening..." message and manual button
+        heroContent.innerHTML = `
+            <h1>Opening <span class="accent">Anime List...</span></h1>
+            <p>If the app doesn't open automatically, click the button below.</p>
+            <div class="hero-buttons">
+                <a href="${appUrl}" class="btn btn-primary">Open in App</a>
+                <a href="https://myanimedex.com" class="btn">Go Home</a>
+            </div>
+        `;
+    }
+}
