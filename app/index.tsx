@@ -168,10 +168,7 @@ export default function LoginScreen() {
           scheme: 'myanimedex',
         });
 
-        Alert.alert(
-          'Config Required',
-          `Please add this URI to Supabase:\n${redirectTo}\n\nRunning in local/dev mode likely requires this specific URI.`
-        );
+
 
 
         const { data, error } = await supabase.auth.signInWithOAuth({
