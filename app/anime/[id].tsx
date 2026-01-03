@@ -12,6 +12,8 @@ import { ReviewSection } from '../../components/ReviewSection';
 import { useRateUs } from '../../hooks/useRateUs';
 import { RateAppSheet } from '../../components/RateAppSheet';
 
+import { useInterstitialAd } from '../../hooks/useInterstitialAd';
+
 const { width, height } = Dimensions.get('window');
 
 // Status options for the modal
@@ -37,6 +39,7 @@ export default function AnimeDetailsScreen() {
   const [episodeInput, setEpisodeInput] = useState('0'); // Local state for modal input
   const [showListModal, setShowListModal] = useState(false);
   const { trackAddAnime, showRateSheet, handleRate, handleLater } = useRateUs();
+  const { showAdIfNeeded } = useInterstitialAd();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -257,6 +260,7 @@ export default function AnimeDetailsScreen() {
         // Track for Rate Us prompt (only for new adds or positive updates, avoiding remove)
         if (status !== 'remove') {
           trackAddAnime();
+          showAdIfNeeded(); // <--- Trigger Ad
         }
       }
     } catch (error) {
@@ -508,6 +512,7 @@ export default function AnimeDetailsScreen() {
         visible={showListModal}
         onClose={() => setShowListModal(false)}
         anime={anime}
+        showAdIfNeeded={showAdIfNeeded}
       />
 
       {/* Rate App Sheet */}
@@ -523,7 +528,7 @@ export default function AnimeDetailsScreen() {
 
 
 // --- Custom List Modal Component ---
-function CustomListModal({ visible, onClose, anime }: { visible: boolean, onClose: () => void, anime: Anime }) {
+function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible: boolean, onClose: () => void, anime: Anime, showAdIfNeeded: () => void }) {
   const { colors } = useTheme();
   const router = useRouter(); // Added router for navigation
   const [lists, setLists] = useState<any[]>([]);
@@ -574,6 +579,7 @@ function CustomListModal({ visible, onClose, anime }: { visible: boolean, onClos
         }
       } else {
         onClose();
+        showAdIfNeeded(); // <--- Trigger Ad
         // Slight delay to ensure modal animation doesn't interfere with Alert
         setTimeout(() => {
           Alert.alert('Success', 'Added to list!');
