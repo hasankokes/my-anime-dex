@@ -40,7 +40,7 @@ export default function LeaderboardScreen() {
                 setUsers(data);
             }
         } catch (error) {
-            console.log('Error fetching leaderboard:', error);
+
         } finally {
             setLoading(false);
         }

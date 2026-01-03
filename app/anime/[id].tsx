@@ -68,10 +68,7 @@ export default function AnimeDetailsScreen() {
               (animeData.images?.jpg?.large_image_url && entry.anime_image !== animeData.images.jpg.large_image_url);
 
             if (needsUpdate) {
-              console.log('[AnimeDetails] Metadata out of sync, healing...', {
-                oldEps: entry.total_episodes,
-                newEps: animeData.episodes,
-              });
+
 
               // Silent update
               supabase
@@ -88,7 +85,7 @@ export default function AnimeDetailsScreen() {
                   if (updateError) {
                     console.error('[AnimeDetails] Failed to heal metadata:', updateError);
                   } else {
-                    console.log('[AnimeDetails] Metadata healed successfully.');
+
                   }
                 });
             }

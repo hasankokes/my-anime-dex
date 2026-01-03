@@ -72,7 +72,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
-            console.log('Fetched Reviews:', JSON.stringify(data, null, 2)); // Debug Log
+
             setReviews(data || []);
 
             // Check if current user has a review
@@ -156,7 +156,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                         .update({ xp: newXp, level: newLevel })
                         .eq('id', session.user.id);
 
-                    console.log(`Awarded 2 XP. New XP: ${newXp}, New Level: ${newLevel}`);
+
                 }
                 // ----------------------
             }

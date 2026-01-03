@@ -21,14 +21,14 @@ export const useRateUs = () => {
             count += 1;
             await AsyncStorage.setItem(STORAGE_KEY_COUNT, count.toString());
 
-            console.log(`[RateUs] Anime added count: ${count}`);
+
 
             // 3. Check condition: every 5 adds
             if (count % 5 === 0) {
                 setShowRateSheet(true);
             }
         } catch (error) {
-            console.error('[RateUs] Error checking rate condition:', error);
+
         }
     };
 
@@ -38,7 +38,7 @@ export const useRateUs = () => {
             if (await StoreReview.hasAction()) {
                 await StoreReview.requestReview();
                 await AsyncStorage.setItem(STORAGE_KEY_HAS_RATED, 'true');
-                console.log('[RateUs] Review requested');
+
             } else {
                 if (Platform.OS === 'web') {
                     window.alert('Thank You! We appreciate your feedback.');
@@ -48,13 +48,13 @@ export const useRateUs = () => {
                 await AsyncStorage.setItem(STORAGE_KEY_HAS_RATED, 'true');
             }
         } catch (error) {
-            console.error('[RateUs] Error requesting review:', error);
+
         }
     };
 
     const handleLater = () => {
         setShowRateSheet(false);
-        console.log('[RateUs] User deferred rating');
+
     };
 
     return {

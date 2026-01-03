@@ -62,12 +62,12 @@ export default function LoginScreen() {
       const { data: { session } } = response;
 
       if (session) {
-        console.log('[LoginScreen] Session found, letting AuthGuard handle redirect');
+
       } else {
         setCheckingSession(false);
       }
     } catch (error) {
-      console.log('[Auth] Session check failed or timed out:', error);
+
       setCheckingSession(false);
     }
   };
@@ -172,7 +172,7 @@ export default function LoginScreen() {
           'Config Required',
           `Please add this URI to Supabase:\n${redirectTo}\n\nRunning in local/dev mode likely requires this specific URI.`
         );
-        console.log('[LoginScreen] Redirect URI:', redirectTo);
+
 
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider,
@@ -191,7 +191,7 @@ export default function LoginScreen() {
           );
 
 
-          console.log('[LoginScreen] WebBrowser result:', JSON.stringify(result));
+
 
 
           if (result.type === 'success' && result.url) {
@@ -226,7 +226,7 @@ export default function LoginScreen() {
                 }
               }
             } catch (e) {
-              console.log('[LoginScreen] Profile safety check failed:', e);
+
             }
 
 
@@ -236,7 +236,7 @@ export default function LoginScreen() {
         }
       }
     } catch (error) {
-      console.error('[Auth] Error:', error);
+
       if (error instanceof Error) {
         Alert.alert('Login Error', `${error.message}\nType: ${error.name}`);
       }

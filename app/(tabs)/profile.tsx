@@ -113,7 +113,7 @@ export default function ProfileScreen() {
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.log('Error fetching profile:', error.message);
+
       }
     } finally {
       setLoading(false);
@@ -192,7 +192,7 @@ export default function ProfileScreen() {
         setRandomAvatars(characters);
       }
     } catch (error) {
-      console.log('Error fetching avatars:', error);
+
     } finally {
       setLoadingAvatars(false);
     }
@@ -351,7 +351,7 @@ export default function ProfileScreen() {
   };
 
   const handleResetProgress = async () => {
-    console.log('Reset Progress button pressed');
+
 
     const performReset = async () => {
       try {

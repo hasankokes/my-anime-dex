@@ -100,7 +100,6 @@ export default function HomeScreen() {
         setLoading(true);
       }
 
-      console.log(`[Home] Fetching: Page ${pageNum}, Query: "${query}", Category: ${currCategory}`);
 
       let response;
       // Priority: Search Query > Category Filter > Top Anime
@@ -142,15 +141,15 @@ export default function HomeScreen() {
     try {
       setTrendingLoading(true);
       const isOnline = isConnected && isInternetReachable !== false;
-      console.log('[Home] Fetching Trending. Online:', isOnline);
+
 
       if (!isOnline) {
         setTrendingLoading(false);
-        console.log('[Home] Trending fetch skipped - Offline');
+
         return;
       }
       const response = await jikanApi.getTopAiringAnime(1);
-      console.log('[Home] Trending Response Items:', response?.data?.length);
+
       setTrendingAnimes(response.data || []);
     } catch (error) {
       console.error('Error fetching trending:', error);

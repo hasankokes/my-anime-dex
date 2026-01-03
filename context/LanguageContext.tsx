@@ -30,7 +30,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
                 setLanguageState('en');
             }
         } catch (error) {
-            console.log('Error loading language', error);
+
         }
     };
 
@@ -40,7 +40,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
             setLanguageState(lang);
             await AsyncStorage.setItem('user-language', lang);
         } catch (error) {
-            console.log('Error saving language', error);
+
         }
     };
 
