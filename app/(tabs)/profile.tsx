@@ -22,11 +22,13 @@ import { useTheme } from '../../context/ThemeContext';
 import * as ImagePicker from 'expo-image-picker';
 import { getRank, getLevelProgress } from '../../lib/levelSystem';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthProvider';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { colors, isDark, toggleTheme } = useTheme();
   const { t, language } = useLanguage();
+  const { signOut, refreshProfile } = useAuth();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [stats, setStats] = useState<UserAnimeStats>({
@@ -121,11 +123,14 @@ export default function ProfileScreen() {
   };
 
   const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      Alert.alert('Error', error.message);
+    try {
+      await signOut(); // Use the context signOut which clears local state immediately
+      router.replace('/'); // Explicitly redirect to login page
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error', error.message);
+      }
     }
-    // No manual redirect needed - AuthGuard will handle it when session becomes null
   };
 
   const startEditing = () => {
@@ -219,6 +224,7 @@ export default function ProfileScreen() {
       if (updateError) throw updateError;
 
       setProfile(prev => prev ? { ...prev, avatar_url: url } : null);
+      await refreshProfile(); // Refresh global state
       Alert.alert('Success', 'Profile picture updated!');
 
     } catch (error) {
@@ -262,6 +268,7 @@ export default function ProfileScreen() {
       if (updateError) throw updateError;
 
       setProfile(prev => prev ? { ...prev, avatar_url: data.publicUrl } : null);
+      await refreshProfile(); // Refresh global state
       Alert.alert('Success', 'Profile picture updated!');
 
     } catch (error) {
@@ -776,7 +783,7 @@ export default function ProfileScreen() {
           <Text style={styles.logoutText}>{t('settings.logout')}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.versionText}>{t('settings.appVersion')} 2.4.0 (Build 391)</Text>
+        <Text style={styles.versionText}>{t('settings.appVersion')} 1.0.1</Text>
         <View style={{ height: 40 }} />
       </ScrollView>
 

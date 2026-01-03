@@ -31,21 +31,10 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { colors, isDark, toggleTheme } = useTheme();
   const { isConnected, isInternetReachable } = useNetwork();
-  const { session } = useAuth();
+  const { session, avatarUrl } = useAuth();
   const flatListRef = useRef<FlatList>(null);
 
-  // Profile Avatar State
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (session?.user) {
-      // Fetch profile to get avatar
-      supabase.from('profiles').select('avatar_url').eq('id', session.user.id).single()
-        .then(({ data }) => {
-          if (data?.avatar_url) setAvatarUrl(data.avatar_url);
-        });
-    }
-  }, [session]);
 
 
   // Categories

@@ -11,6 +11,7 @@ type AuthContextType = {
     signOut: () => Promise<void>;
     signUp: (email: string) => Promise<void>;
     avatarUrl: string | null;
+    refreshProfile: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
     signOut: async () => { },
     signUp: async () => { },
     avatarUrl: null,
+    refreshProfile: async () => { },
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -45,19 +47,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (error) throw error;
     };
 
-    useEffect(() => {
-        // Function to fetch profile to get avatar_url
-        const fetchProfile = async (userId: string) => {
-            const { data } = await supabase
-                .from('profiles')
-                .select('avatar_url')
-                .eq('id', userId)
-                .single();
-            if (data?.avatar_url) {
-                setAvatarUrl(data.avatar_url);
-            }
-        };
+    const fetchProfile = async (userId: string) => {
+        const { data } = await supabase
+            .from('profiles')
+            .select('avatar_url')
+            .eq('id', userId)
+            .single();
+        if (data?.avatar_url) {
+            setAvatarUrl(data.avatar_url);
+        }
+    };
 
+    const refreshProfile = async () => {
+        if (session?.user) {
+            await fetchProfile(session.user.id);
+        }
+    };
+
+    useEffect(() => {
         // Check active sessions and set the user
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
@@ -137,7 +144,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 signIn,
                 signOut,
                 signUp,
-                avatarUrl
+                avatarUrl,
+                refreshProfile
             }}
         >
             {children}

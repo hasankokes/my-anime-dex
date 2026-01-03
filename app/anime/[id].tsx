@@ -227,6 +227,7 @@ export default function AnimeDetailsScreen() {
         anime_title: anime.title_english || anime.title,
         anime_image: anime.images.jpg.large_image_url,
         status: status === 'remove' ? null : status,
+        is_favorite: userEntry?.is_favorite || (!userEntry?.status && status !== 'remove'),
         total_episodes: anime.episodes || 0,
         score: anime.score,
         updated_at: new Date().toISOString(),
@@ -850,5 +851,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_600SemiBold',
     minWidth: 30,
     marginRight: 4,
+    padding: 0, // Remove default padding
+    textAlignVertical: 'center', // Android alignment
+    includeFontPadding: false, // Android font padding
+    height: '100%',
   }
 });
