@@ -47,14 +47,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (error) throw error;
     };
 
-    const fetchProfile = async (userId: string) => {
+    const fetchProfile = async (userId: string, metadataAvatar?: string) => {
         const { data } = await supabase
             .from('profiles')
             .select('avatar_url')
             .eq('id', userId)
             .single();
+
         if (data?.avatar_url) {
             setAvatarUrl(data.avatar_url);
+        } else if (metadataAvatar) {
+            // Fallback to Google metadata if no profile avatar exists
+            setAvatarUrl(metadataAvatar);
         }
     };
 
@@ -69,13 +73,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
             if (session?.user) {
-                // Try getting from metadata first, then profile
-                const metaAvatar = session.user.user_metadata?.avatar_url;
-                if (metaAvatar) {
-                    setAvatarUrl(metaAvatar);
-                } else {
-                    fetchProfile(session.user.id);
-                }
+                // Always fetch from DB first, passing metadata as fallback
+                fetchProfile(session.user.id, session.user.user_metadata?.avatar_url);
             }
             setLoading(false);
         });
@@ -84,12 +83,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
             if (session?.user) {
-                const metaAvatar = session.user.user_metadata?.avatar_url;
-                if (metaAvatar) {
-                    setAvatarUrl(metaAvatar);
-                } else {
-                    fetchProfile(session.user.id);
-                }
+                // Always fetch from DB first, passing metadata as fallback
+                fetchProfile(session.user.id, session.user.user_metadata?.avatar_url);
             } else {
                 setAvatarUrl(null);
             }
