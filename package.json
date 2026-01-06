@@ -52,6 +52,7 @@
     "react-native-gesture-handler": "~2.24.0",
     "react-native-google-mobile-ads": "^16.0.1",
     "react-native-purchases": "^9.6.13",
+    "react-native-purchases-ui": "^9.6.13",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "^4.10.0",

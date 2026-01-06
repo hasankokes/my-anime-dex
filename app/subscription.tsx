@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRevenueCat } from '../context/RevenueCatProvider';
 
 const { width } = Dimensions.get('window');
 
@@ -30,6 +31,45 @@ const COLLAGE_IMAGES = [
 
 export default function SubscriptionScreen() {
   const router = useRouter();
+  const { currentOffering, purchasePackage, restorePermissions, isPro } = useRevenueCat();
+  const [isPurchasing, setIsPurchasing] = React.useState(false);
+
+  // If already pro, go back or show success
+  React.useEffect(() => {
+    if (isPro) {
+      router.back();
+    }
+  }, [isPro]);
+
+  const handlePurchase = async () => {
+    if (!currentOffering) return;
+    setIsPurchasing(true);
+    try {
+      await purchasePackage(currentOffering);
+      // Success is handled by the useEffect above
+    } catch (e) {
+      // Error handled in provider (except user cancellation)
+    } finally {
+      setIsPurchasing(false);
+    }
+  };
+
+  const handleRestore = async () => {
+    setIsPurchasing(true);
+    try {
+      await restorePermissions();
+      // Success handled by useEffect if entitlement found
+      alert("Restore completed.");
+    } catch (e) {
+      alert("Failed to restore purchases.");
+    } finally {
+      setIsPurchasing(false);
+    }
+  };
+
+  const priceString = currentOffering?.product?.priceString || '$19.99';
+  // const pricePerMonth = currentOffering?.product?.price ? (currentOffering.product.price / 12).toFixed(2) : '1.66';
+  const currencySymbol = currentOffering?.product?.priceString?.charAt(0) || '$';
 
   return (
     <View style={styles.container}>
@@ -82,13 +122,12 @@ export default function SubscriptionScreen() {
               <Text style={styles.bestValueText}>BEST VALUE</Text>
             </View>
 
-            <Text style={styles.planName}>Annual Plan</Text>
+            <Text style={styles.planName}>Monthly Plan</Text>
             <View style={styles.priceRow}>
-              <Text style={styles.priceSymbol}>$</Text>
-              <Text style={styles.priceAmount}>19.99</Text>
-              <Text style={styles.pricePeriod}> / year</Text>
+              <Text style={styles.priceAmount}>{priceString}</Text>
+              <Text style={styles.pricePeriod}> / month</Text>
             </View>
-            <Text style={styles.priceSubtext}>That's just $1.66 / month</Text>
+            <Text style={styles.priceSubtext}>Cancel anytime</Text>
           </View>
 
           {/* Benefits Section */}
@@ -130,13 +169,18 @@ export default function SubscriptionScreen() {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.ctaButton} activeOpacity={0.9}>
-          <Text style={styles.ctaButtonText}>Start Annual Plan</Text>
-          <Ionicons name="arrow-forward" size={20} color="#111827" />
+        <TouchableOpacity
+          style={[styles.ctaButton, { opacity: isPurchasing ? 0.7 : 1 }]}
+          activeOpacity={0.9}
+          onPress={handlePurchase}
+          disabled={isPurchasing}
+        >
+          <Text style={styles.ctaButtonText}>{isPurchasing ? "Processing..." : "Start Monthly Plan"}</Text>
+          {!isPurchasing && <Ionicons name="arrow-forward" size={20} color="#111827" />}
         </TouchableOpacity>
 
         <View style={styles.footerLinks}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleRestore} disabled={isPurchasing}>
             <Text style={styles.footerLinkText}>Restore Purchase</Text>
           </TouchableOpacity>
           <Text style={styles.footerLinkText}> • </Text>
