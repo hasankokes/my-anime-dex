@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, ActivityIndicator, Image } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, ActivityIndicator, Image, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 interface SocialButtonProps {
@@ -7,6 +7,12 @@ interface SocialButtonProps {
   onPress: () => void;
   isLoading?: boolean;
 }
+
+const { width, height } = Dimensions.get('window');
+const BASE_WIDTH = 375;
+const BASE_HEIGHT = 812;
+const scale = Math.min(width / BASE_WIDTH, height / BASE_HEIGHT);
+const normalize = (size: number) => Math.round(size * scale);
 
 export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, isLoading }) => {
   const isApple = provider === 'apple';
@@ -28,14 +34,14 @@ export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, i
           {isApple ? (
             <Ionicons
               name="logo-apple"
-              size={24}
+              size={normalize(24)}
               color="white"
               style={styles.icon}
             />
           ) : (
             <Image
               source={require('../assets/images/google-logo.png')}
-              style={[styles.icon, { width: 24, height: 24 }]}
+              style={[styles.icon, { width: normalize(24), height: normalize(24) }]}
             />
           )}
           <Text style={[styles.text, isApple ? styles.appleText : styles.googleText]}>
@@ -52,10 +58,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 56,
-    borderRadius: 28,
+    height: normalize(50), // Reduced from 56
+    borderRadius: normalize(28),
     width: '100%',
-    marginBottom: 16,
+    marginBottom: normalize(16),
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -74,10 +80,10 @@ const styles = StyleSheet.create({
     borderColor: '#F3F4F6',
   },
   icon: {
-    marginRight: 12,
+    marginRight: normalize(12),
   },
   text: {
-    fontSize: 16,
+    fontSize: normalize(16),
     fontFamily: 'Poppins_600SemiBold',
   },
   appleText: {

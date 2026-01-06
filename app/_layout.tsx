@@ -82,8 +82,8 @@ export default function RootLayout() {
       <ThemeProvider>
         <NetworkProvider>
           <LanguageProvider>
-            <RevenueCatProvider>
-              <AuthProvider>
+            <AuthProvider>
+              <RevenueCatProvider>
                 <AuthGuard>
                   <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -102,8 +102,8 @@ export default function RootLayout() {
                   </Stack>
                 </AuthGuard>
                 <OfflineBanner />
-              </AuthProvider>
-            </RevenueCatProvider>
+              </RevenueCatProvider>
+            </AuthProvider>
           </LanguageProvider>
         </NetworkProvider>
       </ThemeProvider>

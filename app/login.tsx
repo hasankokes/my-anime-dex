@@ -14,6 +14,16 @@ WebBrowser.maybeCompleteAuthSession();
 
 const { width, height } = Dimensions.get('window');
 
+// Standard base dimensions (iPhone X/11/12/13/Pro)
+const BASE_WIDTH = 375;
+const BASE_HEIGHT = 812;
+
+// Calculate scale factor - use the smaller of width/height ratios to ensure fit
+// We limit the max scale to 1.1 to prevent it getting too huge on tablets,
+// and let it shrink as much as needed for smaller devices.
+const scale = Math.min(width / BASE_WIDTH, height / BASE_HEIGHT);
+const normalize = (size: number) => Math.round(size * scale);
+
 import { useTheme } from '../context/ThemeContext';
 
 export default function LoginScreen() {
@@ -32,7 +42,6 @@ export default function LoginScreen() {
     checkSession();
 
     // 1. Listen for auth state changes - Removed redundant listener/redirect that conflicts with AuthGuard
-
 
     // 2. Listen for AppState changes
     const appStateSubscription = AppState.addEventListener('change', (nextAppState) => {
@@ -169,9 +178,6 @@ export default function LoginScreen() {
           scheme: 'myanimedex',
         });
 
-
-
-
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider,
           options: {
@@ -187,10 +193,6 @@ export default function LoginScreen() {
             data.url,
             redirectTo
           );
-
-
-
-
 
           if (result.type === 'success' && result.url) {
 
@@ -226,8 +228,6 @@ export default function LoginScreen() {
             } catch (e) {
 
             }
-
-
 
             checkSession();
           }
@@ -302,7 +302,7 @@ export default function LoginScreen() {
             )}
 
             <View style={[styles.inputContainer, isDark && styles.inputContainerDark]}>
-              <Ionicons name="mail-outline" size={20} color={isDark ? '#9CA3AF' : '#9CA3AF'} style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={normalize(20)} color={isDark ? '#9CA3AF' : '#9CA3AF'} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, isDark && styles.inputDark]}
                 placeholder="Email"
@@ -314,7 +314,7 @@ export default function LoginScreen() {
               />
             </View>
             <View style={[styles.inputContainer, isDark && styles.inputContainerDark]}>
-              <Ionicons name="lock-closed-outline" size={20} color={isDark ? '#9CA3AF' : '#9CA3AF'} style={styles.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={normalize(20)} color={isDark ? '#9CA3AF' : '#9CA3AF'} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, isDark && styles.inputDark]}
                 placeholder="Password"
@@ -388,46 +388,46 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: normalize(24),
     justifyContent: 'center',
-    paddingBottom: 40,
+    paddingBottom: normalize(40),
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 50,
+    marginBottom: normalize(80), // Increased from 30 to separate from buttons
   },
   logo: {
-    width: 280, // Increased size for visibility (approx 40% increased from 200)
-    height: 280,
+    width: normalize(200),
+    height: normalize(200),
     resizeMode: 'contain',
     marginBottom: 0,
   },
   tagline: {
-    fontSize: 18,
+    fontSize: normalize(16),
     fontFamily: 'Poppins_500Medium',
     color: '#6B7280',
-    marginTop: -40,
+    marginTop: normalize(-30),
   },
   bottomSection: {
     width: '100%',
   },
   buttonContainer: {
-    marginBottom: 16,
+    marginBottom: normalize(8), // Reduced from 16 to balance spacing (16+8 = 24 above, matching 24 below)
   },
   refreshLink: {
     alignItems: 'center',
-    marginBottom: 24,
-    padding: 8,
+    marginBottom: normalize(24),
+    padding: normalize(8),
   },
   refreshText: {
-    fontSize: 13,
+    fontSize: normalize(13),
     fontFamily: 'Poppins_500Medium',
     color: '#FACC15',
     textDecorationLine: 'underline',
   },
   formContainer: {
     width: '100%',
-    marginBottom: 24,
+    marginBottom: normalize(24),
   },
   inputContainer: {
     flexDirection: 'row',
@@ -435,23 +435,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    borderRadius: 16,
-    height: 56,
-    marginBottom: 16,
-    paddingHorizontal: 16,
+    borderRadius: normalize(16),
+    height: normalize(50), // Reduced from 56
+    marginBottom: normalize(12), // Reduced from 16
+    paddingHorizontal: normalize(16),
   },
   inputContainerDark: {
     backgroundColor: '#374151',
     borderColor: '#4B5563',
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: normalize(12),
   },
   input: {
     flex: 1,
     height: '100%',
     fontFamily: 'Poppins_500Medium',
-    fontSize: 16,
+    fontSize: normalize(14),
     color: '#111827',
   },
   inputDark: {
@@ -459,12 +459,12 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     backgroundColor: '#FACC15',
-    height: 56,
-    borderRadius: 28,
+    height: normalize(50), // Reduced from 56
+    borderRadius: normalize(28),
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 16,
+    marginTop: normalize(8),
+    marginBottom: normalize(16),
     shadowColor: "#FACC15",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -473,16 +473,16 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     fontFamily: 'Poppins_600SemiBold',
-    fontSize: 16,
+    fontSize: normalize(16),
     color: '#000000',
   },
   toggleLink: {
     alignItems: 'center',
-    padding: 8,
+    padding: normalize(8),
   },
   toggleText: {
     fontFamily: 'Poppins_500Medium',
-    fontSize: 14,
+    fontSize: normalize(13),
     color: '#4B5563',
   },
   textLight: {
@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: normalize(24),
   },
   divider: {
     flex: 1,
@@ -499,32 +499,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E7EB',
   },
   dividerText: {
-    marginHorizontal: 16,
+    marginHorizontal: normalize(16),
     fontFamily: 'Poppins_500Medium',
-    fontSize: 14,
+    fontSize: normalize(14),
     color: '#9CA3AF',
   },
   footerText: {
-    fontSize: 11,
+    fontSize: normalize(10),
     fontFamily: 'Poppins_500Medium',
     color: '#9CA3AF',
     textAlign: 'center',
-    lineHeight: 16,
+    lineHeight: normalize(14),
   },
   forgotPasswordContainer: {
     alignSelf: 'flex-end',
-    marginBottom: 24,
-    marginTop: -8,
+    marginBottom: normalize(24),
+    marginTop: normalize(-4),
   },
   forgotPasswordText: {
     fontFamily: 'Poppins_500Medium',
-    fontSize: 14,
+    fontSize: normalize(13),
     color: '#FACC15',
   },
   messageContainer: {
-    padding: 12,
+    padding: normalize(12),
     borderRadius: 8,
-    marginBottom: 16,
+    marginBottom: normalize(16),
     width: '100%',
   },
   errorContainer: {
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontFamily: 'Poppins_500Medium',
-    fontSize: 13,
+    fontSize: normalize(13),
     color: '#1F2937',
     textAlign: 'center',
   },
