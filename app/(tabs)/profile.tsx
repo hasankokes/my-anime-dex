@@ -125,7 +125,7 @@ export default function ProfileScreen() {
   const handleSignOut = async () => {
     try {
       await signOut(); // Use the context signOut which clears local state immediately
-      router.replace('/'); // Explicitly redirect to login page
+      router.replace('/login'); // Explicitly redirect to login page
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert('Error', error.message);
@@ -611,11 +611,11 @@ export default function ProfileScreen() {
           <View style={[styles.subscriptionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.subHeader}>
               <Ionicons name="star" size={20} color="#FACC15" style={{ marginRight: 8 }} />
-              <Text style={[styles.subTitle, { color: colors.text }]}>Ad-supported Free</Text>
+              <Text style={[styles.subTitle, { color: colors.text }]}>Upgrade to AnimeDex Premium</Text>
             </View>
 
             <Text style={[styles.subDescription, { color: colors.subtext }]}>
-              Ad-supported. Upgrade to unlock offline viewing and exclusive themes.
+              Ad-free. Upgrade to unlock offline viewing and exclusive themes.
             </Text>
 
             <TouchableOpacity
@@ -623,7 +623,7 @@ export default function ProfileScreen() {
               onPress={() => router.push('/subscription')}
             >
               <Ionicons name="diamond-outline" size={18} color="#111827" style={{ marginRight: 8 }} />
-              <Text style={styles.upgradeButtonText}>Purchase Annual Subscription</Text>
+              <Text style={styles.upgradeButtonText}>Start monthly plan</Text>
             </TouchableOpacity>
 
             <View style={styles.decorativeCircle} />

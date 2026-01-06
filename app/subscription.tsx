@@ -7,7 +7,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -59,15 +60,20 @@ export default function SubscriptionScreen() {
     try {
       await restorePermissions();
       // Success handled by useEffect if entitlement found
-      alert("Restore completed.");
+      Alert.alert("Success", "Restore completed successfully.");
     } catch (e) {
-      alert("Failed to restore purchases.");
+      Alert.alert("Error", "Failed to restore purchases.");
     } finally {
       setIsPurchasing(false);
     }
   };
 
   const priceString = currentOffering?.product?.priceString || '$19.99';
+  const introPrice = currentOffering?.product?.introPrice;
+
+  const displayPrice = introPrice ? introPrice.priceString : priceString;
+  const originalPrice = introPrice ? priceString : null;
+
   // const pricePerMonth = currentOffering?.product?.price ? (currentOffering.product.price / 12).toFixed(2) : '1.66';
   const currencySymbol = currentOffering?.product?.priceString?.charAt(0) || '$';
 
@@ -124,14 +130,19 @@ export default function SubscriptionScreen() {
 
             <Text style={styles.planName}>Monthly Plan</Text>
             <View style={styles.priceRow}>
-              <Text style={styles.priceAmount}>{priceString}</Text>
+              {originalPrice && (
+                <Text style={[styles.priceAmount, { textDecorationLine: 'line-through', fontSize: 24, color: '#9CA3AF', marginRight: 8 }]}>
+                  {originalPrice}
+                </Text>
+              )}
+              <Text style={styles.priceAmount}>{displayPrice}</Text>
               <Text style={styles.pricePeriod}> / month</Text>
             </View>
             <Text style={styles.priceSubtext}>Cancel anytime</Text>
           </View>
 
           {/* Benefits Section */}
-          <Text style={styles.benefitsTitle}>PRO BENEFITS</Text>
+          <Text style={styles.benefitsTitle}>PREMIUM BENEFITS</Text>
 
           <View style={styles.benefitItem}>
             <View style={styles.iconContainer}>
@@ -163,7 +174,17 @@ export default function SubscriptionScreen() {
             </View>
           </View>
 
-          <View style={{ height: 100 }} />
+          <View style={styles.benefitItem}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="rocket" size={20} color="#854D0E" />
+            </View>
+            <View style={styles.benefitTextContainer}>
+              <Text style={styles.benefitTitle}>Early Access</Text>
+              <Text style={styles.benefitDesc}>Early access to new features.</Text>
+            </View>
+          </View>
+
+          <View style={{ height: 180 }} />
         </View>
       </ScrollView>
 
@@ -184,11 +205,11 @@ export default function SubscriptionScreen() {
             <Text style={styles.footerLinkText}>Restore Purchase</Text>
           </TouchableOpacity>
           <Text style={styles.footerLinkText}> • </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/settings/terms')}>
             <Text style={styles.footerLinkText}>Terms</Text>
           </TouchableOpacity>
           <Text style={styles.footerLinkText}> • </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/settings/privacy')}>
             <Text style={styles.footerLinkText}>Privacy Policy</Text>
           </TouchableOpacity>
         </View>

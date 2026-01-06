@@ -25,12 +25,12 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     if (loading) return;
 
     // In Expo Router, the root index route often has an empty segment array or ['index']
-    const isLogin = segments.length === 0 || segments[0] === 'index';
+    const isLogin = segments[0] === 'login';
     const isResetPassword = segments[0] === 'reset-password';
     const inPublicArea = isLogin || isResetPassword;
 
     if (!session && !inPublicArea) {
-      router.replace('/');
+      router.replace('/login');
     } else if (session && isLogin) {
       router.replace('/(tabs)');
     }
@@ -88,6 +88,7 @@ export default function RootLayout() {
                   <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                     <Stack.Screen name="index" options={{ headerShown: false }} />
+                    <Stack.Screen name="login" options={{ headerShown: false }} />
                     <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
 
                     <Stack.Screen
