@@ -125,21 +125,41 @@ export default function HomeScreen() {
     }
   };
 
+  const [infiniteTrending, setInfiniteTrending] = useState<Anime[]>([]);
+
+  // Fisher-Yates Shuffle
+  const shuffleArray = (array: Anime[]) => {
+    const newArr = [...array];
+    for (let i = newArr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+    }
+    return newArr;
+  };
+
   // Fetch Trending Logic
   const fetchTrending = async () => {
     try {
       setTrendingLoading(true);
       const isOnline = isConnected && isInternetReachable !== false;
 
-
       if (!isOnline) {
         setTrendingLoading(false);
-
         return;
       }
       const response = await jikanApi.getTopAiringAnime(1);
 
-      setTrendingAnimes(response.data || []);
+      // Take top 20 and SHUFFLE
+      const top20 = (response.data || []).slice(0, 20);
+      const shuffled = shuffleArray(top20);
+
+      setTrendingAnimes(shuffled);
+
+      // Create "Infinite" list by repeating the shuffled list multiple times
+      // 50 reps * 20 items = 1000 items (virtually infinite for manual scrolling)
+      const repeated = Array(50).fill(shuffled).flat();
+      setInfiniteTrending(repeated);
+
     } catch (error) {
       console.error('Error fetching trending:', error);
     } finally {
@@ -228,11 +248,13 @@ export default function HomeScreen() {
       <View style={styles.headerRight}>
         {/* Search Icon */}
         <TouchableOpacity style={styles.iconButton} onPress={() => {
-          // Logic to focus search or toggle search view
-          // If already searching, maybe focus input. If not, focus input.
-          if (searchInputRef.current) {
-            searchInputRef.current.focus();
-          }
+          scrollToTop();
+          // Wait for scroll to start/finish a bit then focus
+          setTimeout(() => {
+            if (searchInputRef.current) {
+              searchInputRef.current.focus();
+            }
+          }, 300);
         }}>
           <Ionicons name="search-outline" size={24} color={colors.text} />
         </TouchableOpacity>
@@ -299,11 +321,14 @@ export default function HomeScreen() {
             <ActivityIndicator size="small" color="#FACC15" style={{ height: 200 }} />
           ) : (
             <FlatList
-              data={trendingAnimes.slice(0, 10)}
-              keyExtractor={(item) => `trending-${item.mal_id}`}
+              data={infiniteTrending} // Use the repeated list
+              keyExtractor={(item, index) => `trending-${item.mal_id}-${index}`}
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ gap: 12, paddingRight: 20 }}
+              initialNumToRender={5} // Optimize for performance
+              maxToRenderPerBatch={10}
+              windowSize={5}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={[styles.trendingCard, { backgroundColor: colors.card }]}

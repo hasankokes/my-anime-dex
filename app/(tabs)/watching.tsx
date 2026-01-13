@@ -24,10 +24,14 @@ const { width } = Dimensions.get('window');
 
 const WatchingListItem = ({
   item,
-  onPress
+  onPress,
+  onIncrement,
+  onDecrement
 }: {
   item: AnimeListItem;
   onPress: () => void;
+  onIncrement: () => void;
+  onDecrement: () => void;
 }) => {
   const { colors } = useTheme();
 
@@ -50,9 +54,27 @@ const WatchingListItem = ({
         </Text>
 
         <View style={styles.progressRow}>
-          <Text style={[styles.currentEpisode, { color: colors.text }]}>
-            Episode {item.current_episode}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={onDecrement}
+              style={styles.controlButton}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons name="remove-circle-outline" size={24} color={colors.text} />
+            </TouchableOpacity>
+
+            <Text style={[styles.currentEpisode, { color: colors.text, marginHorizontal: 8 }]}>
+              Episode {item.current_episode}
+            </Text>
+
+            <TouchableOpacity
+              onPress={onIncrement}
+              style={styles.controlButton}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons name="add-circle-outline" size={24} color={colors.text} />
+            </TouchableOpacity>
+          </View>
           <Text style={[styles.percentage, { color: colors.subtext }]}>{percentage}%</Text>
         </View>
 
@@ -155,11 +177,58 @@ export default function WatchingScreen() {
     });
   };
 
+  const updateEpisode = async (item: AnimeListItem, change: number) => {
+    const newEpisode = item.current_episode + change;
+
+    // Validation
+    if (newEpisode < 0) return;
+    if (item.total_episodes && newEpisode > item.total_episodes) return;
+
+    const isCompleted = item.total_episodes && newEpisode === item.total_episodes;
+
+    // Optimistic Update
+    const oldList = [...watchingList];
+
+    if (isCompleted) {
+      setWatchingList(prev => prev.filter(i => i.id !== item.id));
+    } else {
+      setWatchingList(prev => prev.map(i =>
+        i.id === item.id
+          ? { ...i, current_episode: newEpisode }
+          : i
+      ));
+    }
+
+    try {
+      const updateData: any = {
+        current_episode: newEpisode,
+        updated_at: new Date().toISOString()
+      };
+
+      if (isCompleted) {
+        updateData.status = 'completed';
+      }
+
+      const { error } = await supabase
+        .from('user_anime_list')
+        .update(updateData)
+        .eq('id', item.id);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating episode:', error);
+      Alert.alert('Error', 'Failed to update episode progress');
+      setWatchingList(oldList); // Revert
+    }
+  };
+
   const renderItem = ({ item }: { item: AnimeListItem }) => {
     return (
       <WatchingListItem
         item={item}
         onPress={() => handleCardPress(item)}
+        onIncrement={() => updateEpisode(item, 1)}
+        onDecrement={() => updateEpisode(item, -1)}
       />
     );
   };
@@ -361,6 +430,9 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     justifyContent: 'center',
     paddingRight: 4,
+  },
+  controlButton: {
+    padding: 0,
   },
   title: {
     fontSize: 16,

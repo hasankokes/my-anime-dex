@@ -170,7 +170,7 @@ export default function AnimeDetailsScreen() {
     setEpisodeInput(validatedEp.toString());
 
     // Only update if changed
-    if (validatedEp === userEntry?.current_episode && newStatus === userEntry?.status) return;
+    if (validatedEp === userEntry?.current_episode && newStatus === userEntry?.status && userEntry?.is_favorite) return;
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -185,6 +185,7 @@ export default function AnimeDetailsScreen() {
         anime_title: anime.title_english || anime.title,
         anime_image: anime.images.jpg.large_image_url,
         status: newStatus,
+        is_favorite: true, // Auto-favorite on manual update
         total_episodes: anime.episodes || 0,
         current_episode: validatedEp,
         score: anime.score,

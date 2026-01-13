@@ -20,6 +20,7 @@ import { supabase } from '../../lib/supabase';
 import { Profile, UserAnimeStats } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import * as ImagePicker from 'expo-image-picker';
+import { LinearGradient } from 'expo-linear-gradient';
 import { getRank, getLevelProgress } from '../../lib/levelSystem';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthProvider';
@@ -522,23 +523,55 @@ export default function ProfileScreen() {
         {/* Profile Info */}
         <View style={styles.profileInfoContainer}>
           <TouchableOpacity onPress={openAvatarModal} disabled={uploading} style={styles.avatarWrapper}>
-            <View style={[
-              styles.avatarContainer,
-              {
-                backgroundColor: colors.card,
-                borderColor: getRank(profile?.level || 1).colorHex,
-                borderWidth: getRank(profile?.level || 1).borderWidth,
-              }
-            ]}>
-              {uploading ? (
-                <ActivityIndicator size="small" color="#FACC15" style={{ flex: 1 }} />
-              ) : (
-                <Image
-                  source={{ uri: profile?.avatar_url || 'https://via.placeholder.com/150' }}
-                  style={styles.avatar}
-                />
-              )}
-            </View>
+            {profile?.is_pro ? (
+              <LinearGradient
+                colors={['#c084fc', '#a855f7', '#7e22ce']} // Purple gradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 60,
+                  padding: 4, // Thickness of the gradient border
+                }}
+              >
+                <View style={[
+                  styles.avatarContainer,
+                  {
+                    backgroundColor: colors.card,
+                    borderColor: getRank(profile?.level || 1).colorHex,
+                    borderWidth: getRank(profile?.level || 1).borderWidth,
+                    width: 100,
+                    height: 100,
+                  }
+                ]}>
+                  {uploading ? (
+                    <ActivityIndicator size="small" color="#FACC15" style={{ flex: 1 }} />
+                  ) : (
+                    <Image
+                      source={{ uri: profile?.avatar_url || 'https://via.placeholder.com/150' }}
+                      style={styles.avatar}
+                    />
+                  )}
+                </View>
+              </LinearGradient>
+            ) : (
+              <View style={[
+                styles.avatarContainer,
+                {
+                  backgroundColor: colors.card,
+                  borderColor: getRank(profile?.level || 1).colorHex,
+                  borderWidth: getRank(profile?.level || 1).borderWidth,
+                }
+              ]}>
+                {uploading ? (
+                  <ActivityIndicator size="small" color="#FACC15" style={{ flex: 1 }} />
+                ) : (
+                  <Image
+                    source={{ uri: profile?.avatar_url || 'https://via.placeholder.com/150' }}
+                    style={styles.avatar}
+                  />
+                )}
+              </View>
+            )}
             <View style={[styles.editBadge, { backgroundColor: colors.border, borderColor: colors.card }]}>
               <MaterialIcons name="camera-alt" size={14} color="#FFFFFF" />
             </View>
