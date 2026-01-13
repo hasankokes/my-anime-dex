@@ -13,6 +13,8 @@ import { useRateUs } from '../../hooks/useRateUs';
 import { RateAppSheet } from '../../components/RateAppSheet';
 
 import { useInterstitialAd } from '../../hooks/useInterstitialAd';
+import { useLanguage } from '../../context/LanguageContext';
+import { translateText } from '../../lib/translation';
 
 const { width, height } = Dimensions.get('window');
 
@@ -40,6 +42,34 @@ export default function AnimeDetailsScreen() {
   const [showListModal, setShowListModal] = useState(false);
   const { trackAddAnime, showRateSheet, handleRate, handleLater } = useRateUs();
   const { showAdIfNeeded } = useInterstitialAd();
+  const { language } = useLanguage();
+  const [translatedSynopsis, setTranslatedSynopsis] = useState<string>('');
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  useEffect(() => {
+    const translateSynopsis = async () => {
+      if (!anime?.synopsis) return;
+
+      if (language === 'en') {
+        setTranslatedSynopsis(anime.synopsis);
+        return;
+      }
+
+      try {
+        setIsTranslating(true);
+        const translated = await translateText(anime.synopsis, language, anime.mal_id.toString());
+        setTranslatedSynopsis(translated);
+      } catch (error) {
+        setTranslatedSynopsis(anime.synopsis);
+      } finally {
+        setIsTranslating(false);
+      }
+    };
+
+    if (anime) {
+      translateSynopsis();
+    }
+  }, [anime, language]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -397,7 +427,7 @@ export default function AnimeDetailsScreen() {
               style={[styles.synopsisText, { color: colors.subtext }]}
               numberOfLines={isExpanded ? undefined : 4}
             >
-              {anime.synopsis || 'No synopsis available.'}
+              {isTranslating ? 'Translating...' : (translatedSynopsis || anime.synopsis || 'No synopsis available.')}
             </Text>
             {anime.synopsis && anime.synopsis.length > 200 && (
               <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} style={{ marginTop: 8 }}>

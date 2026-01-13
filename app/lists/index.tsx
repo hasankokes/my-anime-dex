@@ -6,10 +6,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { List } from '../../types/lists';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function MyListsScreen() {
     const router = useRouter();
     const { colors, isDark } = useTheme();
+    const { t } = useLanguage();
     const [lists, setLists] = useState<List[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -82,7 +84,7 @@ export default function MyListsScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="chevron-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.headerTitle, { color: colors.text }]}>My Lists</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>{t('profile.myLists')}</Text>
                 <TouchableOpacity
                     style={[styles.addButton, { backgroundColor: '#FACC15' }]}
                     onPress={() => router.push('/lists/create')}

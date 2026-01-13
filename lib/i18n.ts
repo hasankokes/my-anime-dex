@@ -26,6 +26,10 @@ const translations = {
             account: 'Account',
             about: 'About',
         },
+        profile: {
+            myLibrary: 'My Library',
+            myLists: 'My Lists',
+        },
         offline: {
             title: 'No Internet Connection',
             message: 'Some features may be unavailable.',
@@ -116,6 +120,10 @@ const translations = {
             appearance: 'Görünüm',
             account: 'Hesap',
             about: 'Hakkında',
+        },
+        profile: {
+            myLibrary: 'Kütüphanem',
+            myLists: 'Listelerim',
         },
         offline: {
             title: 'İnternet Bağlantısı Yok',
@@ -208,6 +216,10 @@ const translations = {
             account: 'アカウント',
             about: '詳細',
         },
+        profile: {
+            myLibrary: 'マイライブラリ',
+            myLists: 'マイリスト',
+        },
         offline: {
             title: 'インターネット接続がありません',
             message: '一部の機能が利用できない場合があります。',
@@ -292,6 +304,10 @@ const translations = {
             appearance: 'Внешний вид',
             account: 'Аккаунт',
             about: 'О приложении',
+        },
+        profile: {
+            myLibrary: 'Моя библиотека',
+            myLists: 'Мои списки',
         },
         offline: {
             title: 'Нет подключения к Интернету',
@@ -378,6 +394,10 @@ const translations = {
             account: 'Konto',
             about: 'Über',
         },
+        profile: {
+            myLibrary: 'Meine Bibliothek',
+            myLists: 'Meine Listen',
+        },
         offline: {
             title: 'Keine Internetverbindung',
             message: 'Einige Funktionen sind möglicherweise nicht verfügbar.',
@@ -463,6 +483,10 @@ const translations = {
             account: 'الحساب',
             about: 'عن التطبيق',
         },
+        profile: {
+            myLibrary: 'مكتبتي',
+            myLists: 'قوائمي',
+        },
         offline: {
             title: 'لا يوجد اتصال بالإنترنت',
             message: 'قد تكون بعض الميزات غير متوفرة.',
@@ -524,6 +548,111 @@ const translations = {
                 email: 'support@myanimedex.com'
             }
         }
+    },
+    es: {
+        common: {
+            loading: 'Cargando...',
+            error: 'Error',
+            success: 'Éxito',
+            save: 'Guardar',
+            cancel: 'Cancelar',
+            back: 'Atrás',
+            confirm: 'Confirmar',
+        },
+        settings: {
+            title: 'Configuración',
+            language: 'Idioma',
+            theme: 'Modo Oscuro',
+            support: 'Ayuda y Soporte',
+            privacy: 'Política de Privacidad',
+            terms: 'Términos de Servicio',
+            logout: 'Cerrar Sesión',
+            appVersion: 'Versión de la Aplicación',
+            appearance: 'Apariencia',
+            account: 'Cuenta',
+            about: 'Acerca de',
+        },
+        profile: {
+            myLibrary: 'Mi Biblioteca',
+            myLists: 'Mis Listas',
+        },
+        offline: {
+            title: 'Sin Conexión a Internet',
+            message: 'Algunas funciones pueden no estar disponibles.',
+        },
+        terms: { title: 'Términos de Servicio' },
+        privacy: { title: 'Política de Privacidad' },
+        help: { title: 'Ayuda y Soporte' }
+    },
+    pt: {
+        common: {
+            loading: 'Carregando...',
+            error: 'Erro',
+            success: 'Sucesso',
+            save: 'Salvar',
+            cancel: 'Cancelar',
+            back: 'Voltar',
+            confirm: 'Confirmar',
+        },
+        settings: {
+            title: 'Configurações',
+            language: 'Idioma',
+            theme: 'Modo Escuro',
+            support: 'Ajuda e Suporte',
+            privacy: 'Política de Privacidade',
+            terms: 'Termos de Serviço',
+            logout: 'Sair',
+            appVersion: 'Versão do Aplicativo',
+            appearance: 'Aparência',
+            account: 'Conta',
+            about: 'Sobre',
+        },
+        profile: {
+            myLibrary: 'Minha Biblioteca',
+            myLists: 'Minhas Listas',
+        },
+        offline: {
+            title: 'Sem Conexão com a Internet',
+            message: 'Alguns recursos podem não estar disponíveis.',
+        },
+        terms: { title: 'Termos de Serviço' },
+        privacy: { title: 'Política de Privacidade' },
+        help: { title: 'Ajuda e Suporte' }
+    },
+    id: {
+        common: {
+            loading: 'Memuat...',
+            error: 'Kesalahan',
+            success: 'Berhasil',
+            save: 'Simpan',
+            cancel: 'Batal',
+            back: 'Kembali',
+            confirm: 'Konfirmasi',
+        },
+        settings: {
+            title: 'Pengaturan',
+            language: 'Bahasa',
+            theme: 'Mode Gelap',
+            support: 'Bantuan & Dukungan',
+            privacy: 'Kebijakan Privasi',
+            terms: 'Ketentuan Layanan',
+            logout: 'Keluar',
+            appVersion: 'Versi Aplikasi',
+            appearance: 'Tampilan',
+            account: 'Akun',
+            about: 'Tentang',
+        },
+        profile: {
+            myLibrary: 'Perpustakaan Saya',
+            myLists: 'Daftar Saya',
+        },
+        offline: {
+            title: 'Tidak Ada Koneksi Internet',
+            message: 'Beberapa fitur mungkin tidak tersedia.',
+        },
+        terms: { title: 'Ketentuan Layanan' },
+        privacy: { title: 'Kebijakan Privasi' },
+        help: { title: 'Bantuan & Dukungan' }
     },
 };
 

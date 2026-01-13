@@ -664,7 +664,7 @@ export default function ProfileScreen() {
         )}
 
         {/* My Library */}
-        <Text style={[styles.sectionHeader, { color: colors.text }]}>My Library</Text>
+        <Text style={[styles.sectionHeader, { color: colors.text }]}>{t('profile.myLibrary')}</Text>
 
         <View style={[styles.settingsContainer, { backgroundColor: colors.card }]}>
           <TouchableOpacity
@@ -675,7 +675,7 @@ export default function ProfileScreen() {
               <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
                 <Ionicons name="list" size={20} color={colors.text} />
               </View>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>My Lists</Text>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>{t('profile.myLists')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
           </TouchableOpacity>
@@ -720,6 +720,9 @@ export default function ProfileScreen() {
                       'ja': '日本語',
                       'ru': 'Русский',
                       'de': 'Deutsch',
+                      'es': 'Español',
+                      'pt': 'Português',
+                      'id': 'Bahasa Indonesia',
                       'ar': 'العربية'
                     }[language] || 'English (US)'
                   }

@@ -17,6 +17,9 @@ export default function LanguageScreen() {
         { code: 'ja', name: '日本語 (Japanese)', flag: '🇯🇵' },
         { code: 'ru', name: 'Русский (Russian)', flag: '🇷🇺' },
         { code: 'de', name: 'Deutsch (German)', flag: '🇩🇪' },
+        { code: 'es', name: 'Español (Spanish)', flag: '🇪🇸' },
+        { code: 'pt', name: 'Português (Portuguese)', flag: '🇵🇹' },
+        { code: 'id', name: 'Bahasa Indonesia', flag: '🇮🇩' },
         { code: 'ar', name: 'العربية (Arabic)', flag: '🇸🇦' },
     ];
 
