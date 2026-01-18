@@ -41,6 +41,21 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="calendar"
+        options={{
+          title: 'Calendar',
+          tabBarIcon: ({ focused, color }) => (
+            <View style={styles.iconContainer}>
+              <Ionicons
+                name={focused ? "calendar" : "calendar-outline"}
+                size={24}
+                color={focused ? '#FACC15' : color}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="favorites"
         options={{
           title: 'Favorites',

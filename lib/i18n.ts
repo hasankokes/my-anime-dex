@@ -30,6 +30,22 @@ const translations = {
             myLibrary: 'My Library',
             myLists: 'My Lists',
         },
+        calendar: {
+            title: 'Broadcast Time',
+            favoritesOnly: 'Favorites Only',
+            days: {
+                monday: 'Monday',
+                tuesday: 'Tuesday',
+                wednesday: 'Wednesday',
+                thursday: 'Thursday',
+                friday: 'Friday',
+                saturday: 'Saturday',
+                sunday: 'Sunday',
+            },
+            airingAt: 'Airing at',
+            ep: 'EP',
+            in: 'in',
+        },
         offline: {
             title: 'No Internet Connection',
             message: 'Some features may be unavailable.',
@@ -124,6 +140,22 @@ const translations = {
         profile: {
             myLibrary: 'Kütüphanem',
             myLists: 'Listelerim',
+        },
+        calendar: {
+            title: 'Yayın Saatleri',
+            favoritesOnly: 'Sadece Favoriler',
+            days: {
+                monday: 'Pazartesi',
+                tuesday: 'Salı',
+                wednesday: 'Çarşamba',
+                thursday: 'Perşembe',
+                friday: 'Cuma',
+                saturday: 'Cumartesi',
+                sunday: 'Pazar',
+            },
+            airingAt: 'Yayınlanma',
+            ep: 'Bölüm',
+            in: 'kaldı',
         },
         offline: {
             title: 'İnternet Bağlantısı Yok',
