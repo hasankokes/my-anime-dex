@@ -21,11 +21,11 @@ import { AnimeListItem } from '../../types';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthProvider'; // Added useAuth import
+import { useLanguage } from '../../context/LanguageContext';
 import { AnimeCard } from '../../components/AnimeCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNetwork } from '../../context/NetworkContext';
 
-const FILTERS = ['All', 'Watching', 'Completed', 'Plan to Watch'];
 const SORT_OPTIONS = [
   { label: 'Date Added (Newest)', value: 'updated_at', ascending: false },
   { label: 'Date Added (Oldest)', value: 'updated_at', ascending: true },
@@ -40,8 +40,9 @@ export default function FavoritesScreen() {
   const { avatarUrl } = useAuth(); // Added avatarUrl from auth context
   const insets = useSafeAreaInsets();
   const { isConnected, isInternetReachable } = useNetwork();
+  const { t } = useLanguage();
 
-  const [activeFilter, setActiveFilter] = useState('All');
+  const [activeFilter, setActiveFilter] = useState('all');
   const [favorites, setFavorites] = useState<AnimeListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -85,15 +86,8 @@ export default function FavoritesScreen() {
         .eq('user_id', session.user.id)
         .eq('is_favorite', true);
 
-      if (activeFilter !== 'All') {
-        const statusMap: Record<string, string> = {
-          'Watching': 'watching',
-          'Completed': 'completed',
-          'Plan to Watch': 'plan_to_watch'
-        };
-        if (statusMap[activeFilter]) {
-          query = query.eq('status', statusMap[activeFilter]);
-        }
+      if (activeFilter !== 'all') {
+        query = query.eq('status', activeFilter);
       }
 
       query = query.order(sortBy, { ascending: sortAscending });
@@ -103,7 +97,7 @@ export default function FavoritesScreen() {
 
       setFavorites(data || []);
 
-      if (activeFilter === 'All' && data) {
+      if (activeFilter === 'all' && data) {
         await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(data));
       }
     } catch (error) {
@@ -125,6 +119,13 @@ export default function FavoritesScreen() {
     fetchFavorites();
   };
 
+  const filters = [
+    { label: t('favorites.filters.all'), value: 'all' },
+    { label: t('favorites.filters.watching'), value: 'watching' },
+    { label: t('favorites.filters.completed'), value: 'completed' },
+    { label: t('favorites.filters.planToWatch'), value: 'plan_to_watch' }
+  ];
+
   const filteredFavorites = favorites.filter(item =>
     item.anime_title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -139,8 +140,8 @@ export default function FavoritesScreen() {
     setModalVisible(false);
   };
 
-  const renderFilter = ({ item }: { item: string }) => {
-    const isActive = activeFilter === item;
+  const renderFilter = ({ item }: { item: { label: string, value: string } }) => {
+    const isActive = activeFilter === item.value;
     return (
       <TouchableOpacity
         style={[
@@ -152,14 +153,14 @@ export default function FavoritesScreen() {
         ]}
         onPress={() => {
           setLoading(true);
-          setActiveFilter(item);
+          setActiveFilter(item.value);
         }}
       >
         <Text style={[
           styles.filterText,
           { color: isActive ? '#000000' : colors.subtext, fontWeight: isActive ? '700' : '500' }
         ]}>
-          {item}
+          {item.label}
         </Text>
       </TouchableOpacity>
     );
@@ -207,7 +208,7 @@ export default function FavoritesScreen() {
           <TextInput
             ref={searchInputRef}
             style={[styles.searchInput, { color: colors.text }]}
-            placeholder="Search favorites..."
+            placeholder={t('favorites.searchPlaceholder')}
             placeholderTextColor={colors.subtext}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -262,7 +263,7 @@ export default function FavoritesScreen() {
       <View style={{ paddingTop: 10 }}>
         {/* Sort Row */}
         <View style={styles.sortRowContainer}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Lists</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('favorites.lists')}</Text>
           <TouchableOpacity
             style={[styles.sortButton, { borderColor: colors.border, backgroundColor: colors.card }]}
             onPress={() => setModalVisible(true)}
@@ -276,9 +277,9 @@ export default function FavoritesScreen() {
         {/* Filter Tabs */}
         <View style={styles.filterContainer}>
           <FlatList
-            data={FILTERS}
+            data={filters}
             renderItem={renderFilter}
-            keyExtractor={(item) => item}
+            keyExtractor={(item) => item.value}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 20 }}

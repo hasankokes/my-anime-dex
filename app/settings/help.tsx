@@ -50,8 +50,8 @@ export default function HelpScreen() {
                         <Ionicons name="book" size={24} color="#D97706" />
                     </View>
                     <View style={{ flex: 1 }}>
-                        <Text style={[styles.guideTitle, { color: colors.text }]}>App Usage Guide</Text>
-                        <Text style={[styles.guideSubtitle, { color: colors.subtext }]}>Learn about buttons, lists & more</Text>
+                        <Text style={[styles.guideTitle, { color: colors.text }]}>{t('help.walkthrough.title')}</Text>
+                        <Text style={[styles.guideSubtitle, { color: colors.subtext }]}>{t('help.walkthrough.subtitle')}</Text>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
                 </TouchableOpacity>

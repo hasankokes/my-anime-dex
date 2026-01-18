@@ -4,37 +4,39 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function GuideScreen() {
     const router = useRouter();
     const { colors, isDark } = useTheme();
+    const { t } = useLanguage();
 
     const sections = [
         {
-            title: "Keys & Buttons Guide",
+            title: t('help.guide.keys.title'),
             icon: "keypad-outline",
             items: [
-                { icon: "arrow-back", label: "Back", desc: "Returns to the previous screen." },
-                { icon: "heart", label: "Favorite", desc: "Adds the anime to your Favorites list." },
-                { icon: "add-circle", label: "Add to List", desc: "Adds anime to Watching, Plan to Watch, or Completed." },
-                { icon: "list", label: "Custom List", desc: "Save anime to one of your custom lists." },
-                { icon: "trash", label: "Remove", desc: "Removes an anime from your list." },
+                { icon: "arrow-back", label: t('help.guide.keys.back.label'), desc: t('help.guide.keys.back.desc') },
+                { icon: "heart", label: t('help.guide.keys.favorite.label'), desc: t('help.guide.keys.favorite.desc') },
+                { icon: "add-circle", label: t('help.guide.keys.add.label'), desc: t('help.guide.keys.add.desc') },
+                { icon: "list", label: t('help.guide.keys.custom.label'), desc: t('help.guide.keys.custom.desc') },
+                { icon: "trash", label: t('help.guide.keys.remove.label'), desc: t('help.guide.keys.remove.desc') },
             ]
         },
         {
-            title: "How to Add to Favorites",
+            title: t('help.guide.sections.addFav.title'),
             icon: "heart-outline",
-            content: "On any Anime Details page, look for the Heart icon in the top right corner (or slightly below the header image). Tapping this icon will toggle the anime as a 'Favorite'. You can view all your favorites on your Profile page."
+            content: t('help.guide.sections.addFav.content')
         },
         {
-            title: "How to Add to List",
+            title: t('help.guide.sections.addList.title'),
             icon: "library-outline",
-            content: "On the Anime Details page, tap the large yellow 'Add to List' button (or the button showing your current status). A menu will pop up allowing you to choose 'Watching', 'Completed', or 'Plan to Watch'. Selecting a status automatically tracks it in your library."
+            content: t('help.guide.sections.addList.content')
         },
         {
-            title: "How to Create Custom Lists",
+            title: t('help.guide.sections.customList.title'),
             icon: "albums-outline",
-            content: "You can organize anime into your own custom categories!\n\n1. Go to your Profile.\n2. Tap 'My Lists' under 'My Library'.\n3. Tap the '+' (Create) button.\n4. Give your list a name (e.g., 'Weekend Binge') and save.\n\nTo add an anime to this list: Go to the Anime Details page and tap 'Save to Custom List'."
+            content: t('help.guide.sections.customList.content')
         }
     ];
 
@@ -44,7 +46,7 @@ export default function GuideScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.title, { color: colors.text }]}>App Walkthrough</Text>
+                <Text style={[styles.title, { color: colors.text }]}>{t('help.guide.title')}</Text>
             </View>
 
             <ScrollView contentContainerStyle={styles.content}>

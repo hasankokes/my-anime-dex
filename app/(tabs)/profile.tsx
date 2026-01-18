@@ -734,7 +734,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* Support & Legal */}
-        <Text style={[styles.sectionHeader, { color: colors.text }]}>Support & Legal</Text>
+        <Text style={[styles.sectionHeader, { color: colors.text }]}>{t('profile.supportAndLegal')}</Text>
 
         <View style={[styles.settingsContainer, { backgroundColor: colors.card }]}>
 
@@ -782,7 +782,7 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={[styles.sectionHeader, { marginTop: 24, color: '#EF4444' }]}>Danger Zone</Text>
+        <Text style={[styles.sectionHeader, { marginTop: 24, color: '#EF4444' }]}>{t('profile.dangerZone')}</Text>
         <View style={[styles.settingsContainer, { backgroundColor: colors.card, borderColor: '#EF4444', borderWidth: 1 }]}>
           <TouchableOpacity
             style={styles.settingItem}
@@ -792,7 +792,7 @@ export default function ProfileScreen() {
               <View style={[styles.settingIconContainer, { backgroundColor: '#FEE2E2' }]}>
                 <Ionicons name="refresh-outline" size={20} color="#EF4444" />
               </View>
-              <Text style={[styles.settingLabel, { color: '#EF4444' }]}>Reset Progress</Text>
+              <Text style={[styles.settingLabel, { color: '#EF4444' }]}>{t('profile.resetProgress')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
           </TouchableOpacity>
@@ -807,7 +807,7 @@ export default function ProfileScreen() {
               <View style={[styles.settingIconContainer, { backgroundColor: '#FEE2E2' }]}>
                 <Ionicons name="trash-outline" size={20} color="#EF4444" />
               </View>
-              <Text style={[styles.settingLabel, { color: '#EF4444' }]}>Delete Account</Text>
+              <Text style={[styles.settingLabel, { color: '#EF4444' }]}>{t('profile.deleteAccount')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
           </TouchableOpacity>

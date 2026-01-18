@@ -49,14 +49,19 @@ export const DayTabs: React.FC<DayTabsProps> = ({ selectedDay, onSelectDay }) =>
                             onPress={() => onSelectDay(day)}
                             style={[
                                 styles.tab,
-                                isSelected && { backgroundColor: colors.primary }
+                                {
+                                    backgroundColor: isSelected ? '#FACC15' : colors.card,
+                                    borderColor: isSelected ? '#FACC15' : colors.border
+                                }
                             ]}
                         >
                             <Text
                                 style={[
                                     styles.tabText,
-                                    { color: isSelected ? '#000' : colors.text },
-                                    isSelected && styles.selectedTabText
+                                    {
+                                        color: isSelected ? '#000000' : colors.subtext,
+                                        fontWeight: isSelected ? '700' : '500'
+                                    }
                                 ]}
                             >
                                 {t(`calendar.days.${day}`)}
@@ -75,29 +80,24 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     scrollContent: {
-        paddingHorizontal: 10,
+        paddingHorizontal: 0,
         alignItems: 'center',
         gap: 10,
         // Ensure we have enough space
         paddingRight: 20
     },
     tab: {
-        paddingHorizontal: 16,
+        paddingHorizontal: 20,
         paddingVertical: 8,
         borderRadius: 20,
-        backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: 'rgba(128,128,128, 0.2)',
         // Min width to make scrolling predictable?
         minWidth: 80,
         alignItems: 'center',
     },
     tabText: {
         fontFamily: 'Poppins_500Medium',
-        fontSize: 14,
+        fontSize: 13,
         textTransform: 'capitalize',
     },
-    selectedTabText: {
-        fontFamily: 'Poppins_600SemiBold',
-    }
 });

@@ -29,6 +29,10 @@ const translations = {
         profile: {
             myLibrary: 'My Library',
             myLists: 'My Lists',
+            supportAndLegal: 'Support & Legal',
+            dangerZone: 'Danger Zone',
+            resetProgress: 'Reset Progress',
+            deleteAccount: 'Delete Account',
         },
         calendar: {
             title: 'Broadcast Time',
@@ -45,6 +49,49 @@ const translations = {
             airingAt: 'Airing at',
             ep: 'EP',
             in: 'in',
+        },
+        home: {
+            searchPlaceholder: 'Search anime...',
+            trending: 'Trending Now',
+            categories: 'Categories',
+            cats: {
+                all: 'All',
+                action: 'Action',
+                adventure: 'Adventure',
+                comedy: 'Comedy',
+                drama: 'Drama',
+                fantasy: 'Fantasy',
+                scifi: 'Sci-Fi',
+                horror: 'Horror',
+                romance: 'Romance',
+                sliceOfLife: 'Slice of Life',
+            }
+        },
+        favorites: {
+            lists: 'Lists',
+            searchPlaceholder: 'Search favorites...',
+            filters: {
+                all: 'All',
+                watching: 'Watching',
+                completed: 'Completed',
+                planToWatch: 'Plan to Watch'
+            }
+        },
+        animeDetail: {
+            addToList: 'Add to List',
+            saveToCustomList: 'Save to Custom List',
+            episodesWatched: 'Episodes Watched',
+            synopsis: 'Synopsis',
+            rank: 'Rank',
+            popularity: 'Popularity',
+            members: 'Members',
+            updateListStatus: 'Update List Status',
+            removeFromList: 'Remove from List',
+            noListsFound: 'No lists found.',
+            createList: 'Create a List',
+            alreadyInList: 'Anime is already in this list',
+            addedToList: 'Added to list!',
+            failedToAdd: 'Failed to add to list'
         },
         offline: {
             title: 'No Internet Connection',
@@ -98,6 +145,10 @@ const translations = {
         },
         help: {
             title: 'Help & Support',
+            walkthrough: {
+                title: 'Walkthrough',
+                subtitle: 'Learn about buttons, lists & more',
+            },
             faq: {
                 title: 'Frequently Asked Questions',
                 q1: 'How do I add anime to my list?',
@@ -111,6 +162,22 @@ const translations = {
                 title: 'Contact Us',
                 message: 'If you have any questions or need assistance, please contact our support team at:',
                 email: 'support@myanimedex.com'
+            },
+            guide: {
+                title: 'App Walkthrough',
+                keys: {
+                    title: 'Keys & Buttons Guide',
+                    back: { label: 'Back', desc: 'Returns to the previous screen.' },
+                    favorite: { label: 'Favorite', desc: 'Adds the anime to your Favorites list.' },
+                    add: { label: 'Add to List', desc: 'Adds anime to Watching, Plan to Watch, or Completed.' },
+                    custom: { label: 'Custom List', desc: 'Save anime to one of your custom lists.' },
+                    remove: { label: 'Remove', desc: 'Removes an anime from your list.' },
+                },
+                sections: {
+                    addFav: { title: 'How to Add to Favorites', content: 'On any Anime Details page, look for the Heart icon in the top right corner (or slightly below the header image). Tapping this icon will toggle the anime as a "Favorite". You can view all your favorites on your Profile page.' },
+                    addList: { title: 'How to Add to List', content: 'On the Anime Details page, tap the large yellow "Add to List" button (or the button showing your current status). A menu will pop up allowing you to choose "Watching", "Completed", or "Plan to Watch". Selecting a status automatically tracks it in your library.' },
+                    customList: { title: 'How to Create Custom Lists', content: 'You can organize anime into your own custom categories! 1. Go to your Profile. 2. Tap "My Lists" under "My Library". 3. Tap the "+" (Create) button. 4. Give your list a name (e.g., "Weekend Binge") and save. To add an anime to this list: Go to the Anime Details page and tap "Save to Custom List".' },
+                }
             }
         }
     },
@@ -140,6 +207,10 @@ const translations = {
         profile: {
             myLibrary: 'Kütüphanem',
             myLists: 'Listelerim',
+            supportAndLegal: 'Destek ve Yasal',
+            dangerZone: 'Tehlike Bölgesi',
+            resetProgress: 'İlerlemeyi Sıfırla',
+            deleteAccount: 'Hesabı Sil',
         },
         calendar: {
             title: 'Yayın Saatleri',
@@ -156,6 +227,49 @@ const translations = {
             airingAt: 'Yayınlanma',
             ep: 'Bölüm',
             in: 'kaldı',
+        },
+        home: {
+            searchPlaceholder: 'Anime ara...',
+            trending: 'Trend Olanlar',
+            categories: 'Kategoriler',
+            cats: {
+                all: 'Tümü',
+                action: 'Aksiyon',
+                adventure: 'Macera',
+                comedy: 'Komedi',
+                drama: 'Dram',
+                fantasy: 'Fantastik',
+                scifi: 'Bilim Kurgu',
+                horror: 'Korku',
+                romance: 'Romantizm',
+                sliceOfLife: 'Yaşamdan Kesitler',
+            }
+        },
+        favorites: {
+            lists: 'Listeler',
+            searchPlaceholder: 'Favorilerde ara...',
+            filters: {
+                all: 'Tümü',
+                watching: 'İzleniyor',
+                completed: 'Tamamlandı',
+                planToWatch: 'Planlanan'
+            }
+        },
+        animeDetail: {
+            addToList: 'Listeye Ekle',
+            saveToCustomList: 'Özel Listeye Kaydet',
+            episodesWatched: 'İzlenen Bölümler',
+            synopsis: 'Özet',
+            rank: 'Sıralama',
+            popularity: 'Popülerlik',
+            members: 'Üyeler',
+            updateListStatus: 'Liste Durumunu Güncelle',
+            removeFromList: 'Listeden Kaldır',
+            noListsFound: 'Liste bulunamadı.',
+            createList: 'Liste Oluştur',
+            alreadyInList: 'Anime zaten bu listede',
+            addedToList: 'Listeye eklendi!',
+            failedToAdd: 'Listeye eklenemedi'
         },
         offline: {
             title: 'İnternet Bağlantısı Yok',
@@ -209,6 +323,10 @@ const translations = {
         },
         help: {
             title: 'Yardım ve Destek',
+            walkthrough: {
+                title: 'Uygulama Turu',
+                subtitle: 'Düğmeler, listeler ve daha fazlası hakkında bilgi edinin',
+            },
             faq: {
                 title: 'Sıkça Sorulan Sorular',
                 q1: 'Listeme nasıl anime eklerim?',
@@ -222,6 +340,22 @@ const translations = {
                 title: 'Bize Ulaşın',
                 message: 'Herhangi bir sorunuz varsa veya yardıma ihtiyacınız varsa, lütfen destek ekibimizle iletişime geçin:',
                 email: 'support@myanimedex.com'
+            },
+            guide: {
+                title: 'Uygulama Turu',
+                keys: {
+                    title: 'Tuşlar ve Düğmeler Rehberi',
+                    back: { label: 'Geri', desc: 'Önceki ekrana döner.' },
+                    favorite: { label: 'Favori', desc: 'Animeyi favori listenize ekler.' },
+                    add: { label: 'Listeye Ekle', desc: 'Animeyi İzliyor, İzlenecek veya Tamamlandı olarak ekler.' },
+                    custom: { label: 'Özel Liste', desc: 'Animeyi özel listelerinizden birine kaydeder.' },
+                    remove: { label: 'Kaldır', desc: 'Bir animeyi listenizden kaldırır.' },
+                },
+                sections: {
+                    addFav: { title: 'Favorilere Nasıl Eklenir', content: 'Herhangi bir Anime Detay sayfasında, sağ üst köşedeki (veya başlık resminin hemen altındaki) Kalp simgesini bulun. Bu simgeye dokunmak animeyi "Favori" olarak işaretler. Tüm favorilerinizi Profil sayfanızda görebilirsiniz.' },
+                    addList: { title: 'Listeye Nasıl Eklenir', content: 'Anime Detay sayfasında, büyük sarı "Listeye Ekle" düğmesine (veya mevcut durumunuzu gösteren düğmeye) dokunun. "İzliyor", "Tamamlandı" veya "İzlenecek" seçeneklerini seçmenize izin veren bir menü açılır. Bir durum seçmek onu otomatik olarak kütüphanenizde izler.' },
+                    customList: { title: 'Özel Listeler Nasıl Oluşturulur', content: 'Animeleri kendi özel kategorilerinize ayırabilirsiniz! 1. Profilinize gidin. 2. "Kütüphanem" altındaki "Listelerim"e dokunun. 3. "+" (Oluştur) düğmesine dokunun. 4. Listenize bir ad verin (ör. "Hafta Sonu Maratonu") ve kaydedin. Bir animeyi bu listeye eklemek için: Anime Detay sayfasına gidin ve "Özel Listeye Kaydet"e dokunun.' },
+                }
             }
         }
     },
@@ -251,6 +385,69 @@ const translations = {
         profile: {
             myLibrary: 'マイライブラリ',
             myLists: 'マイリスト',
+            supportAndLegal: 'サポート＆法的事項',
+            dangerZone: '危険地帯',
+            resetProgress: '進行状況をリセット',
+            deleteAccount: 'アカウントを削除',
+        },
+        calendar: {
+            title: '放送時間',
+            favoritesOnly: 'お気に入りのみ',
+            days: {
+                monday: '月曜日',
+                tuesday: '火曜日',
+                wednesday: '水曜日',
+                thursday: '木曜日',
+                friday: '金曜日',
+                saturday: '土曜日',
+                sunday: '日曜日',
+            },
+            airingAt: '放送開始',
+            ep: '話',
+            in: 'あと',
+        },
+        home: {
+            searchPlaceholder: 'アニメを検索...',
+            trending: 'トレンド',
+            categories: 'カテゴリー',
+            cats: {
+                all: 'すべて',
+                action: 'アクション',
+                adventure: '冒険',
+                comedy: 'コメディ',
+                drama: 'ドラマ',
+                fantasy: 'ファンタジー',
+                scifi: 'SF',
+                horror: 'ホラー',
+                romance: 'ロマンス',
+                sliceOfLife: '日常',
+            }
+        },
+        favorites: {
+            lists: 'リスト',
+            searchPlaceholder: 'お気に入りを検索...',
+            filters: {
+                all: 'すべて',
+                watching: '視聴中',
+                completed: '完了',
+                planToWatch: '視聴予定'
+            }
+        },
+        animeDetail: {
+            addToList: 'リストに追加',
+            saveToCustomList: 'カスタムリストに保存',
+            episodesWatched: '視聴したエピソード',
+            synopsis: 'あらすじ',
+            rank: 'ランク',
+            popularity: '人気',
+            members: 'メンバー',
+            updateListStatus: 'リストのステータスを更新',
+            removeFromList: 'リストから削除',
+            noListsFound: 'リストが見つかりません。',
+            createList: 'リストを作成',
+            alreadyInList: 'アニメは既にこのリストにあります',
+            addedToList: 'リストに追加されました！',
+            failedToAdd: 'リストに追加できませんでした'
         },
         offline: {
             title: 'インターネット接続がありません',
@@ -300,6 +497,10 @@ const translations = {
         },
         help: {
             title: 'ヘルプとサポート',
+            walkthrough: {
+                title: 'ウォークスルー',
+                subtitle: 'ボタン、リストなどの詳細',
+            },
             faq: {
                 title: 'よくある質問',
                 q1: 'リストにアニメを追加するにはどうすればよいですか？',
@@ -311,6 +512,22 @@ const translations = {
                 title: 'お問い合わせ',
                 message: 'ご質問やサポートが必要な場合は、サポートチームまでお問い合わせください：',
                 email: 'support@myanimedex.com'
+            },
+            guide: {
+                title: 'アプリウォークスルー',
+                keys: {
+                    title: 'キーとボタンのガイド',
+                    back: { label: '戻る', desc: '前の画面に戻ります。' },
+                    favorite: { label: 'お気に入り', desc: 'アニメをお気に入りリストに追加します。' },
+                    add: { label: 'リストに追加', desc: 'アニメを視聴中、視聴予定、または完了に追加します。' },
+                    custom: { label: 'カスタムリスト', desc: 'アニメをカスタムリストの1つに保存します。' },
+                    remove: { label: '削除', desc: 'リストからアニメを削除します。' },
+                },
+                sections: {
+                    addFav: { title: 'お気に入りへの追加方法', content: 'アニメ詳細ページの右上（またはヘッダー画像の下）にあるハートアイコンを探してください。このアイコンをタップすると、アニメがお気に入りとして切り替わります。お気に入りはプロフィールページですべて確認できます。' },
+                    addList: { title: 'リストへの追加方法', content: 'アニメ詳細ページで、大きな黄色の「リストに追加」ボタン（または現在のステータスを表示しているボタン）をタップします。「視聴中」、「完了」、または「視聴予定」を選択できるメニューが表示されます。ステータスを選択すると、ライブラリで自動的に追跡されます。' },
+                    customList: { title: 'カスタムリストの作成方法', content: 'アニメを独自のカスタムカテゴリに整理できます！ 1. プロフィールに移動します。 2. 「マイライブラリ」の下の「マイリスト」をタップします。 3. 「+」（作成）ボタンをタップします。 4. リストに名前（例：「週末の一気見」）を付けて保存します。このリストにアニメを追加するには：アニメ詳細ページに移動し、「カスタムリストに保存」をタップします。' },
+                }
             }
         }
     },
@@ -340,6 +557,69 @@ const translations = {
         profile: {
             myLibrary: 'Моя библиотека',
             myLists: 'Мои списки',
+            supportAndLegal: 'Поддержка и Правовая информация',
+            dangerZone: 'Опасная зона',
+            resetProgress: 'Сбросить прогресс',
+            deleteAccount: 'Удалить аккаунт',
+        },
+        calendar: {
+            title: 'Время трансляции',
+            favoritesOnly: 'Только избранное',
+            days: {
+                monday: 'Понедельник',
+                tuesday: 'Вторник',
+                wednesday: 'Среда',
+                thursday: 'Четверг',
+                friday: 'Пятница',
+                saturday: 'Суббота',
+                sunday: 'Воскресенье',
+            },
+            airingAt: 'В эфире в',
+            ep: 'Эп.',
+            in: 'через',
+        },
+        home: {
+            searchPlaceholder: 'Поиск аниме...',
+            trending: 'В тренде',
+            categories: 'Категории',
+            cats: {
+                all: 'Все',
+                action: 'Экшн',
+                adventure: 'Приключения',
+                comedy: 'Комедия',
+                drama: 'Драма',
+                fantasy: 'Фэнтези',
+                scifi: 'Научная фантастика',
+                horror: 'Ужасы',
+                romance: 'Романтика',
+                sliceOfLife: 'Повседневность',
+            }
+        },
+        favorites: {
+            lists: 'Списки',
+            searchPlaceholder: 'Поиск в избранном...',
+            filters: {
+                all: 'Все',
+                watching: 'Смотрю',
+                completed: 'Завершено',
+                planToWatch: 'В планах'
+            }
+        },
+        animeDetail: {
+            addToList: 'Добавить в список',
+            saveToCustomList: 'Сохранить в свой список',
+            episodesWatched: 'Просмотрено эпизодов',
+            synopsis: 'Синопсис',
+            rank: 'Ранг',
+            popularity: 'Популярность',
+            members: 'Участники',
+            updateListStatus: 'Обновить статус списка',
+            removeFromList: 'Удалить из списка',
+            noListsFound: 'Списки не найдены.',
+            createList: 'Создать список',
+            alreadyInList: 'Аниме уже в этом списке',
+            addedToList: 'Добавлено в список!',
+            failedToAdd: 'Не удалось добавить в список'
         },
         offline: {
             title: 'Нет подключения к Интернету',
@@ -389,6 +669,10 @@ const translations = {
         },
         help: {
             title: 'Помощь и поддержка',
+            walkthrough: {
+                title: 'Руководство',
+                subtitle: 'Узнайте о кнопках, списках и многом другом',
+            },
             faq: {
                 title: 'Часто задаваемые вопросы',
                 q1: 'Как добавить аниме в мой список?',
@@ -400,6 +684,22 @@ const translations = {
                 title: 'Связаться с нами',
                 message: 'Если у вас есть вопросы или вам нужна помощь, свяжитесь с нашей службой поддержки:',
                 email: 'support@myanimedex.com'
+            },
+            guide: {
+                title: 'Руководство по приложению',
+                keys: {
+                    title: 'Руководство по кнопкам',
+                    back: { label: 'Назад', desc: 'Возврат к предыдущему экрану.' },
+                    favorite: { label: 'Избранное', desc: 'Добавляет аниме в ваш список избранного.' },
+                    add: { label: 'Добавить в список', desc: 'Добавляет аниме в "Смотрю", "В планах" или "Завершено".' },
+                    custom: { label: 'Свой список', desc: 'Сохранить аниме в один из ваших пользовательских списков.' },
+                    remove: { label: 'Удалить', desc: 'Удаляет аниме из вашего списка.' },
+                },
+                sections: {
+                    addFav: { title: 'Как добавить в избранное', content: 'На любой странице сведений об аниме найдите значок сердца в правом верхнем углу (или чуть ниже изображения заголовка). Нажатие на этот значок переключит аниме в разряд «Избранное». Вы можете просмотреть все избранные аниме на странице своего профиля.' },
+                    addList: { title: 'Как добавить в список', content: 'На странице сведений об аниме нажмите большую желтую кнопку «Добавить в список» (или кнопку, отображающую ваш текущий статус). Всплывет меню, позволяющее выбрать «Смотрю», «Завершено» или «В планах». Выбор статуса автоматически отслеживает его в вашей библиотеке.' },
+                    customList: { title: 'Как создать свои списки', content: 'Вы можете организовать аниме по своим собственным категориям! 1. Перейдите в свой профиль. 2. Нажмите «Мои списки» в разделе «Моя библиотека». 3. Нажмите кнопку «+» (Создать). 4. Дайте списку имя (например, «Выходные») и сохраните. Чтобы добавить аниме в этот список: Перейдите на страницу сведений об аниме и нажмите «Сохранить в свой список».' },
+                }
             }
         }
     },
@@ -429,6 +729,69 @@ const translations = {
         profile: {
             myLibrary: 'Meine Bibliothek',
             myLists: 'Meine Listen',
+            supportAndLegal: 'Support & Rechtliches',
+            dangerZone: 'Gefahrenzone',
+            resetProgress: 'Fortschritt zurücksetzen',
+            deleteAccount: 'Konto löschen',
+        },
+        calendar: {
+            title: 'Sendezeit',
+            favoritesOnly: 'Nur Favoriten',
+            days: {
+                monday: 'Montag',
+                tuesday: 'Dienstag',
+                wednesday: 'Mittwoch',
+                thursday: 'Donnerstag',
+                friday: 'Freitag',
+                saturday: 'Samstag',
+                sunday: 'Sonntag',
+            },
+            airingAt: 'Ausstrahlung um',
+            ep: 'EP',
+            in: 'in',
+        },
+        home: {
+            searchPlaceholder: 'Anime suchen...',
+            trending: 'Jetzt im Trend',
+            categories: 'Kategorien',
+            cats: {
+                all: 'Alle',
+                action: 'Action',
+                adventure: 'Abenteuer',
+                comedy: 'Komödie',
+                drama: 'Drama',
+                fantasy: 'Fantasie',
+                scifi: 'Sci-Fi',
+                horror: 'Horror',
+                romance: 'Romantik',
+                sliceOfLife: 'Alltagsleben',
+            }
+        },
+        favorites: {
+            lists: 'Listen',
+            searchPlaceholder: 'Favoriten suchen...',
+            filters: {
+                all: 'Alle',
+                watching: 'Am schauen',
+                completed: 'Abgeschlossen',
+                planToWatch: 'Geplant'
+            }
+        },
+        animeDetail: {
+            addToList: 'Zur Liste hinzufügen',
+            saveToCustomList: 'In benutzerdefinierter Liste speichern',
+            episodesWatched: 'Gesehene Episoden',
+            synopsis: 'Zusammenfassung',
+            rank: 'Rang',
+            popularity: 'Popularität',
+            members: 'Mitglieder',
+            updateListStatus: 'Listenstatus aktualisieren',
+            removeFromList: 'Aus Liste entfernen',
+            noListsFound: 'Keine Listen gefunden.',
+            createList: 'Liste erstellen',
+            alreadyInList: 'Anime ist bereits in dieser Liste',
+            addedToList: 'Zur Liste hinzugefügt!',
+            failedToAdd: 'Hinzufügen zur Liste fehlgeschlagen'
         },
         offline: {
             title: 'Keine Internetverbindung',
@@ -478,6 +841,10 @@ const translations = {
         },
         help: {
             title: 'Hilfe & Support',
+            walkthrough: {
+                title: 'Rundgang',
+                subtitle: 'Erfahren Sie mehr über Schaltflächen, Listen und mehr',
+            },
             faq: {
                 title: 'Häufig gestellte Fragen',
                 q1: 'Wie füge ich Anime zu meiner Liste hinzu?',
@@ -489,6 +856,22 @@ const translations = {
                 title: 'Kontaktieren Sie uns',
                 message: 'Wenn Sie Fragen haben oder Hilfe benötigen, wenden Sie sich bitte an unser Support-Team:',
                 email: 'support@myanimedex.com'
+            },
+            guide: {
+                title: 'App-Rundgang',
+                keys: {
+                    title: 'Tasten- & Schaltflächen-Guide',
+                    back: { label: 'Zurück', desc: 'Kehrt zum vorherigen Bildschirm zurück.' },
+                    favorite: { label: 'Favorit', desc: 'Fügt den Anime Ihrer Favoritenliste hinzu.' },
+                    add: { label: 'Zur Liste hinzufügen', desc: 'Fügt Anime zu Am schauen, Geplant oder Abgeschlossen hinzu.' },
+                    custom: { label: 'Benutzerdefinierte Liste', desc: 'Speichern Sie Anime in einer Ihrer benutzerdefinierten Listen.' },
+                    remove: { label: 'Entfernen', desc: 'Entfernt einen Anime aus Ihrer Liste.' },
+                },
+                sections: {
+                    addFav: { title: 'Wie man zu Favoriten hinzufügt', content: 'Suchen Sie auf jeder Anime-Detailseite nach dem Herzsymbol in der oberen rechten Ecke (oder etwas unterhalb des Titelbilds). Durch Tippen auf dieses Symbol wird der Anime als "Favorit" markiert. Sie können alle Ihre Favoriten auf Ihrer Profilseite anzeigen.' },
+                    addList: { title: 'Wie man zur Liste hinzufügt', content: 'Tippen Sie auf der Anime-Detailseite auf die große gelbe Schaltfläche "Zur Liste hinzufügen" (oder die Schaltfläche, die Ihren aktuellen Status anzeigt). Ein Menü wird angezeigt, in dem Sie "Am schauen", "Abgeschlossen" oder "Geplant" auswählen können. Die Auswahl eines Status verfolgt ihn automatisch in Ihrer Bibliothek.' },
+                    customList: { title: 'Wie man benutzerdefinierte Listen erstellt', content: 'Sie können Anime in Ihre eigenen benutzerdefinierten Kategorien organisieren! 1. Gehen Sie zu Ihrem Profil. 2. Tippen Sie unter "Meine Bibliothek" auf "Meine Listen". 3. Tippen Sie auf die Schaltfläche "+" (Erstellen). 4. Geben Sie Ihrer Liste einen Namen (z. B. "Wochenend-Binge") und speichern Sie. Um einen Anime zu dieser Liste hinzuzufügen: Gehen Sie zur Anime-Detailseite und tippen Sie auf "In benutzerdefinierter Liste speichern".' },
+                }
             }
         }
     },
@@ -518,6 +901,69 @@ const translations = {
         profile: {
             myLibrary: 'مكتبتي',
             myLists: 'قوائمي',
+            supportAndLegal: 'الدعم والقانونية',
+            dangerZone: 'منطقة الخطر',
+            resetProgress: 'إعادة تعيين التقدم',
+            deleteAccount: 'حذف الحساب',
+        },
+        calendar: {
+            title: 'وقت البث',
+            favoritesOnly: 'المفضلة فقط',
+            days: {
+                monday: 'الأثنين',
+                tuesday: 'الثلاثاء',
+                wednesday: 'الأربعاء',
+                thursday: 'الخميس',
+                friday: 'الجمعة',
+                saturday: 'السبت',
+                sunday: 'الأحد',
+            },
+            airingAt: 'يعرض في',
+            ep: 'ح',
+            in: 'خلال',
+        },
+        home: {
+            searchPlaceholder: 'البحث عن أنمي...',
+            trending: 'شائع الآن',
+            categories: 'فئات',
+            cats: {
+                all: 'الكل',
+                action: 'أكشن',
+                adventure: 'مغامرة',
+                comedy: 'كوميديا',
+                drama: 'دراما',
+                fantasy: 'خيال',
+                scifi: 'خيال علمي',
+                horror: 'رعب',
+                romance: 'رومانسية',
+                sliceOfLife: 'شريحة من الحياة',
+            }
+        },
+        favorites: {
+            lists: 'القوائم',
+            searchPlaceholder: 'البحث في المفضلة...',
+            filters: {
+                all: 'الكل',
+                watching: 'أشاهد',
+                completed: 'مكتمل',
+                planToWatch: 'أخطط لمشاهدته'
+            }
+        },
+        animeDetail: {
+            addToList: 'إضافة إلى القائمة',
+            saveToCustomList: 'حفظ في قائمة مخصصة',
+            episodesWatched: 'الحلقات التي تمت مشاهدتها',
+            synopsis: 'ملخص',
+            rank: 'تصنيف',
+            popularity: 'شعبية',
+            members: 'أعضاء',
+            updateListStatus: 'تحديث حالة القائمة',
+            removeFromList: 'إزالة من القائمة',
+            noListsFound: 'لا توجد قوائم.',
+            createList: 'إنشاء قائمة',
+            alreadyInList: 'الأنمي موجود بالفعل في هذه القائمة',
+            addedToList: 'تمت الإضافة إلى القائمة!',
+            failedToAdd: 'فشل في الإضافة إلى القائمة'
         },
         offline: {
             title: 'لا يوجد اتصال بالإنترنت',
@@ -567,6 +1013,10 @@ const translations = {
         },
         help: {
             title: 'المساعدة والدعم',
+            walkthrough: {
+                title: 'جولة تعريفية',
+                subtitle: 'تعرف على الأزرار والقوائم والمزيد',
+            },
             faq: {
                 title: 'الأسئلة الشائعة',
                 q1: 'كيف أضيف أنمي إلى قائمتي؟',
@@ -578,6 +1028,22 @@ const translations = {
                 title: 'اتصل بنا',
                 message: 'إذا كان لديك أي أسئلة أو كنت بحاجة إلى مساعدة، يرجى الاتصال بفريق الدعم لدينا:',
                 email: 'support@myanimedex.com'
+            },
+            guide: {
+                title: 'جولة في التطبيق',
+                keys: {
+                    title: 'دليل المفاتيح والأزرار',
+                    back: { label: 'عودة', desc: 'يعود إلى الشاشة السابقة.' },
+                    favorite: { label: 'مفضل', desc: 'يضيف الأنمي إلى قائمة المفضلة لديك.' },
+                    add: { label: 'إضافة إلى القائمة', desc: 'يضيف الأنمي إلى "أشاهد"، "مخطط للمشاهدة"، أو "مكتمل".' },
+                    custom: { label: 'قائمة مخصصة', desc: 'حفظ الأنمي في إحدى قوائمك المخصصة.' },
+                    remove: { label: 'إزالة', desc: 'يزيل الأنمي من قائمتك.' },
+                },
+                sections: {
+                    addFav: { title: 'كيفية الإضافة إلى المفضلة', content: 'في أي صفحة تفاصيل أنمي، ابحث عن رمز القلب في الزاوية العلوية اليمنى (أو أسفل صورة العنوان قليلاً). سيؤدي النقر فوق هذا الرمز إلى تبديل الأنمي كـ "مفضل". يمكنك عرض جميع مفضلاتك على صفحة ملفك الشخصي.' },
+                    addList: { title: 'كيفية الإضافة إلى القائمة', content: 'في صفحة تفاصيل الأنمي، اضغط على الزر الأصفر الكبير "إضافة إلى القائمة" (أو الزر الذي يظهر حالتك الحالية). ستظهر قائمة تتيح لك اختيار "أشاهد" أو "مكتمل" أو "مخطط للمشاهدة". يؤدي تحديد الحالة إلى تتبعها تلقائيًا في مكتبتك.' },
+                    customList: { title: 'كيفية إنشاء قوائم مخصصة', content: 'يمكنك تنظيم الأنمي في فئاتك المخصصة! 1. اذهب إلى ملفك الشخصي. 2. اضغط على "قوائمي" تحت "مكتبتي". 3. اضغط على زر "+" (إنشاء). 4. أعط قائمتك اسمًا (مثل "عطلة نهاية الأسبوع") واحفظها. لإضافة أنمي إلى هذه القائمة: اذهب إلى صفحة تفاصيل الأنمي واضغط على "حفظ في قائمة مخصصة".' },
+                }
             }
         }
     },
@@ -607,6 +1073,69 @@ const translations = {
         profile: {
             myLibrary: 'Mi Biblioteca',
             myLists: 'Mis Listas',
+            supportAndLegal: 'Soporte y Legal',
+            dangerZone: 'Zona de Peligro',
+            resetProgress: 'Restablecer Progreso',
+            deleteAccount: 'Eliminar Cuenta',
+        },
+        calendar: {
+            title: 'Hora de emisión',
+            favoritesOnly: 'Solo favoritos',
+            days: {
+                monday: 'Lunes',
+                tuesday: 'Martes',
+                wednesday: 'Miércoles',
+                thursday: 'Jueves',
+                friday: 'Viernes',
+                saturday: 'Sábado',
+                sunday: 'Domingo',
+            },
+            airingAt: 'Emisión a las',
+            ep: 'EP',
+            in: 'en',
+        },
+        home: {
+            searchPlaceholder: 'Buscar anime...',
+            trending: 'En Tendencia',
+            categories: 'Categorías',
+            cats: {
+                all: 'Todo',
+                action: 'Acción',
+                adventure: 'Aventura',
+                comedy: 'Comedia',
+                drama: 'Drama',
+                fantasy: 'Fantasía',
+                scifi: 'Ciencia Ficción',
+                horror: 'Terror',
+                romance: 'Romance',
+                sliceOfLife: 'Recuentos de la vida',
+            }
+        },
+        favorites: {
+            lists: 'Listas',
+            searchPlaceholder: 'Buscar favoritos...',
+            filters: {
+                all: 'Todo',
+                watching: 'Viendo',
+                completed: 'Completado',
+                planToWatch: 'Planeado'
+            }
+        },
+        animeDetail: {
+            addToList: 'Añadir a Lista',
+            saveToCustomList: 'Guardar en Lista Personalizada',
+            episodesWatched: 'Episodios Vistos',
+            synopsis: 'Sinopsis',
+            rank: 'Rango',
+            popularity: 'Popularidad',
+            members: 'Miembros',
+            updateListStatus: 'Actualizar Estado de Lista',
+            removeFromList: 'Eliminar de Lista',
+            noListsFound: 'No se encontraron listas.',
+            createList: 'Crear una Lista',
+            alreadyInList: 'El anime ya está en esta lista',
+            addedToList: '¡Añadido a la lista!',
+            failedToAdd: 'Error al añadir a la lista'
         },
         offline: {
             title: 'Sin Conexión a Internet',
@@ -614,7 +1143,29 @@ const translations = {
         },
         terms: { title: 'Términos de Servicio' },
         privacy: { title: 'Política de Privacidad' },
-        help: { title: 'Ayuda y Soporte' }
+        help: {
+            title: 'Ayuda y Soporte',
+            walkthrough: {
+                title: 'Guía',
+                subtitle: 'Aprende sobre botones, listas y más',
+            },
+            guide: {
+                title: 'Guía de la Aplicación',
+                keys: {
+                    title: 'Guía de Teclas y Botones',
+                    back: { label: 'Atrás', desc: 'Regresa a la pantalla anterior.' },
+                    favorite: { label: 'Favorito', desc: 'Añade el anime a tu lista de Favoritos.' },
+                    add: { label: 'Añadir a Lista', desc: 'Añade anime a Viendo, Planeado o Completado.' },
+                    custom: { label: 'Lista Personalizada', desc: 'Guarda anime en una de tus listas personalizadas.' },
+                    remove: { label: 'Eliminar', desc: 'Elimina un anime de tu lista.' },
+                },
+                sections: {
+                    addFav: { title: 'Cómo añadir a Favoritos', content: 'En cualquier página de detalles de anime, busca el icono de Corazón en la esquina superior derecha. Tocar este icono marcará el anime como "Favorito".' },
+                    addList: { title: 'Cómo añadir a Lista', content: 'En la página de detalles del anime, toca el botón amarillo grande "Añadir a Lista". Aparecerá un menú que te permitirá elegir "Viendo", "Completado" o "Planeado".' },
+                    customList: { title: 'Cómo crear listas personalizadas', content: 'Ve a Perfil > Mis Listas > Toca el botón "+". Dale un nombre a tu lista y guarda. Para añadir un anime, ve a la página de detalles y toca "Guardar en Lista Personalizada".' },
+                }
+            }
+        }
     },
     pt: {
         common: {
@@ -642,6 +1193,69 @@ const translations = {
         profile: {
             myLibrary: 'Minha Biblioteca',
             myLists: 'Minhas Listas',
+            supportAndLegal: 'Suporte e Legal',
+            dangerZone: 'Zona de Perigo',
+            resetProgress: 'Redefinir Progresso',
+            deleteAccount: 'Excluir Conta',
+        },
+        calendar: {
+            title: 'Horário de Transmissão',
+            favoritesOnly: 'Apenas Favoritos',
+            days: {
+                monday: 'Segunda',
+                tuesday: 'Terça',
+                wednesday: 'Quarta',
+                thursday: 'Quinta',
+                friday: 'Sexta',
+                saturday: 'Sábado',
+                sunday: 'Domingo',
+            },
+            airingAt: 'No ar às',
+            ep: 'EP',
+            in: 'em',
+        },
+        home: {
+            searchPlaceholder: 'Buscar anime...',
+            trending: 'Em Alta',
+            categories: 'Categorias',
+            cats: {
+                all: 'Todos',
+                action: 'Ação',
+                adventure: 'Aventura',
+                comedy: 'Comédia',
+                drama: 'Drama',
+                fantasy: 'Fantasia',
+                scifi: 'Ficção Científica',
+                horror: 'Terror',
+                romance: 'Romance',
+                sliceOfLife: 'Cotidiano',
+            }
+        },
+        favorites: {
+            lists: 'Listas',
+            searchPlaceholder: 'Buscar favoritos...',
+            filters: {
+                all: 'Todos',
+                watching: 'Assistindo',
+                completed: 'Completo',
+                planToWatch: 'Planejado'
+            }
+        },
+        animeDetail: {
+            addToList: 'Adicionar à Lista',
+            saveToCustomList: 'Salvar na Lista Personalizada',
+            episodesWatched: 'Episódios Assistidos',
+            synopsis: 'Sinopse',
+            rank: 'Classificação',
+            popularity: 'Popularidade',
+            members: 'Membros',
+            updateListStatus: 'Atualizar Status da Lista',
+            removeFromList: 'Remover da Lista',
+            noListsFound: 'Nenhuma lista encontrada.',
+            createList: 'Criar uma Lista',
+            alreadyInList: 'Anime já está nesta lista',
+            addedToList: 'Adicionado à lista!',
+            failedToAdd: 'Falha ao adicionar à lista'
         },
         offline: {
             title: 'Sem Conexão com a Internet',
@@ -649,7 +1263,29 @@ const translations = {
         },
         terms: { title: 'Termos de Serviço' },
         privacy: { title: 'Política de Privacidade' },
-        help: { title: 'Ajuda e Suporte' }
+        help: {
+            title: 'Ajuda e Suporte',
+            walkthrough: {
+                title: 'Visão Geral',
+                subtitle: 'Saiba mais sobre botões, listas e mais',
+            },
+            guide: {
+                title: 'Tour do Aplicativo',
+                keys: {
+                    title: 'Guia de Teclas e Botões',
+                    back: { label: 'Voltar', desc: 'Retorna à tela anterior.' },
+                    favorite: { label: 'Favorito', desc: 'Adiciona o anime à sua lista de Favoritos.' },
+                    add: { label: 'Adicionar à Lista', desc: 'Adiciona anime a Assistindo, Planejado ou Completo.' },
+                    custom: { label: 'Lista Personalizada', desc: 'Salva anime em uma de suas listas personalizadas.' },
+                    remove: { label: 'Remover', desc: 'Remove um anime da sua lista.' },
+                },
+                sections: {
+                    addFav: { title: 'Como adicionar aos Favoritos', content: 'Em qualquer página de detalhes de anime, procure o ícone de Coração no canto superior direito. Tocar neste ícone marcará o anime como "Favorito".' },
+                    addList: { title: 'Como adicionar à Lista', content: 'Na página de detalhes do anime, toque no grande botão amarelo "Adicionar à Lista". Um menu aparecerá permitindo que você escolha "Assistindo", "Completo" ou "Planejado".' },
+                    customList: { title: 'Como criar listas personalizadas', content: 'Vá para Perfil > Minhas Listas > Toque no botão "+". Dê um nome à sua lista e salve. Para adicionar um anime, vá para a página de detalhes e toque em "Salvar na Lista Personalizada".' },
+                }
+            }
+        }
     },
     id: {
         common: {
@@ -677,6 +1313,69 @@ const translations = {
         profile: {
             myLibrary: 'Perpustakaan Saya',
             myLists: 'Daftar Saya',
+            supportAndLegal: 'Dukungan & Legal',
+            dangerZone: 'Zona Bahaya',
+            resetProgress: 'Atur Ulang Progres',
+            deleteAccount: 'Hapus Akun',
+        },
+        calendar: {
+            title: 'Waktu Tayang',
+            favoritesOnly: 'Hanya Favorit',
+            days: {
+                monday: 'Senin',
+                tuesday: 'Selasa',
+                wednesday: 'Rabu',
+                thursday: 'Kamis',
+                friday: 'Jumat',
+                saturday: 'Sabtu',
+                sunday: 'Minggu',
+            },
+            airingAt: 'Tayang pada',
+            ep: 'EP',
+            in: 'dalam',
+        },
+        home: {
+            searchPlaceholder: 'Cari anime...',
+            trending: 'Sedang Tren',
+            categories: 'Kategori',
+            cats: {
+                all: 'Semua',
+                action: 'Aksi',
+                adventure: 'Petualangan',
+                comedy: 'Komedi',
+                drama: 'Drama',
+                fantasy: 'Fantasi',
+                scifi: 'Fiksi Ilmiah',
+                horror: 'Horor',
+                romance: 'Romantis',
+                sliceOfLife: 'Sepenggal Kehidupan',
+            }
+        },
+        favorites: {
+            lists: 'Daftar',
+            searchPlaceholder: 'Cari favorit...',
+            filters: {
+                all: 'Semua',
+                watching: 'Sedang Menonton',
+                completed: 'Selesai',
+                planToWatch: 'Rencana Menonton'
+            }
+        },
+        animeDetail: {
+            addToList: 'Tambahkan ke Daftar',
+            saveToCustomList: 'Simpan ke Daftar Khusus',
+            episodesWatched: 'Episode Ditonton',
+            synopsis: 'Sinopsis',
+            rank: 'Peringkat',
+            popularity: 'Popularitas',
+            members: 'Anggota',
+            updateListStatus: 'Perbarui Status Daftar',
+            removeFromList: 'Hapus dari Daftar',
+            noListsFound: 'Daftar tidak ditemukan.',
+            createList: 'Buat Daftar',
+            alreadyInList: 'Anime sudah ada di daftar ini',
+            addedToList: 'Ditambahkan ke daftar!',
+            failedToAdd: 'Gagal menambahkan ke daftar'
         },
         offline: {
             title: 'Tidak Ada Koneksi Internet',
@@ -684,7 +1383,29 @@ const translations = {
         },
         terms: { title: 'Ketentuan Layanan' },
         privacy: { title: 'Kebijakan Privasi' },
-        help: { title: 'Bantuan & Dukungan' }
+        help: {
+            title: 'Bantuan & Dukungan',
+            walkthrough: {
+                title: 'Panduan',
+                subtitle: 'Pelajari tentang tombol, daftar & lainnya',
+            },
+            guide: {
+                title: 'Panduan Aplikasi',
+                keys: {
+                    title: 'Panduan Tombol & Kunci',
+                    back: { label: 'Kembali', desc: 'Kembali ke layar sebelumnya.' },
+                    favorite: { label: 'Favorit', desc: 'Menambahkan anime ke daftar Favorit Anda.' },
+                    add: { label: 'Tambahkan ke Daftar', desc: 'Menambahkan anime ke Sedang Menonton, Rencana Menonton, atau Selesai.' },
+                    custom: { label: 'Daftar Khusus', desc: 'Simpan anime ke salah satu daftar khusus Anda.' },
+                    remove: { label: 'Hapus', desc: 'Menghapus anime dari daftar Anda.' },
+                },
+                sections: {
+                    addFav: { title: 'Cara Menambahkan ke Favorit', content: 'Di halaman Detail Anime, cari ikon Hati di sudut kanan atas. Mengetuk ikon ini akan menandai anime sebagai "Favorit".' },
+                    addList: { title: 'Cara Menambahkan ke Daftar', content: 'Di halaman Detail Anime, ketuk tombol kuning besar "Tambahkan ke Daftar". Menu akan muncul yang memungkinkan Anda memilih "Sedang Menonton", "Selesai", atau "Rencana Menonton".' },
+                    customList: { title: 'Cara Membuat Daftar Khusus', content: 'Buka Profil > Daftar Saya > Ketuk tombol "+". Beri nama daftar Anda dan simpan. Untuk menambahkan anime, buka halaman Detail dan ketuk "Simpan ke Daftar Khusus".' },
+                }
+            }
+        }
     },
 };
 

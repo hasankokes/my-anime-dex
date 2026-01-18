@@ -12,7 +12,7 @@ import { ReviewSection } from '../../components/ReviewSection';
 import { useRateUs } from '../../hooks/useRateUs';
 import { RateAppSheet } from '../../components/RateAppSheet';
 
-import { useInterstitialAd } from '../../hooks/useInterstitialAd';
+import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { useLanguage } from '../../context/LanguageContext';
 import { translateText } from '../../lib/translation';
 
@@ -42,7 +42,7 @@ export default function AnimeDetailsScreen() {
   const [showListModal, setShowListModal] = useState(false);
   const { trackAddAnime, showRateSheet, handleRate, handleLater } = useRateUs();
   const { showAdIfNeeded } = useInterstitialAd();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [translatedSynopsis, setTranslatedSynopsis] = useState<string>('');
   const [isTranslating, setIsTranslating] = useState(false);
 
@@ -313,7 +313,13 @@ export default function AnimeDetailsScreen() {
   }
 
   const getStatusLabel = (value: string) => {
-    return STATUS_OPTIONS.find(o => o.value === value)?.label || 'Add to List';
+    switch (value) {
+      case 'watching': return t('favorites.filters.watching');
+      case 'completed': return t('favorites.filters.completed');
+      case 'plan_to_watch': return t('favorites.filters.planToWatch');
+      case 'remove': return t('animeDetail.removeFromList');
+      default: return t('animeDetail.addToList');
+    }
   };
 
   const currentStatus = userEntry?.status;
@@ -401,7 +407,7 @@ export default function AnimeDetailsScreen() {
 
           {/* Episode Progress (New Location) */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Episodes Watched</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('animeDetail.episodesWatched')}</Text>
             <View style={[styles.episodeInputContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <TextInput
                 style={[styles.episodeInput, { color: colors.text }]}
@@ -422,7 +428,7 @@ export default function AnimeDetailsScreen() {
 
           {/* Synopsis */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Synopsis</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('animeDetail.synopsis')}</Text>
             <Text
               style={[styles.synopsisText, { color: colors.subtext }]}
               numberOfLines={isExpanded ? undefined : 4}
@@ -441,15 +447,15 @@ export default function AnimeDetailsScreen() {
           {/* Info Grid */}
           <View style={[styles.infoGrid, { backgroundColor: colors.card }]}>
             <View style={styles.infoItem}>
-              <Text style={[styles.infoLabel, { color: colors.subtext }]}>Rank</Text>
+              <Text style={[styles.infoLabel, { color: colors.subtext }]}>{t('animeDetail.rank')}</Text>
               <Text style={[styles.infoValue, { color: colors.text }]}>#{anime.rank}</Text>
             </View>
             <View style={styles.infoItem}>
-              <Text style={[styles.infoLabel, { color: colors.subtext }]}>Popularity</Text>
+              <Text style={[styles.infoLabel, { color: colors.subtext }]}>{t('animeDetail.popularity')}</Text>
               <Text style={[styles.infoValue, { color: colors.text }]}>#{anime.popularity}</Text>
             </View>
             <View style={styles.infoItem}>
-              <Text style={[styles.infoLabel, { color: colors.subtext }]}>Members</Text>
+              <Text style={[styles.infoLabel, { color: colors.subtext }]}>{t('animeDetail.members')}</Text>
               <Text style={[styles.infoValue, { color: colors.text }]}>{anime.scored_by?.toLocaleString()}</Text>
             </View>
           </View>
@@ -476,7 +482,7 @@ export default function AnimeDetailsScreen() {
                   styles.actionButtonText,
                   currentStatus ? { color: '#FFF' } : null
                 ]}>
-                  {currentStatus ? getStatusLabel(currentStatus) : 'Add to List'}
+                  {currentStatus ? getStatusLabel(currentStatus) : t('animeDetail.addToList')}
                 </Text>
               </>
             )}
@@ -487,7 +493,7 @@ export default function AnimeDetailsScreen() {
             onPress={() => setShowListModal(true)}
           >
             <Ionicons name="list" size={20} color={colors.text} />
-            <Text style={[styles.actionButtonText, { color: colors.text }]}>Save to Custom List</Text>
+            <Text style={[styles.actionButtonText, { color: colors.text }]}>{t('animeDetail.saveToCustomList')}</Text>
           </TouchableOpacity>
 
           <View style={{ height: 24 }} />
@@ -511,7 +517,7 @@ export default function AnimeDetailsScreen() {
           onPress={() => setShowStatusModal(false)}
         >
           <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Update List Status</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('animeDetail.updateListStatus')}</Text>
             {STATUS_OPTIONS.map((option) => (
               <TouchableOpacity
                 key={option.value}
@@ -527,7 +533,13 @@ export default function AnimeDetailsScreen() {
                 <Text style={[
                   styles.modalOptionText,
                   { color: option.color || colors.text }
-                ]}>{option.label}</Text>
+                ]}>{
+                    option.value === 'watching' ? t('favorites.filters.watching') :
+                      option.value === 'completed' ? t('favorites.filters.completed') :
+                        option.value === 'plan_to_watch' ? t('favorites.filters.planToWatch') :
+                          option.value === 'remove' ? t('animeDetail.removeFromList') :
+                            option.label
+                  }</Text>
 
                 {currentStatus === option.value && (
                   <Ionicons name="checkmark" size={20} color="#FACC15" style={{ marginLeft: 'auto' }} />
@@ -563,6 +575,7 @@ export default function AnimeDetailsScreen() {
 function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible: boolean, onClose: () => void, anime: Anime, showAdIfNeeded: () => void }) {
   const { colors } = useTheme();
   const router = useRouter(); // Added router for navigation
+  const { t } = useLanguage();
   const [lists, setLists] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -605,7 +618,7 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
 
       if (error) {
         if (error.code === '23505') { // Unique violation
-          Alert.alert('Info', 'Anime is already in this list');
+          Alert.alert('Info', t('animeDetail.alreadyInList'));
         } else {
           throw error;
         }
@@ -614,11 +627,11 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
         showAdIfNeeded(); // <--- Trigger Ad
         // Slight delay to ensure modal animation doesn't interfere with Alert
         setTimeout(() => {
-          Alert.alert('Success', 'Added to list!');
+          Alert.alert(t('common.success'), t('animeDetail.addedToList'));
         }, 300);
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to add to list');
+      Alert.alert(t('common.error'), t('animeDetail.failedToAdd'));
     }
   }
 
@@ -635,7 +648,7 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
         onPress={onClose}
       >
         <View style={[styles.modalContent, { backgroundColor: colors.card, maxHeight: '60%' }]}>
-          <Text style={[styles.modalTitle, { color: colors.text }]}>Add to List</Text>
+          <Text style={[styles.modalTitle, { color: colors.text }]}>{t('animeDetail.addToList')}</Text>
           {loading ? (
             <ActivityIndicator color="#FACC15" />
           ) : lists.length > 0 ? (
@@ -655,9 +668,9 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
             />
           ) : (
             <View style={{ alignItems: 'center', padding: 20 }}>
-              <Text style={{ color: colors.subtext, marginBottom: 10 }}>No lists found.</Text>
+              <Text style={{ color: colors.subtext, marginBottom: 10 }}>{t('animeDetail.noListsFound')}</Text>
               <TouchableOpacity onPress={() => { onClose(); router.push('/lists/create'); }}>
-                <Text style={{ color: '#FACC15', fontFamily: 'Poppins_600SemiBold' }}>Create a List</Text>
+                <Text style={{ color: '#FACC15', fontFamily: 'Poppins_600SemiBold' }}>{t('animeDetail.createList')}</Text>
               </TouchableOpacity>
             </View>
           )}

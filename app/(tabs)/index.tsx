@@ -25,6 +25,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNetwork } from '../../context/NetworkContext';
 import { useAuth } from '../../context/AuthProvider';
 import { supabase } from '../../lib/supabase';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function HomeScreen() {
   const { colors, isDark, toggleTheme } = useTheme();
   const { isConnected, isInternetReachable } = useNetwork();
   const { session, avatarUrl } = useAuth();
+  const { t } = useLanguage();
   const flatListRef = useRef<FlatList>(null);
 
 
@@ -39,16 +41,16 @@ export default function HomeScreen() {
 
   // Categories
   const CATEGORIES = [
-    { id: null, name: 'All' },
-    { id: 1, name: 'Action' },
-    { id: 2, name: 'Adventure' },
-    { id: 4, name: 'Comedy' },
-    { id: 8, name: 'Drama' },
-    { id: 10, name: 'Fantasy' },
-    { id: 24, name: 'Sci-Fi' },
-    { id: 14, name: 'Horror' },
-    { id: 22, name: 'Romance' },
-    { id: 36, name: 'Slice of Life' },
+    { id: null, name: t('home.cats.all') },
+    { id: 1, name: t('home.cats.action') },
+    { id: 2, name: t('home.cats.adventure') },
+    { id: 4, name: t('home.cats.comedy') },
+    { id: 8, name: t('home.cats.drama') },
+    { id: 10, name: t('home.cats.fantasy') },
+    { id: 24, name: t('home.cats.scifi') },
+    { id: 14, name: t('home.cats.horror') },
+    { id: 22, name: t('home.cats.romance') },
+    { id: 36, name: t('home.cats.sliceOfLife') },
   ];
 
   const [animes, setAnimes] = useState<Anime[]>([]);
@@ -288,7 +290,7 @@ export default function HomeScreen() {
 
         <TextInput
           ref={searchInputRef}
-          placeholder="Search anime..."
+          placeholder={t('home.searchPlaceholder')}
           placeholderTextColor={colors.subtext}
           style={[styles.searchInput, { color: colors.text }]}
           value={searchText}
@@ -315,7 +317,7 @@ export default function HomeScreen() {
       {!isSearching && (
         <View style={styles.trendingContainer}>
           <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 12, marginTop: 4 }]}>
-            Trending Now
+            {t('home.trending')}
           </Text>
           {trendingLoading ? (
             <ActivityIndicator size="small" color="#FACC15" style={{ height: 200 }} />
@@ -361,7 +363,7 @@ export default function HomeScreen() {
       {/* Categories */}
       <View style={styles.categoriesContainer}>
         <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 12, marginTop: 0 }]}>
-          Categories
+          {t('home.categories')}
         </Text>
         <ScrollView
           horizontal
