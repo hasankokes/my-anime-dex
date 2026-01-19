@@ -158,7 +158,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 12,
         elevation: 3,
-        alignItems: 'center',
         height: 100,
     },
     image: {
@@ -169,18 +168,21 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        padding: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 2, // Small padding to account for font line-height vs image edge
         justifyContent: 'space-between',
     },
     title: {
         fontFamily: 'Poppins_600SemiBold',
         fontSize: 16,
-        lineHeight: 24,
+        lineHeight: 20,
+        marginTop: 4, // Pushed down slightly
     },
     bottomInfoContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        paddingBottom: 2, // Align with image bottom visually
     },
     timeLeftContainer: {
         flexDirection: 'row',
@@ -188,20 +190,20 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     timeText: {
+        fontFamily: 'Poppins_600SemiBold', // Creating more visual weight
+        fontSize: 13, // Increased from 12
+    },
+    epText: {
         fontFamily: 'Poppins_500Medium',
         fontSize: 12,
     },
-    epText: {
-        fontFamily: 'Poppins_400Regular',
-        fontSize: 12,
-    },
     countdownBadge: {
-        paddingHorizontal: 6,
-        paddingVertical: 2,
+        paddingHorizontal: 8, // Slightly more padding
+        paddingVertical: 3,
         borderRadius: 6,
     },
     countdownText: {
-        fontFamily: 'Poppins_600SemiBold',
-        fontSize: 11, // Slightly smaller to fit
+        fontFamily: 'Poppins_700Bold', // Bold for emphasis
+        fontSize: 12, // Increased from 11
     },
 });

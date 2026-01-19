@@ -34,6 +34,7 @@ export default function CalendarScreen() {
 
     const [selectedDay, setSelectedDay] = useState(getToday());
     const [schedule, setSchedule] = useState<any[]>([]);
+    const [allSchedules, setAllSchedules] = useState<Record<string, any[]>>({}); // Cache for loaded days
     const [loading, setLoading] = useState(true);
     const [favoritesOnly, setFavoritesOnly] = useState(false);
     const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set());
@@ -43,16 +44,26 @@ export default function CalendarScreen() {
     const [searchQuery, setSearchQuery] = useState('');
 
     const fetchSchedule = useCallback(async () => {
+        // If we already have data for this day, use it and don't show loading
+        if (allSchedules[selectedDay]) {
+            setSchedule(allSchedules[selectedDay]);
+            return;
+        }
+
         setLoading(true);
         try {
             const data = await getAnimeSchedule(selectedDay);
             setSchedule(data);
+            setAllSchedules(prev => ({
+                ...prev,
+                [selectedDay]: data
+            }));
         } catch (error) {
             console.error(error);
         } finally {
             setLoading(false);
         }
-    }, [selectedDay]);
+    }, [selectedDay, allSchedules]);
 
     const fetchFavorites = useCallback(async () => {
         if (!session?.user?.id) return;
@@ -240,22 +251,19 @@ export default function CalendarScreen() {
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <FixedHeader />
 
-            {loading ? (
-                <View style={[styles.centerContainer, { paddingTop: 20 }]}>
-                    <ListHeader />
-                    <View style={{ flex: 1, justifyContent: 'center' }}>
-                        <ActivityIndicator size="large" color={colors.primary} />
-                    </View>
-                </View>
-            ) : (
-                <FlatList
-                    ref={flatListRef}
-                    data={filteredSchedule}
-                    keyExtractor={(item) => item.mal_id.toString()}
-                    renderItem={({ item }) => <CalendarAnimeCard anime={item} />}
-                    contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }]}
-                    ListHeaderComponent={ListHeader}
-                    ListEmptyComponent={
+            <FlatList
+                ref={flatListRef}
+                data={loading ? [] : filteredSchedule}
+                keyExtractor={(item) => item.mal_id.toString()}
+                renderItem={({ item }) => <CalendarAnimeCard anime={item} />}
+                contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }]}
+                ListHeaderComponent={ListHeader}
+                ListEmptyComponent={
+                    loading ? (
+                        <View style={{ flex: 1, justifyContent: 'center', marginTop: 100 }}>
+                            <ActivityIndicator size="large" color={colors.primary} />
+                        </View>
+                    ) : (
                         <View style={styles.emptyContainer}>
                             <Ionicons name="calendar-clear-outline" size={48} color={colors.subtext} />
                             <Text style={[styles.emptyText, { color: colors.subtext }]}>
@@ -266,9 +274,9 @@ export default function CalendarScreen() {
                                         : "No anime scheduled for this day."}
                             </Text>
                         </View>
-                    }
-                />
-            )}
+                    )
+                }
+            />
         </View>
     );
 }

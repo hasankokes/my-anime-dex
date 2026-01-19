@@ -16,6 +16,7 @@ import { useRouter } from 'expo-router';
 import { supabase } from '../lib/supabase';
 import { StarRating } from './StarRating';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { formatDistanceToNow } from 'date-fns';
 import { calculateLevelFromXp } from '../lib/levelSystem';
 
@@ -40,6 +41,7 @@ type ReviewSectionProps = {
 
 export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
     const { colors, isDark } = useTheme();
+    const { t } = useLanguage();
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
     const [expanded, setExpanded] = useState(false);
@@ -94,7 +96,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
 
     const handleSubmit = async () => {
         if (rating === 0) {
-            Alert.alert('Rating Required', 'Please select a star rating.');
+            Alert.alert(t('animeDetail.ratingRequired'), t('animeDetail.selectRating'));
             return;
         }
 
@@ -103,7 +105,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
             const { data: { session } } = await supabase.auth.getSession();
 
             if (!session) {
-                Alert.alert('Login Required', 'Please log in to write a review.');
+                Alert.alert(t('animeDetail.loginRequired'), t('animeDetail.loginToReview'));
                 return;
             }
 
@@ -162,11 +164,11 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
             }
 
             setModalVisible(false);
-            Alert.alert('Success', 'Review published! (+2 XP)');
+            Alert.alert(t('common.success'), t('animeDetail.reviewPublished'));
 
         } catch (error) {
             console.error('Error submitting review:', error);
-            Alert.alert('Error', 'Failed to publish review.');
+            Alert.alert(t('common.error'), t('animeDetail.failedToPublish'));
         } finally {
             setSubmitting(false);
         }
@@ -215,7 +217,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                 onPress={() => setExpanded(!expanded)}
             >
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                    Reviews ({reviews.length})
+                    {t('animeDetail.reviews')} ({reviews.length})
                 </Text>
                 <Ionicons
                     name={expanded ? "chevron-up" : "chevron-down"}
@@ -233,7 +235,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                         onPress={() => setModalVisible(true)}
                     >
                         <Text style={styles.addButtonText}>
-                            {myReview ? 'Edit Your Review' : 'Write a Review'}
+                            {myReview ? t('animeDetail.editReview') : t('animeDetail.writeReview')}
                         </Text>
                     </TouchableOpacity>
 
@@ -241,7 +243,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                         <ActivityIndicator size="small" color="#FACC15" />
                     ) : reviews.length === 0 ? (
                         <Text style={[styles.emptyText, { color: colors.subtext }]}>
-                            No reviews yet. Be the first to review!
+                            {t('animeDetail.noReviews')}
                         </Text>
                     ) : (
                         <FlatList
@@ -269,7 +271,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                 >
                     <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
                         <View style={styles.modalHeader}>
-                            <Text style={[styles.modalTitle, { color: colors.text }]}>Rate this Anime</Text>
+                            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('animeDetail.rateAnime')}</Text>
                             <TouchableOpacity onPress={() => setModalVisible(false)}>
                                 <Ionicons name="close" size={24} color={colors.text} />
                             </TouchableOpacity>
@@ -281,7 +283,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
 
                         <TextInput
                             style={[styles.input, { color: colors.text, backgroundColor: colors.inputBg }]}
-                            placeholder="Write your thoughts (optional)..."
+                            placeholder={t('animeDetail.reviewPlaceholder')}
                             placeholderTextColor={colors.subtext}
                             multiline
                             numberOfLines={4}
@@ -297,7 +299,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                             {submitting ? (
                                 <ActivityIndicator color="#000" />
                             ) : (
-                                <Text style={styles.submitButtonText}>Submit Review</Text>
+                                <Text style={styles.submitButtonText}>{t('animeDetail.submitReview')}</Text>
                             )}
                         </TouchableOpacity>
                     </View>

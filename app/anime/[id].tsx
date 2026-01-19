@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList, Switch } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
@@ -438,7 +438,7 @@ export default function AnimeDetailsScreen() {
             {anime.synopsis && anime.synopsis.length > 200 && (
               <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} style={{ marginTop: 8 }}>
                 <Text style={{ color: colors.primary, fontFamily: 'Poppins_600SemiBold' }}>
-                  {isExpanded ? 'Read Less' : 'Read More'}
+                  {isExpanded ? t('animeDetail.readLess') : t('animeDetail.readMore')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -574,13 +574,24 @@ export default function AnimeDetailsScreen() {
 // --- Custom List Modal Component ---
 function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible: boolean, onClose: () => void, anime: Anime, showAdIfNeeded: () => void }) {
   const { colors } = useTheme();
-  const router = useRouter(); // Added router for navigation
+  const router = useRouter();
   const { t } = useLanguage();
   const [lists, setLists] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
+  const [newListName, setNewListName] = useState('');
+  const [newListDescription, setNewListDescription] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
+  const [createLoading, setCreateLoading] = useState(false);
 
   useEffect(() => {
-    if (visible) fetchLists();
+    if (visible) {
+      fetchLists();
+      setIsCreating(false);
+      setNewListName('');
+      setNewListDescription('');
+      setIsPublic(true);
+    }
   }, [visible]);
 
   const fetchLists = async () => {
@@ -603,6 +614,45 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
       setLoading(false);
     }
   }
+
+  const createNewList = async () => {
+    if (!newListName.trim()) return;
+
+    try {
+      setCreateLoading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase
+        .from('lists')
+        .insert({
+          user_id: session.user.id,
+          title: newListName.trim(),
+          description: newListDescription.trim() || null,
+          is_public: isPublic
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Add the new list to local state immediately
+      setLists([data, ...lists]);
+      setNewListName('');
+      setNewListDescription('');
+      setIsPublic(true);
+      setIsCreating(false);
+
+      // Optionally auto-add the anime to this new list
+      // await addToList(data.id); 
+
+    } catch (error) {
+      console.error('Error creating list:', error);
+      Alert.alert(t('common.error'), t('common.error'));
+    } finally {
+      setCreateLoading(false);
+    }
+  };
 
   const addToList = async (listId: string) => {
     try {
@@ -647,34 +697,126 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
         activeOpacity={1}
         onPress={onClose}
       >
-        <View style={[styles.modalContent, { backgroundColor: colors.card, maxHeight: '60%' }]}>
-          <Text style={[styles.modalTitle, { color: colors.text }]}>{t('animeDetail.addToList')}</Text>
+        <TouchableOpacity
+          activeOpacity={1}
+          style={[styles.modalContent, { backgroundColor: colors.card, maxHeight: '80%' }]}
+        >
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <Text style={[styles.modalTitle, { color: colors.text, marginBottom: 0 }]}>{t('animeDetail.addToList')}</Text>
+            {!isCreating && (
+              <TouchableOpacity onPress={() => setIsCreating(true)}>
+                <Text style={{ color: colors.primary, fontFamily: 'Poppins_600SemiBold', fontSize: 14 }}>
+                  + {t('animeDetail.createNewList')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {isCreating && (
+            <View style={{ marginBottom: 16, padding: 12, backgroundColor: colors.background, borderRadius: 12 }}>
+              <Text style={{ color: colors.subtext, fontSize: 12, marginBottom: 4 }}>{t('animeDetail.enterListName')}</Text>
+              <TextInput
+                style={{
+                  backgroundColor: colors.card,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  borderRadius: 8,
+                  padding: 10,
+                  color: colors.text,
+                  fontFamily: 'Poppins_400Regular',
+                  marginBottom: 12
+                }}
+                value={newListName}
+                onChangeText={setNewListName}
+                placeholder={t('animeDetail.enterListName')}
+                placeholderTextColor={colors.subtext}
+                autoFocus
+              />
+
+              <Text style={{ color: colors.subtext, fontSize: 12, marginBottom: 4 }}>{t('animeDetail.listDescription')}</Text>
+              <TextInput
+                style={{
+                  backgroundColor: colors.card,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  borderRadius: 8,
+                  padding: 10,
+                  color: colors.text,
+                  fontFamily: 'Poppins_400Regular',
+                  marginBottom: 12,
+                  height: 60
+                }}
+                value={newListDescription}
+                onChangeText={setNewListDescription}
+                placeholder={t('animeDetail.listDescription')}
+                placeholderTextColor={colors.subtext}
+                multiline
+                numberOfLines={3}
+              />
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <View style={{ flex: 1, marginRight: 10 }}>
+                  <Text style={{ color: colors.text, fontFamily: 'Poppins_600SemiBold', fontSize: 14 }}>{t('animeDetail.publicList')}</Text>
+                  <Text style={{ color: colors.subtext, fontSize: 10 }}>{t('animeDetail.publicListDesc')}</Text>
+                </View>
+                <Switch
+                  value={isPublic}
+                  onValueChange={setIsPublic}
+                  trackColor={{ false: '#374151', true: colors.primary }}
+                  thumbColor={'#FFFFFF'}
+                />
+              </View>
+
+              <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 10 }}>
+                <TouchableOpacity onPress={() => setIsCreating(false)} style={{ padding: 8 }}>
+                  <Text style={{ color: colors.subtext, fontFamily: 'Poppins_500Medium' }}>{t('common.cancel')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={createNewList}
+                  disabled={!newListName.trim() || createLoading}
+                  style={{ backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8, opacity: !newListName.trim() ? 0.5 : 1 }}
+                >
+                  {createLoading ? (
+                    <ActivityIndicator size="small" color="#000" />
+                  ) : (
+                    <Text style={{ color: '#000', fontFamily: 'Poppins_600SemiBold' }}>{t('animeDetail.create')}</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
           {loading ? (
             <ActivityIndicator color="#FACC15" />
           ) : lists.length > 0 ? (
             <FlatList
               data={lists}
               keyExtractor={item => item.id}
+              contentContainerStyle={{ paddingBottom: 20 }}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={[styles.modalOption, { borderBottomColor: colors.border }]}
                   onPress={() => addToList(item.id)}
                 >
                   <Ionicons name="list" size={20} color={colors.subtext} style={{ marginRight: 12 }} />
-                  <Text style={[styles.modalOptionText, { color: colors.text }]}>{item.title}</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.modalOptionText, { color: colors.text }]} numberOfLines={1}>{item.title}</Text>
+                    {item.description && (
+                      <Text style={{ color: colors.subtext, fontSize: 10 }} numberOfLines={1}>{item.description}</Text>
+                    )}
+                  </View>
                   <Ionicons name="add-circle-outline" size={20} color={colors.subtext} style={{ marginLeft: 'auto' }} />
                 </TouchableOpacity>
               )}
             />
           ) : (
-            <View style={{ alignItems: 'center', padding: 20 }}>
-              <Text style={{ color: colors.subtext, marginBottom: 10 }}>{t('animeDetail.noListsFound')}</Text>
-              <TouchableOpacity onPress={() => { onClose(); router.push('/lists/create'); }}>
-                <Text style={{ color: '#FACC15', fontFamily: 'Poppins_600SemiBold' }}>{t('animeDetail.createList')}</Text>
-              </TouchableOpacity>
-            </View>
+            !isCreating && (
+              <View style={{ alignItems: 'center', padding: 20 }}>
+                <Text style={{ color: colors.subtext, marginBottom: 10 }}>{t('animeDetail.noListsFound')}</Text>
+              </View>
+            )
           )}
-        </View>
+        </TouchableOpacity>
       </TouchableOpacity>
     </Modal>
   );
