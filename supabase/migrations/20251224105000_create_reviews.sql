@@ -43,13 +43,13 @@ CREATE POLICY "Reviews are viewable by everyone."
   ON public.reviews FOR SELECT USING (true);
 
 CREATE POLICY "Users can create their own review." 
-  ON public.reviews FOR INSERT WITH CHECK (auth.uid() = user_id);
+  ON public.reviews FOR INSERT WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own review." 
-  ON public.reviews FOR UPDATE USING (auth.uid() = user_id);
+  ON public.reviews FOR UPDATE USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete their own review." 
-  ON public.reviews FOR DELETE USING (auth.uid() = user_id);
+  ON public.reviews FOR DELETE USING ((select auth.uid()) = user_id);
 
 -- Create index for performance
 CREATE INDEX IF NOT EXISTS reviews_anime_id_idx ON public.reviews(anime_id);

@@ -52,7 +52,7 @@ BEGIN
         RETURN lvl;
     END IF;
 END;
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$ LANGUAGE plpgsql IMMUTABLE SET search_path = public;
 
 -- 3. Function to calculate User XP based on list
 CREATE OR REPLACE FUNCTION public.calculate_user_xp(target_user_id UUID)
@@ -85,7 +85,7 @@ BEGIN
         level = public.calculate_level(total_xp)
     WHERE id = target_user_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 4. Trigger Function
 CREATE OR REPLACE FUNCTION public.handle_xp_change()
@@ -98,7 +98,7 @@ BEGIN
     END IF;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 5. Create Trigger
 DROP TRIGGER IF EXISTS on_list_change_update_xp ON public.user_anime_list;

@@ -6,6 +6,7 @@ create table if not exists public.anime_translations (
     language text not null,
     synopsis text not null,
     created_at timestamp with time zone not null default now(),
+    created_by uuid references auth.users(id) default auth.uid(),
     constraint anime_translations_pkey primary key (id),
     constraint anime_translations_anime_id_language_key unique (anime_id, language)
 );
@@ -25,7 +26,7 @@ create policy "Authenticated users can insert translations"
     on public.anime_translations
     for insert
     to authenticated
-    with check (true);
+    with check (auth.uid() = created_by);
 
 -- Optional: If you want to allow updating existing translations (e.g. to fix them), 
 -- you can add an update policy. For now, we assume translations are write-once or fixed by admin.

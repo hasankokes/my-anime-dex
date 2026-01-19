@@ -67,23 +67,23 @@ CREATE POLICY "Public profiles are viewable by everyone."
   ON public.profiles FOR SELECT USING (true);
 
 CREATE POLICY "Users can insert their own profile." 
-  ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
+  ON public.profiles FOR INSERT WITH CHECK ((select auth.uid()) = id);
 
 CREATE POLICY "Users can update own profile." 
-  ON public.profiles FOR UPDATE USING (auth.uid() = id);
+  ON public.profiles FOR UPDATE USING ((select auth.uid()) = id);
 
 -- Policies for Anime List
 CREATE POLICY "Users can view their own list." 
-  ON public.user_anime_list FOR SELECT USING (auth.uid() = user_id);
+  ON public.user_anime_list FOR SELECT USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert into their own list." 
-  ON public.user_anime_list FOR INSERT WITH CHECK (auth.uid() = user_id);
+  ON public.user_anime_list FOR INSERT WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own list." 
-  ON public.user_anime_list FOR UPDATE USING (auth.uid() = user_id);
+  ON public.user_anime_list FOR UPDATE USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete from their own list." 
-  ON public.user_anime_list FOR DELETE USING (auth.uid() = user_id);
+  ON public.user_anime_list FOR DELETE USING ((select auth.uid()) = user_id);
 
 -- Function to handle new user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
@@ -97,7 +97,7 @@ BEGIN
   );
   RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Trigger the function every time a user is created
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;

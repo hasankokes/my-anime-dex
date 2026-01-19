@@ -37,6 +37,16 @@ export default function GuideScreen() {
             title: t('help.guide.sections.customList.title'),
             icon: "albums-outline",
             content: t('help.guide.sections.customList.content')
+        },
+        {
+            title: t('help.guide.sections.calendar.title'),
+            icon: "calendar-outline",
+            content: t('help.guide.sections.calendar.content')
+        },
+        {
+            title: t('help.guide.sections.writeReview.title'),
+            icon: "create-outline",
+            content: t('help.guide.sections.writeReview.content')
         }
     ];
 

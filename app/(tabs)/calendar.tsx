@@ -198,7 +198,7 @@ export default function CalendarScreen() {
                 keyExtractor={(item) => item.mal_id.toString()}
                 renderItem={({ item }) => <CalendarAnimeCard anime={item} />}
                 contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }]}
-                ListHeaderComponent={() => (
+                ListHeaderComponent={
                     <CalendarListHeader
                         colors={colors}
                         t={t}
@@ -207,7 +207,7 @@ export default function CalendarScreen() {
                         selectedDay={selectedDay}
                         setSelectedDay={setSelectedDay}
                     />
-                )}
+                }
                 ListEmptyComponent={
                     loading ? (
                         <View style={{ flex: 1, justifyContent: 'center', marginTop: 100 }}>

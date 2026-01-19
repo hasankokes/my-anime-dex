@@ -65,16 +65,16 @@ export default function HelpScreen() {
                     </View>
                 ))}
 
-                <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>Contact Us</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>{t('help.contact.title')}</Text>
                 <TouchableOpacity
                     style={[styles.contactButton, { backgroundColor: '#FACC15' }]}
                     onPress={handleEmailSupport}
                 >
                     <Ionicons name="mail" size={20} color="#000" style={{ marginRight: 8 }} />
-                    <Text style={styles.contactButtonText}>Email Support</Text>
+                    <Text style={styles.contactButtonText}>{t('help.contact.emailButton')}</Text>
                 </TouchableOpacity>
 
-                <Text style={[styles.version, { color: colors.subtext }]}>{t('settings.appVersion')} 2.4.0 (Build 391)</Text>
+
             </ScrollView>
         </SafeAreaView>
     );

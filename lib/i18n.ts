@@ -181,7 +181,8 @@ const translations = {
             contact: {
                 title: 'Contact Us',
                 message: 'If you have any questions or need assistance, please contact our support team at:',
-                email: 'support@myanimedex.com'
+                email: 'support@myanimedex.com',
+                emailButton: 'Email Support'
             },
             guide: {
                 title: 'App Walkthrough',
@@ -196,7 +197,9 @@ const translations = {
                 sections: {
                     addFav: { title: 'How to Add to Favorites', content: 'On any Anime Details page, look for the Heart icon in the top right corner (or slightly below the header image). Tapping this icon will toggle the anime as a "Favorite". You can view all your favorites on your Profile page.' },
                     addList: { title: 'How to Add to List', content: 'On the Anime Details page, tap the large yellow "Add to List" button (or the button showing your current status). A menu will pop up allowing you to choose "Watching", "Completed", or "Plan to Watch". Selecting a status automatically tracks it in your library.' },
-                    customList: { title: 'How to Create Custom Lists', content: 'You can organize anime into your own custom categories! 1. Go to your Profile. 2. Tap "My Lists" under "My Library". 3. Tap the "+" (Create) button. 4. Give your list a name (e.g., "Weekend Binge") and save. To add an anime to this list: Go to the Anime Details page and tap "Save to Custom List".' },
+                    customList: { title: 'How to Create Custom Lists', content: 'You can organize anime into your own custom categories! You can create a list from your Profile > My Lists > "+" OR directly from the Anime Details page by tapping "Save to Custom List" > "Create new list". Give it a name and description, then save.' },
+                    calendar: { title: 'How to Use Calendar', content: 'Check the Calendar tab to see daily broadcast schedules. You can filter by "Favorites Only" to see when your favorite shows are airing. Click on a day to view that day\'s lineup.' },
+                    writeReview: { title: 'How to Write a Review', content: 'Scroll down on the Anime Details page to the "Reviews" section. Tap "Write a Review" to share your thoughts. You can rate the anime and earn XP!' },
                 }
             }
         }
@@ -379,7 +382,8 @@ const translations = {
             contact: {
                 title: 'Bize Ulaşın',
                 message: 'Herhangi bir sorunuz varsa veya yardıma ihtiyacınız varsa, lütfen destek ekibimizle iletişime geçin:',
-                email: 'support@myanimedex.com'
+                email: 'support@myanimedex.com',
+                emailButton: 'E-posta Desteği'
             },
             guide: {
                 title: 'Uygulama Turu',
@@ -394,7 +398,9 @@ const translations = {
                 sections: {
                     addFav: { title: 'Favorilere Nasıl Eklenir', content: 'Herhangi bir Anime Detay sayfasında, sağ üst köşedeki (veya başlık resminin hemen altındaki) Kalp simgesini bulun. Bu simgeye dokunmak animeyi "Favori" olarak işaretler. Tüm favorilerinizi Profil sayfanızda görebilirsiniz.' },
                     addList: { title: 'Listeye Nasıl Eklenir', content: 'Anime Detay sayfasında, büyük sarı "Listeye Ekle" düğmesine (veya mevcut durumunuzu gösteren düğmeye) dokunun. "İzliyor", "Tamamlandı" veya "İzlenecek" seçeneklerini seçmenize izin veren bir menü açılır. Bir durum seçmek onu otomatik olarak kütüphanenizde izler.' },
-                    customList: { title: 'Özel Listeler Nasıl Oluşturulur', content: 'Animeleri kendi özel kategorilerinize ayırabilirsiniz! 1. Profilinize gidin. 2. "Kütüphanem" altındaki "Listelerim"e dokunun. 3. "+" (Oluştur) düğmesine dokunun. 4. Listenize bir ad verin (ör. "Hafta Sonu Maratonu") ve kaydedin. Bir animeyi bu listeye eklemek için: Anime Detay sayfasına gidin ve "Özel Listeye Kaydet"e dokunun.' },
+                    customList: { title: 'Özel Listeler Nasıl Oluşturulur', content: 'Animeleri kendi özel kategorilerinize ayırabilirsiniz! Profil > Listelerim > "+" yolunu izleyerek VEYA Anime Detay sayfasından "Özel Listeye Kaydet" > "Yeni liste oluştur"a dokunarak bir liste oluşturabilirsiniz. Listeye bir ad ve açıklama verin, ardından kaydedin.' },
+                    calendar: { title: 'Takvim Nasıl Kullanılır', content: 'Günlük yayın programlarını görmek için Takvim sekmesini kontrol edin. Favori dizilerinizin ne zaman yayınlandığını görmek için "Sadece Favoriler"e göre filtreleyebilirsiniz. O günün programını görmek için bir güne tıklayın.' },
+                    writeReview: { title: 'Yorum Nasıl Yazılır', content: 'Anime Detay sayfasında aşağı kaydırarak "Yorumlar" bölümüne gelin. Düşüncelerinizi paylaşmak için "Yorum Yaz"a dokunun. Animeyi puanlayabilir ve XP kazanabilirsiniz!' },
                 }
             }
         }
@@ -567,11 +573,14 @@ const translations = {
                 a1: 'アニメの詳細ページに移動し、ステータス（視聴中、完了、視聴予定など）を選択することで、リストにアニメを追加できます。',
                 q2: 'アプリは無料ですか？',
                 a2: 'はい、アプリの基本機能は無料です。追加機能のためのプレミアムサブスクリプションも提供しています。',
+                q3: 'カスタムリストを作成するにはどうすればよいですか？',
+                a3: 'プロフィール > リストタブに移動し、「+」ボタンをタップしてカスタムリストを作成できます。アニメを追加するには、アニメ詳細ページに移動し、「リストに追加」をタップしてカスタムリストを選択します。',
             },
             contact: {
                 title: 'お問い合わせ',
                 message: 'ご質問やサポートが必要な場合は、サポートチームまでお問い合わせください：',
-                email: 'support@myanimedex.com'
+                email: 'support@myanimedex.com',
+                emailButton: 'メールサポート'
             },
             guide: {
                 title: 'アプリウォークスルー',
@@ -586,7 +595,9 @@ const translations = {
                 sections: {
                     addFav: { title: 'お気に入りへの追加方法', content: 'アニメ詳細ページの右上（またはヘッダー画像の下）にあるハートアイコンを探してください。このアイコンをタップすると、アニメがお気に入りとして切り替わります。お気に入りはプロフィールページですべて確認できます。' },
                     addList: { title: 'リストへの追加方法', content: 'アニメ詳細ページで、大きな黄色の「リストに追加」ボタン（または現在のステータスを表示しているボタン）をタップします。「視聴中」、「完了」、または「視聴予定」を選択できるメニューが表示されます。ステータスを選択すると、ライブラリで自動的に追跡されます。' },
-                    customList: { title: 'カスタムリストの作成方法', content: 'アニメを独自のカスタムカテゴリに整理できます！ 1. プロフィールに移動します。 2. 「マイライブラリ」の下の「マイリスト」をタップします。 3. 「+」（作成）ボタンをタップします。 4. リストに名前（例：「週末の一気見」）を付けて保存します。このリストにアニメを追加するには：アニメ詳細ページに移動し、「カスタムリストに保存」をタップします。' },
+                    customList: { title: 'カスタムリストの作成方法', content: 'アニメを独自のカスタムカテゴリに整理できます！ プロフィール > マイリスト > 「+」から、またはアニメ詳細ページで「カスタムリストに保存」>「新しいリストを作成」をタップしてリストを作成できます。名前と説明を入力して保存してください。' },
+                    calendar: { title: 'カレンダーの使い方', content: 'カレンダータブで毎日の放送スケジュールを確認できます。「お気に入りのみ」でフィルタリングして、お気に入りの番組の放送時間を確認できます。日付をクリックするとその日のラインナップが表示されます。' },
+                    writeReview: { title: 'レビューの書き方', content: 'アニメ詳細ページを下にスクロールして「レビュー」セクションに移動します。「レビューを書く」をタップして感想を共有しましょう。アニメを評価してXPを獲得できます！' },
                 }
             }
         }
@@ -759,11 +770,14 @@ const translations = {
                 a1: 'Вы можете добавить аниме в свой список, перейдя на страницу сведений об аниме и выбрав статус (Смотрю, Завершено, Планирую и т. д.).',
                 q2: 'Это приложение бесплатное?',
                 a2: 'Да, основные функции приложения бесплатны. Мы также предлагаем премиум-подписку для дополнительных функций.',
+                q3: 'Как создать свой список?',
+                a3: 'Вы можете создать свой список, перейдя в Профиль > вкладка Списки и нажав кнопку «+». Чтобы добавить аниме, перейдите на любую страницу сведений об аниме, нажмите «Добавить в список» и выберите свой список.',
             },
             contact: {
                 title: 'Связаться с нами',
                 message: 'Если у вас есть вопросы или вам нужна помощь, свяжитесь с нашей службой поддержки:',
-                email: 'support@myanimedex.com'
+                email: 'support@myanimedex.com',
+                emailButton: 'Написать в поддержку'
             },
             guide: {
                 title: 'Руководство по приложению',
@@ -778,7 +792,9 @@ const translations = {
                 sections: {
                     addFav: { title: 'Как добавить в избранное', content: 'На любой странице сведений об аниме найдите значок сердца в правом верхнем углу (или чуть ниже изображения заголовка). Нажатие на этот значок переключит аниме в разряд «Избранное». Вы можете просмотреть все избранные аниме на странице своего профиля.' },
                     addList: { title: 'Как добавить в список', content: 'На странице сведений об аниме нажмите большую желтую кнопку «Добавить в список» (или кнопку, отображающую ваш текущий статус). Всплывет меню, позволяющее выбрать «Смотрю», «Завершено» или «В планах». Выбор статуса автоматически отслеживает его в вашей библиотеке.' },
-                    customList: { title: 'Как создать свои списки', content: 'Вы можете организовать аниме по своим собственным категориям! 1. Перейдите в свой профиль. 2. Нажмите «Мои списки» в разделе «Моя библиотека». 3. Нажмите кнопку «+» (Создать). 4. Дайте списку имя (например, «Выходные») и сохраните. Чтобы добавить аниме в этот список: Перейдите на страницу сведений об аниме и нажмите «Сохранить в свой список».' },
+                    customList: { title: 'Как создать свои списки', content: 'Вы можете организовать аниме по своим собственным категориям! Вы можете создать список в Профиль > Мои списки > «+» ИЛИ прямо со страницы сведений об аниме, нажав «Сохранить в свой список» > «Создать новый список». Дайте ему имя и описание, затем сохраните.' },
+                    calendar: { title: 'Как использовать календарь', content: 'Проверьте вкладку "Календарь", чтобы увидеть ежедневное расписание трансляций. Вы можете отфильтровать по "Только избранное", чтобы увидеть, когда выходят ваши любимые шоу. Нажмите на день, чтобы просмотреть расписание на этот день.' },
+                    writeReview: { title: 'Как написать отзыв', content: 'Прокрутите страницу сведений об аниме вниз до раздела «Отзывы». Нажмите «Написать отзыв», чтобы поделиться своими мыслями. Вы можете оценить аниме и заработать XP!' },
                 }
             }
         }
@@ -951,11 +967,14 @@ const translations = {
                 a1: 'Sie können Anime zu Ihrer Liste hinzufügen, indem Sie zur Anime-Detailseite navigieren und einen Status (Wird geschaut, Abgeschlossen, Geplant usw.) auswählen.',
                 q2: 'Ist die App kostenlos?',
                 a2: 'Ja, die Kernfunktionen der App sind kostenlos. Wir bieten auch ein Premium-Abonnement für zusätzliche Funktionen an.',
+                q3: 'Wie kann ich eine benutzerdefinierte Liste erstellen?',
+                a3: 'Sie können eine benutzerdefinierte Liste erstellen, indem Sie zu Ihrem Profil > Reiter Listen gehen und auf die Schaltfläche "+" tippen. Um Anime hinzuzufügen, gehen Sie zu einer Anime-Detailseite, tippen Sie auf "Zur Liste hinzufügen" und wählen Sie Ihre benutzerdefinierte Liste aus.',
             },
             contact: {
                 title: 'Kontaktieren Sie uns',
                 message: 'Wenn Sie Fragen haben oder Hilfe benötigen, wenden Sie sich bitte an unser Support-Team:',
-                email: 'support@myanimedex.com'
+                email: 'support@myanimedex.com',
+                emailButton: 'E-Mail-Support'
             },
             guide: {
                 title: 'App-Rundgang',
@@ -970,7 +989,9 @@ const translations = {
                 sections: {
                     addFav: { title: 'Wie man zu Favoriten hinzufügt', content: 'Suchen Sie auf jeder Anime-Detailseite nach dem Herzsymbol in der oberen rechten Ecke (oder etwas unterhalb des Titelbilds). Durch Tippen auf dieses Symbol wird der Anime als "Favorit" markiert. Sie können alle Ihre Favoriten auf Ihrer Profilseite anzeigen.' },
                     addList: { title: 'Wie man zur Liste hinzufügt', content: 'Tippen Sie auf der Anime-Detailseite auf die große gelbe Schaltfläche "Zur Liste hinzufügen" (oder die Schaltfläche, die Ihren aktuellen Status anzeigt). Ein Menü wird angezeigt, in dem Sie "Am schauen", "Abgeschlossen" oder "Geplant" auswählen können. Die Auswahl eines Status verfolgt ihn automatisch in Ihrer Bibliothek.' },
-                    customList: { title: 'Wie man benutzerdefinierte Listen erstellt', content: 'Sie können Anime in Ihre eigenen benutzerdefinierten Kategorien organisieren! 1. Gehen Sie zu Ihrem Profil. 2. Tippen Sie unter "Meine Bibliothek" auf "Meine Listen". 3. Tippen Sie auf die Schaltfläche "+" (Erstellen). 4. Geben Sie Ihrer Liste einen Namen (z. B. "Wochenend-Binge") und speichern Sie. Um einen Anime zu dieser Liste hinzuzufügen: Gehen Sie zur Anime-Detailseite und tippen Sie auf "In benutzerdefinierter Liste speichern".' },
+                    customList: { title: 'Wie man benutzerdefinierte Listen erstellt', content: 'Sie können Anime in Ihre eigenen benutzerdefinierten Kategorien organisieren! Sie können eine Liste über Profil > Meine Listen > "+" ODER direkt von der Anime-Detailseite erstellen, indem Sie auf "In benutzerdefinierter Liste speichern" > "Neue Liste erstellen" tippen. Geben Sie einen Namen und eine Beschreibung ein und speichern Sie.' },
+                    calendar: { title: 'Verwendung des Kalenders', content: 'Überprüfen Sie den Reiter "Kalender", um die täglichen Sendepläne zu sehen. Sie können nach "Nur Favoriten" filtern, um zu sehen, wann Ihre Lieblingssendungen ausgestrahlt werden. Klicken Sie auf einen Tag, um das Programm für diesen Tag anzuzeigen.' },
+                    writeReview: { title: 'Wie man eine Bewertung schreibt', content: 'Scrollen Sie auf der Anime-Detailseite nach unten zum Abschnitt "Bewertungen". Tippen Sie auf "Bewertung schreiben", um Ihre Gedanken zu teilen. Sie können den Anime bewerten und XP verdienen!' },
                 }
             }
         }
@@ -1144,11 +1165,14 @@ const translations = {
                 a1: 'يمكنك إضافة أنمي إلى قائمتك من خلال الانتقال إلى صفحة تفاصيل الأنمي واختيار الحالة (قيد المشاهدة، مكتمل، مخطط للمشاهدة، إلخ).',
                 q2: 'هل التطبيق مجاني؟',
                 a2: 'نعم، الميزات الأساسية للتطبيق مجانية. نقدم أيضًا اشتراكًا مميزًا للحصول على ميزات إضافية.',
+                q3: 'كيف يمكنني إنشاء قائمة مخصصة؟',
+                a3: 'يمكنك إنشاء قائمة مخصصة بالانتقال إلى ملفك الشخصي > علامة تبويب القوائم والنقر على زر "+". لإضافة أنمي، انتقل إلى أي صفحة تفاصيل أنمي، واضغط على "إضافة إلى القائمة"، واختر قائمتك المخصصة.',
             },
             contact: {
                 title: 'اتصل بنا',
                 message: 'إذا كان لديك أي أسئلة أو كنت بحاجة إلى مساعدة، يرجى الاتصال بفريق الدعم لدينا:',
-                email: 'support@myanimedex.com'
+                email: 'support@myanimedex.com',
+                emailButton: 'دعم البريد الإلكتروني'
             },
             guide: {
                 title: 'جولة في التطبيق',
@@ -1163,7 +1187,9 @@ const translations = {
                 sections: {
                     addFav: { title: 'كيفية الإضافة إلى المفضلة', content: 'في أي صفحة تفاصيل أنمي، ابحث عن رمز القلب في الزاوية العلوية اليمنى (أو أسفل صورة العنوان قليلاً). سيؤدي النقر فوق هذا الرمز إلى تبديل الأنمي كـ "مفضل". يمكنك عرض جميع مفضلاتك على صفحة ملفك الشخصي.' },
                     addList: { title: 'كيفية الإضافة إلى القائمة', content: 'في صفحة تفاصيل الأنمي، اضغط على الزر الأصفر الكبير "إضافة إلى القائمة" (أو الزر الذي يظهر حالتك الحالية). ستظهر قائمة تتيح لك اختيار "أشاهد" أو "مكتمل" أو "مخطط للمشاهدة". يؤدي تحديد الحالة إلى تتبعها تلقائيًا في مكتبتك.' },
-                    customList: { title: 'كيفية إنشاء قوائم مخصصة', content: 'يمكنك تنظيم الأنمي في فئاتك المخصصة! 1. اذهب إلى ملفك الشخصي. 2. اضغط على "قوائمي" تحت "مكتبتي". 3. اضغط على زر "+" (إنشاء). 4. أعط قائمتك اسمًا (مثل "عطلة نهاية الأسبوع") واحفظها. لإضافة أنمي إلى هذه القائمة: اذهب إلى صفحة تفاصيل الأنمي واضغط على "حفظ في قائمة مخصصة".' },
+                    customList: { title: 'كيفية إنشاء قوائم مخصصة', content: 'يمكنك تنظيم الأنمي في فئاتك الخاصة! يمكنك إنشاء قائمة من الملف الشخصي > قوائمي > "+" أو مباشرة من صفحة تفاصيل الأنمي بالنقر على "حفظ في قائمة مخصصة" > "إنشاء قائمة جديدة". أدخل اسمًا ووصفًا، ثم احفظ.' },
+                    calendar: { title: 'كيفية استخدام التقويم', content: 'تحقق من علامة تبويب "التقويم" لرؤية جداول البث اليومية. يمكنك التصفية حسب "المفضلة فقط" لمعرفة متى يتم عرض برامجك المفضلة. انقر على أي يوم لعرض تشكيلة ذلك اليوم.' },
+                    writeReview: { title: 'كيفية كتابة مراجعة', content: 'قم بالتمرير لأسفل في صفحة تفاصيل الأنمي إلى قسم "المراجعات". اضغط على "اكتب مراجعة" لمشاركة أفكارك. يمكنك تقييم الأنمي وكسب نقاط خبرة!' },
                 }
             }
         }
@@ -1291,6 +1317,21 @@ const translations = {
                 title: 'Guía',
                 subtitle: 'Aprende sobre botones, listas y más',
             },
+            faq: {
+                title: 'Preguntas Frecuentes',
+                q1: '¿Cómo añado anime a mi lista?',
+                a1: 'Puedes añadir anime a tu lista navegando a la página de detalles del anime y seleccionando un estado (Viendo, Completado, Planeado, etc.).',
+                q2: '¿Es la aplicación gratuita?',
+                a2: 'Sí, las funciones principales de la aplicación son gratuitas. También ofrecemos una suscripción premium para funciones adicionales.',
+                q3: '¿Cómo puedo crear una lista personalizada?',
+                a3: 'Puedes crear una lista personalizada yendo a tu Perfil > pestaña Listas y tocando el botón "+". Para añadir anime, ve a cualquier página de detalles de anime, toca "Añadir a Lista" y selecciona tu lista personalizada.',
+            },
+            contact: {
+                title: 'Contáctanos',
+                message: 'Si tienes alguna pregunta o necesitas ayuda, por favor contacta a nuestro equipo de soporte en:',
+                email: 'support@myanimedex.com',
+                emailButton: 'Soporte por Correo'
+            },
             guide: {
                 title: 'Guía de la Aplicación',
                 keys: {
@@ -1304,7 +1345,9 @@ const translations = {
                 sections: {
                     addFav: { title: 'Cómo añadir a Favoritos', content: 'En cualquier página de detalles de anime, busca el icono de Corazón en la esquina superior derecha. Tocar este icono marcará el anime como "Favorito".' },
                     addList: { title: 'Cómo añadir a Lista', content: 'En la página de detalles del anime, toca el botón amarillo grande "Añadir a Lista". Aparecerá un menú que te permitirá elegir "Viendo", "Completado" o "Planeado".' },
-                    customList: { title: 'Cómo crear listas personalizadas', content: 'Ve a Perfil > Mis Listas > Toca el botón "+". Dale un nombre a tu lista y guarda. Para añadir un anime, ve a la página de detalles y toca "Guardar en Lista Personalizada".' },
+                    customList: { title: 'Cómo crear listas personalizadas', content: '¡Puedes organizar el anime en tus propias categorías personalizadas!! Puedes crear una lista desde Perfil > Mis Listas > "+" O directamente desde la página de Detalles del Anime tocando "Guardar en Lista Personalizada" > "Crear nueva lista". Dale un nombre y una descripción, luego guarda.' },
+                    calendar: { title: 'Cómo usar el Calendario', content: 'Revisa la pestaña "Calendario" para ver los horarios de emisión diarios. Puedes filtrar por "Solo favoritos" para ver cuándo se emiten tus programas favoritos. Haz clic en un día para ver la programación de ese día.' },
+                    writeReview: { title: 'Cómo escribir una reseña', content: 'Desplázate hacia abajo en la página de Detalles del Anime hasta la sección "Reseñas". Toca "Escribir reseña" para compartir tus pensamientos. ¡Puedes calificar el anime y ganar XP!' },
                 }
             }
         }
@@ -1432,6 +1475,21 @@ const translations = {
                 title: 'Visão Geral',
                 subtitle: 'Saiba mais sobre botões, listas e mais',
             },
+            faq: {
+                title: 'Perguntas Frequentes',
+                q1: 'Como adiciono anime à minha lista?',
+                a1: 'Você pode adicionar anime à sua lista navegando até a página de detalhes do anime e selecionando um status (Assistindo, Completo, Planejado, etc.).',
+                q2: 'O aplicativo é gratuito?',
+                a2: 'Sim, os recursos principais do aplicativo são gratuitos. Também oferecemos uma assinatura premium para recursos adicionais.',
+                q3: 'Como posso criar uma lista personalizada?',
+                a3: 'Você pode criar uma lista personalizada indo em seu Perfil > aba Listas e tocando no botão "+". Para adicionar anime, vá para qualquer página de detalhes de anime, toque em "Adicionar à Lista" e selecione sua lista personalizada.',
+            },
+            contact: {
+                title: 'Fale Conosco',
+                message: 'Se você tiver alguma dúvida ou precisar de ajuda, entre em contato com nossa equipe de suporte em:',
+                email: 'support@myanimedex.com',
+                emailButton: 'Suporte por E-mail'
+            },
             guide: {
                 title: 'Tour do Aplicativo',
                 keys: {
@@ -1445,7 +1503,9 @@ const translations = {
                 sections: {
                     addFav: { title: 'Como adicionar aos Favoritos', content: 'Em qualquer página de detalhes de anime, procure o ícone de Coração no canto superior direito. Tocar neste ícone marcará o anime como "Favorito".' },
                     addList: { title: 'Como adicionar à Lista', content: 'Na página de detalhes do anime, toque no grande botão amarelo "Adicionar à Lista". Um menu aparecerá permitindo que você escolha "Assistindo", "Completo" ou "Planejado".' },
-                    customList: { title: 'Como criar listas personalizadas', content: 'Vá para Perfil > Minhas Listas > Toque no botão "+". Dê um nome à sua lista e salve. Para adicionar um anime, vá para a página de detalhes e toque em "Salvar na Lista Personalizada".' },
+                    customList: { title: 'Como criar listas personalizadas', content: 'Você pode organizar animes em suas próprias categorias personalizadas! Você pode criar uma lista em Perfil > Minhas Listas > "+" OU diretamente da página de Detalhes do Anime tocando em "Salvar na Lista Personalizada" > "Criar nova lista". Dê um nome e descrição, e salve.' },
+                    calendar: { title: 'Como usar o Calendário', content: 'Verifique a aba "Calendário" para ver a programação diária de transmissão. Você pode filtrar por "Apenas Favoritos" para ver quando seus programas favoritos estão no ar. Clique em um dia para ver a programação desse dia.' },
+                    writeReview: { title: 'Como escrever uma avaliação', content: 'Role para baixo na página de Detalhes do Anime até a seção "Avaliações". Toque em "Escrever avaliação" para compartilhar seus pensamentos. Você pode avaliar o anime e ganhar XP!' },
                 }
             }
         }
@@ -1573,6 +1633,21 @@ const translations = {
                 title: 'Panduan',
                 subtitle: 'Pelajari tentang tombol, daftar & lainnya',
             },
+            faq: {
+                title: 'Pertanyaan Umum',
+                q1: 'Bagaimana cara menambahkan anime ke daftar saya?',
+                a1: 'Anda dapat menambahkan anime ke daftar Anda dengan menavigasi ke halaman detail anime dan memilih status (Sedang Menonton, Selesai, Rencana Menonton, dll.).',
+                q2: 'Apakah aplikasi ini gratis?',
+                a2: 'Ya, fitur utama aplikasi ini gratis untuk digunakan. Kami juga menawarkan langganan premium untuk fitur tambahan.',
+                q3: 'Bagaimana cara membuat daftar khusus?',
+                a3: 'Anda dapat membuat daftar khusus dengan membuka Profil > tab Daftar dan mengetuk tombol "+". Untuk menambahkan anime, buka halaman detail anime mana pun, ketuk "Tambahkan ke Daftar", dan pilih daftar khusus Anda.',
+            },
+            contact: {
+                title: 'Hubungi Kami',
+                message: 'Jika Anda memiliki pertanyaan atau butuh bantuan, silakan hubungi tim dukungan kami di:',
+                email: 'support@myanimedex.com',
+                emailButton: 'Dukungan Email'
+            },
             guide: {
                 title: 'Panduan Aplikasi',
                 keys: {
@@ -1586,7 +1661,9 @@ const translations = {
                 sections: {
                     addFav: { title: 'Cara Menambahkan ke Favorit', content: 'Di halaman Detail Anime, cari ikon Hati di sudut kanan atas. Mengetuk ikon ini akan menandai anime sebagai "Favorit".' },
                     addList: { title: 'Cara Menambahkan ke Daftar', content: 'Di halaman Detail Anime, ketuk tombol kuning besar "Tambahkan ke Daftar". Menu akan muncul yang memungkinkan Anda memilih "Sedang Menonton", "Selesai", atau "Rencana Menonton".' },
-                    customList: { title: 'Cara Membuat Daftar Khusus', content: 'Buka Profil > Daftar Saya > Ketuk tombol "+". Beri nama daftar Anda dan simpan. Untuk menambahkan anime, buka halaman Detail dan ketuk "Simpan ke Daftar Khusus".' },
+                    customList: { title: 'Cara Membuat Daftar Khusus', content: 'Anda dapat mengatur anime ke dalam kategori khusus Anda sendiri! Anda dapat membuat daftar dari Profil > Daftar Saya > "+" ATAU langsung dari halaman Detail Anime dengan mengetuk "Simpan ke Daftar Khusus" > "Buat daftar baru". Beri nama dan deskripsi, lalu simpan.' },
+                    calendar: { title: 'Cara Menggunakan Kalender', content: 'Periksa tab "Kalender" untuk melihat jadwal tayang harian. Anda dapat memfilter berdasarkan "Hanya Favorit" untuk melihat kapan acara favorit Anda tayang. Klik pada hari untuk melihat jadwal hari itu.' },
+                    writeReview: { title: 'Cara Menulis Ulasan', content: 'Gulir ke bawah pada halaman Detail Anime ke bagian "Ulasan". Ketuk "Tulis Ulasan" untuk membagikan pendapat Anda. Anda dapat memberi peringkat anime dan mendapatkan XP!' },
                 }
             }
         }

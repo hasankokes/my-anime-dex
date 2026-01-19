@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'Poppins_600SemiBold',
-        fontSize: 16,
+        fontSize: 14,
         lineHeight: 20,
         marginTop: 4, // Pushed down slightly
     },
