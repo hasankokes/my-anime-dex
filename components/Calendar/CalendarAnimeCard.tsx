@@ -15,7 +15,7 @@ import { useRouter } from 'expo-router';
 // Checking jikanApi.ts content again in my mind... I used `export const getAnimeSchedule...`. Pass.
 // I'll define a subset interface here for what I need.
 
-import { getNextBroadcastDate } from '../../lib/dateUtils';
+import { getNextBroadcastDate, getCurrentJSTDate } from '../../lib/dateUtils';
 
 interface CalendarAnimeCardProps {
     anime: any; // Using any to avoid tight coupling with full API response for now
@@ -42,8 +42,7 @@ export const CalendarAnimeCard: React.FC<CalendarAnimeCardProps> = ({ anime }) =
             // But wait, targetJST is a "Face Value" date object. jstNow is Face Value.
             // Subtraction works fine for delta.
 
-            const now = new Date();
-            const jstNow = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Tokyo" }));
+            const jstNow = getCurrentJSTDate();
 
             const diffMs = targetDate.getTime() - jstNow.getTime();
 

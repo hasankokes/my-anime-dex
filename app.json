@@ -2,7 +2,7 @@
   "expo": {
     "name": "MyAnimeDex",
     "slug": "react-native-expo-starter",
-    "version": "1.0.5",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myanimedex",
@@ -10,11 +10,12 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.myanimedex.app"
+      "bundleIdentifier": "com.myanimedex.app",
+      "buildNumber": "7"
     },
     "android": {
       "package": "com.myanimedex.app",
-      "versionCode": 6,
+      "versionCode": 7,
       "permissions": [
         "com.android.vending.BILLING"
       ],

@@ -41,7 +41,8 @@ export default function CalendarScreen() {
 
     // Search State
     const [isSearchVisible, setIsSearchVisible] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [inputText, setInputText] = useState(''); // What the user types
+    const [searchQuery, setSearchQuery] = useState(''); // What filters the list
 
     const fetchSchedule = useCallback(async () => {
         // If we already have data for this day, use it and don't show loading
@@ -150,6 +151,7 @@ export default function CalendarScreen() {
         if (isSearchVisible) {
             setIsSearchVisible(false);
             setSearchQuery('');
+            setInputText('');
             Keyboard.dismiss();
         } else {
             setIsSearchVisible(true);
@@ -157,99 +159,38 @@ export default function CalendarScreen() {
         }
     };
 
-    // --- Fixed Header Component ---
-    const FixedHeader = () => (
-        <View style={[styles.fixedHeader, { paddingTop: insets.top + 2, backgroundColor: colors.background, paddingBottom: 0 }]}>
-            {isSearchVisible ? (
-                <View style={styles.searchHeaderContainer}>
-                    <Ionicons name="search-outline" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
-                    <TextInput
-                        ref={searchInputRef}
-                        style={[styles.searchInput, { color: colors.text }]}
-                        placeholder="Search daily schedule..."
-                        placeholderTextColor={colors.subtext}
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                    />
-                    <TouchableOpacity onPress={toggleSearch} style={{ padding: 4 }}>
-                        <Ionicons name="close" size={24} color={colors.text} />
-                    </TouchableOpacity>
-                </View>
-            ) : (
-                <>
-                    <TouchableOpacity style={styles.headerLeft} onPress={scrollToTop}>
-                        <Image
-                            source={require('../../assets/images/header-logo.png')}
-                            style={styles.headerLogo}
-                            resizeMode="contain"
-                        />
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={[styles.headerBrandText, { color: colors.text }]}>CALEN</Text>
-                            <Text style={[styles.headerBrandText, { color: '#FACC15' }]}>DAR</Text>
-                        </View>
-                    </TouchableOpacity>
+    const handleSearchSubmit = () => {
+        setSearchQuery(inputText.trim());
+        Keyboard.dismiss();
+    };
 
-                    <View style={styles.headerRight}>
-                        <TouchableOpacity style={styles.iconButton} onPress={toggleSearch}>
-                            <Ionicons name="search-outline" size={24} color={colors.text} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
-                            <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/(tabs)/profile')}>
-                            <Image
-                                source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
-                                style={styles.headerProfileImage}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </>
-            )}
-        </View>
-    );
+    // --- Fixed Header Component moved outside to prevent re-renders on state change ---
+    // But since it depends on many local variables, we can memoize it or use props.
+    // Memoizing inside component:
 
-    const ListHeader = () => (
-        <View>
-            {/* Original Header Content: Title + Actions */}
-            <View style={styles.pageHeader}>
-                <View style={styles.titleContainer}>
-                    <Text style={[styles.headerTitle, { color: colors.text }]}>{t('calendar.title')}</Text>
-                    <Ionicons name="calendar-outline" size={20} color={colors.primary} style={{ marginLeft: 8 }} />
-                </View>
-
-                <TouchableOpacity
-                    style={[
-                        styles.favButton,
-                        {
-                            backgroundColor: favoritesOnly ? colors.primary : colors.card,
-                            borderColor: colors.border,
-                            borderWidth: 1
-                        }
-                    ]}
-                    onPress={() => setFavoritesOnly(!favoritesOnly)}
-                >
-                    <Ionicons
-                        name={favoritesOnly ? "heart" : "heart-outline"}
-                        size={16}
-                        color={favoritesOnly ? '#fff' : colors.text}
-                    />
-                    <Text style={[
-                        styles.favButtonText,
-                        { color: favoritesOnly ? '#fff' : colors.text }
-                    ]}>
-                        {t('calendar.favoritesOnly')}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Day Tabs */}
-            <DayTabs selectedDay={selectedDay} onSelectDay={setSelectedDay} />
-        </View>
-    );
+    // We will use the existing FixedHeader implementation but since it is defined inside the render function scope (essentially), 
+    // it gets recreated.
+    // Let's refactor to return the JSX directly or use useMemo, but the cleanest is to keep it inline in return 
+    // or properly extract it. 
+    // Given the props usage, I'll extract it and pass props.
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <FixedHeader />
+            <CalendarHeader
+                insets={insets}
+                colors={colors}
+                isSearchVisible={isSearchVisible}
+                inputText={inputText}
+                setInputText={setInputText}
+                handleSearchSubmit={handleSearchSubmit}
+                toggleSearch={toggleSearch}
+                scrollToTop={scrollToTop}
+                isDark={isDark}
+                toggleTheme={toggleTheme}
+                avatarUrl={avatarUrl}
+                router={router}
+                searchInputRef={searchInputRef}
+            />
 
             <FlatList
                 ref={flatListRef}
@@ -257,7 +198,16 @@ export default function CalendarScreen() {
                 keyExtractor={(item) => item.mal_id.toString()}
                 renderItem={({ item }) => <CalendarAnimeCard anime={item} />}
                 contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }]}
-                ListHeaderComponent={ListHeader}
+                ListHeaderComponent={() => (
+                    <CalendarListHeader
+                        colors={colors}
+                        t={t}
+                        favoritesOnly={favoritesOnly}
+                        setFavoritesOnly={setFavoritesOnly}
+                        selectedDay={selectedDay}
+                        setSelectedDay={setSelectedDay}
+                    />
+                )}
                 ListEmptyComponent={
                     loading ? (
                         <View style={{ flex: 1, justifyContent: 'center', marginTop: 100 }}>
@@ -280,6 +230,121 @@ export default function CalendarScreen() {
         </View>
     );
 }
+
+// Extracted Header Component
+const CalendarHeader = ({
+    insets,
+    colors,
+    isSearchVisible,
+    inputText,
+    setInputText,
+    handleSearchSubmit,
+    toggleSearch,
+    scrollToTop,
+    isDark,
+    toggleTheme,
+    avatarUrl,
+    router,
+    searchInputRef
+}: any) => (
+    <View style={[styles.fixedHeader, { paddingTop: insets.top + 2, backgroundColor: colors.background, paddingBottom: 0 }]}>
+        {isSearchVisible ? (
+            <View style={styles.searchHeaderContainer}>
+                <Ionicons name="search-outline" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
+                <TextInput
+                    ref={searchInputRef}
+                    style={[styles.searchInput, { color: colors.text }]}
+                    placeholder="Search daily schedule..."
+                    placeholderTextColor={colors.subtext}
+                    value={inputText}
+                    onChangeText={setInputText}
+                    onSubmitEditing={handleSearchSubmit}
+                    returnKeyType="search"
+                    autoFocus={true}
+                />
+                <TouchableOpacity onPress={toggleSearch} style={{ padding: 4 }}>
+                    <Ionicons name="close" size={24} color={colors.text} />
+                </TouchableOpacity>
+            </View>
+        ) : (
+            <>
+                <TouchableOpacity style={styles.headerLeft} onPress={scrollToTop}>
+                    <Image
+                        source={require('../../assets/images/header-logo.png')}
+                        style={styles.headerLogo}
+                        resizeMode="contain"
+                    />
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={[styles.headerBrandText, { color: colors.text }]}>CALEN</Text>
+                        <Text style={[styles.headerBrandText, { color: '#FACC15' }]}>DAR</Text>
+                    </View>
+                </TouchableOpacity>
+
+                <View style={styles.headerRight}>
+                    <TouchableOpacity style={styles.iconButton} onPress={toggleSearch}>
+                        <Ionicons name="search-outline" size={24} color={colors.text} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
+                        <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/(tabs)/profile')}>
+                        <Image
+                            source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
+                            style={styles.headerProfileImage}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </>
+        )}
+    </View>
+);
+
+// Extracted List Header Component
+const CalendarListHeader = ({
+    colors,
+    t,
+    favoritesOnly,
+    setFavoritesOnly,
+    selectedDay,
+    setSelectedDay
+}: any) => (
+    <View>
+        {/* Original Header Content: Title + Actions */}
+        <View style={styles.pageHeader}>
+            <View style={styles.titleContainer}>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>{t('calendar.title')}</Text>
+                <Ionicons name="calendar-outline" size={20} color={colors.primary} style={{ marginLeft: 8 }} />
+            </View>
+
+            <TouchableOpacity
+                style={[
+                    styles.favButton,
+                    {
+                        backgroundColor: favoritesOnly ? colors.primary : colors.card,
+                        borderColor: colors.border,
+                        borderWidth: 1
+                    }
+                ]}
+                onPress={() => setFavoritesOnly(!favoritesOnly)}
+            >
+                <Ionicons
+                    name={favoritesOnly ? "heart" : "heart-outline"}
+                    size={16}
+                    color={favoritesOnly ? '#fff' : colors.text}
+                />
+                <Text style={[
+                    styles.favButtonText,
+                    { color: favoritesOnly ? '#fff' : colors.text }
+                ]}>
+                    {t('calendar.favoritesOnly')}
+                </Text>
+            </TouchableOpacity>
+        </View>
+
+        {/* Day Tabs */}
+        <DayTabs selectedDay={selectedDay} onSelectDay={setSelectedDay} />
+    </View>
+);
 
 const styles = StyleSheet.create({
     container: {
