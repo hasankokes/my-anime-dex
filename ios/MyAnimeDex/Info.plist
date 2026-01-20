@@ -35,7 +35,7 @@
     <key>CFBundleVersion</key>
     <string>7</string>
     <key>GADApplicationIdentifier</key>
-    <string>ca-app-pub-3940256099942544~3347511713</string>
+    <string>ca-app-pub-5358007170177982~9623309693</string>
     <key>GADDelayAppMeasurementInit</key>
     <false/>
     <key>LSMinimumSystemVersion</key>
@@ -50,6 +50,8 @@
       <true/>
     </dict>
     <key>NSUserActivityTypes</key>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>This identifier will be used to deliver personalized ads to you.</string>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>

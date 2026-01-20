@@ -42,6 +42,7 @@
     "expo-store-review": "~8.1.5",
     "expo-symbols": "^0.4.4",
     "expo-system-ui": "~5.0.11",
+    "expo-tracking-transparency": "~5.2.4",
     "expo-web-browser": "~14.2.0",
     "i18n-js": "^4.5.1",
     "lucide-react-native": "^0.511.0",

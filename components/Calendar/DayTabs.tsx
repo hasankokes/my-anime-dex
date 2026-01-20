@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     scrollContent: {
-        paddingHorizontal: 20, // Align with list content
+        paddingRight: 20, // Keep right padding so the last item isn't cut off
         gap: 10,
         alignItems: 'center',
     },

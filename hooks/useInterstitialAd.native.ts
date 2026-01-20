@@ -3,10 +3,18 @@ import { InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../lib/supabase';
 
-// Use the Real Unit ID provided by user, but fall back to Test ID if valid one isn't available in some contexts.
-// However, for safety in this specific task where I can't verify environment, I'll use the user provided ID.
-// User provided ID: ca-app-pub-5358007170177982/5656420192
-const REAL_AD_UNIT_ID = 'ca-app-pub-5358007170177982/5656420192';
+import { Platform } from 'react-native';
+
+// User provided IDs
+const ANDROID_AD_UNIT_ID = 'ca-app-pub-5358007170177982/5656420192';
+const IOS_AD_UNIT_ID = 'ca-app-pub-5358007170177982/8252364184';
+
+const REAL_AD_UNIT_ID = Platform.select({
+    ios: IOS_AD_UNIT_ID,
+    android: ANDROID_AD_UNIT_ID,
+    default: ANDROID_AD_UNIT_ID,
+})!;
+
 const AD_UNIT_ID = __DEV__ ? TestIds.INTERSTITIAL : REAL_AD_UNIT_ID;
 
 const STORAGE_KEY_AD_COUNT = 'ad_action_count';

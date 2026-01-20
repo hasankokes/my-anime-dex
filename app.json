@@ -42,10 +42,16 @@
       "expo-font",
       "expo-web-browser",
       [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      [
         "react-native-google-mobile-ads",
         {
-          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
-          "iosAppId": "ca-app-pub-3940256099942544~3347511713"
+          "androidAppId": "ca-app-pub-5358007170177982~5033603669",
+          "iosAppId": "ca-app-pub-5358007170177982~9623309693"
         }
       ],
       [

@@ -13,6 +13,7 @@ import { OfflineBanner } from '../components/OfflineBanner';
 import { LanguageProvider } from '../context/LanguageContext';
 import { RevenueCatProvider } from '../context/RevenueCatProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,6 +51,12 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
 export default function RootLayout() {
   useFrameworkReady();
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await requestTrackingPermissionsAsync();
+    })();
+  }, []);
 
   // Load Google Fonts AND Icon Fonts to prevent "squares"
   const [fontsLoaded] = useFonts({
