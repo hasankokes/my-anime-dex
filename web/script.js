@@ -111,3 +111,28 @@ if (listId) {
         `;
     }
 }
+// OS Detection for Smart Routing
+function detectOS() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    // Windows Phone must come first because its UA also contains "Android"
+    if (/windows phone/i.test(userAgent)) {
+        return "Windows Phone";
+    }
+
+    if (/android/i.test(userAgent)) {
+        document.body.classList.add('is-android');
+        return "Android";
+    }
+
+    // iOS detection from: http://stackoverflow.com/a/9039885/177710
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        document.body.classList.add('is-ios');
+        return "iOS";
+    }
+
+    return "unknown";
+}
+
+// Run detection on load
+document.addEventListener('DOMContentLoaded', detectOS);

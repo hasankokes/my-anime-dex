@@ -52,13 +52,13 @@ h3 {
 }
 
 .nav-logo {
-    height: 40px;
-    /* Slightly smaller to fit nicely with text */
+    height: 60px;
+    /* Increased size */
     width: auto;
 }
 
 .logo-text {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 700;
     letter-spacing: 0.5px;
     line-height: 1;
@@ -139,7 +139,7 @@ h3 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
+    padding: 10px 40px;
     position: fixed;
     top: 0;
     left: 0;
@@ -356,7 +356,7 @@ h3 {
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 30px;
 }
 
@@ -478,6 +478,13 @@ h3 {
     margin-right: auto;
 }
 
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
 /* Footer */
 footer {
     padding: 60px 8% 30px;
@@ -495,6 +502,35 @@ footer {
     color: var(--text-secondary);
     font-size: 0.9rem;
     margin-top: 8px;
+}
+
+.footer-social {
+    text-align: center;
+}
+
+.footer-social h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.footer-social p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+}
+
+.social-icons a {
+    font-size: 1.8rem;
+    color: var(--text-secondary);
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.social-icons a:hover {
+    color: #E1306C;
+    /* Instagram Brand Color */
+    transform: scale(1.1);
 }
 
 .footer-links {
@@ -661,6 +697,15 @@ footer {
         padding: 60px 20px;
     }
 
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .feature-card {
+        padding: 20px;
+    }
+
     .section-header h2 {
         font-size: 2rem;
     }
@@ -670,6 +715,10 @@ footer {
         gap: 30px;
         text-align: center;
         align-items: center;
+    }
+
+    .footer-social {
+        margin: 20px 0;
     }
 
     .footer-links {
@@ -683,5 +732,28 @@ footer {
 
     .cta-content {
         padding: 40px 20px;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .cta-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Sticky Footer Logic for Mobile */
+    /* Hide non-relevant buttons in main content on mobile */
+    body.is-ios .hero-buttons .btn-android,
+    body.is-ios .cta-buttons .btn-android {
+        display: none;
+    }
+
+    body.is-android .hero-buttons .btn-ios,
+    body.is-android .cta-buttons .btn-ios {
+        display: none;
     }
 }

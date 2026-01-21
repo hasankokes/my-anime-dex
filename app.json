@@ -2,7 +2,7 @@
   "expo": {
     "name": "MyAnimeDex",
     "slug": "react-native-expo-starter",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myanimedex",
@@ -11,11 +11,14 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.myanimedex.app",
-      "buildNumber": "7"
+      "buildNumber": "7",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app requires access to the camera to allow you to take and upload profile photos."
+      }
     },
     "android": {
       "package": "com.myanimedex.app",
-      "versionCode": 7,
+      "versionCode": 8,
       "permissions": [
         "com.android.vending.BILLING"
       ],
