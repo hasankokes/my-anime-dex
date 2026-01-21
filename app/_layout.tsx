@@ -13,7 +13,7 @@ import { OfflineBanner } from '../components/OfflineBanner';
 import { LanguageProvider } from '../context/LanguageContext';
 import { RevenueCatProvider } from '../context/RevenueCatProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
+import { requestTrackingPermissions } from '../lib/tracking';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -54,7 +54,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     (async () => {
-      const { status } = await requestTrackingPermissionsAsync();
+      const { status } = await requestTrackingPermissions();
     })();
   }, []);
 

@@ -12,6 +12,7 @@ const translations = {
             cancel: 'Cancel',
             back: 'Back',
             confirm: 'Confirm',
+            continueWithApple: 'Continue with Apple',
         },
         settings: {
             title: 'Settings',
@@ -213,6 +214,7 @@ const translations = {
             cancel: 'İptal',
             back: 'Geri',
             confirm: 'Onayla',
+            continueWithApple: 'Apple ile Devam Et',
         },
         settings: {
             title: 'Ayarlar',
@@ -414,6 +416,7 @@ const translations = {
             cancel: 'キャンセル',
             back: '戻る',
             confirm: '確認',
+            continueWithApple: 'Appleでサインイン',
         },
         settings: {
             title: '設定',
@@ -611,6 +614,7 @@ const translations = {
             cancel: 'Отмена',
             back: 'Назад',
             confirm: 'Подтвердить',
+            continueWithApple: 'Войти с Apple',
         },
         settings: {
             title: 'Настройки',

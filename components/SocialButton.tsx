@@ -1,11 +1,14 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, ActivityIndicator, Image, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import i18n from '../lib/i18n';
 
 interface SocialButtonProps {
   provider: 'apple' | 'google';
   onPress: () => void;
   isLoading?: boolean;
+  iconOnly?: boolean;
+  style?: ViewStyle;
 }
 
 const { width, height } = Dimensions.get('window');
@@ -14,14 +17,16 @@ const BASE_HEIGHT = 812;
 const scale = Math.min(width / BASE_WIDTH, height / BASE_HEIGHT);
 const normalize = (size: number) => Math.round(size * scale);
 
-export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, isLoading }) => {
+export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, isLoading, iconOnly, style }) => {
   const isApple = provider === 'apple';
 
   return (
     <TouchableOpacity
       style={[
         styles.button,
-        isApple ? styles.appleButton : styles.googleButton
+        isApple ? styles.appleButton : styles.googleButton,
+        iconOnly && styles.iconOnlyButton,
+        style
       ]}
       onPress={onPress}
       activeOpacity={0.8}
@@ -36,17 +41,19 @@ export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, i
               name="logo-apple"
               size={normalize(24)}
               color="white"
-              style={styles.icon}
+              style={iconOnly ? undefined : styles.icon}
             />
           ) : (
             <Image
               source={require('../assets/images/google-logo.png')}
-              style={[styles.icon, { width: normalize(24), height: normalize(24) }]}
+              style={[iconOnly ? undefined : styles.icon, { width: normalize(24), height: normalize(24) }]}
             />
           )}
-          <Text style={[styles.text, isApple ? styles.appleText : styles.googleText]}>
-            Continue with {isApple ? 'Apple' : 'Google'}
-          </Text>
+          {!iconOnly && (
+            <Text style={[styles.text, isApple ? styles.appleText : styles.googleText]}>
+              {isApple ? i18n.t('common.continueWithApple') : 'Continue with Google'}
+            </Text>
+          )}
         </>
       )}
     </TouchableOpacity>
@@ -70,6 +77,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 2,
+  },
+  iconOnlyButton: {
+    width: normalize(50),
+    height: normalize(50),
+    borderRadius: normalize(25),
+    marginBottom: 0,
   },
   appleButton: {
     backgroundColor: '#1A1A1A',

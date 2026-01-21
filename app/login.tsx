@@ -9,6 +9,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri } from 'expo-auth-session';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PREDEFINED_AVATARS } from '../lib/constants';
+import { signInWithAppleNative } from '../lib/appleAuth';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -245,6 +246,64 @@ export default function LoginScreen() {
     }
   };
 
+  const performAppleAuth = async () => {
+    try {
+      // Use Native Sign-In ONLY for iOS
+      if (Platform.OS !== 'ios') {
+        await performOAuth('apple');
+        return;
+      }
+
+      const credential = await signInWithAppleNative();
+
+      if (credential.identityToken) {
+        const { error, data } = await supabase.auth.signInWithIdToken({
+          provider: 'apple',
+          token: credential.identityToken,
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        // If this is the first time, Apple returns the name. We should capture it.
+        // Supabase might capture email automatically from the token.
+        if (data.user && credential.fullName) {
+          const name = credential.fullName.givenName
+            ? `${credential.fullName.givenName} ${credential.fullName.familyName || ''}`.trim()
+            : null;
+
+          if (name) {
+            await supabase.auth.updateUser({
+              data: { full_name: name }
+            });
+
+            // Also try to update profile if it exists or insert if it doesn't (handled downstream usually but good to be safe)
+            try {
+              const { error: updateError } = await supabase.from('profiles').update({
+                username: name
+              }).eq('id', data.user.id);
+            } catch (e) {
+              // Ignore profile update errors here, basic auth is done
+            }
+          }
+        }
+
+        checkSession();
+      } else {
+        throw new Error('No identity token received from Apple');
+      }
+    } catch (e: any) {
+      if (e.code === 'ERR_REQUEST_CANCELED') {
+        // User canceled, do nothing
+      } else {
+        Alert.alert('Apple Sign-In Error', e.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (checkingSession) {
     return (
       <View style={[styles.container, styles.center, isDark && styles.containerDark]}>
@@ -277,10 +336,22 @@ export default function LoginScreen() {
 
           {/* Social Section (Moved to Top) */}
           <View style={styles.buttonContainer}>
+            <>
+              <SocialButton
+                provider="apple"
+                onPress={performAppleAuth}
+                isLoading={loading}
+                style={{ flex: 1 }}
+                iconOnly
+              />
+              <View style={{ width: 24 }} />
+            </>
             <SocialButton
               provider="google"
               onPress={() => performOAuth('google')}
               isLoading={loading}
+              style={{ flex: 1 }}
+              iconOnly
             />
           </View>
 
@@ -412,7 +483,9 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonContainer: {
-    marginBottom: normalize(8), // Reduced from 16 to balance spacing (16+8 = 24 above, matching 24 below)
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: normalize(24),
   },
   refreshLink: {
     alignItems: 'center',

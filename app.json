@@ -25,7 +25,7 @@
       }
     },
     "splash": {
-      "image": "./assets/images/splash-light.png",
+      "image": "./assets/images/splash-light.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff",
       "dark": {
@@ -41,6 +41,7 @@
       "expo-router",
       "expo-font",
       "expo-web-browser",
+      "expo-apple-authentication",
       [
         "expo-tracking-transparency",
         {
@@ -61,7 +62,8 @@
             "enableProguardInReleaseBuilds": true
           }
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true

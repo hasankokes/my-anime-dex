@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import Purchases, { CustomerInfo, PurchasesPackage } from 'react-native-purchases';
-import { REVENUECAT_API_KEY } from '../constants/Config';
+import { REVENUECAT_ANDROID_API_KEY, REVENUECAT_IOS_API_KEY } from '../constants/Config';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthProvider'; // Import useAuth
 
@@ -26,9 +26,9 @@ export const RevenueCatProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         const init = async () => {
             try {
                 if (Platform.OS === 'android') {
-                    await Purchases.configure({ apiKey: REVENUECAT_API_KEY });
+                    await Purchases.configure({ apiKey: REVENUECAT_ANDROID_API_KEY });
                 } else if (Platform.OS === 'ios') {
-                    await Purchases.configure({ apiKey: REVENUECAT_API_KEY });
+                    await Purchases.configure({ apiKey: REVENUECAT_IOS_API_KEY });
                 }
 
                 const info = await Purchases.getCustomerInfo();

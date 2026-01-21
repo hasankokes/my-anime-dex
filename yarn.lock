@@ -1488,22 +1488,22 @@
     redux-thunk "^3.1.0"
     reselect "^5.1.0"
 
-"@revenuecat/purchases-js-hybrid-mappings@17.26.0":
-  version "17.26.0"
-  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-js-hybrid-mappings/-/purchases-js-hybrid-mappings-17.26.0.tgz#66eb298f9c7bdbb83dc316c825feab66c29d468c"
-  integrity sha512-FBVSrPANEX7qz8F5kQi86vUiT3M7+lOGcty3ayuvcXvmAciVZBMvWXjFCGkv1dhPpkhTyVhS+7wBcRr8KizBLA==
+"@revenuecat/purchases-js-hybrid-mappings@17.28.0":
+  version "17.28.0"
+  resolved "https://registry.npmjs.org/@revenuecat/purchases-js-hybrid-mappings/-/purchases-js-hybrid-mappings-17.28.0.tgz"
+  integrity sha512-xOHeEEt7Qe/pf1oLbYodfie7Fa46SNFPbwgy4ZjyAypXNXt+3sXXpBcim+pm7l9VefcuFmGuHGIKfSipXXXkWw==
   dependencies:
-    "@revenuecat/purchases-js" "1.23.0"
+    "@revenuecat/purchases-js" "1.24.1"
 
-"@revenuecat/purchases-js@1.23.0":
-  version "1.23.0"
-  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-js/-/purchases-js-1.23.0.tgz#4cfe714d300d9c3ab67c897e6a6aafc2401517d5"
-  integrity sha512-CtYO0Tk/+MSI4Ea16xs269v81wZWWISdBmYPIHmxclnuCfsV5zFl7bzV1LqO2za7xKWJwLwc5tcLeQng2bsY+w==
+"@revenuecat/purchases-js@1.24.1":
+  version "1.24.1"
+  resolved "https://registry.npmjs.org/@revenuecat/purchases-js/-/purchases-js-1.24.1.tgz"
+  integrity sha512-MmnuBw72+G4yLwE/GD6tzui/JWeEwDZrTMEh98+47WoVJ5+wu4wdQtxB/UuYQlKTpZKx271NwgP6RpCQ5A9k9A==
 
-"@revenuecat/purchases-typescript-internal@17.26.0":
-  version "17.26.0"
-  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-17.26.0.tgz#1cf5cde0d8b8c71c430c8d92f87f3c2a08252e93"
-  integrity sha512-I9MbHSJm3TXrLwbh9KjTyInt1ZkZw20ahuNnlFOfR8QxazccagjXu7Tm8um9rIAofY1lvJf8DjQptfOvBJ0UQQ==
+"@revenuecat/purchases-typescript-internal@17.28.0":
+  version "17.28.0"
+  resolved "https://registry.npmjs.org/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-17.28.0.tgz"
+  integrity sha512-p4yIbK4zn5/7viHuYcbrwdxgv0LCNZGW4sCm0fHc2YLzFG1rff5yb5er9nyYxlpTmRz7hlIwv7PXHJi+FkyEhg==
 
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
@@ -2074,6 +2074,11 @@ bser@2.1.1:
   dependencies:
     node-int64 "^0.4.0"
 
+buffer-equal-constant-time@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz"
+  integrity sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==
+
 buffer-from@^1.0.0:
   version "1.1.2"
   resolved "https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.2.tgz"
@@ -2505,6 +2510,13 @@ eastasianwidth@^0.2.0:
   resolved "https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz"
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
+ecdsa-sig-formatter@1.0.11:
+  version "1.0.11"
+  resolved "https://registry.npmjs.org/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.11.tgz"
+  integrity sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==
+  dependencies:
+    safe-buffer "^5.0.1"
+
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz"
@@ -2603,6 +2615,11 @@ exec-async@^2.2.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/exec-async/-/exec-async-2.2.0.tgz"
   integrity sha512-87OpwcEiMia/DeiKFzaQNBNFeN3XkkpYIh9FyOqq5mS2oKv3CBE67PXoEKcr6nodWdXNogTiQ0jE2NGuoffXPw==
+
+expo-apple-authentication@~7.2.4:
+  version "7.2.4"
+  resolved "https://registry.npmjs.org/expo-apple-authentication/-/expo-apple-authentication-7.2.4.tgz"
+  integrity sha512-T2agaLLPT4Ax97FeXImB7BCCEzEJ0gB+ZwlFa/FXBtbp6WFKcGRlTVKiX2YPYLZzN5QjXcmQ9HHJ17jRthNHMg==
 
 expo-application@~6.1.5:
   version "6.1.5"
@@ -2711,10 +2728,10 @@ expo-linking@~7.1.7:
     expo-constants "~17.1.7"
     invariant "^2.2.4"
 
-expo-localization@^17.0.8:
-  version "17.0.8"
-  resolved "https://registry.npmjs.org/expo-localization/-/expo-localization-17.0.8.tgz"
-  integrity sha512-UrdwklZBDJ+t+ZszMMiE0SXZ2eJxcquCuQcl6EvGHM9K+e6YqKVRQ+w8qE+iIB3H75v2RJy6MHAaLK+Mqeo04g==
+expo-localization@~16.1.6:
+  version "16.1.6"
+  resolved "https://registry.yarnpkg.com/expo-localization/-/expo-localization-16.1.6.tgz#0ad7bd6bb61f14d9d786e63fd0f7d190d44695cc"
+  integrity sha512-v4HwNzs8QvyKHwl40MvETNEKr77v1o9/eVC8WCBY++DIlBAvonHyJe2R9CfqpZbC4Tlpl7XV+07nLXc8O5PQsA==
   dependencies:
     rtl-detect "^1.0.2"
 
@@ -2800,7 +2817,7 @@ expo-system-ui@~5.0.11:
 
 expo-tracking-transparency@~5.2.4:
   version "5.2.4"
-  resolved "https://registry.yarnpkg.com/expo-tracking-transparency/-/expo-tracking-transparency-5.2.4.tgz#f3e343e9094376e89ec590444ac05dda6b4ecd25"
+  resolved "https://registry.npmjs.org/expo-tracking-transparency/-/expo-tracking-transparency-5.2.4.tgz"
   integrity sha512-Evog1rmbSLrODuG8AukEoV0y1RzQiJelX95rFuXY3kxHZQbiBOQ7YzAOsuYACztDf4XDoSODStdHSgUkgKNxJA==
 
 expo-web-browser@~14.2.0:
@@ -3407,6 +3424,39 @@ json5@^2.2.3:
   resolved "https://registry.npmjs.org/json5/-/json5-2.2.3.tgz"
   integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
 
+jsonwebtoken@^9.0.3:
+  version "9.0.3"
+  resolved "https://registry.npmjs.org/jsonwebtoken/-/jsonwebtoken-9.0.3.tgz"
+  integrity sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==
+  dependencies:
+    jws "^4.0.1"
+    lodash.includes "^4.3.0"
+    lodash.isboolean "^3.0.3"
+    lodash.isinteger "^4.0.4"
+    lodash.isnumber "^3.0.3"
+    lodash.isplainobject "^4.0.6"
+    lodash.isstring "^4.0.1"
+    lodash.once "^4.0.0"
+    ms "^2.1.1"
+    semver "^7.5.4"
+
+jwa@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/jwa/-/jwa-2.0.1.tgz"
+  integrity sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==
+  dependencies:
+    buffer-equal-constant-time "^1.0.1"
+    ecdsa-sig-formatter "1.0.11"
+    safe-buffer "^5.0.1"
+
+jws@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npmjs.org/jws/-/jws-4.0.1.tgz"
+  integrity sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==
+  dependencies:
+    jwa "^2.0.1"
+    safe-buffer "^5.0.1"
+
 kleur@^3.0.3:
   version "3.0.3"
   resolved "https://registry.npmjs.org/kleur/-/kleur-3.0.3.tgz"
@@ -3521,6 +3571,41 @@ lodash.debounce@4.0.8, lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz"
   integrity sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==
+
+lodash.includes@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.npmjs.org/lodash.includes/-/lodash.includes-4.3.0.tgz"
+  integrity sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w==
+
+lodash.isboolean@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/lodash.isboolean/-/lodash.isboolean-3.0.3.tgz"
+  integrity sha512-Bz5mupy2SVbPHURB98VAcw+aHh4vRV5IPNhILUCsOzRmsTmSQ17jIuqopAentWoehktxGd9e/hbIXq980/1QJg==
+
+lodash.isinteger@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.npmjs.org/lodash.isinteger/-/lodash.isinteger-4.0.4.tgz"
+  integrity sha512-DBwtEWN2caHQ9/imiNeEA5ys1JoRtRfY3d7V9wkqtbycnAmTvRRmbHKDV4a0EYc678/dia0jrte4tjYwVBaZUA==
+
+lodash.isnumber@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz"
+  integrity sha512-QYqzpfwO3/CWf3XP+Z+tkQsfaLL/EnUlXWVkIk5FUPc4sBdTehEqZONuyRt2P67PXAk+NXmTBcc97zw9t1FQrw==
+
+lodash.isplainobject@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.npmjs.org/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz"
+  integrity sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==
+
+lodash.isstring@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npmjs.org/lodash.isstring/-/lodash.isstring-4.0.1.tgz"
+  integrity sha512-0wJxfxH1wgO3GrbuP+dTTk7op+6L41QCXbGINEmD+ny/G/eCqGzxyCsh7159S+mgDDcoarnBw6PC1PS5+wUGgw==
+
+lodash.once@^4.0.0:
+  version "4.1.1"
+  resolved "https://registry.npmjs.org/lodash.once/-/lodash.once-4.1.1.tgz"
+  integrity sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==
 
 lodash.throttle@^4.1.1:
   version "4.1.1"
@@ -4365,19 +4450,19 @@ react-native-is-edge-to-edge@1.1.7, react-native-is-edge-to-edge@^1.1.6, react-n
   integrity sha512-EH6i7E8epJGIcu7KpfXYXiV2JFIYITtq+rVS8uEb+92naMRBdxhTuS8Wn2Q7j9sqyO0B+Xbaaf9VdipIAmGW4w==
 
 react-native-purchases-ui@^9.6.13:
-  version "9.6.13"
-  resolved "https://registry.yarnpkg.com/react-native-purchases-ui/-/react-native-purchases-ui-9.6.13.tgz#42957d45c51c72be2dbcf1b31afd714a046bc757"
-  integrity sha512-f6lTNX06B1Z8dEDwYlV0WDMgvz7FEdeIf4ETfUZu9XSge7O9iYdjymR9VOa2VFlDyHl/ZhonXy/uGjPzy0N5OQ==
+  version "9.7.1"
+  resolved "https://registry.npmjs.org/react-native-purchases-ui/-/react-native-purchases-ui-9.7.1.tgz"
+  integrity sha512-XJJbFK+yVA5QUxERuFBI8RgUENJnpRL8grE7ElrhZ9LkWtexYzkVbSskdGa8nh9Qsud3Z/gscuwzVgClxMqr4g==
   dependencies:
-    "@revenuecat/purchases-typescript-internal" "17.26.0"
+    "@revenuecat/purchases-typescript-internal" "17.28.0"
 
 react-native-purchases@^9.6.13:
-  version "9.6.13"
-  resolved "https://registry.yarnpkg.com/react-native-purchases/-/react-native-purchases-9.6.13.tgz#79d9d127458f496b2aed1a3b1ef6958a2240e91d"
-  integrity sha512-/+q/ZNKsn8i9Fc8QiObxod9uyhLy6EMW3Yo4quZdvs7C+yfZE/dUUD3K6Tz8KXSUTeGcE/8ZN27WZCGMlH0P9w==
+  version "9.7.1"
+  resolved "https://registry.npmjs.org/react-native-purchases/-/react-native-purchases-9.7.1.tgz"
+  integrity sha512-1uvdDiu3WNDfo97sc56YfVYxqeTq1bIGAw5aKEKhc8kmWwSOh6FYm5d6gbuxJvR/LUERf0GitlQ1KIKrYLtnSQ==
   dependencies:
-    "@revenuecat/purchases-js-hybrid-mappings" "17.26.0"
-    "@revenuecat/purchases-typescript-internal" "17.26.0"
+    "@revenuecat/purchases-js-hybrid-mappings" "17.28.0"
+    "@revenuecat/purchases-typescript-internal" "17.28.0"
 
 react-native-reanimated@~3.17.4:
   version "3.17.5"
@@ -4659,7 +4744,7 @@ rtl-detect@^1.0.2:
   resolved "https://registry.npmjs.org/rtl-detect/-/rtl-detect-1.1.2.tgz"
   integrity sha512-PGMBq03+TTG/p/cRB7HCLKJ1MgDIi07+QU1faSjiYRfmY5UsAttV9Hs08jDAHVwcOwmVLcSJkpwyfXszVjWfIQ==
 
-safe-buffer@5.2.1:
+safe-buffer@5.2.1, safe-buffer@^5.0.1:
   version "5.2.1"
   resolved "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz"
   integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
