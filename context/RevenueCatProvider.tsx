@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import Purchases, { CustomerInfo, PurchasesPackage } from 'react-native-purchases';
 import { REVENUECAT_ANDROID_API_KEY, REVENUECAT_IOS_API_KEY } from '../constants/Config';
@@ -25,6 +26,14 @@ export const RevenueCatProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     useEffect(() => {
         const init = async () => {
             try {
+                // Skip RevenueCat in Expo Go
+                const isExpoGo = Constants.appOwnership === 'expo';
+                if (isExpoGo) {
+                    console.log('Expo Go detected: Skipping RevenueCat initialization');
+                    setInitializing(false);
+                    return;
+                }
+
                 if (Platform.OS === 'android') {
                     await Purchases.configure({ apiKey: REVENUECAT_ANDROID_API_KEY });
                 } else if (Platform.OS === 'ios') {

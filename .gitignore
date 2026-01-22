@@ -48,7 +48,6 @@ android/app/src/main/jniLibs/
 android/app/src/debug/
 android/app/src/release/
 android/app/src/main/res/raw/
-android/gradle/
 android/.gradle/
 android/captures/
 android/local.properties
@@ -77,3 +76,7 @@ ios/Pods/
 
 expo-env.d.ts
 # @end expo-cli
+
+# Native folders (managed workflow)
+android/
+ios/

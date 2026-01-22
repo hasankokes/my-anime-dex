@@ -26,7 +26,7 @@ const STATUS_OPTIONS = [
   { label: 'Remove from List', value: 'remove', icon: 'trash-outline', color: '#EF4444' },
 ];
 
-export default function AnimeDetailsScreen() {
+const AnimeDetailsScreen = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -570,6 +570,8 @@ export default function AnimeDetailsScreen() {
 }
 
 
+
+export default AnimeDetailsScreen;
 
 // --- Custom List Modal Component ---
 function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible: boolean, onClose: () => void, anime: Anime, showAdIfNeeded: () => void }) {

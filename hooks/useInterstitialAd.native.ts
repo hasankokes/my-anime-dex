@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
+import Constants from 'expo-constants';
+// import { InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../lib/supabase';
 
@@ -15,35 +16,55 @@ const REAL_AD_UNIT_ID = Platform.select({
     default: ANDROID_AD_UNIT_ID,
 })!;
 
-const AD_UNIT_ID = __DEV__ ? TestIds.INTERSTITIAL : REAL_AD_UNIT_ID;
+// const AD_UNIT_ID = __DEV__ ? TestIds.INTERSTITIAL : REAL_AD_UNIT_ID;
 
 const STORAGE_KEY_AD_COUNT = 'ad_action_count';
 
 export const useInterstitialAd = () => {
     const [loaded, setLoaded] = useState(false);
-    const [interstitial, setInterstitial] = useState<InterstitialAd | null>(null);
+    const [interstitial, setInterstitial] = useState<any | null>(null);
 
     // Load ad
     useEffect(() => {
-        const ad = InterstitialAd.createForAdRequest(AD_UNIT_ID, {
-            requestNonPersonalizedAdsOnly: true,
-        });
+        // Skip AdMob in Expo Go to prevent crashes
+        if (Constants.appOwnership === 'expo') {
+            console.log('Expo Go detected: Skipping AdMob initialization');
+            return;
+        }
 
-        const unsubscribeLoaded = ad.addAdEventListener(AdEventType.LOADED, () => {
-            setLoaded(true);
-        });
+        let ad: InterstitialAd | null = null;
+        let unsubscribeLoaded: (() => void) | undefined;
+        let unsubscribeClosed: (() => void) | undefined;
 
-        const unsubscribeClosed = ad.addAdEventListener(AdEventType.CLOSED, () => {
-            setLoaded(false);
-            ad.load(); // Load next ad
-        });
+        try {
+            // Dynamically require the module to avoid crash in Expo Go where the native module is missing
+            const { InterstitialAd, AdEventType, TestIds } = require('react-native-google-mobile-ads');
 
-        ad.load();
-        setInterstitial(ad);
+            const AD_UNIT_ID = __DEV__ ? TestIds.INTERSTITIAL : REAL_AD_UNIT_ID;
+
+            ad = InterstitialAd.createForAdRequest(AD_UNIT_ID, {
+                requestNonPersonalizedAdsOnly: true,
+            });
+
+            unsubscribeLoaded = ad.addAdEventListener(AdEventType.LOADED, () => {
+                setLoaded(true);
+            });
+
+            unsubscribeClosed = ad.addAdEventListener(AdEventType.CLOSED, () => {
+                setLoaded(false);
+                ad?.load(); // Load next ad
+            });
+
+            ad.load();
+            setInterstitial(ad);
+
+        } catch (error) {
+            console.warn('Failed to initialize AdMob (module missing?):', error);
+        }
 
         return () => {
-            unsubscribeLoaded();
-            unsubscribeClosed();
+            if (unsubscribeLoaded) unsubscribeLoaded();
+            if (unsubscribeClosed) unsubscribeClosed();
         };
     }, []);
 

@@ -819,7 +819,7 @@ export default function ProfileScreen() {
           <Text style={styles.logoutText}>{t('settings.logout')}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.versionText}>{t('settings.appVersion')} 1.0.6</Text>
+        <Text style={styles.versionText}>{t('settings.appVersion')} </Text>
         <View style={{ height: 40 }} />
       </ScrollView>
 
