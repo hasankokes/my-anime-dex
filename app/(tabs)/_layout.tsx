@@ -2,9 +2,11 @@ import { Tabs } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function TabLayout() {
   const { colors, isDark } = useTheme();
+  const { t } = useLanguage();
 
   return (
     <Tabs
@@ -28,7 +30,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: t('tabs.home'),
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>
               <Ionicons
@@ -43,7 +45,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="calendar"
         options={{
-          title: 'Calendar',
+          title: t('tabs.calendar'),
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>
               <Ionicons
@@ -58,7 +60,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="favorites"
         options={{
-          title: 'Favorites',
+          title: t('tabs.favorites'),
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>
               <Ionicons
@@ -73,7 +75,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="watching"
         options={{
-          title: 'Watching',
+          title: t('tabs.watching'),
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>
               <Ionicons
@@ -88,7 +90,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: t('tabs.profile'),
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>
               <Ionicons

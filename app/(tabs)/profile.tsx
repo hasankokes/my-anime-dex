@@ -515,7 +515,7 @@ export default function ProfileScreen() {
           <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
             <Ionicons name="chevron-back" size={24} color={colors.text} />
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>Profile</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>{t('tabs.profile')}</Text>
 
         </View>
 
@@ -1111,7 +1111,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 18,
     fontFamily: 'Poppins_700Bold',
-    marginLeft: 20,
+    marginHorizontal: 20,
     marginBottom: 16,
   },
   settingsContainer: {

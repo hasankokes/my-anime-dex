@@ -336,22 +336,24 @@ export default function LoginScreen() {
 
           {/* Social Section (Moved to Top) */}
           <View style={styles.buttonContainer}>
-            <>
-              <SocialButton
-                provider="apple"
-                onPress={performAppleAuth}
-                isLoading={loading}
-                style={{ flex: 1 }}
-                iconOnly
-              />
-              <View style={{ width: 24 }} />
-            </>
+            {Platform.OS === 'ios' && (
+              <>
+                <SocialButton
+                  provider="apple"
+                  onPress={performAppleAuth}
+                  isLoading={loading}
+                  style={{ flex: 1 }}
+                  iconOnly
+                />
+                <View style={{ width: 24 }} />
+              </>
+            )}
             <SocialButton
               provider="google"
               onPress={() => performOAuth('google')}
               isLoading={loading}
-              style={{ flex: 1 }}
-              iconOnly
+              style={Platform.OS === 'ios' ? { flex: 1 } : undefined}
+              iconOnly={Platform.OS === 'ios'}
             />
           </View>
 

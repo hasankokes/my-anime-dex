@@ -157,6 +157,12 @@ export default function WatchingScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchData();
+
+      return () => {
+        setIsSearchVisible(false);
+        setSearchQuery('');
+        Keyboard.dismiss();
+      };
     }, [])
   );
 
@@ -243,18 +249,20 @@ export default function WatchingScreen() {
       {isSearchVisible ? (
         // Search Mode Header
         <View style={styles.searchHeaderContainer}>
-          <Ionicons name="search-outline" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
-          <TextInput
-            ref={searchInputRef}
-            style={[styles.searchInput, { color: colors.text }]}
-            placeholder="Search watching..."
-            placeholderTextColor={colors.subtext}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-          <TouchableOpacity onPress={toggleSearch} style={{ padding: 4 }}>
-            <Ionicons name="close" size={24} color={colors.text} />
-          </TouchableOpacity>
+          <View style={[styles.searchBar, { backgroundColor: colors.card, shadowColor: '#000' }]}>
+            <Ionicons name="search-outline" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
+            <TextInput
+              ref={searchInputRef}
+              style={[styles.searchInput, { color: colors.text }]}
+              placeholder="Search watching..."
+              placeholderTextColor={colors.subtext}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            <TouchableOpacity onPress={toggleSearch} style={{ padding: 4 }}>
+              <Ionicons name="close" size={24} color={colors.text} />
+            </TouchableOpacity>
+          </View>
         </View>
       ) : (
         <>
@@ -358,11 +366,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: '100%',
+    paddingVertical: 10,
+    paddingLeft: 12,
+  },
+  searchBar: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 44,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   searchInput: {
     flex: 1,
     fontFamily: 'Poppins_500Medium',
-    fontSize: 16,
+    fontSize: 14,
     height: '100%',
   },
   headerLeft: {

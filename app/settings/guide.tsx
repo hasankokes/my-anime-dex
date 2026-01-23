@@ -21,6 +21,7 @@ export default function GuideScreen() {
                 { icon: "add-circle", label: t('help.guide.keys.add.label'), desc: t('help.guide.keys.add.desc') },
                 { icon: "list", label: t('help.guide.keys.custom.label'), desc: t('help.guide.keys.custom.desc') },
                 { icon: "trash", label: t('help.guide.keys.remove.label'), desc: t('help.guide.keys.remove.desc') },
+                { image: require('../../assets/images/header-logo.png'), label: t('help.guide.keys.logo.label'), desc: t('help.guide.keys.logo.desc') },
             ]
         },
         {
@@ -71,8 +72,18 @@ export default function GuideScreen() {
                             <View style={styles.itemsGrid}>
                                 {section.items.map((item, i) => (
                                     <View key={i} style={styles.keyItem}>
-                                        <View style={[styles.iconBox, { backgroundColor: isDark ? '#374151' : '#F3F4F6' }]}>
-                                            <Ionicons name={item.icon as any} size={20} color={colors.text} />
+                                        <View style={[
+                                            styles.iconBox,
+                                            {
+                                                backgroundColor: isDark ? '#374151' : '#F3F4F6',
+                                                padding: (item as any).image ? 0 : 0,
+                                            }
+                                        ]}>
+                                            {(item as any).image ? (
+                                                <Image source={(item as any).image} style={{ width: '90%', height: '90%' }} resizeMode="contain" />
+                                            ) : (
+                                                <Ionicons name={item.icon as any} size={20} color={colors.text} />
+                                            )}
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={[styles.keyLabel, { color: colors.text }]}>{item.label}</Text>
@@ -82,16 +93,23 @@ export default function GuideScreen() {
                                 ))}
                             </View>
                         ) : (
-                            <Text style={[styles.sectionContent, { color: colors.subtext }]}>
-                                {section.content}
-                            </Text>
+                            <View>
+                                {(section as any).image && (
+                                    <View style={styles.imageContainer}>
+                                        <Image source={(section as any).image} style={styles.sectionImage} resizeMode="contain" />
+                                    </View>
+                                )}
+                                <Text style={[styles.sectionContent, { color: colors.subtext }]}>
+                                    {section.content}
+                                </Text>
+                            </View>
                         )}
                     </View>
                 ))}
 
                 <View style={{ height: 40 }} />
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaView >
     );
 }
 
@@ -165,5 +183,16 @@ const styles = StyleSheet.create({
     keyDesc: {
         fontSize: 12,
         fontFamily: 'Poppins_400Regular',
+    },
+    imageContainer: {
+        alignItems: 'center',
+        marginBottom: 16,
+        padding: 10,
+        backgroundColor: 'rgba(0,0,0,0.02)',
+        borderRadius: 12,
+    },
+    sectionImage: {
+        width: 120,
+        height: 60,
     },
 });

@@ -14,6 +14,13 @@ const translations = {
             confirm: 'Confirm',
             continueWithApple: 'Continue with Apple',
         },
+        tabs: {
+            home: 'Home',
+            calendar: 'Calendar',
+            favorites: 'Favorites',
+            watching: 'Watching',
+            profile: 'Profile',
+        },
         settings: {
             title: 'Settings',
             language: 'Language',
@@ -194,6 +201,7 @@ const translations = {
                     add: { label: 'Add to List', desc: 'Adds anime to Watching, Plan to Watch, or Completed.' },
                     custom: { label: 'Custom List', desc: 'Save anime to one of your custom lists.' },
                     remove: { label: 'Remove', desc: 'Removes an anime from your list.' },
+                    logo: { label: 'Header Logo', desc: 'Scrolls to top.' },
                 },
                 sections: {
                     addFav: { title: 'How to Add to Favorites', content: 'On any Anime Details page, look for the Heart icon in the top right corner (or slightly below the header image). Tapping this icon will toggle the anime as a "Favorite". You can view all your favorites on your Profile page.' },
@@ -215,6 +223,13 @@ const translations = {
             back: 'Geri',
             confirm: 'Onayla',
             continueWithApple: 'Apple ile Devam Et',
+        },
+        tabs: {
+            home: 'Anasayfa',
+            calendar: 'Takvim',
+            favorites: 'Favoriler',
+            watching: 'İzleniyor',
+            profile: 'Profil',
         },
         settings: {
             title: 'Ayarlar',
@@ -396,6 +411,7 @@ const translations = {
                     add: { label: 'Listeye Ekle', desc: 'Animeyi İzliyor, İzlenecek veya Tamamlandı olarak ekler.' },
                     custom: { label: 'Özel Liste', desc: 'Animeyi özel listelerinizden birine kaydeder.' },
                     remove: { label: 'Kaldır', desc: 'Bir animeyi listenizden kaldırır.' },
+                    logo: { label: 'Logo', desc: 'En üste kaydırır.' },
                 },
                 sections: {
                     addFav: { title: 'Favorilere Nasıl Eklenir', content: 'Herhangi bir Anime Detay sayfasında, sağ üst köşedeki (veya başlık resminin hemen altındaki) Kalp simgesini bulun. Bu simgeye dokunmak animeyi "Favori" olarak işaretler. Tüm favorilerinizi Profil sayfanızda görebilirsiniz.' },
@@ -417,6 +433,13 @@ const translations = {
             back: '戻る',
             confirm: '確認',
             continueWithApple: 'Appleでサインイン',
+        },
+        tabs: {
+            home: 'ホーム',
+            calendar: 'カレンダー',
+            favorites: 'お気に入り',
+            watching: '視聴中',
+            profile: 'プロフィール',
         },
         settings: {
             title: '設定',
@@ -594,6 +617,7 @@ const translations = {
                     add: { label: 'リストに追加', desc: 'アニメを視聴中、視聴予定、または完了に追加します。' },
                     custom: { label: 'カスタムリスト', desc: 'アニメをカスタムリストの1つに保存します。' },
                     remove: { label: '削除', desc: 'リストからアニメを削除します。' },
+                    logo: { label: 'ヘッダーロゴ', desc: 'トップに戻る。' },
                 },
                 sections: {
                     addFav: { title: 'お気に入りへの追加方法', content: 'アニメ詳細ページの右上（またはヘッダー画像の下）にあるハートアイコンを探してください。このアイコンをタップすると、アニメがお気に入りとして切り替わります。お気に入りはプロフィールページですべて確認できます。' },
@@ -615,6 +639,13 @@ const translations = {
             back: 'Назад',
             confirm: 'Подтвердить',
             continueWithApple: 'Войти с Apple',
+        },
+        tabs: {
+            home: 'Главная',
+            calendar: 'Календарь',
+            favorites: 'Избранное',
+            watching: 'Смотрю',
+            profile: 'Профиль',
         },
         settings: {
             title: 'Настройки',
@@ -792,6 +823,7 @@ const translations = {
                     add: { label: 'Добавить в список', desc: 'Добавляет аниме в "Смотрю", "В планах" или "Завершено".' },
                     custom: { label: 'Свой список', desc: 'Сохранить аниме в один из ваших пользовательских списков.' },
                     remove: { label: 'Удалить', desc: 'Удаляет аниме из вашего списка.' },
+                    logo: { label: 'Логотип', desc: 'Прокручивает вверх.' },
                 },
                 sections: {
                     addFav: { title: 'Как добавить в избранное', content: 'На любой странице сведений об аниме найдите значок сердца в правом верхнем углу (или чуть ниже изображения заголовка). Нажатие на этот значок переключит аниме в разряд «Избранное». Вы можете просмотреть все избранные аниме на странице своего профиля.' },
@@ -812,6 +844,13 @@ const translations = {
             cancel: 'Abbrechen',
             back: 'Zurück',
             confirm: 'Bestätigen',
+        },
+        tabs: {
+            home: 'Start',
+            calendar: 'Kalender',
+            favorites: 'Favoriten',
+            watching: 'Am schauen',
+            profile: 'Profil',
         },
         settings: {
             title: 'Einstellungen',
@@ -989,6 +1028,7 @@ const translations = {
                     add: { label: 'Zur Liste hinzufügen', desc: 'Fügt Anime zu Am schauen, Geplant oder Abgeschlossen hinzu.' },
                     custom: { label: 'Benutzerdefinierte Liste', desc: 'Speichern Sie Anime in einer Ihrer benutzerdefinierten Listen.' },
                     remove: { label: 'Entfernen', desc: 'Entfernt einen Anime aus Ihrer Liste.' },
+                    logo: { label: 'Header-Logo', desc: 'Scrollt nach oben.' },
                 },
                 sections: {
                     addFav: { title: 'Wie man zu Favoriten hinzufügt', content: 'Suchen Sie auf jeder Anime-Detailseite nach dem Herzsymbol in der oberen rechten Ecke (oder etwas unterhalb des Titelbilds). Durch Tippen auf dieses Symbol wird der Anime als "Favorit" markiert. Sie können alle Ihre Favoriten auf Ihrer Profilseite anzeigen.' },
@@ -1009,6 +1049,13 @@ const translations = {
             cancel: 'إلغاء',
             back: 'عودة',
             confirm: 'تأكيد',
+        },
+        tabs: {
+            home: 'الرئيسية',
+            calendar: 'التقويم',
+            favorites: 'المفضلة',
+            watching: 'أشاهد',
+            profile: 'حسابي',
         },
         settings: {
             title: 'الإعدادات',
@@ -1187,6 +1234,7 @@ const translations = {
                     add: { label: 'إضافة إلى القائمة', desc: 'يضيف الأنمي إلى "أشاهد"، "مخطط للمشاهدة"، أو "مكتمل".' },
                     custom: { label: 'قائمة مخصصة', desc: 'حفظ الأنمي في إحدى قوائمك المخصصة.' },
                     remove: { label: 'إزالة', desc: 'يزيل الأنمي من قائمتك.' },
+                    logo: { label: 'شعار الرأس', desc: 'انتقل للأعلى.' },
                 },
                 sections: {
                     addFav: { title: 'كيفية الإضافة إلى المفضلة', content: 'في أي صفحة تفاصيل أنمي، ابحث عن رمز القلب في الزاوية العلوية اليمنى (أو أسفل صورة العنوان قليلاً). سيؤدي النقر فوق هذا الرمز إلى تبديل الأنمي كـ "مفضل". يمكنك عرض جميع مفضلاتك على صفحة ملفك الشخصي.' },
@@ -1207,6 +1255,13 @@ const translations = {
             cancel: 'Cancelar',
             back: 'Atrás',
             confirm: 'Confirmar',
+        },
+        tabs: {
+            home: 'Inicio',
+            calendar: 'Calendario',
+            favorites: 'Favoritos',
+            watching: 'Viendo',
+            profile: 'Perfil',
         },
         settings: {
             title: 'Configuración',
@@ -1345,6 +1400,7 @@ const translations = {
                     add: { label: 'Añadir a Lista', desc: 'Añade anime a Viendo, Planeado o Completado.' },
                     custom: { label: 'Lista Personalizada', desc: 'Guarda anime en una de tus listas personalizadas.' },
                     remove: { label: 'Eliminar', desc: 'Elimina un anime de tu lista.' },
+                    logo: { label: 'Logo del Encabezado', desc: 'Desplaza arriba.' },
                 },
                 sections: {
                     addFav: { title: 'Cómo añadir a Favoritos', content: 'En cualquier página de detalles de anime, busca el icono de Corazón en la esquina superior derecha. Tocar este icono marcará el anime como "Favorito".' },
@@ -1365,6 +1421,13 @@ const translations = {
             cancel: 'Cancelar',
             back: 'Voltar',
             confirm: 'Confirmar',
+        },
+        tabs: {
+            home: 'Início',
+            calendar: 'Calendário',
+            favorites: 'Favoritos',
+            watching: 'Assistindo',
+            profile: 'Perfil',
         },
         settings: {
             title: 'Configurações',
@@ -1503,6 +1566,7 @@ const translations = {
                     add: { label: 'Adicionar à Lista', desc: 'Adiciona anime a Assistindo, Planejado ou Completo.' },
                     custom: { label: 'Lista Personalizada', desc: 'Salva anime em uma de suas listas personalizadas.' },
                     remove: { label: 'Remover', desc: 'Remove um anime da sua lista.' },
+                    logo: { label: 'Logo do Cabeçalho', desc: 'Rola para o topo.' },
                 },
                 sections: {
                     addFav: { title: 'Como adicionar aos Favoritos', content: 'Em qualquer página de detalhes de anime, procure o ícone de Coração no canto superior direito. Tocar neste ícone marcará o anime como "Favorito".' },
@@ -1523,6 +1587,13 @@ const translations = {
             cancel: 'Batal',
             back: 'Kembali',
             confirm: 'Konfirmasi',
+        },
+        tabs: {
+            home: 'Beranda',
+            calendar: 'Kalender',
+            favorites: 'Favorit',
+            watching: 'Menonton',
+            profile: 'Profil',
         },
         settings: {
             title: 'Pengaturan',
@@ -1661,6 +1732,7 @@ const translations = {
                     add: { label: 'Tambahkan ke Daftar', desc: 'Menambahkan anime ke Sedang Menonton, Rencana Menonton, atau Selesai.' },
                     custom: { label: 'Daftar Khusus', desc: 'Simpan anime ke salah satu daftar khusus Anda.' },
                     remove: { label: 'Hapus', desc: 'Menghapus anime dari daftar Anda.' },
+                    logo: { label: 'Logo Header', desc: 'Gulir ke atas.' },
                 },
                 sections: {
                     addFav: { title: 'Cara Menambahkan ke Favorit', content: 'Di halaman Detail Anime, cari ikon Hati di sudut kanan atas. Mengetuk ikon ini akan menandai anime sebagai "Favorit".' },
