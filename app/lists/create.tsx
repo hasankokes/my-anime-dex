@@ -5,10 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
+import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 
 export default function CreateListScreen() {
     const router = useRouter();
     const { colors, isDark } = useTheme();
+    const { showAdIfNeeded } = useInterstitialAd();
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -42,6 +44,7 @@ export default function CreateListScreen() {
             if (error) throw error;
 
             Alert.alert('Success', 'List created!');
+            showAdIfNeeded('create_list');
             router.back();
         } catch (error) {
             console.error('Error creating list:', error);

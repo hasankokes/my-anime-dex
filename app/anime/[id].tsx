@@ -437,6 +437,7 @@ const AnimeDetailsScreen = () => {
                 ]}
                 onPress={() => {
                   if (anime.trailer?.embed_url) {
+                    showAdIfNeeded('trailer');
                     setShowTrailerModal(true);
                   }
                 }}

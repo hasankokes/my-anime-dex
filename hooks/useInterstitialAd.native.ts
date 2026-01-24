@@ -32,31 +32,44 @@ export const useInterstitialAd = () => {
             return;
         }
 
-        let ad: InterstitialAd | null = null;
+        let ad: any = null;
         let unsubscribeLoaded: (() => void) | undefined;
         let unsubscribeClosed: (() => void) | undefined;
 
         try {
             // Dynamically require the module to avoid crash in Expo Go where the native module is missing
+            const mobileAds = require('react-native-google-mobile-ads').default;
             const { InterstitialAd, AdEventType, TestIds } = require('react-native-google-mobile-ads');
+            const { getTrackingPermissionsAsync } = require('expo-tracking-transparency');
 
-            const AD_UNIT_ID = __DEV__ ? TestIds.INTERSTITIAL : REAL_AD_UNIT_ID;
+            // Initialize the AdMob SDK
+            mobileAds().initialize().then(async () => {
+                // Check tracking status for personalized ads
+                const { status: trackingStatus } = await getTrackingPermissionsAsync();
 
-            ad = InterstitialAd.createForAdRequest(AD_UNIT_ID, {
-                requestNonPersonalizedAdsOnly: true,
+                const AD_UNIT_ID = __DEV__ ? TestIds.INTERSTITIAL : REAL_AD_UNIT_ID;
+
+                // Create ad request based on tracking status
+                // If granted, we can serve personalized ads (default). 
+                // If denied/unknown, we request non-personalized ads.
+                const requestOptions = trackingStatus === 'granted'
+                    ? {}
+                    : { requestNonPersonalizedAdsOnly: true };
+
+                ad = InterstitialAd.createForAdRequest(AD_UNIT_ID, requestOptions);
+
+                unsubscribeLoaded = ad.addAdEventListener(AdEventType.LOADED, () => {
+                    setLoaded(true);
+                });
+
+                unsubscribeClosed = ad.addAdEventListener(AdEventType.CLOSED, () => {
+                    setLoaded(false);
+                    ad?.load(); // Load next ad
+                });
+
+                ad.load();
+                setInterstitial(ad);
             });
-
-            unsubscribeLoaded = ad.addAdEventListener(AdEventType.LOADED, () => {
-                setLoaded(true);
-            });
-
-            unsubscribeClosed = ad.addAdEventListener(AdEventType.CLOSED, () => {
-                setLoaded(false);
-                ad?.load(); // Load next ad
-            });
-
-            ad.load();
-            setInterstitial(ad);
 
         } catch (error) {
             console.warn('Failed to initialize AdMob (module missing?):', error);
@@ -68,7 +81,7 @@ export const useInterstitialAd = () => {
         };
     }, []);
 
-    const showAdIfNeeded = async () => {
+    const showAdIfNeeded = async (actionType: 'general' | 'trailer' | 'create_list' = 'general') => {
         try {
             // 1. Check if user is PRO
             const { data: { session } } = await supabase.auth.getSession();
@@ -85,18 +98,63 @@ export const useInterstitialAd = () => {
 
             if (isPro) return;
 
-            // 2. Increment & Check Count
-            const countStr = await AsyncStorage.getItem(STORAGE_KEY_AD_COUNT);
-            let count = parseInt(countStr || '0', 10);
-            count += 1;
-            await AsyncStorage.setItem(STORAGE_KEY_AD_COUNT, count.toString());
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-            // 3. Show Ad every 3rd action
-            if (count % 3 === 0) {
-                if (loaded && interstitial) {
-                    interstitial.show();
-                } else {
-                    console.log('Ad not loaded yet');
+            // Trailer Ad Logic: Show on 2nd view of the day
+            if (actionType === 'trailer') {
+                const storageKey = 'ad_trailer_daily';
+                const storedData = await AsyncStorage.getItem(storageKey);
+                let data = storedData ? JSON.parse(storedData) : { date: today, count: 0 };
+
+                if (data.date !== today) {
+                    data = { date: today, count: 0 };
+                }
+
+                data.count += 1;
+                await AsyncStorage.setItem(storageKey, JSON.stringify(data));
+
+                if (data.count === 2) {
+                    if (loaded && interstitial) {
+                        interstitial.show();
+                    }
+                }
+                return;
+            }
+
+            // Create List Ad Logic: Show on 1st creation of the day
+            if (actionType === 'create_list') {
+                const storageKey = 'ad_create_list_daily';
+                const storedData = await AsyncStorage.getItem(storageKey);
+                let data = storedData ? JSON.parse(storedData) : { date: today, count: 0 };
+
+                if (data.date !== today) {
+                    data = { date: today, count: 0 };
+                }
+
+                data.count += 1;
+                await AsyncStorage.setItem(storageKey, JSON.stringify(data));
+
+                if (data.count === 1) {
+                    if (loaded && interstitial) {
+                        interstitial.show();
+                    }
+                }
+                return;
+            }
+
+            // General Logic (Existing): Show every 3rd action
+            if (actionType === 'general') {
+                const countStr = await AsyncStorage.getItem(STORAGE_KEY_AD_COUNT);
+                let count = parseInt(countStr || '0', 10);
+                count += 1;
+                await AsyncStorage.setItem(STORAGE_KEY_AD_COUNT, count.toString());
+
+                if (count % 3 === 0) {
+                    if (loaded && interstitial) {
+                        interstitial.show();
+                    } else {
+                        console.log('Ad not loaded yet');
+                    }
                 }
             }
 
