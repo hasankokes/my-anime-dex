@@ -16,6 +16,7 @@ import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { useLanguage } from '../../context/LanguageContext';
 import { translateText } from '../../lib/translation';
 import { WebView } from 'react-native-webview';
+import YoutubePlayer from "react-native-youtube-iframe";
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,6 +27,16 @@ const STATUS_OPTIONS = [
   { label: 'Plan to Watch', value: 'plan_to_watch', icon: 'calendar-outline' },
   { label: 'Remove from List', value: 'remove', icon: 'trash-outline', color: '#EF4444' },
 ];
+
+// Helper to extract video ID
+const getVideoId = (url: string) => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
+
 
 const AnimeDetailsScreen = () => {
   const { id } = useLocalSearchParams();
@@ -610,24 +621,15 @@ const AnimeDetailsScreen = () => {
               <Ionicons name="close-circle" size={36} color="#FFF" />
             </TouchableOpacity>
             {anime?.trailer?.embed_url ? (
-              Platform.OS === 'web' ? (
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={anime.trailer.embed_url}
-                  style={{ border: 'none' }}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <WebView
-                  source={{ uri: anime.trailer.embed_url }}
-                  style={styles.webView}
-                  allowsFullscreenVideo
-                  javaScriptEnabled
-                  domStorageEnabled
-                />
-              )
+              <YoutubePlayer
+                height={(width - 32) * 9 / 16} // Force 16:9 aspect ratio
+                width={width - 32}
+                play={true}
+                videoId={getVideoId(anime.trailer.embed_url) || ''}
+                webViewProps={{
+                  androidLayerType: 'hardware',
+                }}
+              />
             ) : (
               <View style={styles.center}>
                 <Text style={{ color: '#FFF' }}>Error loading trailer</Text>
@@ -1138,8 +1140,9 @@ const styles = StyleSheet.create({
   },
   trailerModalContent: {
     width: '100%',
-    height: 250, // Aspect ratio 16:9 approx for mobile width
-    backgroundColor: '#000',
+    // height removed to let children determine height
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   webView: {
     flex: 1,

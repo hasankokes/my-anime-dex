@@ -113,7 +113,7 @@ export const useInterstitialAd = () => {
                 data.count += 1;
                 await AsyncStorage.setItem(storageKey, JSON.stringify(data));
 
-                if (data.count === 2) {
+                if (data.count % 2 === 0) {
                     if (loaded && interstitial) {
                         interstitial.show();
                     }
@@ -121,7 +121,11 @@ export const useInterstitialAd = () => {
                 return;
             }
 
-            // Create List Ad Logic: Show on 1st creation of the day
+            // Create List Ad Logic: Show on 1st creation of the day (keep as once or make recurrent?)
+            // User only complained about trailer, but let's make lists robust too if needed. 
+            // For now, let's keep list logic as is unless asked, or change to modulo if "3 oge listeye ekle" works. 
+            // User said "3 oge listeye ekle calısıyor" (add 3 items works) -> that matches "general" logic (count % 3 === 0).
+            // This block is for "create_list". 
             if (actionType === 'create_list') {
                 const storageKey = 'ad_create_list_daily';
                 const storedData = await AsyncStorage.getItem(storageKey);

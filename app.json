@@ -28,7 +28,7 @@
       }
     },
     "splash": {
-      "image": "./assets/images/splash-light.png",
+      "image": "./assets/images/header-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff",
       "dark": {

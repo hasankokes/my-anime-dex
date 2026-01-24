@@ -13,6 +13,7 @@ const translations = {
             back: 'Back',
             confirm: 'Confirm',
             continueWithApple: 'Continue with Apple',
+            unknown: 'Unknown',
         },
         tabs: {
             home: 'Home',
@@ -41,6 +42,7 @@ const translations = {
             dangerZone: 'Danger Zone',
             resetProgress: 'Reset Progress',
             deleteAccount: 'Delete Account',
+            myReviews: 'My Reviews',
         },
         calendar: {
             title: 'Broadcast Time',
@@ -223,6 +225,7 @@ const translations = {
             back: 'Geri',
             confirm: 'Onayla',
             continueWithApple: 'Apple ile Devam Et',
+            unknown: 'Bilinmeyen',
         },
         tabs: {
             home: 'Anasayfa',
@@ -251,6 +254,7 @@ const translations = {
             dangerZone: 'Tehlike Bölgesi',
             resetProgress: 'İlerlemeyi Sıfırla',
             deleteAccount: 'Hesabı Sil',
+            myReviews: 'Yorumlarım',
         },
         calendar: {
             title: 'Yayın Saatleri',
@@ -433,6 +437,7 @@ const translations = {
             back: '戻る',
             confirm: '確認',
             continueWithApple: 'Appleでサインイン',
+            unknown: '不明',
         },
         tabs: {
             home: 'ホーム',
@@ -461,6 +466,7 @@ const translations = {
             dangerZone: '危険地帯',
             resetProgress: '進行状況をリセット',
             deleteAccount: 'アカウントを削除',
+            myReviews: '私のレビュー',
         },
         calendar: {
             title: '放送時間',
@@ -639,6 +645,7 @@ const translations = {
             back: 'Назад',
             confirm: 'Подтвердить',
             continueWithApple: 'Войти с Apple',
+            unknown: 'Неизвестно',
         },
         tabs: {
             home: 'Главная',
@@ -667,6 +674,7 @@ const translations = {
             dangerZone: 'Опасная зона',
             resetProgress: 'Сбросить прогресс',
             deleteAccount: 'Удалить аккаунт',
+            myReviews: 'Мои отзывы',
         },
         calendar: {
             title: 'Время трансляции',
@@ -844,6 +852,7 @@ const translations = {
             cancel: 'Abbrechen',
             back: 'Zurück',
             confirm: 'Bestätigen',
+            unknown: 'Unbekannt',
         },
         tabs: {
             home: 'Start',
@@ -872,6 +881,7 @@ const translations = {
             dangerZone: 'Gefahrenzone',
             resetProgress: 'Fortschritt zurücksetzen',
             deleteAccount: 'Konto löschen',
+            myReviews: 'Meine Bewertungen',
         },
         calendar: {
             title: 'Sendezeit',
@@ -1049,6 +1059,7 @@ const translations = {
             cancel: 'إلغاء',
             back: 'عودة',
             confirm: 'تأكيد',
+            unknown: 'مجهول',
         },
         tabs: {
             home: 'الرئيسية',
@@ -1077,6 +1088,7 @@ const translations = {
             dangerZone: 'منطقة الخطر',
             resetProgress: 'إعادة تعيين التقدم',
             deleteAccount: 'حذف الحساب',
+            myReviews: 'مراجعاتي',
         },
         calendar: {
             title: 'وقت البث',
@@ -1255,6 +1267,7 @@ const translations = {
             cancel: 'Cancelar',
             back: 'Atrás',
             confirm: 'Confirmar',
+            unknown: 'Desconocido',
         },
         tabs: {
             home: 'Inicio',
@@ -1283,6 +1296,7 @@ const translations = {
             dangerZone: 'Zona de Peligro',
             resetProgress: 'Restablecer Progreso',
             deleteAccount: 'Eliminar Cuenta',
+            myReviews: 'Mis Reseñas',
         },
         calendar: {
             title: 'Hora de emisión',
@@ -1421,6 +1435,7 @@ const translations = {
             cancel: 'Cancelar',
             back: 'Voltar',
             confirm: 'Confirmar',
+            unknown: 'Desconhecido',
         },
         tabs: {
             home: 'Início',
@@ -1449,6 +1464,7 @@ const translations = {
             dangerZone: 'Zona de Perigo',
             resetProgress: 'Redefinir Progresso',
             deleteAccount: 'Excluir Conta',
+            myReviews: 'Minhas Avaliações',
         },
         calendar: {
             title: 'Horário de Transmissão',
@@ -1587,6 +1603,7 @@ const translations = {
             cancel: 'Batal',
             back: 'Kembali',
             confirm: 'Konfirmasi',
+            unknown: 'Tidak Diketahui',
         },
         tabs: {
             home: 'Beranda',
@@ -1615,6 +1632,7 @@ const translations = {
             dangerZone: 'Zona Bahaya',
             resetProgress: 'Atur Ulang Progres',
             deleteAccount: 'Hapus Akun',
+            myReviews: 'Ulasan Saya',
         },
         calendar: {
             title: 'Waktu Tayang',

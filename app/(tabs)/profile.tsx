@@ -679,6 +679,21 @@ export default function ProfileScreen() {
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
           </TouchableOpacity>
+
+          <View style={[styles.settingDivider, { backgroundColor: colors.border }]} />
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push('/profile/reviews')}
+          >
+            <View style={styles.settingLeft}>
+              <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
+                <Ionicons name="chatbubble-ellipses-outline" size={20} color={colors.text} />
+              </View>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>{t('profile.myReviews')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+          </TouchableOpacity>
         </View>
 
         {/* App Settings */}
