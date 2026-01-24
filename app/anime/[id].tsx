@@ -15,6 +15,7 @@ import { RateAppSheet } from '../../components/RateAppSheet';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { useLanguage } from '../../context/LanguageContext';
 import { translateText } from '../../lib/translation';
+import { WebView } from 'react-native-webview';
 
 const { width, height } = Dimensions.get('window');
 
@@ -45,6 +46,7 @@ const AnimeDetailsScreen = () => {
   const { language, t } = useLanguage();
   const [translatedSynopsis, setTranslatedSynopsis] = useState<string>('');
   const [isTranslating, setIsTranslating] = useState(false);
+  const [showTrailerModal, setShowTrailerModal] = useState(false);
 
   useEffect(() => {
     const translateSynopsis = async () => {
@@ -405,24 +407,50 @@ const AnimeDetailsScreen = () => {
             ))}
           </View>
 
-          {/* Episode Progress (New Location) */}
+          {/* Episode Progress & Trailer */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('animeDetail.episodesWatched')}</Text>
-            <View style={[styles.episodeInputContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              <TextInput
-                style={[styles.episodeInput, { color: colors.text }]}
-                value={episodeInput}
-                onChangeText={setEpisodeInput}
-                onEndEditing={handleEpisodeUpdate}
-                keyboardType="number-pad"
-                placeholder="0"
-                placeholderTextColor={colors.subtext}
-                returnKeyType="done"
-                onSubmitEditing={handleEpisodeUpdate}
-              />
-              <Text style={{ color: colors.subtext, fontSize: 16 }}>
-                / {anime.episodes || '?'}
-              </Text>
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              <View style={[styles.episodeInputContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <TextInput
+                  style={[styles.episodeInput, { color: colors.text }]}
+                  value={episodeInput}
+                  onChangeText={setEpisodeInput}
+                  onEndEditing={handleEpisodeUpdate}
+                  keyboardType="number-pad"
+                  placeholder="0"
+                  placeholderTextColor={colors.subtext}
+                  returnKeyType="done"
+                  onSubmitEditing={handleEpisodeUpdate}
+                />
+                <Text style={{ color: colors.subtext, fontSize: 16 }}>
+                  / {anime.episodes || '?'}
+                </Text>
+              </View>
+
+              {/* Trailer Box */}
+              <TouchableOpacity
+                style={[
+                  styles.trailerBox,
+                  { backgroundColor: colors.card, borderColor: colors.border },
+                  !anime.trailer?.embed_url && { opacity: 0.7 }
+                ]}
+                onPress={() => {
+                  if (anime.trailer?.embed_url) {
+                    setShowTrailerModal(true);
+                  }
+                }}
+                disabled={!anime.trailer?.embed_url}
+              >
+                <Ionicons
+                  name={anime.trailer?.embed_url ? "logo-youtube" : "videocam-off-outline"}
+                  size={24}
+                  color={anime.trailer?.embed_url ? "#FF0000" : colors.subtext}
+                />
+                <Text style={[styles.trailerText, { color: anime.trailer?.embed_url ? colors.text : colors.subtext }]}>
+                  {anime.trailer?.embed_url ? "Watch Trailer" : "No Trailer"}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -559,12 +587,54 @@ const AnimeDetailsScreen = () => {
         showAdIfNeeded={showAdIfNeeded}
       />
 
-      {/* Rate App Sheet */}
       <RateAppSheet
         visible={showRateSheet}
         onRate={handleRate}
         onClose={handleLater}
       />
+
+      {/* Trailer Modal */}
+      <Modal
+        visible={showTrailerModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowTrailerModal(false)}
+      >
+        <View style={styles.trailerModalContainer}>
+          <View style={styles.trailerModalContent}>
+            <TouchableOpacity
+              style={styles.closeTrailerButton}
+              onPress={() => setShowTrailerModal(false)}
+            >
+              <Ionicons name="close-circle" size={36} color="#FFF" />
+            </TouchableOpacity>
+            {anime?.trailer?.embed_url ? (
+              Platform.OS === 'web' ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={anime.trailer.embed_url}
+                  style={{ border: 'none' }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <WebView
+                  source={{ uri: anime.trailer.embed_url }}
+                  style={styles.webView}
+                  allowsFullscreenVideo
+                  javaScriptEnabled
+                  domStorageEnabled
+                />
+              )
+            ) : (
+              <View style={styles.center}>
+                <Text style={{ color: '#FFF' }}>Error loading trailer</Text>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -1043,5 +1113,41 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center', // Android alignment
     includeFontPadding: false, // Android font padding
     height: '100%',
+  },
+  trailerBox: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    gap: 12,
+    height: 44,
+  },
+  trailerText: {
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 12,
+  },
+  trailerModalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  trailerModalContent: {
+    width: '100%',
+    height: 250, // Aspect ratio 16:9 approx for mobile width
+    backgroundColor: '#000',
+  },
+  webView: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  closeTrailerButton: {
+    position: 'absolute',
+    top: -50,
+    right: 20,
+    zIndex: 20,
   }
 });

@@ -62,3 +62,39 @@ export const getNextBroadcastDate = (anime: any) => {
 
     return targetJST;
 };
+
+/**
+ * Converts the anime broadcast time (JST) to the user's local Date object.
+ * Adjusts for the JST (UTC+9) offset.
+ */
+export const getBroadcastDateObj = (anime: any): Date | null => {
+    const targetJST = getNextBroadcastDate(anime);
+    if (!targetJST) return null;
+
+    // Formula: RealUTC = TimestampOfFaceValue + LocalOffset - JSTOffset
+    // targetJST.getTime() is UTC timestamp of the Face Value date (interpreted in Local Time)
+    // LocalOffset converts FaceValue-as-Local to True-UTC
+    // JSTOffset shifts the True-UTC (which was actually JST-FaceValue) back to the actual Event-UTC.
+
+    const jstOffsetMs = 9 * 60 * 60 * 1000;
+    const localOffsetMs = -targetJST.getTimezoneOffset() * 60 * 1000;
+
+    const realUtcTime = targetJST.getTime() + localOffsetMs - jstOffsetMs;
+
+    return new Date(realUtcTime);
+};
+
+export const getUtcOffsetString = (date: Date = new Date()): string => {
+    const offset = date.getTimezoneOffset();
+    if (offset === 0) return 'UTC';
+
+    const sign = offset < 0 ? '+' : '-';
+    const absOffset = Math.abs(offset);
+    const hours = Math.floor(absOffset / 60);
+    const minutes = absOffset % 60;
+
+    if (minutes === 0) {
+        return `UTC${sign}${hours}`;
+    }
+    return `UTC${sign}${hours}:${minutes}`;
+};

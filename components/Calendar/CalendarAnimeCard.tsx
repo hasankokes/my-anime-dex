@@ -15,7 +15,8 @@ import { useRouter } from 'expo-router';
 // Checking jikanApi.ts content again in my mind... I used `export const getAnimeSchedule...`. Pass.
 // I'll define a subset interface here for what I need.
 
-import { getNextBroadcastDate, getCurrentJSTDate } from '../../lib/dateUtils';
+import { format } from 'date-fns';
+import { getNextBroadcastDate, getCurrentJSTDate, getBroadcastDateObj, getUtcOffsetString } from '../../lib/dateUtils';
 
 interface CalendarAnimeCardProps {
     anime: any; // Using any to avoid tight coupling with full API response for now
@@ -126,7 +127,13 @@ export const CalendarAnimeCard: React.FC<CalendarAnimeCardProps> = ({ anime }) =
                 <View style={styles.bottomInfoContainer}>
                     <View style={styles.timeLeftContainer}>
                         <Text style={[styles.timeText, { color: colors.primary }]}>
-                            {anime.broadcast.time || '??:??'} JST
+                            {(() => {
+                                const localDate = getBroadcastDateObj(anime);
+                                if (localDate) {
+                                    return `${format(localDate, 'HH:mm')} ${getUtcOffsetString(localDate)}`;
+                                }
+                                return (anime.broadcast?.time || '??:??') + ' JST';
+                            })()}
                         </Text>
                         {timeLeft ? (
                             <View style={[styles.countdownBadge, { backgroundColor: colors.primary + '20' }]}>

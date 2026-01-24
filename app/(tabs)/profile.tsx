@@ -819,7 +819,7 @@ export default function ProfileScreen() {
           <Text style={styles.logoutText}>{t('settings.logout')}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.versionText}>{t('settings.appVersion')} </Text>
+
         <View style={{ height: 40 }} />
       </ScrollView>
 
@@ -1168,12 +1168,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_600SemiBold',
     color: '#EF4444',
   },
-  versionText: {
-    textAlign: 'center',
-    fontSize: 12,
-    fontFamily: 'Poppins_500Medium',
-    color: '#6B7280',
-  },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
