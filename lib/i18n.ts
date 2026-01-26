@@ -129,8 +129,9 @@ const translations = {
         },
         terms: {
             title: 'Terms of Service',
+            readAppleEula: 'Read Apple Standard EULA',
             lastUpdated: 'Last Updated: December 22, 2025',
-            intro: 'Please read these Terms of Service ("Terms", "Terms of Service") carefully before using the MyAnimeDex application operated by us.',
+            intro: 'Your use of this application is governed by the Apple Standard End User License Agreement (EULA). In addition, please read these Terms specifically regarding your account and content.',
             sections: {
                 acceptance: {
                     title: '1. Acceptance of Terms',
@@ -341,8 +342,9 @@ const translations = {
         },
         terms: {
             title: 'Kullanım Koşulları',
+            readAppleEula: 'Apple Standart EULA\'nı Oku',
             lastUpdated: 'Son Güncelleme: 22 Aralık 2025',
-            intro: 'Bizim tarafımızdan işletilen MyAnimeDex uygulamasını kullanmadan önce lütfen bu Hizmet Koşullarını ("Koşullar", "Hizmet Koşulları") dikkatlice okuyun.',
+            intro: 'Bu uygulamanın kullanımında Apple Standart Son Kullanıcı Lisans Sözleşmesi (EULA) geçerlidir. Ayrıca, hesabınız ve içeriğinizle ilgili olarak lütfen bu Koşulları okuyun.',
             sections: {
                 acceptance: {
                     title: '1. Koşulların Kabulü',
@@ -553,8 +555,9 @@ const translations = {
         },
         terms: {
             title: '利用規約',
+            readAppleEula: 'Apple標準使用許諾契約(EULA)を読む',
             lastUpdated: '最終更新日：2025年12月22日',
-            intro: 'MyAnimeDexアプリケーションを使用する前に、これらの利用規約（「規約」、「利用規約」）を注意深くお読みください。',
+            intro: 'このアプリケーションの使用には、Apple標準使用許諾契約（EULA）が適用されます。また、アカウントとコンテンツに関するこれらの規約もお読みください。',
             sections: {
                 acceptance: {
                     title: '1. 規約の受諾',
@@ -761,8 +764,9 @@ const translations = {
         },
         terms: {
             title: 'Условия использования',
+            readAppleEula: 'Прочитать стандартное соглашение Apple (EULA)',
             lastUpdated: 'Последнее обновление: 22 декабря 2025 г.',
-            intro: 'Пожалуйста, внимательно прочитайте эти Условия использования ("Условия") перед использованием приложения MyAnimeDex, управляемого нами.',
+            intro: 'Использование этого приложения регулируется Стандартным лицензионным соглашением Apple (EULA). Кроме того, пожалуйста, ознакомьтесь с этими Условиями, касающимися вашей учетной записи и контента.',
             sections: {
                 acceptance: {
                     title: '1. Принятие условий',

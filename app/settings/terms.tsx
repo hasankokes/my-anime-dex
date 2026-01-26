@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,6 +22,15 @@ export default function TermsScreen() {
 
             <ScrollView contentContainerStyle={styles.content}>
                 <Text style={[styles.lastUpdated, { color: colors.subtext }]}>{t('terms.lastUpdated')}</Text>
+
+                <TouchableOpacity
+                    style={[styles.eulaButton, { borderColor: colors.primary, backgroundColor: colors.card }]}
+                    onPress={() => Linking.openURL('https://www.apple.com/legal/internet-services/itunes/dev/stdeula')}
+                >
+                    <Ionicons name="document-text-outline" size={20} color={colors.primary} style={{ marginRight: 8 }} />
+                    <Text style={[styles.eulaText, { color: colors.primary }]}>{t('terms.readAppleEula')}</Text>
+                    <Ionicons name="open-outline" size={16} color={colors.primary} style={{ marginLeft: 6 }} />
+                </TouchableOpacity>
 
                 <Text style={[styles.paragraph, { color: colors.text }]}>
                     {t('terms.intro')}
@@ -90,5 +99,18 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins_500Medium',
         lineHeight: 22,
         marginBottom: 16,
+    },
+    eulaButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+        marginBottom: 24,
+        alignSelf: 'flex-start',
+    },
+    eulaText: {
+        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 14,
     },
 });
