@@ -35,6 +35,7 @@ export const useInterstitialAd = () => {
         let ad: any = null;
         let unsubscribeLoaded: (() => void) | undefined;
         let unsubscribeClosed: (() => void) | undefined;
+        let unsubscribeError: (() => void) | undefined;
 
         try {
             // Dynamically require the module to avoid crash in Expo Go where the native module is missing
@@ -67,6 +68,14 @@ export const useInterstitialAd = () => {
                     ad?.load(); // Load next ad
                 });
 
+                unsubscribeError = ad.addAdEventListener(AdEventType.ERROR, (error: any) => {
+                    setLoaded(false);
+                    // Retry loading after a delay
+                    setTimeout(() => {
+                        ad?.load();
+                    }, 5000);
+                });
+
                 ad.load();
                 setInterstitial(ad);
             });
@@ -78,6 +87,7 @@ export const useInterstitialAd = () => {
         return () => {
             if (unsubscribeLoaded) unsubscribeLoaded();
             if (unsubscribeClosed) unsubscribeClosed();
+            if (unsubscribeError) unsubscribeError();
         };
     }, []);
 

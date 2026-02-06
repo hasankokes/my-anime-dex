@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyAnimeDex - Your Ultimate Anime Companion</title>
+    <title>MyAnimeDex - Ultimate Anime Tracker & Manga List App</title>
+    <meta name="description"
+        content="Never forget which episode you were on! Track your anime progress, organize your library, and discover new series with MyAnimeDex. Join for free today.">
+    <meta name="keywords"
+        content="anime tracker, anime list, manga tracker, myanimelist alternative, anilist alternative, watch order, anime progress, free anime app, otaku, myanimedex">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -51,6 +55,18 @@
             <a href="#features">Features</a>
             <a href="#about">About</a>
             <a href="privacy.html">Privacy</a>
+
+            <!-- Language Switcher -->
+            <div class="lang-dropdown">
+                <span class="lang-current">EN <ion-icon name="chevron-down-outline"></ion-icon></span>
+                <div class="lang-menu">
+                    <a href="index.html" class="active">English</a>
+                    <a href="tr.html">Türkçe</a>
+                    <a href="jp.html">日本語</a>
+                    <a href="id.html">Bahasa Indonesia</a>
+                </div>
+            </div>
+
             <a href="#download" class="btn btn-primary">Download App</a>
         </nav>
 
@@ -64,6 +80,14 @@
             <a href="#features">Features</a>
             <a href="#about">About</a>
             <a href="privacy.html">Privacy</a>
+
+            <div class="mobile-lang-links">
+                <a href="index.html" class="active">English</a>
+                <a href="tr.html">Türkçe</a>
+                <a href="jp.html">日本語</a>
+                <a href="id.html">Indonesia</a>
+            </div>
+
             <a href="#download" class="btn btn-primary">Download App</a>
             <div class="close-menu">
                 <ion-icon name="close-outline"></ion-icon>
@@ -78,13 +102,12 @@
             <p>The ultimate mobile companion for anime enthusiasts. Sync seamlessly, get live updates, and explore a
                 world of anime.</p>
             <div class="hero-buttons">
-                <button class="btn btn-disabled btn-ios" disabled
-                    aria-label="Download MyAnimeDex on iOS App Store"><ion-icon name="logo-apple"></ion-icon> App Store
-                    Soon</button>
-                <button class="btn btn-disabled btn-android" disabled
+                <a href="https://apps.apple.com/us/app/myanimedex/id6758043488" class="btn btn-ios"
+                    aria-label="Download MyAnimeDex on iOS App Store"><ion-icon name="logo-apple"></ion-icon> App
+                    Store</a>
+                <a href="https://play.google.com/store/apps/details?id=com.myanimedex.app" class="btn btn-android"
                     aria-label="Get MyAnimeDex on Google Play Store"><ion-icon name="logo-google-playstore"></ion-icon>
-                    Google Play
-                    Soon</button>
+                    Google Play</a>
             </div>
             <div class="stats">
                 <div class="stat-item">
@@ -210,12 +233,13 @@
             <h2>Ready to start your journey?</h2>
             <p>Download MyAnimeDex today and join thousands of anime fans.</p>
             <div class="cta-buttons">
-                <button class="btn btn-disabled btn-large btn-ios" disabled
-                    aria-label="Download MyAnimeDex on iOS App Store"><ion-icon name="logo-apple"></ion-icon> App Store
-                    Soon</button>
-                <button class="btn btn-disabled btn-large btn-android" disabled
-                    aria-label="Get MyAnimeDex on Google Play Store"><ion-icon name="logo-google-playstore"></ion-icon>
-                    Google Play Soon</button>
+                <a href="https://apps.apple.com/us/app/myanimedex/id6758043488" class="btn btn-large btn-ios"
+                    aria-label="Download MyAnimeDex on iOS App Store"><ion-icon name="logo-apple"></ion-icon> App
+                    Store</a>
+                <a href="https://play.google.com/store/apps/details?id=com.myanimedex.app"
+                    class="btn btn-large btn-android" aria-label="Get MyAnimeDex on Google Play Store"><ion-icon
+                        name="logo-google-playstore"></ion-icon>
+                    Google Play</a>
             </div>
 
         </div>
@@ -246,6 +270,7 @@
 
             <div class="footer-links">
                 <a href="#features">Features</a>
+                <a href="anime/index.html">Top 100 Anime</a>
                 <a href="privacy.html">Privacy Policy</a>
                 <a href="delete-account.html">Delete Account</a>
                 <a href="mailto:support@myanimedex.com">Contact</a>

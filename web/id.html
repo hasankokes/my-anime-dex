@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyAnimeDex - Aplikasi Pelacak Anime & Daftar Manga Terbaik</title>
+    <meta name="description"
+        content="Jangan pernah lupa episode mana yang terakhir ditonton! Lacak progres anime Anda, atur perpustakaan, dan temukan seri baru dengan MyAnimeDex. Gabung gratis hari ini.">
+    <meta name="keywords"
+        content="pelacak anime, daftar anime, pelacak manga, alternatif myanimelist, alternatif anilist, urutan nonton, progres anime, aplikasi anime gratis, wibu, myanimedex">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Ionicons for Icons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "MyAnimeDex",
+      "operatingSystem": "iOS, Android",
+      "applicationCategory": "EntertainmentApplication",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "ratingCount": "100"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "downloadUrl": "https://myanimedex.com",
+      "featureList": "Pelacakan anime, Perpustakaan manga, Notifikasi rilis",
+      "installUrl": [
+        "https://apps.apple.com/us/app/myanimedex/id6758043488",
+        "https://play.google.com/store/apps/details?id=com.myanimedex.app"
+      ]
+    }
+    </script>
+</head>
+
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="navbar">
+        <a href="index.html" class="logo-link">
+            <img src="header-logo.png" alt="MyAnimeDex Logo" class="nav-logo">
+            <span class="logo-text">MYANIME<span class="accent">DEX</span></span>
+        </a>
+        <nav class="desktop-nav">
+            <a href="#features">Fitur</a>
+            <a href="#about">Tentang</a>
+            <a href="privacy.html">Privasi</a>
+
+            <!-- Language Switcher -->
+            <div class="lang-dropdown">
+                <span class="lang-current">ID <ion-icon name="chevron-down-outline"></ion-icon></span>
+                <div class="lang-menu">
+                    <a href="index.html">English</a>
+                    <a href="tr.html">Türkçe</a>
+                    <a href="jp.html">日本語</a>
+                    <a href="id.html" class="active">Bahasa Indonesia</a>
+                </div>
+            </div>
+
+            <a href="#download" class="btn btn-primary">Unduh Aplikasi</a>
+        </nav>
+
+        <!-- Mobile Menu Toggle -->
+        <div class="mobile-menu-toggle">
+            <ion-icon name="menu-outline"></ion-icon>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <a href="#features">Fitur</a>
+            <a href="#about">Tentang</a>
+            <a href="privacy.html">Privasi</a>
+
+            <div class="mobile-lang-links">
+                <a href="index.html">English</a>
+                <a href="tr.html">Türkçe</a>
+                <a href="jp.html">日本語</a>
+                <a href="id.html" class="active">Indonesia</a>
+            </div>
+
+            <a href="#download" class="btn btn-primary">Unduh Aplikasi</a>
+            <div class="close-menu">
+                <ion-icon name="close-outline"></ion-icon>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Lacak, Temukan, dan Bagikan <span class="accent">Perjalanan Anime Anda</span></h1>
+            <p>Pendamping seluler terbaik bagi penggemar anime. Sinkronisasi lancar, dapatkan info langsung, dan
+                jelajahi dunia anime.</p>
+            <div class="hero-buttons">
+                <a href="https://apps.apple.com/us/app/myanimedex/id6758043488" class="btn btn-ios"
+                    aria-label="Unduh MyAnimeDex di iOS App Store"><ion-icon name="logo-apple"></ion-icon> App Store</a>
+                <a href="https://play.google.com/store/apps/details?id=com.myanimedex.app" class="btn btn-android"
+                    aria-label="Dapatkan MyAnimeDex di Google Play Store"><ion-icon
+                        name="logo-google-playstore"></ion-icon>
+                    Google Play</a>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-num">10k+</span>
+                    <span class="stat-label">Anime</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">Langsung</span>
+                    <span class="stat-label">Pembaruan</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">Gratis</span>
+                    <span class="stat-label">Selamanya</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="phone-mockup">
+                <div class="phone-screen">
+                    <img src="ss/screen-dark.png" alt="Tangkapan Layar Aplikasi MyAnimeDex"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+            </div>
+            <div class="glow-effect"></div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-header">
+            <h2>Mengapa <span class="accent">MyAnimeDex?</span></h2>
+            <p>Segala yang Anda butuhkan untuk mengelola kehidupan anime Anda.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon-box">
+                    <ion-icon name="list-outline"></ion-icon>
+                </div>
+                <h3>Pelacakan Cerdas</h3>
+                <p>Lacak apa yang Anda tonton, apa yang sudah dilihat, dan apa yang ingin Anda tonton. Sinkron dengan
+                    layanan favorit Anda.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box">
+                    <ion-icon name="trending-up-outline"></ion-icon>
+                </div>
+                <h3>Sedang Tren</h3>
+                <p>Tetap update dengan anime terpanas yang sedang tayang. Jangan pernah ketinggalan keseruannya.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box">
+                    <ion-icon name="person-outline"></ion-icon>
+                </div>
+                <h3>Profil Kustom</h3>
+                <p>Ekspresikan diri Anda dengan avatar dan tema unik. Pamerkan koleksi Anda dengan gaya.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box">
+                    <ion-icon name="share-social-outline"></ion-icon>
+                </div>
+                <h3>Bagikan ke Teman</h3>
+                <p>Buat daftar anime Anda sendiri dan bagikan dengan teman-teman. Beri tahu mereka apa yang Anda tonton!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Showcase -->
+    <section id="showcase" class="showcase">
+        <div class="section-header">
+            <h2>Pameran <span class="accent">Aplikasi</span></h2>
+            <p>Lihat lebih dekat MyAnimeDex.</p>
+        </div>
+
+        <div class="showcase-grid">
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/screen-light.png" alt="Tangkapan Layar Mode Terang">
+                    </div>
+                </div>
+                <h3>Mode Terang</h3>
+            </div>
+
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/watching_dark.png" alt="Tangkapan Layar Daftar Pantauan">
+                    </div>
+                </div>
+                <h3>Pelacakan Cerdas</h3>
+            </div>
+
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/favorites_dark.png" alt="Tangkapan Layar Favorit">
+                    </div>
+                </div>
+                <h3>Favorit</h3>
+            </div>
+
+            <!-- Avatar -->
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/avatar.png" alt="Tangkapan Layar Kustomisasi">
+                    </div>
+                </div>
+                <h3>Kustomisasi</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section id="download" class="cta">
+        <div class="cta-content">
+            <h2>Siap memulai perjalanan Anda?</h2>
+            <p>Unduh MyAnimeDex hari ini dan bergabunglah dengan ribuan penggemar anime.</p>
+            <div class="cta-buttons">
+                <a href="https://apps.apple.com/us/app/myanimedex/id6758043488" class="btn btn-large btn-ios"
+                    aria-label="Unduh MyAnimeDex di iOS App Store"><ion-icon name="logo-apple"></ion-icon> App Store</a>
+                <a href="https://play.google.com/store/apps/details?id=com.myanimedex.app"
+                    class="btn btn-large btn-android" aria-label="Dapatkan MyAnimeDex di Google Play Store"><ion-icon
+                        name="logo-google-playstore"></ion-icon>
+                    Google Play</a>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="social-section" style="padding: 40px 0; text-align: center;">
+        <div class="footer-social">
+            <h3>Ikuti kami</h3>
+            <p>Kami ada di media sosial! Ayo tetap terhubung.</p>
+            <div class="social-icons">
+                <a href="https://www.instagram.com/myanimedex/" target="_blank" aria-label="Ikuti kami di Instagram">
+                    <ion-icon name="logo-instagram"></ion-icon>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo-container">
+                    <img src="header-logo.png" alt="MyAnimeDex Logo" class="footer-logo">
+                    <span class="logo-text">MY ANIME <span class="accent">DEX</span></span>
+                </div>
+                <p>Dibuat dengan ❤️ untuk penggemar anime.</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="#features">Fitur</a>
+                <a href="anime/index.html">Top 100 Anime</a>
+                <a href="privacy.html">Kebijakan Privasi</a>
+                <a href="delete-account.html">Hapus Akun</a>
+                <a href="mailto:support@myanimedex.com">Kontak</a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2025 MyAnimeDex. Hak cipta dilindungi undang-undang.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

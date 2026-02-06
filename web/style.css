@@ -134,6 +134,17 @@ h3 {
     font-size: 1.1rem;
 }
 
+.btn-ios,
+.btn-android {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-ios:hover,
+.btn-android:hover {
+    border-color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 /* Navbar */
 .navbar {
     display: flex;
@@ -745,15 +756,84 @@ footer {
         justify-content: center;
     }
 
-    /* Sticky Footer Logic for Mobile */
-    /* Hide non-relevant buttons in main content on mobile */
-    body.is-ios .hero-buttons .btn-android,
-    body.is-ios .cta-buttons .btn-android {
-        display: none;
-    }
+    /* Sticky Footer Logic for Mobile - REMOVED to show both buttons */
 
-    body.is-android .hero-buttons .btn-ios,
-    body.is-android .cta-buttons .btn-ios {
-        display: none;
-    }
+}
+
+/* Language Switcher Styles appended to style.css */
+
+.lang-dropdown {
+    position: relative;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+.lang-current {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.lang-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--card-bg, #1A1A1A);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px 0;
+    min-width: 150px;
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.lang-dropdown:hover .lang-menu {
+    display: flex;
+}
+
+.lang-menu a {
+    padding: 8px 16px;
+    color: var(--text-color, #fff);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.lang-menu a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color, #FACC15);
+}
+
+.lang-menu a.active {
+    color: var(--accent-color, #FACC15);
+    font-weight: 700;
+}
+
+/* Mobile Language Links */
+.mobile-lang-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 15px 0;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-lang-links a {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.mobile-lang-links a.active {
+    background: var(--accent-color, #FACC15);
+    color: #000;
 }

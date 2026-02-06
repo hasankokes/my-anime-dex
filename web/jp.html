@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyAnimeDex - 究極のアニメ追跡＆マンガリストアプリ</title>
+    <meta name="description" content="何話まで見たかもう忘れない！MyAnimeDexでアニメの進捗を管理し、ライブラリを整理して、新しいシリーズを見つけよう。今すぐ無料で参加。">
+    <meta name="keywords"
+        content="アニメ追跡, アニメリスト, マンガ管理, myanimelist 代替, anilist 代替, 視聴順, アニメ進捗, 無料アニメアプリ, オタク, myanimedex">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Ionicons for Icons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "MyAnimeDex",
+      "operatingSystem": "iOS, Android",
+      "applicationCategory": "EntertainmentApplication",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "ratingCount": "100"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "downloadUrl": "https://myanimedex.com",
+      "featureList": "アニメ追跡, マンガライブラリ, リリース通知",
+      "installUrl": [
+        "https://apps.apple.com/us/app/myanimedex/id6758043488",
+        "https://play.google.com/store/apps/details?id=com.myanimedex.app"
+      ]
+    }
+    </script>
+</head>
+
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="navbar">
+        <a href="index.html" class="logo-link">
+            <img src="header-logo.png" alt="MyAnimeDex Logo" class="nav-logo">
+            <span class="logo-text">MYANIME<span class="accent">DEX</span></span>
+        </a>
+        <nav class="desktop-nav">
+            <a href="#features">特徴</a>
+            <a href="#about">概要</a>
+            <a href="privacy.html">プライバシー</a>
+
+            <!-- Language Switcher -->
+            <div class="lang-dropdown">
+                <span class="lang-current">JP <ion-icon name="chevron-down-outline"></ion-icon></span>
+                <div class="lang-menu">
+                    <a href="index.html">English</a>
+                    <a href="tr.html">Türkçe</a>
+                    <a href="jp.html" class="active">日本語</a>
+                    <a href="id.html">Bahasa Indonesia</a>
+                </div>
+            </div>
+
+            <a href="#download" class="btn btn-primary">アプリをダウンロード</a>
+        </nav>
+
+        <!-- Mobile Menu Toggle -->
+        <div class="mobile-menu-toggle">
+            <ion-icon name="menu-outline"></ion-icon>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <a href="#features">特徴</a>
+            <a href="#about">概要</a>
+            <a href="privacy.html">プライバシー</a>
+
+            <div class="mobile-lang-links">
+                <a href="index.html">English</a>
+                <a href="tr.html">Türkçe</a>
+                <a href="jp.html" class="active">日本語</a>
+                <a href="id.html">Indonesia</a>
+            </div>
+
+            <a href="#download" class="btn btn-primary">アプリをダウンロード</a>
+            <div class="close-menu">
+                <ion-icon name="close-outline"></ion-icon>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1><span class="accent">アニメライフ</span>を追跡、発見、共有しよう</h1>
+            <p>アニメ愛好家のための究極のモバイルコンパニオン。シームレスに同期し、ライブアップデートを取得し、アニメの世界を探索しよう。</p>
+            <div class="hero-buttons">
+                <a href="https://apps.apple.com/us/app/myanimedex/id6758043488" class="btn btn-ios"
+                    aria-label="iOS App StoreでMyAnimeDexをダウンロード"><ion-icon name="logo-apple"></ion-icon> App Store</a>
+                <a href="https://play.google.com/store/apps/details?id=com.myanimedex.app" class="btn btn-android"
+                    aria-label="Google Play StoreでMyAnimeDexを入手"><ion-icon name="logo-google-playstore"></ion-icon>
+                    Google Play</a>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-num">10k+</span>
+                    <span class="stat-label">アニメ</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">ライブ</span>
+                    <span class="stat-label">アップデート</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">無料</span>
+                    <span class="stat-label">永久に</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="phone-mockup">
+                <div class="phone-screen">
+                    <img src="ss/screen-dark.png" alt="MyAnimeDex アプリスクリーンショット"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+            </div>
+            <div class="glow-effect"></div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-header">
+            <h2>なぜ <span class="accent">MyAnimeDex?</span></h2>
+            <p>アニメライフを管理するために必要なすべて。</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon-box">
+                    <ion-icon name="list-outline"></ion-icon>
+                </div>
+                <h3>スマートトラッキング</h3>
+                <p>見ているもの、見たもの、見ようと思っているものを追跡します。お気に入りのサービスと同期します。</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box">
+                    <ion-icon name="trending-up-outline"></ion-icon>
+                </div>
+                <h3>トレンド中</h3>
+                <p>今放送中の最もホットなアニメの最新情報を入手。話題を見逃さないでください。</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box">
+                    <ion-icon name="person-outline"></ion-icon>
+                </div>
+                <h3>カスタムプロフィール</h3>
+                <p>ユニークなアバターやテーマで自分を表現しましょう。コレクションをスタイリッシュに披露しましょう。</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box">
+                    <ion-icon name="share-social-outline"></ion-icon>
+                </div>
+                <h3>友達と共有</h3>
+                <p>自分だけのアニメリストを作成して友達と共有しましょう。何を見ているか知らせましょう！</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Showcase -->
+    <section id="showcase" class="showcase">
+        <div class="section-header">
+            <h2>アプリ <span class="accent">ショーケース</span></h2>
+            <p>MyAnimeDexを詳しく見てみましょう。</p>
+        </div>
+
+        <div class="showcase-grid">
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/screen-light.png" alt="ライトモードのスクリーンショット">
+                    </div>
+                </div>
+                <h3>ライトモード</h3>
+            </div>
+
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/watching_dark.png" alt="追跡リストのスクリーンショット">
+                    </div>
+                </div>
+                <h3>スマートトラッキング</h3>
+            </div>
+
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/favorites_dark.png" alt="お気に入りのスクリーンショット">
+                    </div>
+                </div>
+                <h3>お気に入り</h3>
+            </div>
+
+            <!-- Avatar -->
+            <div class="showcase-item">
+                <div class="phone-mockup small">
+                    <div class="phone-screen">
+                        <img src="ss/avatar.png" alt="カスタマイズのスクリーンショット">
+                    </div>
+                </div>
+                <h3>カスタマイズ</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section id="download" class="cta">
+        <div class="cta-content">
+            <h2>冒険を始める準備はできましたか？</h2>
+            <p>今すぐMyAnimeDexをダウンロードして、数千人のアニメファンに参加しましょう。</p>
+            <div class="cta-buttons">
+                <a href="https://apps.apple.com/us/app/myanimedex/id6758043488" class="btn btn-large btn-ios"
+                    aria-label="iOS App StoreでMyAnimeDexをダウンロード"><ion-icon name="logo-apple"></ion-icon> App Store</a>
+                <a href="https://play.google.com/store/apps/details?id=com.myanimedex.app"
+                    class="btn btn-large btn-android" aria-label="Google Play StoreでMyAnimeDexを入手"><ion-icon
+                        name="logo-google-playstore"></ion-icon>
+                    Google Play</a>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="social-section" style="padding: 40px 0; text-align: center;">
+        <div class="footer-social">
+            <h3>フォローする</h3>
+            <p>ソーシャルメディアにいます！連絡を取り合いましょう。</p>
+            <div class="social-icons">
+                <a href="https://www.instagram.com/myanimedex/" target="_blank" aria-label="Instagramでフォロー">
+                    <ion-icon name="logo-instagram"></ion-icon>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo-container">
+                    <img src="header-logo.png" alt="MyAnimeDex Logo" class="footer-logo">
+                    <span class="logo-text">MY ANIME <span class="accent">DEX</span></span>
+                </div>
+                <p>アニメファンのために ❤️ で作られました。</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="#features">特徴</a>
+                <a href="anime/index.html">トップ100アニメ</a>
+                <a href="privacy.html">プライバシーポリシー</a>
+                <a href="delete-account.html">アカウント削除</a>
+                <a href="mailto:support@myanimedex.com">お問い合わせ</a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2025 MyAnimeDex. 全著作権所有。
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
