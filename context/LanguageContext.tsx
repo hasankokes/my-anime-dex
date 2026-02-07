@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import i18n from '../lib/i18n';
+import i18n, { translations } from '../lib/i18n';
 import * as Localization from 'expo-localization';
 
 type LanguageContextType = {
@@ -25,9 +25,19 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
                 i18n.locale = savedLanguage;
                 setLanguageState(savedLanguage);
             } else {
-                // Default to English as per user request, ignoring system locale for initial default
-                i18n.locale = 'en';
-                setLanguageState('en');
+                // Auto-detect language
+                const deviceLanguage = Localization.getLocales()[0]?.languageCode;
+
+                // Check if device language is supported
+                // @ts-ignore
+                if (deviceLanguage && translations[deviceLanguage]) {
+                    i18n.locale = deviceLanguage;
+                    setLanguageState(deviceLanguage);
+                } else {
+                    // Fallback to English
+                    i18n.locale = 'en';
+                    setLanguageState('en');
+                }
             }
         } catch (error) {
 

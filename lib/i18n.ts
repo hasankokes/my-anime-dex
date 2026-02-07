@@ -2,7 +2,7 @@ import * as Localization from 'expo-localization';
 import { I18n } from 'i18n-js';
 
 // Define translations
-const translations = {
+export const translations = {
     en: {
         common: {
             loading: 'Loading...',
