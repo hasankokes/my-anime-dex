@@ -28,11 +28,11 @@
       }
     },
     "splash": {
-      "image": "./assets/images/header-logo.png",
-      "resizeMode": "contain",
+      "image": "./assets/images/splash-lightcover.png",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff",
       "dark": {
-        "image": "./assets/images/splash-dark.png",
+        "image": "./assets/images/splash-dark-cover.png",
         "backgroundColor": "#1A1A1A"
       }
     },

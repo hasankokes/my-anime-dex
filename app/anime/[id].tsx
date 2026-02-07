@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList, Switch } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList, Switch, KeyboardAvoidingView } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
@@ -767,132 +767,137 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
       animationType="slide"
       onRequestClose={onClose}
     >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
       >
         <TouchableOpacity
+          style={styles.modalOverlay}
           activeOpacity={1}
-          style={[styles.modalContent, { backgroundColor: colors.card, maxHeight: '80%' }]}
+          onPress={onClose}
         >
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <Text style={[styles.modalTitle, { color: colors.text, marginBottom: 0 }]}>{t('animeDetail.addToList')}</Text>
-            {!isCreating && (
-              <TouchableOpacity onPress={() => setIsCreating(true)}>
-                <Text style={{ color: colors.primary, fontFamily: 'Poppins_600SemiBold', fontSize: 14 }}>
-                  + {t('animeDetail.createNewList')}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-
-          {isCreating && (
-            <View style={{ marginBottom: 16, padding: 12, backgroundColor: colors.background, borderRadius: 12 }}>
-              <Text style={{ color: colors.subtext, fontSize: 12, marginBottom: 4 }}>{t('animeDetail.enterListName')}</Text>
-              <TextInput
-                style={{
-                  backgroundColor: colors.card,
-                  borderWidth: 1,
-                  borderColor: colors.border,
-                  borderRadius: 8,
-                  padding: 10,
-                  color: colors.text,
-                  fontFamily: 'Poppins_400Regular',
-                  marginBottom: 12
-                }}
-                value={newListName}
-                onChangeText={setNewListName}
-                placeholder={t('animeDetail.enterListName')}
-                placeholderTextColor={colors.subtext}
-                autoFocus
-              />
-
-              <Text style={{ color: colors.subtext, fontSize: 12, marginBottom: 4 }}>{t('animeDetail.listDescription')}</Text>
-              <TextInput
-                style={{
-                  backgroundColor: colors.card,
-                  borderWidth: 1,
-                  borderColor: colors.border,
-                  borderRadius: 8,
-                  padding: 10,
-                  color: colors.text,
-                  fontFamily: 'Poppins_400Regular',
-                  marginBottom: 12,
-                  height: 60
-                }}
-                value={newListDescription}
-                onChangeText={setNewListDescription}
-                placeholder={t('animeDetail.listDescription')}
-                placeholderTextColor={colors.subtext}
-                multiline
-                numberOfLines={3}
-              />
-
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                <View style={{ flex: 1, marginRight: 10 }}>
-                  <Text style={{ color: colors.text, fontFamily: 'Poppins_600SemiBold', fontSize: 14 }}>{t('animeDetail.publicList')}</Text>
-                  <Text style={{ color: colors.subtext, fontSize: 10 }}>{t('animeDetail.publicListDesc')}</Text>
-                </View>
-                <Switch
-                  value={isPublic}
-                  onValueChange={setIsPublic}
-                  trackColor={{ false: '#374151', true: colors.primary }}
-                  thumbColor={'#FFFFFF'}
-                />
-              </View>
-
-              <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 10 }}>
-                <TouchableOpacity onPress={() => setIsCreating(false)} style={{ padding: 8 }}>
-                  <Text style={{ color: colors.subtext, fontFamily: 'Poppins_500Medium' }}>{t('common.cancel')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={createNewList}
-                  disabled={!newListName.trim() || createLoading}
-                  style={{ backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8, opacity: !newListName.trim() ? 0.5 : 1 }}
-                >
-                  {createLoading ? (
-                    <ActivityIndicator size="small" color="#000" />
-                  ) : (
-                    <Text style={{ color: '#000', fontFamily: 'Poppins_600SemiBold' }}>{t('animeDetail.create')}</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-
-          {loading ? (
-            <ActivityIndicator color="#FACC15" />
-          ) : lists.length > 0 ? (
-            <FlatList
-              data={lists}
-              keyExtractor={item => item.id}
-              contentContainerStyle={{ paddingBottom: 20 }}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[styles.modalOption, { borderBottomColor: colors.border }]}
-                  onPress={() => addToList(item.id)}
-                >
-                  <Ionicons name="list" size={20} color={colors.subtext} style={{ marginRight: 12 }} />
-                  <View style={{ flex: 1 }}>
-                    <Text style={[styles.modalOptionText, { color: colors.text }]} numberOfLines={1}>{item.title}</Text>
-                    {item.description && (
-                      <Text style={{ color: colors.subtext, fontSize: 10 }} numberOfLines={1}>{item.description}</Text>
-                    )}
-                  </View>
-                  <Ionicons name="add-circle-outline" size={20} color={colors.subtext} style={{ marginLeft: 'auto' }} />
+          <TouchableOpacity
+            activeOpacity={1}
+            style={[styles.modalContent, { backgroundColor: colors.card, maxHeight: '80%' }]}
+          >
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text style={[styles.modalTitle, { color: colors.text, marginBottom: 0 }]}>{t('animeDetail.addToList')}</Text>
+              {!isCreating && (
+                <TouchableOpacity onPress={() => setIsCreating(true)}>
+                  <Text style={{ color: colors.primary, fontFamily: 'Poppins_600SemiBold', fontSize: 14 }}>
+                    + {t('animeDetail.createNewList')}
+                  </Text>
                 </TouchableOpacity>
               )}
-            />
-          ) : (
-            !isCreating && (
-              <View style={{ alignItems: 'center', padding: 20 }}>
-                <Text style={{ color: colors.subtext, marginBottom: 10 }}>{t('animeDetail.noListsFound')}</Text>
+            </View>
+
+            {isCreating && (
+              <View style={{ marginBottom: 16, padding: 12, backgroundColor: colors.background, borderRadius: 12 }}>
+                <Text style={{ color: colors.subtext, fontSize: 12, marginBottom: 4 }}>{t('animeDetail.enterListName')}</Text>
+                <TextInput
+                  style={{
+                    backgroundColor: colors.card,
+                    borderWidth: 1,
+                    borderColor: colors.border,
+                    borderRadius: 8,
+                    padding: 10,
+                    color: colors.text,
+                    fontFamily: 'Poppins_400Regular',
+                    marginBottom: 12
+                  }}
+                  value={newListName}
+                  onChangeText={setNewListName}
+                  placeholder={t('animeDetail.enterListName')}
+                  placeholderTextColor={colors.subtext}
+                  autoFocus
+                />
+
+                <Text style={{ color: colors.subtext, fontSize: 12, marginBottom: 4 }}>{t('animeDetail.listDescription')}</Text>
+                <TextInput
+                  style={{
+                    backgroundColor: colors.card,
+                    borderWidth: 1,
+                    borderColor: colors.border,
+                    borderRadius: 8,
+                    padding: 10,
+                    color: colors.text,
+                    fontFamily: 'Poppins_400Regular',
+                    marginBottom: 12,
+                    height: 60
+                  }}
+                  value={newListDescription}
+                  onChangeText={setNewListDescription}
+                  placeholder={t('animeDetail.listDescription')}
+                  placeholderTextColor={colors.subtext}
+                  multiline
+                  numberOfLines={3}
+                />
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <View style={{ flex: 1, marginRight: 10 }}>
+                    <Text style={{ color: colors.text, fontFamily: 'Poppins_600SemiBold', fontSize: 14 }}>{t('animeDetail.publicList')}</Text>
+                    <Text style={{ color: colors.subtext, fontSize: 10 }}>{t('animeDetail.publicListDesc')}</Text>
+                  </View>
+                  <Switch
+                    value={isPublic}
+                    onValueChange={setIsPublic}
+                    trackColor={{ false: '#374151', true: colors.primary }}
+                    thumbColor={'#FFFFFF'}
+                  />
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 10 }}>
+                  <TouchableOpacity onPress={() => setIsCreating(false)} style={{ padding: 8 }}>
+                    <Text style={{ color: colors.subtext, fontFamily: 'Poppins_500Medium' }}>{t('common.cancel')}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={createNewList}
+                    disabled={!newListName.trim() || createLoading}
+                    style={{ backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8, opacity: !newListName.trim() ? 0.5 : 1 }}
+                  >
+                    {createLoading ? (
+                      <ActivityIndicator size="small" color="#000" />
+                    ) : (
+                      <Text style={{ color: '#000', fontFamily: 'Poppins_600SemiBold' }}>{t('animeDetail.create')}</Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
               </View>
-            )
-          )}
+            )}
+
+            {loading ? (
+              <ActivityIndicator color="#FACC15" />
+            ) : lists.length > 0 ? (
+              <FlatList
+                data={lists}
+                keyExtractor={item => item.id}
+                contentContainerStyle={{ paddingBottom: 20 }}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[styles.modalOption, { borderBottomColor: colors.border }]}
+                    onPress={() => addToList(item.id)}
+                  >
+                    <Ionicons name="list" size={20} color={colors.subtext} style={{ marginRight: 12 }} />
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.modalOptionText, { color: colors.text }]} numberOfLines={1}>{item.title}</Text>
+                      {item.description && (
+                        <Text style={{ color: colors.subtext, fontSize: 10 }} numberOfLines={1}>{item.description}</Text>
+                      )}
+                    </View>
+                    <Ionicons name="add-circle-outline" size={20} color={colors.subtext} style={{ marginLeft: 'auto' }} />
+                  </TouchableOpacity>
+                )}
+              />
+            ) : (
+              !isCreating && (
+                <View style={{ alignItems: 'center', padding: 20 }}>
+                  <Text style={{ color: colors.subtext, marginBottom: 10 }}>{t('animeDetail.noListsFound')}</Text>
+                </View>
+              )
+            )}
+          </TouchableOpacity>
         </TouchableOpacity>
-      </TouchableOpacity>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

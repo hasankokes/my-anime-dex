@@ -15,7 +15,8 @@ export const OfflineBanner = () => {
     const [visible, setVisible] = useState(false);
 
     // Show if disconnected OR connected but no internet
-    const isOffline = !isConnected || (isConnected && isInternetReachable === false);
+    // Explicitly check for === false to handle null (unknown) states gracefully
+    const isOffline = isConnected === false || (isConnected === true && isInternetReachable === false);
 
     if (!isOffline) return null;
 

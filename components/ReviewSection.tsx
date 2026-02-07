@@ -9,7 +9,9 @@ import {
     FlatList,
     Alert,
     Modal,
-    Image
+    Image,
+    Platform,
+    KeyboardAvoidingView
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -46,6 +48,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
     const [loading, setLoading] = useState(true);
     const [expanded, setExpanded] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
     // Form State
     const [myReview, setMyReview] = useState<Review | null>(null);
@@ -79,6 +82,10 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
 
             // Check if current user has a review
             const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                setCurrentUserId(session.user.id);
+            }
+
             if (session && data) {
                 const userReview = data.find(r => r.user_id === session.user.id);
                 if (userReview) {
@@ -180,12 +187,20 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
         const avatarUrl = profile?.avatar_url || 'https://via.placeholder.com/40';
         const username = profile?.username || 'User';
 
+        const isOwnReview = currentUserId === item.user_id;
+
         return (
             <View style={[styles.reviewCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <View style={styles.reviewHeader}>
                     <TouchableOpacity
                         style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
-                        onPress={() => router.push(`/users/${item.user_id}`)}
+                        onPress={() => {
+                            if (isOwnReview) {
+                                router.push('/(tabs)/profile');
+                            } else {
+                                router.push(`/users/${item.user_id}`);
+                            }
+                        }}
                     >
                         <Image
                             source={{ uri: avatarUrl }}
@@ -209,6 +224,43 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
         );
     };
 
+    const handleDelete = () => {
+        Alert.alert(
+            t('animeDetail.deleteReview'),
+            t('animeDetail.confirmDeleteReview'),
+            [
+                { text: t('common.cancel'), style: 'cancel' },
+                {
+                    text: t('common.confirm'),
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            const { data: { session } } = await supabase.auth.getSession();
+                            if (!session) return;
+
+                            const { error } = await supabase
+                                .from('reviews')
+                                .delete()
+                                .eq('user_id', session.user.id)
+                                .eq('anime_id', animeId);
+
+                            if (error) throw error;
+
+                            setReviews(prev => prev.filter(r => r.user_id !== session.user.id));
+                            setMyReview(null);
+                            setRating(0);
+                            setComment('');
+                            Alert.alert(t('common.success'), t('animeDetail.reviewDeleted'));
+                        } catch (error) {
+                            console.error('Error deleting review:', error);
+                            Alert.alert(t('common.error'), t('animeDetail.failedToDelete'));
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     return (
         <View style={styles.container}>
             {/* Header / Expand Toggle */}
@@ -229,15 +281,34 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
             {/* Expanded Content */}
             {expanded && (
                 <View style={styles.content}>
-                    {/* Add Review Button */}
-                    <TouchableOpacity
-                        style={[styles.addButton, { backgroundColor: colors.primary }]}
-                        onPress={() => setModalVisible(true)}
-                    >
-                        <Text style={styles.addButtonText}>
-                            {myReview ? t('animeDetail.editReview') : t('animeDetail.writeReview')}
-                        </Text>
-                    </TouchableOpacity>
+                    {/* Add/Edit/Delete Review Buttons */}
+                    {myReview ? (
+                        <View style={{ flexDirection: 'row', gap: 12, marginBottom: 8 }}>
+                            <TouchableOpacity
+                                style={[styles.addButton, { backgroundColor: colors.primary, flex: 1, marginBottom: 0 }]}
+                                onPress={() => setModalVisible(true)}
+                            >
+                                <Text style={styles.addButtonText}>
+                                    {t('animeDetail.editReview')}
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.addButton, { backgroundColor: '#EF4444', aspectRatio: 1, paddingHorizontal: 0, marginBottom: 0 }]}
+                                onPress={handleDelete}
+                            >
+                                <Ionicons name="trash-outline" size={20} color="#FFF" />
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <TouchableOpacity
+                            style={[styles.addButton, { backgroundColor: colors.primary }]}
+                            onPress={() => setModalVisible(true)}
+                        >
+                            <Text style={styles.addButtonText}>
+                                {t('animeDetail.writeReview')}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
 
                     {loading ? (
                         <ActivityIndicator size="small" color="#FACC15" />
@@ -264,46 +335,51 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                 animationType="slide"
                 onRequestClose={() => setModalVisible(false)}
             >
-                <TouchableOpacity
-                    style={styles.modalOverlay}
-                    activeOpacity={1}
-                    onPress={() => setModalVisible(false)}
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1 }}
                 >
-                    <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                        <View style={styles.modalHeader}>
-                            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('animeDetail.rateAnime')}</Text>
-                            <TouchableOpacity onPress={() => setModalVisible(false)}>
-                                <Ionicons name="close" size={24} color={colors.text} />
+                    <TouchableOpacity
+                        style={styles.modalOverlay}
+                        activeOpacity={1}
+                        onPress={() => setModalVisible(false)}
+                    >
+                        <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                            <View style={styles.modalHeader}>
+                                <Text style={[styles.modalTitle, { color: colors.text }]}>{t('animeDetail.rateAnime')}</Text>
+                                <TouchableOpacity onPress={() => setModalVisible(false)}>
+                                    <Ionicons name="close" size={24} color={colors.text} />
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.ratingContainer}>
+                                <StarRating rating={rating} onRatingChange={setRating} size={40} />
+                            </View>
+
+                            <TextInput
+                                style={[styles.input, { color: colors.text, backgroundColor: colors.inputBg }]}
+                                placeholder={t('animeDetail.reviewPlaceholder')}
+                                placeholderTextColor={colors.subtext}
+                                multiline
+                                numberOfLines={4}
+                                value={comment}
+                                onChangeText={setComment}
+                            />
+
+                            <TouchableOpacity
+                                style={[styles.submitButton, { backgroundColor: colors.primary, opacity: submitting ? 0.7 : 1 }]}
+                                onPress={handleSubmit}
+                                disabled={submitting}
+                            >
+                                {submitting ? (
+                                    <ActivityIndicator color="#000" />
+                                ) : (
+                                    <Text style={styles.submitButtonText}>{t('animeDetail.submitReview')}</Text>
+                                )}
                             </TouchableOpacity>
                         </View>
-
-                        <View style={styles.ratingContainer}>
-                            <StarRating rating={rating} onRatingChange={setRating} size={40} />
-                        </View>
-
-                        <TextInput
-                            style={[styles.input, { color: colors.text, backgroundColor: colors.inputBg }]}
-                            placeholder={t('animeDetail.reviewPlaceholder')}
-                            placeholderTextColor={colors.subtext}
-                            multiline
-                            numberOfLines={4}
-                            value={comment}
-                            onChangeText={setComment}
-                        />
-
-                        <TouchableOpacity
-                            style={[styles.submitButton, { backgroundColor: colors.primary, opacity: submitting ? 0.7 : 1 }]}
-                            onPress={handleSubmit}
-                            disabled={submitting}
-                        >
-                            {submitting ? (
-                                <ActivityIndicator color="#000" />
-                            ) : (
-                                <Text style={styles.submitButtonText}>{t('animeDetail.submitReview')}</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                </KeyboardAvoidingView>
             </Modal>
         </View>
     );

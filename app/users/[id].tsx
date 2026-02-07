@@ -54,23 +54,31 @@ export default function PublicProfileScreen() {
             setProfile(profileData);
 
             // 2. Fetch Stats
-            const { count: watchedCount } = await supabase
+            console.log('Fetching stats for user:', id);
+
+            const { count: watchedCount, error: watchedError } = await supabase
                 .from('user_anime_list')
                 .select('*', { count: 'exact', head: true })
                 .eq('user_id', id)
                 .eq('status', 'completed');
 
-            const { count: watchingCount } = await supabase
+            if (watchedError) console.error('Error fetching watched count:', watchedError);
+
+            const { count: watchingCount, error: watchingError } = await supabase
                 .from('user_anime_list')
                 .select('*', { count: 'exact', head: true })
                 .eq('user_id', id)
                 .eq('status', 'watching');
 
-            const { count: favCount } = await supabase
+            if (watchingError) console.error('Error fetching watching count:', watchingError);
+
+            const { count: favCount, error: favError } = await supabase
                 .from('user_anime_list')
                 .select('*', { count: 'exact', head: true })
                 .eq('user_id', id)
                 .eq('is_favorite', true);
+
+            if (favError) console.error('Error fetching favorites count:', favError);
 
             setStats({
                 watched_count: watchedCount || 0,

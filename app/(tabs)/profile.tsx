@@ -11,7 +11,8 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
-  Platform
+  Platform,
+  KeyboardAvoidingView
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -845,42 +846,47 @@ export default function ProfileScreen() {
         animationType="slide"
         onRequestClose={() => setIsEditing(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Edit Profile</Text>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>Edit Profile</Text>
 
-            <Text style={[styles.inputLabel, { color: colors.subtext }]}>Username</Text>
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  backgroundColor: colors.inputBg,
-                  color: colors.text,
-                  borderColor: colors.border
-                }
-              ]}
-              value={newUsername}
-              onChangeText={setNewUsername}
-              placeholder="Enter username"
-              placeholderTextColor={colors.subtext}
-            />
+              <Text style={[styles.inputLabel, { color: colors.subtext }]}>Username</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colors.inputBg,
+                    color: colors.text,
+                    borderColor: colors.border
+                  }
+                ]}
+                value={newUsername}
+                onChangeText={setNewUsername}
+                placeholder="Enter username"
+                placeholderTextColor={colors.subtext}
+              />
 
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: colors.border }]}
-                onPress={() => setIsEditing(false)}
-              >
-                <Text style={{ color: colors.text }}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#FACC15' }]}
-                onPress={saveProfile}
-              >
-                <Text style={{ color: '#000', fontWeight: 'bold' }}>Save</Text>
-              </TouchableOpacity>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={[styles.modalButton, { backgroundColor: colors.border }]}
+                  onPress={() => setIsEditing(false)}
+                >
+                  <Text style={{ color: colors.text }}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, { backgroundColor: '#FACC15' }]}
+                  onPress={saveProfile}
+                >
+                  <Text style={{ color: '#000', fontWeight: 'bold' }}>Save</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* Avatar Selection Modal */}

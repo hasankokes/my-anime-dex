@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Share, Image, Modal, TextInput, TouchableWithoutFeedback, Platform, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Share, Image, Modal, TextInput, TouchableWithoutFeedback, Platform, FlatList, KeyboardAvoidingView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Linking from 'expo-linking';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -479,54 +479,59 @@ export default function ListDetailsScreen() {
                 animationType="slide"
                 onRequestClose={() => setEditingItem(null)}
             >
-                <TouchableWithoutFeedback onPress={() => setEditingItem(null)}>
-                    <View style={styles.modalOverlay}>
-                        <TouchableWithoutFeedback onPress={() => { }}>
-                            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                                <Text style={[styles.modalTitle, { color: colors.text }]}>Rate & Review</Text>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1 }}
+                >
+                    <TouchableWithoutFeedback onPress={() => setEditingItem(null)}>
+                        <View style={styles.modalOverlay}>
+                            <TouchableWithoutFeedback onPress={() => { }}>
+                                <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                                    <Text style={[styles.modalTitle, { color: colors.text }]}>Rate & Review</Text>
 
-                                <Text style={[styles.inputLabel, { color: colors.subtext }]}>Score (1-10)</Text>
-                                <TextInput
-                                    style={[styles.input, { backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.border }]}
-                                    value={editScore}
-                                    onChangeText={setEditScore}
-                                    keyboardType="numeric"
-                                    placeholder="e.g. 9"
-                                    placeholderTextColor={colors.subtext}
-                                    maxLength={2}
-                                />
+                                    <Text style={[styles.inputLabel, { color: colors.subtext }]}>Score (1-10)</Text>
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.border }]}
+                                        value={editScore}
+                                        onChangeText={setEditScore}
+                                        keyboardType="numeric"
+                                        placeholder="e.g. 9"
+                                        placeholderTextColor={colors.subtext}
+                                        maxLength={2}
+                                    />
 
-                                <Text style={[styles.inputLabel, { color: colors.subtext }]}>Comment</Text>
-                                <TextInput
-                                    style={[styles.textArea, { backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.border }]}
-                                    value={editComment}
-                                    onChangeText={setEditComment}
-                                    multiline
-                                    numberOfLines={3}
-                                    placeholder="Write your thoughts..."
-                                    placeholderTextColor={colors.subtext}
-                                    textAlignVertical="top"
-                                />
+                                    <Text style={[styles.inputLabel, { color: colors.subtext }]}>Comment</Text>
+                                    <TextInput
+                                        style={[styles.textArea, { backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.border }]}
+                                        value={editComment}
+                                        onChangeText={setEditComment}
+                                        multiline
+                                        numberOfLines={3}
+                                        placeholder="Write your thoughts..."
+                                        placeholderTextColor={colors.subtext}
+                                        textAlignVertical="top"
+                                    />
 
-                                <View style={styles.modalButtons}>
-                                    <TouchableOpacity
-                                        style={[styles.modalBtn, { backgroundColor: colors.border }]}
-                                        onPress={() => setEditingItem(null)}
-                                    >
-                                        <Text style={{ color: colors.text }}>Cancel</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[styles.modalBtn, { backgroundColor: '#FACC15' }]}
-                                        onPress={saveItemDetails}
-                                        disabled={saving}
-                                    >
-                                        {saving ? <ActivityIndicator color="#000" /> : <Text style={{ color: '#000', fontWeight: 'bold' }}>Save</Text>}
-                                    </TouchableOpacity>
+                                    <View style={styles.modalButtons}>
+                                        <TouchableOpacity
+                                            style={[styles.modalBtn, { backgroundColor: colors.border }]}
+                                            onPress={() => setEditingItem(null)}
+                                        >
+                                            <Text style={{ color: colors.text }}>Cancel</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[styles.modalBtn, { backgroundColor: '#FACC15' }]}
+                                            onPress={saveItemDetails}
+                                            disabled={saving}
+                                        >
+                                            {saving ? <ActivityIndicator color="#000" /> : <Text style={{ color: '#000', fontWeight: 'bold' }}>Save</Text>}
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                </TouchableWithoutFeedback>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </KeyboardAvoidingView>
             </Modal>
         </SafeAreaView>
     );

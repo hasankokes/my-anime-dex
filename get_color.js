@@ -1,0 +1,1 @@
+const fs = require('fs'); const PNG = require('pngjs').PNG; fs.createReadStream('assets/images/splash-dark.png').pipe(new PNG()).on('parsed', function() { var idx = (this.width * 10 + 10) << 2; console.log('#' + ((1 << 24) + (this.data[idx] << 16) + (this.data[idx+1] << 8) + this.data[idx+2]).toString(16).slice(1)); });

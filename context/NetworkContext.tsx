@@ -2,8 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 
 type NetworkContextType = {
-    isConnected: boolean;
-    isInternetReachable: boolean;
+    isConnected: boolean | null;
+    isInternetReachable: boolean | null;
     type: string;
 };
 
@@ -16,9 +16,9 @@ const NetworkContext = createContext<NetworkContextType>({
 export const useNetwork = () => useContext(NetworkContext);
 
 export const NetworkProvider = ({ children }: { children: React.ReactNode }) => {
-    const [state, setState] = useState<{ isConnected: boolean; isInternetReachable: boolean; type: string }>({
+    const [state, setState] = useState<{ isConnected: boolean | null; isInternetReachable: boolean | null; type: string }>({
         isConnected: true, // Optimistic default
-        isInternetReachable: true,
+        isInternetReachable: null, // Unknown initially
         type: 'unknown',
     });
 
@@ -26,8 +26,8 @@ export const NetworkProvider = ({ children }: { children: React.ReactNode }) => 
         // Subscribe to network state updates
         const unsubscribe = NetInfo.addEventListener((netState) => {
             setState({
-                isConnected: netState.isConnected ?? false,
-                isInternetReachable: netState.isInternetReachable ?? false,
+                isConnected: netState.isConnected,
+                isInternetReachable: netState.isInternetReachable,
                 type: netState.type,
             });
         });
