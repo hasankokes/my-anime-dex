@@ -14,6 +14,9 @@ export default function MyListsScreen() {
     const { t } = useLanguage();
     const [lists, setLists] = useState<List[]>([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState<'my' | 'shared'>('my');
+    const [sharedLists, setSharedLists] = useState<List[]>([]);
+    const [refreshing, setRefreshing] = useState(false);
 
     const fetchLists = async () => {
         try {
@@ -21,23 +24,43 @@ export default function MyListsScreen() {
             const { data: { session } } = await supabase.auth.getSession();
 
             if (!session) {
-                setListing([]);
+                setLists([]);
+                setSharedLists([]);
                 return;
             }
 
-            const { data, error } = await supabase
+            // Fetch My Lists
+            const { data: myData, error: myError } = await supabase
                 .from('lists')
                 .select('*')
                 .eq('user_id', session.user.id)
                 .order('created_at', { ascending: false });
 
-            if (error) throw error;
-            setLists(data || []);
+            if (myError) throw myError;
+            setLists(myData || []);
+
+            // Fetch Shared Lists
+            const { data: sharedData, error: sharedError } = await supabase
+                .from('list_collaborators')
+                .select('list:lists(*)') // Select the related list data
+                .eq('user_id', session.user.id);
+
+            if (sharedError) throw sharedError;
+
+            // Extract lists from the response
+            const formattedSharedLists = sharedData
+                .map((item: any) => item.list)
+                .filter((list: any) => list !== null)
+                .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+            setSharedLists(formattedSharedLists);
+
         } catch (error) {
             console.error('Error fetching lists:', error);
             Alert.alert('Error', 'Failed to load your lists.');
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     };
 
@@ -47,13 +70,18 @@ export default function MyListsScreen() {
         }, [])
     );
 
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchLists();
+    };
+
     const renderItem = ({ item }: { item: List }) => (
         <TouchableOpacity
             style={[styles.listItem, { backgroundColor: colors.card, borderColor: colors.border }]}
             onPress={() => router.push(`/lists/${item.id}`)}
         >
             <View style={styles.listIconContainer}>
-                <Ionicons name="list" size={24} color="#FACC15" />
+                <Ionicons name={activeTab === 'my' ? "list" : "people"} size={24} color="#FACC15" />
             </View>
             <View style={styles.listContent}>
                 <Text style={[styles.listTitle, { color: colors.text }]}>{item.title}</Text>
@@ -73,10 +101,6 @@ export default function MyListsScreen() {
         </TouchableOpacity>
     );
 
-    function setListing(arg0: never[]) {
-        throw new Error('Function not implemented.');
-    }
-
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
             {/* Header */}
@@ -93,33 +117,80 @@ export default function MyListsScreen() {
                 </TouchableOpacity>
             </View>
 
+            {/* Tabs / Filters */}
+            <View style={styles.tabContainer}>
+                <TouchableOpacity
+                    style={[
+                        styles.filterPill,
+                        {
+                            backgroundColor: activeTab === 'my' ? '#FACC15' : colors.card,
+                            borderColor: activeTab === 'my' ? '#FACC15' : colors.border
+                        }
+                    ]}
+                    onPress={() => setActiveTab('my')}
+                >
+                    <Text style={[
+                        styles.tabText,
+                        { color: activeTab === 'my' ? '#000000' : colors.subtext, fontWeight: activeTab === 'my' ? '700' : '500' }
+                    ]}>
+                        {t('profile.myLists')}
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={[
+                        styles.filterPill,
+                        {
+                            backgroundColor: activeTab === 'shared' ? '#FACC15' : colors.card,
+                            borderColor: activeTab === 'shared' ? '#FACC15' : colors.border
+                        }
+                    ]}
+                    onPress={() => setActiveTab('shared')}
+                >
+                    <Text style={[
+                        styles.tabText,
+                        { color: activeTab === 'shared' ? '#000000' : colors.subtext, fontWeight: activeTab === 'shared' ? '700' : '500' }
+                    ]}>
+                        {t('collaborators.sharedWithMe')}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+
             {loading ? (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="#FACC15" />
                 </View>
-            ) : lists.length > 0 ? (
+            ) : (activeTab === 'my' ? lists : sharedLists).length > 0 ? (
                 <FlatList
-                    data={lists}
+                    data={activeTab === 'my' ? lists : sharedLists}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id}
                     contentContainerStyle={styles.listContainer}
                     showsVerticalScrollIndicator={false}
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
                 />
             ) : (
                 <View style={styles.emptyContainer}>
                     <View style={[styles.emptyIconContainer, { backgroundColor: colors.card }]}>
-                        <Ionicons name="list-outline" size={48} color={colors.subtext} />
+                        <Ionicons name={activeTab === 'my' ? "list-outline" : "people-outline"} size={48} color={colors.subtext} />
                     </View>
-                    <Text style={[styles.emptyTitle, { color: colors.text }]}>No Lists Yet</Text>
-                    <Text style={[styles.emptyText, { color: colors.subtext }]}>
-                        Create your first custom anime list to share with others.
+                    <Text style={[styles.emptyTitle, { color: colors.text }]}>
+                        {activeTab === 'my' ? 'No Lists Yet' : t('collaborators.noSharedLists')}
                     </Text>
-                    <TouchableOpacity
-                        style={[styles.createButton, { backgroundColor: '#FACC15' }]}
-                        onPress={() => router.push('/lists/create')}
-                    >
-                        <Text style={styles.createButtonText}>Create New List</Text>
-                    </TouchableOpacity>
+                    <Text style={[styles.emptyText, { color: colors.subtext }]}>
+                        {activeTab === 'my'
+                            ? 'Create your first custom anime list to share with others.'
+                            : t('collaborators.sharedListsDesc')}
+                    </Text>
+                    {activeTab === 'my' && (
+                        <TouchableOpacity
+                            style={[styles.createButton, { backgroundColor: '#FACC15' }]}
+                            onPress={() => router.push('/lists/create')}
+                        >
+                            <Text style={styles.createButtonText}>Create New List</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             )}
         </SafeAreaView>
@@ -233,5 +304,22 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: 'Poppins_600SemiBold',
         color: '#000',
+    },
+    tabContainer: {
+        flexDirection: 'row',
+        paddingHorizontal: 20,
+        marginBottom: 10,
+        marginTop: 20,
+    },
+    filterPill: {
+        paddingHorizontal: 20,
+        paddingVertical: 8,
+        borderRadius: 20,
+        marginRight: 10,
+        borderWidth: 1,
+    },
+    tabText: {
+        fontSize: 14,
+        fontFamily: 'Poppins_500Medium',
     },
 });

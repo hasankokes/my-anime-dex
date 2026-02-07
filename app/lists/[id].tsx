@@ -10,21 +10,39 @@ import { useTheme } from '../../context/ThemeContext';
 import DraggableFlatList, { ScaleDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
 
 
+import CollaboratorModal from '../../components/CollaboratorModal';
+
+interface CollaboratorProfile {
+    user_id: string;
+    profiles: {
+        username: string;
+        avatar_url: string | null;
+    };
+}
+
+import { useLanguage } from '../../context/LanguageContext';
+
 export default function ListDetailsScreen() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const { colors, isDark } = useTheme();
+    const { t } = useLanguage();
 
     const [list, setList] = useState<List | null>(null);
     const [items, setItems] = useState<ListItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [isOwner, setIsOwner] = useState(false);
+    const [isCollaborator, setIsCollaborator] = useState(false);
+    const [collaboratorsList, setCollaboratorsList] = useState<CollaboratorProfile[]>([]);
+    const [showCollaboratorsModal, setShowCollaboratorsModal] = useState(false);
 
     // Edit State
     const [editingItem, setEditingItem] = useState<ListItem | null>(null);
     const [editScore, setEditScore] = useState('');
     const [editComment, setEditComment] = useState('');
     const [saving, setSaving] = useState(false);
+
+    const canEdit = isOwner || isCollaborator;
 
     useEffect(() => {
         fetchListDetails();
@@ -51,8 +69,36 @@ export default function ListDetailsScreen() {
             if (listError) throw listError;
             setList(listData);
 
-            if (session && listData.user_id === session.user.id) {
-                setIsOwner(true);
+            if (session) {
+                if (listData.user_id === session.user.id) {
+                    setIsOwner(true);
+                }
+            }
+
+            // Fetch collaborators
+            const { data: collaboratorsData } = await supabase
+                .from('list_collaborators')
+                .select(`
+                    user_id,
+                    profiles:user_id (
+                        username,
+                        avatar_url
+                    )
+                `)
+                .eq('list_id', id);
+
+            if (collaboratorsData) {
+                const formattedCollaborators = collaboratorsData.map((d: any) => ({
+                    user_id: d.user_id,
+                    profiles: Array.isArray(d.profiles) ? d.profiles[0] : d.profiles
+                })) as CollaboratorProfile[];
+
+                setCollaboratorsList(formattedCollaborators);
+
+                if (session) {
+                    const isCollab = formattedCollaborators.some(c => c.user_id === session.user.id);
+                    if (isCollab) setIsCollaborator(true);
+                }
             }
 
             // Fetch List Items
@@ -85,7 +131,7 @@ export default function ListDetailsScreen() {
     const onDragEnd = async ({ data }: { data: ListItem[] }) => {
         setItems(data);
         // Persist new order
-        if (isOwner) {
+        if (canEdit) {
             try {
                 const updates = data.map((item, index) => ({
                     id: item.id,
@@ -94,8 +140,7 @@ export default function ListDetailsScreen() {
                 }));
 
                 // Upsert all positions (batch update logic would be better but simple loops work for small lists)
-                // Supabase standard bulk update isn't straightforward for different values on different rows without a function or multiple calls.
-                // For simplicity, we loop. Optimizations could include a custom SQL function.
+                // For simplicity, we loop.
                 for (const item of updates) {
                     await supabase.from('list_items').update({ position: item.position }).eq('id', item.id);
                 }
@@ -261,7 +306,7 @@ export default function ListDetailsScreen() {
                         <TouchableOpacity
                             style={{ flex: 1, flexDirection: 'row' }}
                             onPress={() => router.push(`/anime/${item.anime_id}`)}
-                            onLongPress={isOwner ? drag : undefined}
+                            onLongPress={canEdit ? drag : undefined}
                             disabled={isActive}
                         >
                             <View style={styles.itemImageContainer}>
@@ -291,7 +336,7 @@ export default function ListDetailsScreen() {
                             </View>
                         </TouchableOpacity>
 
-                        {isOwner && (
+                        {canEdit && (
                             <View style={styles.actionsColumn}>
                                 <TouchableOpacity
                                     onPressIn={drag}
@@ -363,7 +408,7 @@ export default function ListDetailsScreen() {
                     </View>
                 </TouchableOpacity>
 
-                {isOwner && (
+                {canEdit && (
                     <View style={styles.actionsColumn}>
                         {/* No Drag Handle on Web for now */}
 
@@ -398,14 +443,41 @@ export default function ListDetailsScreen() {
                     style={styles.avatar}
                 />
                 <Text style={[styles.authorName, { color: colors.subtext }]}>
-                    by {(list as any)?.profiles?.username || 'Unknown'}
+                    {t('lists.by')} {(list as any)?.profiles?.username || t('common.unknown')}
                 </Text>
-                <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{items.length} items</Text>
+                <View style={[styles.badge, { marginRight: 8 }]}>
+                    <Text style={styles.badgeText}>{items.length} {t('lists.items')}</Text>
                 </View>
+
+                {/* Collaborators Display */}
+                {collaboratorsList.length > 0 && (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 8 }}>
+                        <Text style={[styles.authorName, { color: colors.subtext, marginRight: 6 }]}>&</Text>
+                        {collaboratorsList.map((collab, index) => (
+                            <View key={collab.user_id} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 8 }}>
+                                <Image
+                                    source={{ uri: collab.profiles.avatar_url || 'https://via.placeholder.com/150' }}
+                                    style={styles.avatar}
+                                />
+                                <Text style={[styles.authorName, { color: colors.subtext, marginRight: 0 }]}>
+                                    {collab.profiles.username}
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
+                )}
             </View>
-            {isOwner && Platform.OS !== 'web' && items.length > 1 && (
-                <Text style={[styles.dragHint, { color: colors.subtext }]}>long press an item to reorder</Text>
+            {isOwner && (
+                <TouchableOpacity
+                    style={[styles.inviteButton, { borderColor: colors.border, backgroundColor: colors.card }]}
+                    onPress={() => setShowCollaboratorsModal(true)}
+                >
+                    <Ionicons name="person-add-outline" size={18} color={colors.text} style={{ marginRight: 8 }} />
+                    <Text style={[styles.inviteButtonText, { color: colors.text }]}>{t('collaborators.add')}</Text>
+                </TouchableOpacity>
+            )}
+            {canEdit && Platform.OS !== 'web' && items.length > 1 && (
+                <Text style={[styles.dragHint, { color: colors.subtext }]}>{t('lists.reorderHint')}</Text>
             )}
         </View>
     );
@@ -533,6 +605,11 @@ export default function ListDetailsScreen() {
                     </TouchableWithoutFeedback>
                 </KeyboardAvoidingView>
             </Modal>
+            <CollaboratorModal
+                visible={showCollaboratorsModal}
+                onClose={() => setShowCollaboratorsModal(false)}
+                listId={id as string}
+            />
         </SafeAreaView>
     );
 }
@@ -602,6 +679,20 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: 'Poppins_600SemiBold',
     },
+    inviteButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 24,
+        borderWidth: 1,
+        marginTop: 16,
+    },
+    inviteButtonText: {
+        fontSize: 14,
+        fontFamily: 'Poppins_600SemiBold',
+    },
     dragHint: {
         fontSize: 12,
         fontStyle: 'italic',
@@ -625,8 +716,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 20, // Add horizontal margin here since parent lost it
     },
     itemImageContainer: {
-        width: 80,
-        height: 110,
+        width: 90,
+        height: 130,
     },
     itemImage: {
         width: '100%',
