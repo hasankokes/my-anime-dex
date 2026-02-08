@@ -238,6 +238,7 @@ export const translations = {
                     customList: { title: 'How to Create Custom Lists', content: 'You can organize anime into your own custom categories! You can create a list from your Profile > My Lists > "+" OR directly from the Anime Details page by tapping "Save to Custom List" > "Create new list". Give it a name and description, then save.' },
                     calendar: { title: 'How to Use Calendar', content: 'Check the Calendar tab to see daily broadcast schedules. You can filter by "Favorites Only" to see when your favorite shows are airing. Click on a day to view that day\'s lineup.' },
                     writeReview: { title: 'How to Write a Review', content: 'Scroll down on the Anime Details page to the "Reviews" section. Tap "Write a Review" to share your thoughts. You can rate the anime and earn XP!' },
+                    addCollaborator: { title: 'How to Add a Collaborator', content: 'Go to your Profile > Lists and tap on a custom list you created. Tap the "Collaborators" icon (or "Add Collaborator" button) in the header. Search for a user by their username and tap "Add" to invite them to edit the list with you.' },
                 }
             }
         }
@@ -477,6 +478,7 @@ export const translations = {
                     customList: { title: 'Özel Listeler Nasıl Oluşturulur', content: 'Animeleri kendi özel kategorilerinize ayırabilirsiniz! Profil > Listelerim > "+" yolunu izleyerek VEYA Anime Detay sayfasından "Özel Listeye Kaydet" > "Yeni liste oluştur"a dokunarak bir liste oluşturabilirsiniz. Listeye bir ad ve açıklama verin, ardından kaydedin.' },
                     calendar: { title: 'Takvim Nasıl Kullanılır', content: 'Günlük yayın programlarını görmek için Takvim sekmesini kontrol edin. Favori dizilerinizin ne zaman yayınlandığını görmek için "Sadece Favoriler"e göre filtreleyebilirsiniz. O günün programını görmek için bir güne tıklayın.' },
                     writeReview: { title: 'Yorum Nasıl Yazılır', content: 'Anime Detay sayfasında aşağı kaydırarak "Yorumlar" bölümüne gelin. Düşüncelerinizi paylaşmak için "Yorum Yaz"a dokunun. Animeyi puanlayabilir ve XP kazanabilirsiniz!' },
+                    addCollaborator: { title: 'İşbirlikçi Nasıl Eklenir', content: 'Profil > Listelerim\'e gidin ve oluşturduğunuz bir özel listeye dokunun. Başlıktaki "İşbirlikçiler" simgesine (veya "İşbirlikçi Ekle" düğmesine) dokunun. Bir kullanıcıyı kullanıcı adına göre arayın ve listeyi sizinle birlikte düzenlemeye davet etmek için "Ekle"ye dokunun.' },
                 }
             }
         }
@@ -712,6 +714,7 @@ export const translations = {
                     customList: { title: 'カスタムリストの作成方法', content: 'アニメを独自のカスタムカテゴリに整理できます！ プロフィール > マイリスト > 「+」から、またはアニメ詳細ページで「カスタムリストに保存」>「新しいリストを作成」をタップしてリストを作成できます。名前と説明を入力して保存してください。' },
                     calendar: { title: 'カレンダーの使い方', content: 'カレンダータブで毎日の放送スケジュールを確認できます。「お気に入りのみ」でフィルタリングして、お気に入りの番組の放送時間を確認できます。日付をクリックするとその日のラインナップが表示されます。' },
                     writeReview: { title: 'レビューの書き方', content: 'アニメ詳細ページを下にスクロールして「レビュー」セクションに移動します。「レビューを書く」をタップして感想を共有しましょう。アニメを評価してXPを獲得できます！' },
+                    addCollaborator: { title: '共同編集者の追加方法', content: 'プロフィール > リストに移動し、作成したカスタムリストをタップします。ヘッダーの「共同編集者」アイコン（または「共同編集者を追加」ボタン）をタップします。ユーザー名でユーザーを検索し、「追加」をタップして、リストの編集に招待します。' },
                 }
             }
         }
@@ -947,6 +950,7 @@ export const translations = {
                     customList: { title: 'Как создать свои списки', content: 'Вы можете организовать аниме по своим собственным категориям! Вы можете создать список в Профиль > Мои списки > «+» ИЛИ прямо со страницы сведений об аниме, нажав «Сохранить в свой список» > «Создать новый список». Дайте ему имя и описание, затем сохраните.' },
                     calendar: { title: 'Как использовать календарь', content: 'Проверьте вкладку "Календарь", чтобы увидеть ежедневное расписание трансляций. Вы можете отфильтровать по "Только избранное", чтобы увидеть, когда выходят ваши любимые шоу. Нажмите на день, чтобы просмотреть расписание на этот день.' },
                     writeReview: { title: 'Как написать отзыв', content: 'Прокрутите страницу сведений об аниме вниз до раздела «Отзывы». Нажмите «Написать отзыв», чтобы поделиться своими мыслями. Вы можете оценить аниме и заработать XP!' },
+                    addCollaborator: { title: 'Как добавить соавтора', content: 'Перейдите в Профиль > Списки и нажмите на созданный вами пользовательский список. Нажмите значок «Соавторы» (или кнопку «Добавить соавтора») в заголовке. Найдите пользователя по имени и нажмите «Добавить», чтобы пригласить его редактировать список вместе с вами.' },
                 }
             }
         }
@@ -1158,6 +1162,7 @@ export const translations = {
                     customList: { title: 'Wie man benutzerdefinierte Listen erstellt', content: 'Sie können Anime in Ihre eigenen benutzerdefinierten Kategorien organisieren! Sie können eine Liste über Profil > Meine Listen > "+" ODER direkt von der Anime-Detailseite erstellen, indem Sie auf "In benutzerdefinierter Liste speichern" > "Neue Liste erstellen" tippen. Geben Sie einen Namen und eine Beschreibung ein und speichern Sie.' },
                     calendar: { title: 'Verwendung des Kalenders', content: 'Überprüfen Sie den Reiter "Kalender", um die täglichen Sendepläne zu sehen. Sie können nach "Nur Favoriten" filtern, um zu sehen, wann Ihre Lieblingssendungen ausgestrahlt werden. Klicken Sie auf einen Tag, um das Programm für diesen Tag anzuzeigen.' },
                     writeReview: { title: 'Wie man eine Bewertung schreibt', content: 'Scrollen Sie auf der Anime-Detailseite nach unten zum Abschnitt "Bewertungen". Tippen Sie auf "Bewertung schreiben", um Ihre Gedanken zu teilen. Sie können den Anime bewerten und XP verdienen!' },
+                    addCollaborator: { title: 'Wie man Mitarbeiter hinzufügt', content: 'Gehen Sie zu Profil > Listen und tippen Sie auf eine von Ihnen erstellte benutzerdefinierte Liste. Tippen Sie in der Kopfzeile auf das Symbol "Mitarbeiter" (oder die Schaltfläche "Mitarbeiter hinzufügen"). Suchen Sie einen Benutzer anhand seines Benutzernamens und tippen Sie auf "Hinzufügen", um ihn zur gemeinsamen Bearbeitung der Liste einzuladen.' },
                 }
             }
         },
@@ -1392,6 +1397,7 @@ export const translations = {
                     customList: { title: 'كيفية إنشاء قوائم مخصصة', content: 'يمكنك تنظيم الأنمي في فئاتك الخاصة! يمكنك إنشاء قائمة من الملف الشخصي > قوائمي > "+" أو مباشرة من صفحة تفاصيل الأنمي بالنقر على "حفظ في قائمة مخصصة" > "إنشاء قائمة جديدة". أدخل اسمًا ووصفًا، ثم احفظ.' },
                     calendar: { title: 'كيفية استخدام التقويم', content: 'تحقق من علامة تبويب "التقويم" لرؤية جداول البث اليومية. يمكنك التصفية حسب "المفضلة فقط" لمعرفة متى يتم عرض برامجك المفضلة. انقر على أي يوم لعرض تشكيلة ذلك اليوم.' },
                     writeReview: { title: 'كيفية كتابة مراجعة', content: 'قم بالتمرير لأسفل في صفحة تفاصيل الأنمي إلى قسم "المراجعات". اضغط على "اكتب مراجعة" لمشاركة أفكارك. يمكنك تقييم الأنمي وكسب نقاط خبرة!' },
+                    addCollaborator: { title: 'كيفية إضافة متعاون', content: 'انتقل إلى الملف الشخصي > القوائم واضغط على قائمة مخصصة قمت بإنشائها. اضغط على أيقونة "المتعاونون" (أو زر "إضافة متعاون") في الرأس. ابحث عن مستخدم باسم المستخدم الخاص به واضغط على "إضافة" لدعوته لتحرير القائمة معك.' },
                 }
             }
         },
@@ -1586,6 +1592,7 @@ export const translations = {
                     customList: { title: 'Cómo crear listas personalizadas', content: '¡Puedes organizar el anime en tus propias categorías personalizadas!! Puedes crear una lista desde Perfil > Mis Listas > "+" O directamente desde la página de Detalles del Anime tocando "Guardar en Lista Personalizada" > "Crear nueva lista". Dale un nombre y una descripción, luego guarda.' },
                     calendar: { title: 'Cómo usar el Calendario', content: 'Revisa la pestaña "Calendario" para ver los horarios de emisión diarios. Puedes filtrar por "Solo favoritos" para ver cuándo se emiten tus programas favoritos. Haz clic en un día para ver la programación de ese día.' },
                     writeReview: { title: 'Cómo escribir una reseña', content: 'Desplázate hacia abajo en la página de Detalles del Anime hasta la sección "Reseñas". Toca "Escribir reseña" para compartir tus pensamientos. ¡Puedes calificar el anime y ganar XP!' },
+                    addCollaborator: { title: 'Cómo añadir colaboradores', content: 'Ve a Perfil > Listas y toca una lista personalizada que hayas creado. Toca el icono "Colaboradores" (o el botón "Añadir colaborador") en el encabezado. Busca un usuario por su nombre de usuario y toca "Añadir" para invitarlo a editar la lista contigo.' },
                 }
             }
         },
@@ -1780,6 +1787,7 @@ export const translations = {
                     customList: { title: 'Como criar listas personalizadas', content: 'Você pode organizar animes em suas próprias categorias personalizadas! Você pode criar uma lista em Perfil > Minhas Listas > "+" OU diretamente da página de Detalhes do Anime tocando em "Salvar na Lista Personalizada" > "Criar nova lista". Dê um nome e descrição, e salve.' },
                     calendar: { title: 'Como usar o Calendário', content: 'Verifique a aba "Calendário" para ver a programação diária de transmissão. Você pode filtrar por "Apenas Favoritos" para ver quando seus programas favoritos estão no ar. Clique em um dia para ver a programação desse dia.' },
                     writeReview: { title: 'Como escrever uma avaliação', content: 'Role para baixo na página de Detalhes do Anime até a seção "Avaliações". Toque em "Escrever avaliação" para compartilhar seus pensamentos. Você pode avaliar o anime e ganhar XP!' },
+                    addCollaborator: { title: 'Como adicionar colaboradores', content: 'Vá para Perfil > Listas e toque em uma lista personalizada que você criou. Toque no ícone "Colaboradores" (ou no botão "Adicionar Colaborador") no cabeçalho. Pesquise um usuário pelo nome de usuário e toque em "Adicionar" para convidá-lo a editar a lista com você.' },
                 }
             }
         },
@@ -1974,6 +1982,7 @@ export const translations = {
                     customList: { title: 'Cara Membuat Daftar Khusus', content: 'Anda dapat mengatur anime ke dalam kategori khusus Anda sendiri! Anda dapat membuat daftar dari Profil > Daftar Saya > "+" ATAU langsung dari halaman Detail Anime dengan mengetuk "Simpan ke Daftar Khusus" > "Buat daftar baru". Beri nama dan deskripsi, lalu simpan.' },
                     calendar: { title: 'Cara Menggunakan Kalender', content: 'Periksa tab "Kalender" untuk melihat jadwal tayang harian. Anda dapat memfilter berdasarkan "Hanya Favorit" untuk melihat kapan acara favorit Anda tayang. Klik pada hari untuk melihat jadwal hari itu.' },
                     writeReview: { title: 'Cara Menulis Ulasan', content: 'Gulir ke bawah pada halaman Detail Anime ke bagian "Ulasan". Ketuk "Tulis Ulasan" untuk membagikan pendapat Anda. Anda dapat memberi peringkat anime dan mendapatkan XP!' },
+                    addCollaborator: { title: 'Cara Menambahkan Kolaborator', content: 'Buka Profil > Daftar dan ketuk daftar kustom yang Anda buat. Ketuk ikon "Kolaborator" (atau tombol "Tambah Kolaborator") di header. Cari pengguna berdasarkan nama pengguna mereka dan ketuk "Tambah" untuk mengundang mereka mengedit daftar bersama Anda.' },
                 }
             }
         },

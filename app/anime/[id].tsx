@@ -677,14 +677,35 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      const { data, error } = await supabase
+      // 1. Fetch owned lists
+      const { data: ownedLists, error: ownedError } = await supabase
         .from('lists')
         .select('*')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setLists(data || []);
+      if (ownedError) throw ownedError;
+
+      // 2. Fetch lists where user is a collaborator
+      const { data: collabLists, error: collabError } = await supabase
+        .from('list_collaborators')
+        .select('lists(*)')
+        .eq('user_id', session.user.id);
+
+      if (collabError) throw collabError;
+
+      // Format collaborative lists (unwrap from lists object)
+      const formattedCollabLists = collabLists
+        ?.map((item: any) => item.lists)
+        .filter((list: any) => list !== null) || [];
+
+      // Combine and remove duplicates (though IDs should be unique between owned/collab)
+      const allLists = [...(ownedLists || []), ...formattedCollabLists];
+
+      // Sort combined lists by created_at desc
+      allLists.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setLists(allLists);
     } catch (error) {
       console.error('Error fetching lists:', error);
     } finally {

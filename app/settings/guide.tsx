@@ -48,6 +48,11 @@ export default function GuideScreen() {
             title: t('help.guide.sections.writeReview.title'),
             icon: "create-outline",
             content: t('help.guide.sections.writeReview.content')
+        },
+        {
+            title: t('help.guide.sections.addCollaborator.title'),
+            icon: "people-outline",
+            content: t('help.guide.sections.addCollaborator.content')
         }
     ];
 

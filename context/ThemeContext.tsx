@@ -27,7 +27,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     // Load saved theme
-    AsyncStorage.getItem('app_theme').then(savedTheme => {
+    AsyncStorage.getItem('app_theme').then((savedTheme: string | null) => {
       if (savedTheme) {
         setTheme(savedTheme as Theme);
       }

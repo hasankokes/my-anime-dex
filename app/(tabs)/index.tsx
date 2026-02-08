@@ -283,29 +283,53 @@ export default function HomeScreen() {
   const renderHeader = () => (
     <View style={styles.headerContainer}>
 
-      {/* Search Bar (Visible in scrollable area) */}
-      <View style={[styles.searchBar, { backgroundColor: colors.inputBg }]}>
-        <TouchableOpacity onPress={performSearch}>
-          <Ionicons name="search" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
-        </TouchableOpacity>
-
-        <TextInput
-          ref={searchInputRef}
-          placeholder={t('home.searchPlaceholder')}
-          placeholderTextColor={colors.subtext}
-          style={[styles.searchInput, { color: colors.text }]}
-          value={searchText}
-          onChangeText={handleTextChange}
-          onSubmitEditing={performSearch}
-          returnKeyType="search"
-          autoCapitalize="none"
-        />
-
-        {(searchText.length > 0 || isSearching) && (
-          <TouchableOpacity onPress={cancelSearch}>
-            <Ionicons name="close-circle" size={20} color={colors.subtext} />
+      {/* Search Bar & My Lists Button */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 0 }}>
+        <View style={[styles.searchBar, { backgroundColor: colors.inputBg, flex: 1 }]}>
+          <TouchableOpacity onPress={performSearch}>
+            <Ionicons name="search" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
           </TouchableOpacity>
-        )}
+
+          <TextInput
+            ref={searchInputRef}
+            placeholder={t('home.searchPlaceholder')}
+            placeholderTextColor={colors.subtext}
+            style={[styles.searchInput, { color: colors.text }]}
+            value={searchText}
+            onChangeText={handleTextChange}
+            onSubmitEditing={performSearch}
+            returnKeyType="search"
+            autoCapitalize="none"
+          />
+
+          {(searchText.length > 0 || isSearching) && (
+            <TouchableOpacity onPress={cancelSearch}>
+              <Ionicons name="close-circle" size={20} color={colors.subtext} />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* My Lists Button */}
+        <TouchableOpacity
+          style={{
+            height: 50,
+            paddingHorizontal: 16,
+            borderRadius: 16,
+            backgroundColor: colors.card,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderWidth: 1,
+            borderColor: colors.border,
+            gap: 8
+          }}
+          onPress={() => router.push('/lists')}
+        >
+          <Ionicons name="list" size={20} color={colors.text} />
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: colors.text }}>
+            {t('profile.myLists')}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {isSearching && (
