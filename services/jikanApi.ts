@@ -88,7 +88,9 @@ const BASE_URL = 'https://api.jikan.moe/v4';
 const scheduleCache = new Map<string, { data: JikanAnime[]; timestamp: number }>();
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 
-export const getAnimeSchedule = async (day: string): Promise<JikanAnime[]> => {
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const getAnimeSchedule = async (day: string, retries = 3): Promise<JikanAnime[]> => {
     const normalizedDay = day.toLowerCase();
 
     // Check cache first
@@ -100,12 +102,29 @@ export const getAnimeSchedule = async (day: string): Promise<JikanAnime[]> => {
     try {
         const response = await fetch(`${BASE_URL}/schedules?filter=${normalizedDay}`);
 
-        if (!response.ok) {
-            if (response.status === 429) {
-                // Rate limited, wait a bit or throw specific error
-                throw new Error('Rate limit exceeded. Please try again later.');
+        if (response.status === 429 || response.status === 504) {
+            if (retries > 0) {
+                await wait(1000); // Wait 1s and retry
+                return getAnimeSchedule(day, retries - 1);
             }
-            throw new Error(`Jikan API Error: ${response.statusText}`);
+        }
+
+        if (!response.ok) {
+            let errorMessage = `Jikan API Error: ${response.status}`;
+            try {
+                const errorBody = await response.json();
+                if (errorBody.message) {
+                    errorMessage += ` - ${errorBody.message}`;
+                } else if (errorBody.error) {
+                    errorMessage += ` - ${errorBody.error}`;
+                }
+            } catch (e) {
+                // Could not parse error body, rely on status
+                if (response.statusText) {
+                    errorMessage += ` ${response.statusText}`;
+                }
+            }
+            throw new Error(errorMessage);
         }
 
         const json: JikanScheduleResponse = await response.json();
@@ -118,7 +137,7 @@ export const getAnimeSchedule = async (day: string): Promise<JikanAnime[]> => {
 
         return json.data;
     } catch (error) {
-        console.error('Error fetching anime schedule:', error);
+        // console.error('Error fetching anime schedule:', error); // Suppress log, handled by UI
         // Return cached data if available even if expired, as fallback
         if (cached) {
             return cached.data;

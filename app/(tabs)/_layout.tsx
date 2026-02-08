@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -25,12 +25,24 @@ export default function TabLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.subtext,
         tabBarLabelStyle: styles.tabLabel,
+        tabBarButton: (props) => (
+          <Pressable
+            {...props}
+            android_ripple={{
+              color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+              radius: 30,
+              borderless: true,
+              foreground: true,
+            }}
+          />
+        ),
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: t('tabs.home'),
+          headerShown: false,
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>
               <Ionicons
@@ -46,6 +58,7 @@ export default function TabLayout() {
         name="calendar"
         options={{
           title: t('tabs.calendar'),
+          headerShown: false,
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>
               <Ionicons
@@ -61,6 +74,7 @@ export default function TabLayout() {
         name="favorites"
         options={{
           title: t('tabs.favorites'),
+          headerShown: false,
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>
               <Ionicons
@@ -76,6 +90,7 @@ export default function TabLayout() {
         name="watching"
         options={{
           title: t('tabs.watching'),
+          headerShown: false,
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>
               <Ionicons
@@ -91,6 +106,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: t('tabs.profile'),
+          headerShown: false,
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>
               <Ionicons

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList, Switch, KeyboardAvoidingView } from 'react-native';
+import { Image } from 'expo-image';
+import { ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList, Switch, KeyboardAvoidingView, View, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
@@ -347,7 +348,8 @@ const AnimeDetailsScreen = () => {
           <Image
             source={{ uri: anime.images.jpg.large_image_url }}
             style={styles.heroImage}
-            resizeMode="cover"
+            contentFit="cover"
+            transition={500}
           />
           <LinearGradient
             colors={['transparent', 'rgba(0,0,0,0.4)', colors.background]}

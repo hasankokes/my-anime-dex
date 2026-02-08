@@ -53,8 +53,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     inputBg: isDark ? '#1F2937' : '#F3F4F6',
   };
 
+  const contextValue = React.useMemo(() => ({
+    theme,
+    isDark,
+    toggleTheme,
+    colors
+  }), [theme, isDark, colors]);
+
   return (
-    <ThemeContext.Provider value={{ theme, isDark, toggleTheme, colors }}>
+    <ThemeContext.Provider value={contextValue}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       {children}
     </ThemeContext.Provider>

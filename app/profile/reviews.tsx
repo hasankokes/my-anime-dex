@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../../lib/supabase';
@@ -103,6 +103,36 @@ export default function MyReviewsScreen() {
         }
     };
 
+    const handleDeleteReview = (review: MyReview) => {
+        Alert.alert(
+            t('animeDetail.deleteReview'),
+            t('animeDetail.confirmDeleteReview'),
+            [
+                { text: t('common.cancel'), style: 'cancel' },
+                {
+                    text: t('common.confirm'),
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            const { error } = await supabase
+                                .from('reviews')
+                                .delete()
+                                .eq('id', review.id);
+
+                            if (error) throw error;
+
+                            setReviews(prev => prev.filter(r => r.id !== review.id));
+                            Alert.alert(t('common.success'), t('animeDetail.reviewDeleted'));
+                        } catch (error) {
+                            console.error('Error deleting review:', error);
+                            Alert.alert(t('common.error'), t('animeDetail.failedToDelete'));
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     const renderItem = ({ item }: { item: MyReview }) => (
         <TouchableOpacity
             style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
@@ -113,9 +143,17 @@ export default function MyReviewsScreen() {
                 style={styles.animeImage}
             />
             <View style={styles.contentContainer}>
-                <Text style={[styles.animeTitle, { color: colors.text }]} numberOfLines={1}>
-                    {item.anime_title || t('common.unknown')}
-                </Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Text style={[styles.animeTitle, { color: colors.text, flex: 1 }]} numberOfLines={1}>
+                        {item.anime_title || t('common.unknown')}
+                    </Text>
+                    <TouchableOpacity
+                        onPress={() => handleDeleteReview(item)}
+                        style={{ padding: 4, marginLeft: 4 }}
+                    >
+                        <Ionicons name="trash-outline" size={20} color="#EF4444" />
+                    </TouchableOpacity>
+                </View>
 
                 <View style={styles.ratingRow}>
                     <StarRating rating={item.rating} size={14} readOnly onRatingChange={() => { }} />

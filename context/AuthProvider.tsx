@@ -70,11 +70,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         // Check active sessions and set the user
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            if (session?.user) {
-                // Always fetch from DB first, passing metadata as fallback
-                fetchProfile(session.user.id, session.user.user_metadata?.avatar_url);
+        supabase.auth.getSession().then(({ data: { session }, error }) => {
+            if (error) {
+                console.error("AuthProvider: Error getting session:", error.message);
+                if (error.message.includes("Refresh Token")) {
+                    console.log("AuthProvider: tailored sign out for invalid refresh token");
+                    // Force sign out to clear invalid tokens from storage
+                    supabase.auth.signOut();
+                    setSession(null);
+                    setAvatarUrl(null);
+                }
+            } else {
+                setSession(session);
+                if (session?.user) {
+                    // Always fetch from DB first, passing metadata as fallback
+                    fetchProfile(session.user.id, session.user.user_metadata?.avatar_url);
+                }
             }
             setLoading(false);
         });
@@ -131,18 +142,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return () => sub.remove();
     }, []);
 
+    const contextValue = React.useMemo(() => ({
+        session,
+        loading,
+        signIn,
+        signOut,
+        signUp,
+        avatarUrl,
+        refreshProfile
+    }), [session, loading, avatarUrl]);
+
     return (
-        <AuthContext.Provider
-            value={{
-                session,
-                loading,
-                signIn,
-                signOut,
-                signUp,
-                avatarUrl,
-                refreshProfile
-            }}
-        >
+        <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
     );

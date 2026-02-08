@@ -36,6 +36,7 @@ export default function CalendarScreen() {
     const [schedule, setSchedule] = useState<any[]>([]);
     const [allSchedules, setAllSchedules] = useState<Record<string, any[]>>({}); // Cache for loaded days
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [favoritesOnly, setFavoritesOnly] = useState(false);
     const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set());
 
@@ -52,6 +53,7 @@ export default function CalendarScreen() {
         }
 
         setLoading(true);
+        setError(null);
         try {
             const data = await getAnimeSchedule(selectedDay);
             setSchedule(data);
@@ -60,7 +62,8 @@ export default function CalendarScreen() {
                 [selectedDay]: data
             }));
         } catch (error) {
-            console.error(error);
+            // console.error(error); // Suppress log box for handled UI errors
+            setError((error as Error).message || 'Failed to load schedule');
         } finally {
             setLoading(false);
         }
@@ -220,6 +223,21 @@ export default function CalendarScreen() {
                     loading ? (
                         <View style={{ flex: 1, justifyContent: 'center', marginTop: 100 }}>
                             <ActivityIndicator size="large" color={colors.primary} />
+                        </View>
+                    ) : error ? (
+                        <View style={styles.emptyContainer}>
+                            <Ionicons name="alert-circle-outline" size={48} color={colors.primary} />
+                            <Text style={[styles.emptyText, { color: colors.text, textAlign: 'center', marginBottom: 8 }]}>
+                                {error.includes('504')
+                                    ? "Service is temporarily unavailable (MyAnimeList timeout)."
+                                    : "Failed to load schedule."}
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => fetchSchedule()}
+                                style={{ padding: 10, backgroundColor: colors.card, borderRadius: 8, marginTop: 8 }}
+                            >
+                                <Text style={{ color: colors.primary, fontFamily: 'Poppins_600SemiBold' }}>Try Again</Text>
+                            </TouchableOpacity>
                         </View>
                     ) : (
                         <View style={styles.emptyContainer}>

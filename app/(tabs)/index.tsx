@@ -12,9 +12,9 @@ import {
   Keyboard,
   StatusBar,
   ScrollView,
-  Image,
   Alert
 } from 'react-native';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -238,7 +238,7 @@ export default function HomeScreen() {
         <Image
           source={require('../../assets/images/header-logo.png')}
           style={styles.headerLogo}
-          resizeMode="contain"
+          contentFit="contain"
         />
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={[styles.headerBrandText, { color: colors.text }]}>ANIME</Text>
@@ -272,6 +272,7 @@ export default function HomeScreen() {
           <Image
             source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
             style={styles.headerProfileImage}
+            contentFit="cover"
           />
         </TouchableOpacity>
       </View>
@@ -339,6 +340,8 @@ export default function HomeScreen() {
                   <Image
                     source={{ uri: item.images.jpg.large_image_url }}
                     style={styles.trendingImage}
+                    contentFit="cover"
+                    transition={500}
                   />
                   <LinearGradient
                     colors={['transparent', 'rgba(0,0,0,0.8)']}
@@ -473,10 +476,10 @@ const styles = StyleSheet.create({
     marginLeft: 0,
   },
   headerLogo: {
-    width: 110, // Increased further
-    height: 70, // Increased further
-    marginRight: -20, // Adjust overlap
-    marginLeft: -10, // Pull closer to edge
+    width: 110,
+    height: 70,
+    marginRight: -20,
+    marginLeft: -10,
   },
   headerBrandText: {
     fontFamily: 'Poppins_700Bold',

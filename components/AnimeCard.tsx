@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { Image } from 'expo-image';
 import { Anime } from '../lib/jikan';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,7 +11,7 @@ interface AnimeCardProps {
     onPress: () => void;
 }
 
-export const AnimeCard: React.FC<AnimeCardProps> = ({ anime, onPress }) => {
+export const AnimeCard: React.FC<AnimeCardProps> = React.memo(({ anime, onPress }) => {
     const { width } = useWindowDimensions();
     const { colors, isDark } = useTheme();
 
@@ -27,7 +28,8 @@ export const AnimeCard: React.FC<AnimeCardProps> = ({ anime, onPress }) => {
                 <Image
                     source={{ uri: anime.images.jpg.large_image_url }}
                     style={styles.image}
-                    resizeMode="cover"
+                    contentFit="cover"
+                    transition={500}
                 />
                 <LinearGradient
                     colors={['transparent', 'rgba(0,0,0,0.8)']}
@@ -49,7 +51,7 @@ export const AnimeCard: React.FC<AnimeCardProps> = ({ anime, onPress }) => {
             </View>
         </TouchableOpacity>
     );
-};
+});
 
 const styles = StyleSheet.create({
     container: {

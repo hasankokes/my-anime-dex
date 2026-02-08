@@ -30,10 +30,28 @@ export const getNextBroadcastDate = (anime: any) => {
         'Thursday': 4, 'Friday': 5, 'Saturday': 6
     };
 
-    const broadcastDayStr = anime.broadcast.day;
+    const broadcastDayStr = anime.broadcast.day ? anime.broadcast.day.trim() : '';
+
+    // Normalize string to match keys (e.g. "mondays" -> "Mondays")
+    // Simple approach: Capitalize first letter, rest lowercase? 
+    // Keys are Title Case. 
+    // Jikan usually returns "Mondays". 
+    // Let's try exact match first, then case-insensitive scan.
+
     let broadcastDay = dayMap[broadcastDayStr];
+
     if (broadcastDay === undefined) {
-        return null;
+        // Case-insensitive fallback
+        const lowerDay = broadcastDayStr.toLowerCase();
+        const foundKey = Object.keys(dayMap).find(k => k.toLowerCase() === lowerDay);
+        if (foundKey) {
+            broadcastDay = dayMap[foundKey];
+        } else {
+            // Check for singular/plural mismatch manually if needed, 
+            // but dayMap already has "Sunday" and "Sundays".
+            // If still undefined, return null.
+            return null;
+        }
     }
 
     // Logic from CalendarAnimeCard.tsx:

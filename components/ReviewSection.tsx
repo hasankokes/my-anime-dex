@@ -9,10 +9,10 @@ import {
     FlatList,
     Alert,
     Modal,
-    Image,
     Platform,
     KeyboardAvoidingView
 } from 'react-native';
+import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { supabase } from '../lib/supabase';
@@ -205,6 +205,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                         <Image
                             source={{ uri: avatarUrl }}
                             style={styles.avatar}
+                            contentFit="cover"
                         />
                         <View style={{ flex: 1, marginLeft: 10 }}>
                             <Text style={[styles.username, { color: colors.text }]}>
@@ -317,13 +318,13 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                             {t('animeDetail.noReviews')}
                         </Text>
                     ) : (
-                        <FlatList
-                            data={reviews}
-                            scrollEnabled={false} // Nested in main ScrollView
-                            renderItem={renderReviewItem}
-                            keyExtractor={item => item.id}
-                            contentContainerStyle={{ gap: 12 }}
-                        />
+                        <View style={{ gap: 12 }}>
+                            {reviews.map(item => (
+                                <View key={item.id}>
+                                    {renderReviewItem({ item })}
+                                </View>
+                            ))}
+                        </View>
                     )}
                 </View>
             )}
