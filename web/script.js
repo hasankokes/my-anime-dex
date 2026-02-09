@@ -136,3 +136,30 @@ function detectOS() {
 
 // Run detection on load
 document.addEventListener('DOMContentLoaded', detectOS);
+
+
+// Showcase Carousel Navigation
+document.addEventListener('DOMContentLoaded', () => {
+    const showcaseGrid = document.querySelector('.showcase-grid');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+
+    if (showcaseGrid && prevBtn && nextBtn) {
+        // Scroll amount: item width (280) + gap (30) = 310
+        const scrollAmount = 310;
+
+        prevBtn.addEventListener('click', () => {
+            showcaseGrid.scrollBy({
+                left: -scrollAmount,
+                behavior: 'smooth'
+            });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            showcaseGrid.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth'
+            });
+        });
+    }
+});

@@ -247,9 +247,12 @@ h3 {
     position: relative;
 }
 
+/* Remove aspect-ratio from phone-mockup and set img height to auto. */
 .phone-mockup {
     width: 300px;
-    height: 700px;
+    height: auto;
+    /* Let image determine height */
+    /* aspect-ratio removed to let image drive dimensions */
     background: #000;
     border-radius: 40px;
     position: relative;
@@ -262,46 +265,8 @@ h3 {
         0 20px 50px rgba(0, 0, 0, 0.5);
     /* Shadow for depth */
     overflow: hidden;
-}
-
-/* Notch (Çentik) */
-.phone-mockup::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 25px;
-    background: #000;
-    border-radius: 0 0 16px 16px;
-    z-index: 10;
-}
-
-/* Speaker Grill inside Notch */
-.phone-mockup::after {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 4px;
-    background: #222;
-    border-radius: 2px;
-    z-index: 11;
-}
-
-
-
-.phone-screen {
-    width: 100%;
-    height: 100%;
-    background: #000;
-    border-radius: 30px;
-    overflow: hidden;
-    padding: 0;
-    margin: 0;
+    border: 0.6px solid #000;
+    /* Ultra-thin black frame */
 }
 
 /* Volume Buttons (Using psuedo element on inner wrapper if needed, or just skip for simplicity) */
@@ -411,24 +376,58 @@ h3 {
 
 /* App Showcase */
 .showcase {
-    padding: 100px 8%;
+    padding: 50px 8%;
     background-color: var(--bg-color);
     text-align: center;
 }
 
+.showcase .section-header {
+    margin-bottom: 10px;
+}
+
 .showcase-grid {
     display: flex;
-    justify-content: center;
-    gap: 50px;
-    flex-wrap: wrap;
-    margin-top: 60px;
+    justify-content: flex-start;
+    gap: 30px;
+    flex-wrap: nowrap;
+    /* Prevent wrapping to create carousel */
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
+    padding-bottom: 40px;
+    /* Space for scrollbar and shadow */
+    padding-top: 50px;
+    /* Prevent top shadow clipping */
+    margin-top: 0;
+    /* Adjusted margin to compensate for padding */
+    scroll-snap-type: x mandatory;
+    /* Optional: Hide scrollbar for cleaner look, or style it if preferred */
+    -webkit-overflow-scrolling: touch;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.showcase-grid::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.showcase-grid {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
 
 .showcase-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
+
+    /* Config for Desktop Carousel: Fixed width for natural flow */
+    flex: 0 0 auto;
+    width: 280px;
+    scroll-snap-align: start;
 }
 
 .showcase-item h3 {
@@ -436,9 +435,67 @@ h3 {
     font-weight: 500;
 }
 
+
+
+/* Showcase Navigation */
+.showcase-wrapper {
+    position: relative;
+    max-width: 1400px;
+    /* Limit width to keep buttons close */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 10;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.nav-btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: black;
+}
+
+.prev-btn {
+    left: 0;
+    /* Positioned relative to wrapper */
+}
+
+.next-btn {
+    right: 0;
+}
+
+/* Hide navigation buttons on mobile/tablet where touch is primary */
+@media (max-width: 1024px) {
+    .nav-btn {
+        display: none;
+    }
+
+    .showcase-wrapper {
+        padding: 0;
+    }
+}
+
 .phone-mockup.small {
     width: 260px;
-    height: 600px;
+    height: auto;
+    /* Let image define height */
     border-radius: 35px;
     /* Adjust fake bezel scalings for smaller size */
     box-shadow:
@@ -446,17 +503,12 @@ h3 {
         0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-.phone-mockup.small::before {
-    width: 100px;
-    height: 22px;
-}
-
-
-
 .phone-screen img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    /* Full height, no crop */
+    object-fit: contain;
+    /* Ensure full image is visible */
     display: block;
     border-radius: 28px;
     /* Match inner radius */
@@ -757,6 +809,50 @@ footer {
     }
 
     /* Sticky Footer Logic for Mobile - REMOVED to show both buttons */
+
+    /* Mobile Carousel for App Showcase */
+    .showcase-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        gap: 20px;
+        padding: 10px 20px 30px;
+        /* Bottom padding for scrollbar / spacing */
+        margin-top: 40px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        scrollbar-width: none;
+        /* Firefox */
+        -ms-overflow-style: none;
+        /* IE and Edge */
+    }
+
+    .showcase-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .showcase-item {
+        flex: 0 0 85%;
+        /* Shows part of the next item to encourage scrolling */
+        min-width: 280px;
+        scroll-snap-align: center;
+        margin-right: 0;
+        /* Gap handles spacing */
+    }
+
+    /* Adjust phone mockup size for carousel items */
+    .showcase-item .phone-mockup.small {
+        width: 100%;
+        max-width: 280px;
+        height: auto;
+        /* aspect-ratio removed to fix empty bottom space */
+    }
+
+    .section-header {
+        margin-bottom: 30px;
+    }
 
 }
 
