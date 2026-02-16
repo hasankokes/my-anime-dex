@@ -51,7 +51,7 @@ export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, i
           )}
           {!iconOnly && (
             <Text style={[styles.text, isApple ? styles.appleText : styles.googleText]}>
-              {isApple ? i18n.t('common.continueWithApple') : 'Continue with Google'}
+              {isApple ? i18n.t('common.continueWithApple') : i18n.t('common.continueWithGoogle')}
             </Text>
           )}
         </>

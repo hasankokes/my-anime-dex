@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Image, Alert } from 'react-native';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Image, Alert, Platform } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,16 +7,45 @@ import { supabase } from '../../lib/supabase';
 import { List } from '../../types/lists';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useWalkthrough } from '../../context/WalkthroughContext';
 
 export default function MyListsScreen() {
     const router = useRouter();
     const { colors, isDark } = useTheme();
     const { t } = useLanguage();
+    const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, resetKey } = useWalkthrough();
     const [lists, setLists] = useState<List[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'my' | 'shared'>('my');
     const [sharedLists, setSharedLists] = useState<List[]>([]);
     const [refreshing, setRefreshing] = useState(false);
+
+    // Walkthrough refs
+    const addListButtonRef = useRef<View>(null);
+    const tabFilterRef = useRef<View>(null);
+
+    const measureRef = useCallback((ref: React.RefObject<View | null>, stepIndex: number) => {
+        if (ref.current) {
+            ref.current.measureInWindow((x, y, width, height) => {
+                if (width > 0 && height > 0) {
+                    registerStepLayout(stepIndex, { x, y, width, height });
+                }
+            });
+        }
+    }, [registerStepLayout]);
+
+    // Auto-trigger walkthrough on first visit
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            const isFirst = await checkFirstLaunch('lists');
+            if (isFirst && !walkthroughActive) {
+                measureRef(addListButtonRef, 0);
+                measureRef(tabFilterRef, 1);
+                setTimeout(() => startWalkthrough('lists'), 300);
+            }
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, [resetKey]);
 
     const fetchLists = async () => {
         try {
@@ -75,6 +104,47 @@ export default function MyListsScreen() {
         fetchLists();
     };
 
+    const leaveSharedList = (listId: string, listTitle: string) => {
+        if (Platform.OS === 'web') {
+            if (window.confirm(t('collaborators.confirmLeave'))) {
+                performLeave(listId);
+            }
+        } else {
+            Alert.alert(
+                t('collaborators.leaveList'),
+                t('collaborators.confirmLeave'),
+                [
+                    { text: t('common.cancel'), style: 'cancel' },
+                    {
+                        text: t('collaborators.leaveList'),
+                        style: 'destructive',
+                        onPress: () => performLeave(listId)
+                    }
+                ]
+            );
+        }
+    };
+
+    const performLeave = async (listId: string) => {
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) return;
+
+            const { error } = await supabase
+                .from('list_collaborators')
+                .delete()
+                .eq('list_id', listId)
+                .eq('user_id', session.user.id);
+
+            if (error) throw error;
+
+            setSharedLists(prev => prev.filter(l => l.id !== listId));
+        } catch (error) {
+            console.error('Error leaving list:', error);
+            Alert.alert(t('common.error'), t('collaborators.failedToRemove'));
+        }
+    };
+
     const renderItem = ({ item }: { item: List }) => (
         <TouchableOpacity
             style={[styles.listItem, { backgroundColor: colors.card, borderColor: colors.border }]}
@@ -97,7 +167,20 @@ export default function MyListsScreen() {
                     </Text>
                 </View>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+            {activeTab === 'shared' ? (
+                <TouchableOpacity
+                    style={styles.leaveButton}
+                    onPress={(e) => {
+                        e.stopPropagation();
+                        leaveSharedList(item.id, item.title);
+                    }}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                    <Ionicons name="exit-outline" size={20} color="#EF4444" />
+                </TouchableOpacity>
+            ) : (
+                <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+            )}
         </TouchableOpacity>
     );
 
@@ -110,15 +193,18 @@ export default function MyListsScreen() {
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>{t('profile.myLists')}</Text>
                 <TouchableOpacity
+                    ref={addListButtonRef as any}
                     style={[styles.addButton, { backgroundColor: '#FACC15' }]}
                     onPress={() => router.push('/lists/create')}
+                    {...({ collapsable: false } as any)}
+                    onLayout={() => measureRef(addListButtonRef, 0)}
                 >
                     <Ionicons name="add" size={24} color="#000" />
                 </TouchableOpacity>
             </View>
 
             {/* Tabs / Filters */}
-            <View style={styles.tabContainer}>
+            <View ref={tabFilterRef as any} collapsable={false} style={styles.tabContainer} onLayout={() => measureRef(tabFilterRef, 1)}>
                 <TouchableOpacity
                     style={[
                         styles.filterPill,
@@ -321,5 +407,10 @@ const styles = StyleSheet.create({
     tabText: {
         fontSize: 14,
         fontFamily: 'Poppins_500Medium',
+    },
+    leaveButton: {
+        padding: 8,
+        borderRadius: 20,
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
     },
 });

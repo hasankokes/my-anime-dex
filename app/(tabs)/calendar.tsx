@@ -12,6 +12,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthProvider';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { getNextBroadcastDate } from '../../lib/dateUtils';
+import { useWalkthrough } from '../../context/WalkthroughContext';
 
 // Days mapping for Jikan API
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -24,6 +25,62 @@ export default function CalendarScreen() {
     const router = useRouter();
     const flatListRef = useRef<FlatList>(null);
     const searchInputRef = useRef<TextInput>(null);
+
+    // Walkthrough refs
+    const dayTabsRef = useRef<View>(null);
+    const firstCardRef = useRef<View>(null);
+    const favoritesToggleRef = useRef<View>(null);
+    const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, activeWalkthroughId, currentStep: walkthroughStep, resetKey } = useWalkthrough();
+
+    // Measure walkthrough refs when Calendar walkthrough is active
+    useEffect(() => {
+        if (walkthroughActive && activeWalkthroughId === 'calendar') {
+            const timer = setTimeout(() => {
+                if (firstCardRef.current) {
+                    firstCardRef.current.measureInWindow((x, y, width, height) => {
+                        if (width > 0 && height > 0) registerStepLayout(0, { x, y, width, height });
+                    });
+                }
+                if (dayTabsRef.current) {
+                    dayTabsRef.current.measureInWindow((x, y, width, height) => {
+                        if (width > 0 && height > 0) registerStepLayout(1, { x, y, width, height });
+                    });
+                }
+                if (favoritesToggleRef.current) {
+                    favoritesToggleRef.current.measureInWindow((x, y, width, height) => {
+                        if (width > 0 && height > 0) registerStepLayout(2, { x, y, width, height });
+                    });
+                }
+            }, 400);
+            return () => clearTimeout(timer);
+        }
+    }, [walkthroughActive, activeWalkthroughId, walkthroughStep]);
+
+    // Auto-trigger Calendar walkthrough on first visit
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            const isFirst = await checkFirstLaunch('calendar');
+            if (isFirst && !walkthroughActive) {
+                if (firstCardRef.current) {
+                    firstCardRef.current.measureInWindow((x, y, width, height) => {
+                        if (width > 0 && height > 0) registerStepLayout(0, { x, y, width, height });
+                    });
+                }
+                if (dayTabsRef.current) {
+                    dayTabsRef.current.measureInWindow((x, y, width, height) => {
+                        if (width > 0 && height > 0) registerStepLayout(1, { x, y, width, height });
+                    });
+                }
+                if (favoritesToggleRef.current) {
+                    favoritesToggleRef.current.measureInWindow((x, y, width, height) => {
+                        if (width > 0 && height > 0) registerStepLayout(2, { x, y, width, height });
+                    });
+                }
+                setTimeout(() => startWalkthrough('calendar'), 300);
+            }
+        }, 1500);
+        return () => clearTimeout(timer);
+    }, [resetKey]);
 
     // Determine today's day
     const getToday = () => {
@@ -210,6 +267,8 @@ export default function CalendarScreen() {
                     setFavoritesOnly={setFavoritesOnly}
                     selectedDay={selectedDay}
                     setSelectedDay={setSelectedDay}
+                    dayTabsRef={dayTabsRef}
+                    favoritesToggleRef={favoritesToggleRef}
                 />
             </View>
 
@@ -217,7 +276,11 @@ export default function CalendarScreen() {
                 ref={flatListRef}
                 data={loading ? [] : filteredSchedule}
                 keyExtractor={(item) => item.mal_id.toString()}
-                renderItem={({ item }) => <CalendarAnimeCard anime={item} />}
+                renderItem={({ item, index }) => (
+                    <View ref={index === 0 ? firstCardRef : undefined} collapsable={false}>
+                        <CalendarAnimeCard anime={item} />
+                    </View>
+                )}
                 contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }]}
                 ListEmptyComponent={
                     loading ? (
@@ -334,7 +397,9 @@ const CalendarListHeader = ({
     favoritesOnly,
     setFavoritesOnly,
     selectedDay,
-    setSelectedDay
+    setSelectedDay,
+    dayTabsRef,
+    favoritesToggleRef
 }: any) => (
     <View>
         {/* Original Header Content: Title + Actions */}
@@ -344,33 +409,37 @@ const CalendarListHeader = ({
                 <Ionicons name="calendar-outline" size={20} color={colors.primary} style={{ marginLeft: 8 }} />
             </View>
 
-            <TouchableOpacity
-                style={[
-                    styles.favButton,
-                    {
-                        backgroundColor: favoritesOnly ? colors.primary : colors.card,
-                        borderColor: colors.border,
-                        borderWidth: 1
-                    }
-                ]}
-                onPress={() => setFavoritesOnly(!favoritesOnly)}
-            >
-                <Ionicons
-                    name={favoritesOnly ? "heart" : "heart-outline"}
-                    size={16}
-                    color={favoritesOnly ? '#fff' : colors.text}
-                />
-                <Text style={[
-                    styles.favButtonText,
-                    { color: favoritesOnly ? '#fff' : colors.text }
-                ]}>
-                    {t('calendar.favoritesOnly')}
-                </Text>
-            </TouchableOpacity>
+            <View ref={favoritesToggleRef} collapsable={false}>
+                <TouchableOpacity
+                    style={[
+                        styles.favButton,
+                        {
+                            backgroundColor: favoritesOnly ? colors.primary : colors.card,
+                            borderColor: colors.border,
+                            borderWidth: 1
+                        }
+                    ]}
+                    onPress={() => setFavoritesOnly(!favoritesOnly)}
+                >
+                    <Ionicons
+                        name={favoritesOnly ? "heart" : "heart-outline"}
+                        size={16}
+                        color={favoritesOnly ? '#fff' : colors.text}
+                    />
+                    <Text style={[
+                        styles.favButtonText,
+                        { color: favoritesOnly ? '#fff' : colors.text }
+                    ]}>
+                        {t('calendar.favoritesOnly')}
+                    </Text>
+                </TouchableOpacity>
+            </View>
         </View>
 
         {/* Day Tabs */}
-        <DayTabs selectedDay={selectedDay} onSelectDay={setSelectedDay} />
+        <View ref={dayTabsRef} collapsable={false}>
+            <DayTabs selectedDay={selectedDay} onSelectDay={setSelectedDay} />
+        </View>
     </View>
 );
 

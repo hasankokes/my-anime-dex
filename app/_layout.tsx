@@ -12,6 +12,8 @@ import { NetworkProvider } from '../context/NetworkContext';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { LanguageProvider } from '../context/LanguageContext';
 import { RevenueCatProvider } from '../context/RevenueCatProvider';
+import { WalkthroughProvider } from '../context/WalkthroughContext';
+import { WalkthroughOverlay } from '../components/WalkthroughOverlay';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { requestTrackingPermissions } from '../lib/tracking';
 
@@ -91,24 +93,27 @@ export default function RootLayout() {
           <LanguageProvider>
             <AuthProvider>
               <RevenueCatProvider>
-                <AuthGuard>
-                  <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                    <Stack.Screen name="index" options={{ headerShown: false }} />
-                    <Stack.Screen name="login" options={{ headerShown: false }} />
-                    <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
+                <WalkthroughProvider>
+                  <AuthGuard>
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                      <Stack.Screen name="index" options={{ headerShown: false }} />
+                      <Stack.Screen name="login" options={{ headerShown: false }} />
+                      <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
 
-                    <Stack.Screen
-                      name="subscription"
-                      options={{
-                        presentation: 'modal',
-                        headerShown: false,
-                        animation: 'slide_from_bottom'
-                      }}
-                    />
-                  </Stack>
-                </AuthGuard>
-                <OfflineBanner />
+                      <Stack.Screen
+                        name="subscription"
+                        options={{
+                          presentation: 'modal',
+                          headerShown: false,
+                          animation: 'slide_from_bottom'
+                        }}
+                      />
+                    </Stack>
+                  </AuthGuard>
+                  <OfflineBanner />
+                  <WalkthroughOverlay />
+                </WalkthroughProvider>
               </RevenueCatProvider>
             </AuthProvider>
           </LanguageProvider>

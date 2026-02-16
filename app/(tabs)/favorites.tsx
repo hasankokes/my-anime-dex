@@ -22,6 +22,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthProvider'; // Added useAuth import
 import { useLanguage } from '../../context/LanguageContext';
+import { useWalkthrough } from '../../context/WalkthroughContext';
 import { AnimeCard } from '../../components/AnimeCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNetwork } from '../../context/NetworkContext';
@@ -56,7 +57,48 @@ export default function FavoritesScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [sortBy, setSortBy] = useState('updated_at');
   const [sortAscending, setSortAscending] = useState(false);
+
   const flatListRef = React.useRef<FlatList>(null);
+
+  // Walkthrough
+  const filterTabsRef = React.useRef<View>(null);
+  const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, activeWalkthroughId, resetKey } = useWalkthrough();
+
+  // Measure Walkthrough Ref
+  React.useEffect(() => {
+    if (walkthroughActive && activeWalkthroughId === 'favorites') {
+      const timer = setTimeout(() => {
+        if (filterTabsRef.current) {
+          filterTabsRef.current.measureInWindow((x, y, width, height) => {
+            if (width > 0 && height > 0) registerStepLayout(0, { x, y, width, height });
+          });
+        }
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [walkthroughActive, activeWalkthroughId]);
+
+  // Auto-trigger
+  React.useEffect(() => {
+    if (loading) return;
+    const timer = setTimeout(async () => {
+      const isFirst = await checkFirstLaunch('favorites');
+      if (isFirst && !walkthroughActive) {
+        if (filterTabsRef.current) {
+          filterTabsRef.current.measureInWindow((x, y, width, height) => {
+            if (width > 0 && height > 0) {
+              registerStepLayout(0, { x, y, width, height });
+              // Start walkthrough ONLY after successful measurement
+              setTimeout(() => {
+                startWalkthrough('favorites');
+              }, 100);
+            }
+          });
+        }
+      }
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [resetKey, loading]);
 
   const fetchFavorites = async () => {
     try {
@@ -80,24 +122,18 @@ export default function FavoritesScreen() {
         return;
       }
 
-      let query = supabase
+      // Fetch ALL favorites (no filtering by status or sort in DB)
+      const { data, error } = await supabase
         .from('user_anime_list')
         .select('*')
         .eq('user_id', session.user.id)
         .eq('is_favorite', true);
 
-      if (activeFilter !== 'all') {
-        query = query.eq('status', activeFilter);
-      }
-
-      query = query.order(sortBy, { ascending: sortAscending });
-
-      const { data, error } = await query;
       if (error) throw error;
 
       setFavorites(data || []);
 
-      if (activeFilter === 'all' && data) {
+      if (data) {
         await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(data));
       }
     } catch (error) {
@@ -117,7 +153,7 @@ export default function FavoritesScreen() {
         setSearchQuery('');
         Keyboard.dismiss();
       };
-    }, [activeFilter, sortBy, sortAscending])
+    }, []) // Removed dependencies to prevent re-fetching on local state changes
   );
 
   const onRefresh = () => {
@@ -132,9 +168,39 @@ export default function FavoritesScreen() {
     { label: t('favorites.filters.planToWatch'), value: 'plan_to_watch' }
   ];
 
-  const filteredFavorites = favorites.filter(item =>
-    item.anime_title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredFavorites = React.useMemo(() => {
+    let result = [...favorites];
+
+    // 1. Status Filter
+    if (activeFilter !== 'all') {
+      result = result.filter(item => item.status === activeFilter);
+    }
+
+    // 2. Search Filter
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(item => item.anime_title.toLowerCase().includes(q));
+    }
+
+    // 3. Sorting
+    result.sort((a: any, b: any) => {
+      let valA = a[sortBy];
+      let valB = b[sortBy];
+
+      // Handle nulls/undefined safely
+      if (valA === undefined || valA === null) valA = '';
+      if (valB === undefined || valB === null) valB = '';
+
+      if (typeof valA === 'string') valA = valA.toLowerCase();
+      if (typeof valB === 'string') valB = valB.toLowerCase();
+
+      if (valA < valB) return sortAscending ? -1 : 1;
+      if (valA > valB) return sortAscending ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [favorites, activeFilter, searchQuery, sortBy, sortAscending]);
 
   const handleCardPress = (id: string) => {
     router.push(`/anime/${id}`);
@@ -158,7 +224,7 @@ export default function FavoritesScreen() {
           }
         ]}
         onPress={() => {
-          setLoading(true);
+          // setLoading(true); // No longer needed for local filtering
           setActiveFilter(item.value);
         }}
       >
@@ -283,7 +349,7 @@ export default function FavoritesScreen() {
         </View>
 
         {/* Filter Tabs */}
-        <View style={styles.filterContainer}>
+        <View ref={filterTabsRef} collapsable={false} style={styles.filterContainer}>
           <FlatList
             data={filters}
             renderItem={renderFilter}

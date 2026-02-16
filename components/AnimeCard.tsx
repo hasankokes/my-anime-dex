@@ -9,14 +9,18 @@ import { useTheme } from '../context/ThemeContext';
 interface AnimeCardProps {
     anime: Anime;
     onPress: () => void;
+    numColumns?: number;
 }
 
-export const AnimeCard: React.FC<AnimeCardProps> = React.memo(({ anime, onPress }) => {
+export const AnimeCard: React.FC<AnimeCardProps> = React.memo(({ anime, onPress, numColumns }) => {
     const { width } = useWindowDimensions();
     const { colors, isDark } = useTheme();
 
-    // Calculate card width dynamically for a 2-column grid
-    const cardWidth = (width - 56) / 2;
+    // Determine columns: use prop if provided, otherwise auto-detect
+    const columns = numColumns ?? (width >= 768 ? 3 : 2);
+    // Calculate card width dynamically based on column count
+    // 40 = horizontal padding (20*2), gaps = 16 * (columns - 1)
+    const cardWidth = (width - 40 - 16 * (columns - 1)) / columns;
 
     return (
         <TouchableOpacity

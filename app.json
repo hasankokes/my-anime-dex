@@ -33,6 +33,15 @@
       "navigationBar": {
         "visible": "true",
         "backgroundColor": "#00000000"
+      },
+      "splash": {
+        "image": "./assets/images/splash-lightcover.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#ffffff",
+        "dark": {
+          "image": "./assets/images/splash-dark-cover.png",
+          "backgroundColor": "#1A1A1A"
+        }
       }
     },
     "splash": {

@@ -1,15 +1,31 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Platform, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useWalkthrough } from '../../context/WalkthroughContext';
 
 export default function HelpScreen() {
     const router = useRouter();
     const { colors } = useTheme();
     const { t } = useLanguage();
+    const { startWalkthrough, resetWalkthroughs } = useWalkthrough();
+
+    const handleStartWalkthrough = () => {
+        router.replace('/(tabs)');
+        setTimeout(() => startWalkthrough('home'), 500);
+    };
+
+    const handleResetAllWalkthroughs = async () => {
+        await resetWalkthroughs();
+        Alert.alert(
+            t('common.success'),
+            t('help.walkthrough.resetSuccess' as any),
+            [{ text: t('common.confirm'), onPress: handleStartWalkthrough }]
+        );
+    };
 
     const faqs = [
         {
@@ -52,6 +68,36 @@ export default function HelpScreen() {
                     <View style={{ flex: 1 }}>
                         <Text style={[styles.guideTitle, { color: colors.text }]}>{t('help.walkthrough.title')}</Text>
                         <Text style={[styles.guideSubtitle, { color: colors.subtext }]}>{t('help.walkthrough.subtitle')}</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+                </TouchableOpacity>
+
+                {/* Interactive Walkthrough Button */}
+                <TouchableOpacity
+                    style={[styles.guideBanner, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 12 }]}
+                    onPress={handleStartWalkthrough}
+                >
+                    <View style={[styles.guideIcon, { backgroundColor: '#DCFCE7' }]}>
+                        <Ionicons name="walk" size={24} color="#16A34A" />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.guideTitle, { color: colors.text }]}>{t('walkthrough.startAgain' as any)}</Text>
+                        <Text style={[styles.guideSubtitle, { color: colors.subtext }]}>{t('help.walkthrough.subtitle')}</Text>
+                    </View>
+                    <Ionicons name="play-circle" size={24} color="#FACC15" />
+                </TouchableOpacity>
+
+                {/* Reset All Walkthroughs */}
+                <TouchableOpacity
+                    style={[styles.guideBanner, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 0 }]}
+                    onPress={handleResetAllWalkthroughs}
+                >
+                    <View style={[styles.guideIcon, { backgroundColor: '#FEE2E2' }]}>
+                        <Ionicons name="refresh" size={24} color="#DC2626" />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.guideTitle, { color: colors.text }]}>{t('help.walkthrough.resetAll' as any)}</Text>
+                        <Text style={[styles.guideSubtitle, { color: colors.subtext }]}>{t('help.walkthrough.resetDesc' as any)}</Text>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
                 </TouchableOpacity>

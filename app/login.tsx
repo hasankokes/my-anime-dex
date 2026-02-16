@@ -10,6 +10,7 @@ import { makeRedirectUri } from 'expo-auth-session';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PREDEFINED_AVATARS } from '../lib/constants';
 import { signInWithAppleNative } from '../lib/appleAuth';
+import { useLanguage } from '../context/LanguageContext';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -31,6 +32,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { isDark } = useTheme();
+  const { t } = useLanguage();
 
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
@@ -85,7 +87,7 @@ export default function LoginScreen() {
 
   const performEmailAuth = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password.');
+      Alert.alert(t('common.error'), t('login.emailPasswordRequired'));
       return;
     }
 
@@ -112,7 +114,7 @@ export default function LoginScreen() {
           await supabase.from('profiles').update({ avatar_url: randomAvatar }).eq('id', data.user.id);
         }
 
-        Alert.alert('Success', 'Account created! Please check your email for confirmation settings.');
+        Alert.alert(t('common.success'), t('login.accountCreated'));
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -122,7 +124,7 @@ export default function LoginScreen() {
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert('Authentication Error', error.message);
+        Alert.alert(t('login.authError'), error.message);
       }
     } finally {
       setLoading(false);
@@ -131,7 +133,7 @@ export default function LoginScreen() {
   const handleForgotPassword = async () => {
     setAuthMessage(null);
     if (!email) {
-      setAuthMessage({ type: 'error', text: 'Please enter your email address to reset your password.' });
+      setAuthMessage({ type: 'error', text: t('login.forgotPasswordPrompt') });
       return;
     }
 
@@ -150,7 +152,7 @@ export default function LoginScreen() {
 
       setAuthMessage({
         type: 'success',
-        text: 'Check your email! We sent you a password reset link.'
+        text: t('login.resetEmailSent')
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -237,7 +239,7 @@ export default function LoginScreen() {
     } catch (error) {
 
       if (error instanceof Error) {
-        Alert.alert('Login Error', `${error.message}\nType: ${error.name}`);
+        Alert.alert(t('login.loginError'), `${error.message}\nType: ${error.name}`);
       }
     } finally {
       if (Platform.OS !== 'web') {
@@ -297,7 +299,7 @@ export default function LoginScreen() {
       if (e.code === 'ERR_REQUEST_CANCELED') {
         // User canceled, do nothing
       } else {
-        Alert.alert('Apple Sign-In Error', e.message);
+        Alert.alert(t('login.appleSignInError'), e.message);
       }
     } finally {
       setLoading(false);
@@ -331,7 +333,7 @@ export default function LoginScreen() {
               style={styles.logo}
             />
 
-            <Text style={styles.tagline}>Track   Discover   Watch</Text>
+            <Text style={styles.tagline}>{t('login.tagline')}</Text>
           </View>
 
           {/* Social Section (Moved to Top) */}
@@ -359,7 +361,7 @@ export default function LoginScreen() {
 
           <View style={styles.dividerContainer}>
             <View style={styles.divider} />
-            <Text style={styles.dividerText}>or</Text>
+            <Text style={styles.dividerText}>{t('login.or')}</Text>
             <View style={styles.divider} />
           </View>
 
@@ -378,7 +380,7 @@ export default function LoginScreen() {
               <Ionicons name="mail-outline" size={normalize(20)} color={isDark ? '#9CA3AF' : '#9CA3AF'} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, isDark && styles.inputDark]}
-                placeholder="Email"
+                placeholder={t('login.emailPlaceholder')}
                 placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
                 value={email}
                 onChangeText={setEmail}
@@ -390,7 +392,7 @@ export default function LoginScreen() {
               <Ionicons name="lock-closed-outline" size={normalize(20)} color={isDark ? '#9CA3AF' : '#9CA3AF'} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, isDark && styles.inputDark]}
-                placeholder="Password"
+                placeholder={t('login.passwordPlaceholder')}
                 placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
                 value={password}
                 onChangeText={setPassword}
@@ -404,7 +406,7 @@ export default function LoginScreen() {
                 style={styles.forgotPasswordContainer}
                 disabled={loading}
               >
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                <Text style={styles.forgotPasswordText}>{t('login.forgotPassword')}</Text>
               </TouchableOpacity>
             )}
 
@@ -417,21 +419,21 @@ export default function LoginScreen() {
                 <ActivityIndicator color="#FFF" />
               ) : (
                 <Text style={styles.primaryButtonText}>
-                  {isSignUp ? 'Create Account' : 'Sign In'}
+                  {isSignUp ? t('login.createAccount') : t('login.signIn')}
                 </Text>
               )}
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)} style={styles.toggleLink}>
               <Text style={[styles.toggleText, isDark && styles.textLight]}>
-                {isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up'}
+                {isSignUp ? t('login.alreadyHaveAccount') : t('login.dontHaveAccount')}
               </Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.bottomSection}>
             <Text style={styles.footerText}>
-              By continuing, you agree to our Terms of Service and Privacy Policy.
+              {t('login.footer')}
             </Text>
           </View>
         </ScrollView>

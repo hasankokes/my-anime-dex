@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import { supabase } from '../../lib/supabase';
 import { AnimeListItem } from '../../types';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
+import { useWalkthrough } from '../../context/WalkthroughContext';
 
 const { width } = Dimensions.get('window');
 
@@ -26,12 +27,14 @@ const WatchingListItem = ({
   item,
   onPress,
   onIncrement,
-  onDecrement
+  onDecrement,
+  episodeControlsRef,
 }: {
   item: AnimeListItem;
   onPress: () => void;
   onIncrement: () => void;
   onDecrement: () => void;
+  episodeControlsRef?: React.RefObject<View | null>;
 }) => {
   const { colors } = useTheme();
 
@@ -54,7 +57,7 @@ const WatchingListItem = ({
         </Text>
 
         <View style={styles.progressRow}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View ref={episodeControlsRef} collapsable={false} style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity
               onPress={onDecrement}
               style={styles.controlButton}
@@ -99,6 +102,46 @@ export default function WatchingScreen() {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = React.useRef<TextInput>(null);
+
+  // Walkthrough
+  const episodeControlsRef = useRef<View>(null);
+  const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, activeWalkthroughId, resetKey } = useWalkthrough();
+
+  // Measure walkthrough ref when Watching walkthrough is active
+  useEffect(() => {
+    if (walkthroughActive && activeWalkthroughId === 'watching') {
+      const timer = setTimeout(() => {
+        if (episodeControlsRef.current) {
+          episodeControlsRef.current.measureInWindow((x, y, width, height) => {
+            if (width > 0 && height > 0) registerStepLayout(0, { x, y, width, height });
+          });
+        }
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [walkthroughActive, activeWalkthroughId]);
+
+  // Auto-trigger Watching walkthrough on first visit
+  useEffect(() => {
+    if (loading) return;
+
+    const timer = setTimeout(async () => {
+      // Don't start walkthrough if there are no items to highlight
+      if (watchingList.length === 0) return;
+
+      const isFirst = await checkFirstLaunch('watching');
+      if (isFirst && !walkthroughActive) {
+        if (episodeControlsRef.current) {
+          episodeControlsRef.current.measureInWindow((x, y, width, height) => {
+            if (width > 0 && height > 0) registerStepLayout(0, { x, y, width, height });
+          });
+        }
+        setTimeout(() => startWalkthrough('watching'), 300);
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [resetKey, loading, watchingList.length]);
 
   // Filtered List
   const filteredList = watchingList.filter(item =>
@@ -228,13 +271,14 @@ export default function WatchingScreen() {
     }
   };
 
-  const renderItem = ({ item }: { item: AnimeListItem }) => {
+  const renderItem = ({ item, index }: { item: AnimeListItem; index: number }) => {
     return (
       <WatchingListItem
         item={item}
         onPress={() => handleCardPress(item)}
         onIncrement={() => updateEpisode(item, 1)}
         onDecrement={() => updateEpisode(item, -1)}
+        episodeControlsRef={index === 0 ? episodeControlsRef : undefined}
       />
     );
   };

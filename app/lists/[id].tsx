@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Share, Image, Modal, TextInput, TouchableWithoutFeedback, Platform, FlatList, KeyboardAvoidingView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Linking from 'expo-linking';
@@ -8,7 +8,7 @@ import { supabase } from '../../lib/supabase';
 import { List, ListItem } from '../../types/lists';
 import { useTheme } from '../../context/ThemeContext';
 import DraggableFlatList, { ScaleDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
-
+import { Anime, jikanApi } from '../../lib/jikan';
 
 import CollaboratorModal from '../../components/CollaboratorModal';
 
@@ -41,6 +41,14 @@ export default function ListDetailsScreen() {
     const [editScore, setEditScore] = useState('');
     const [editComment, setEditComment] = useState('');
     const [saving, setSaving] = useState(false);
+
+    // Add Anime Search State
+    const [showAddAnimeModal, setShowAddAnimeModal] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState<Anime[]>([]);
+    const [searchLoading, setSearchLoading] = useState(false);
+    const [addingAnimeId, setAddingAnimeId] = useState<number | null>(null);
+    const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const canEdit = isOwner || isCollaborator;
 
@@ -287,6 +295,75 @@ export default function ListDetailsScreen() {
             setSaving(false);
         }
     }
+
+    // --- Add Anime Search ---
+    const handleSearchAnime = useCallback((query: string) => {
+        setSearchQuery(query);
+        if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+        if (!query.trim()) {
+            setSearchResults([]);
+            setSearchLoading(false);
+            return;
+        }
+        setSearchLoading(true);
+        searchTimerRef.current = setTimeout(async () => {
+            try {
+                const response = await jikanApi.searchAnime(query.trim());
+                setSearchResults(response.data || []);
+            } catch (e) {
+                console.error('Search error:', e);
+            } finally {
+                setSearchLoading(false);
+            }
+        }, 400);
+    }, []);
+
+    const addAnimeToList = async (anime: Anime) => {
+        try {
+            setAddingAnimeId(anime.mal_id);
+            const { error } = await supabase
+                .from('list_items')
+                .insert({
+                    list_id: id,
+                    anime_id: anime.mal_id.toString(),
+                    anime_title: anime.title_english || anime.title,
+                    anime_image: anime.images.jpg.large_image_url,
+                    score: anime.score,
+                });
+
+            if (error) {
+                if (error.code === '23505') {
+                    Alert.alert('Info', t('lists.alreadyInList'));
+                } else {
+                    throw error;
+                }
+            } else {
+                // Add to local state
+                const newItem: ListItem = {
+                    id: Date.now().toString(), // temp id until refresh
+                    list_id: id as string,
+                    anime_id: anime.mal_id.toString(),
+                    anime_title: anime.title_english || anime.title,
+                    anime_image: anime.images.jpg.large_image_url,
+                    score: anime.score,
+                    added_at: new Date().toISOString(),
+                    position: items.length,
+                };
+                setItems(prev => [...prev, newItem]);
+                Alert.alert(t('common.success'), t('lists.animeAdded'));
+            }
+        } catch (error) {
+            Alert.alert(t('common.error'), 'Failed to add anime');
+        } finally {
+            setAddingAnimeId(null);
+        }
+    };
+
+    const openAddAnimeModal = () => {
+        setSearchQuery('');
+        setSearchResults([]);
+        setShowAddAnimeModal(true);
+    };
 
     const renderItem = ({ item, drag, isActive }: RenderItemParams<ListItem>) => {
         // Native render with Drag support
@@ -610,6 +687,119 @@ export default function ListDetailsScreen() {
                 onClose={() => setShowCollaboratorsModal(false)}
                 listId={id as string}
             />
+
+            {/* Add Anime Search Modal */}
+            <Modal
+                visible={showAddAnimeModal}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setShowAddAnimeModal(false)}
+            >
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1 }}
+                >
+                    <TouchableWithoutFeedback onPress={() => setShowAddAnimeModal(false)}>
+                        <View style={styles.modalOverlay}>
+                            <TouchableWithoutFeedback onPress={() => { }}>
+                                <View style={[styles.addAnimeModalContent, { backgroundColor: colors.card }]}>
+                                    <Text style={[styles.modalTitle, { color: colors.text }]}>{t('lists.addAnime')}</Text>
+
+                                    <View style={[styles.searchInputContainer, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+                                        <Ionicons name="search" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
+                                        <TextInput
+                                            style={[styles.searchInput, { color: colors.text }]}
+                                            placeholder={t('lists.searchAnime')}
+                                            placeholderTextColor={colors.subtext}
+                                            value={searchQuery}
+                                            onChangeText={handleSearchAnime}
+                                            autoFocus
+                                        />
+                                        {searchQuery.length > 0 && (
+                                            <TouchableOpacity onPress={() => handleSearchAnime('')}>
+                                                <Ionicons name="close-circle" size={20} color={colors.subtext} />
+                                            </TouchableOpacity>
+                                        )}
+                                    </View>
+
+                                    {searchLoading ? (
+                                        <View style={{ padding: 40, alignItems: 'center' }}>
+                                            <ActivityIndicator size="large" color="#FACC15" />
+                                        </View>
+                                    ) : searchResults.length > 0 ? (
+                                        <FlatList
+                                            data={searchResults}
+                                            keyExtractor={(item) => item.mal_id.toString()}
+                                            style={{ maxHeight: 400 }}
+                                            keyboardShouldPersistTaps="handled"
+                                            renderItem={({ item: anime }) => {
+                                                const isAlreadyAdded = items.some(i => i.anime_id === anime.mal_id.toString());
+                                                return (
+                                                    <View style={[styles.searchResultItem, { borderBottomColor: colors.border }]}>
+                                                        <Image
+                                                            source={{ uri: anime.images?.jpg?.image_url }}
+                                                            style={styles.searchResultImage}
+                                                        />
+                                                        <View style={{ flex: 1, marginLeft: 12 }}>
+                                                            <Text style={[styles.searchResultTitle, { color: colors.text }]} numberOfLines={2}>
+                                                                {anime.title_english || anime.title}
+                                                            </Text>
+                                                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                                                                {anime.score && (
+                                                                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                                                        <Ionicons name="star" size={12} color="#F59E0B" />
+                                                                        <Text style={{ color: colors.subtext, fontSize: 12 }}>{anime.score}</Text>
+                                                                    </View>
+                                                                )}
+                                                                {anime.type && (
+                                                                    <Text style={{ color: colors.subtext, fontSize: 11 }}>{anime.type}</Text>
+                                                                )}
+                                                            </View>
+                                                        </View>
+                                                        {isAlreadyAdded ? (
+                                                            <View style={[styles.addedBadge]}>
+                                                                <Ionicons name="checkmark-circle" size={24} color="#10B981" />
+                                                            </View>
+                                                        ) : (
+                                                            <TouchableOpacity
+                                                                style={styles.addAnimeBtn}
+                                                                onPress={() => addAnimeToList(anime)}
+                                                                disabled={addingAnimeId === anime.mal_id}
+                                                            >
+                                                                {addingAnimeId === anime.mal_id ? (
+                                                                    <ActivityIndicator size="small" color="#000" />
+                                                                ) : (
+                                                                    <Ionicons name="add" size={24} color="#000" />
+                                                                )}
+                                                            </TouchableOpacity>
+                                                        )}
+                                                    </View>
+                                                );
+                                            }}
+                                        />
+                                    ) : searchQuery.length > 0 && !searchLoading ? (
+                                        <View style={{ padding: 40, alignItems: 'center' }}>
+                                            <Ionicons name="search-outline" size={40} color={colors.subtext} />
+                                            <Text style={{ color: colors.subtext, marginTop: 8 }}>No results found</Text>
+                                        </View>
+                                    ) : null}
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </KeyboardAvoidingView>
+            </Modal>
+
+            {/* FAB - Add Anime */}
+            {canEdit && (
+                <TouchableOpacity
+                    style={styles.fab}
+                    onPress={openAddAnimeModal}
+                    activeOpacity={0.8}
+                >
+                    <Ionicons name="add" size={28} color="#000" />
+                </TouchableOpacity>
+            )}
         </SafeAreaView>
     );
 }
@@ -830,5 +1020,72 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
-    }
+    },
+    fab: {
+        position: 'absolute',
+        right: 20,
+        bottom: 30,
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#FACC15',
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#FACC15',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+        elevation: 6,
+        zIndex: 100,
+    },
+    addAnimeModalContent: {
+        borderRadius: 24,
+        padding: 24,
+        elevation: 5,
+        maxHeight: '80%',
+    },
+    searchInputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        marginBottom: 16,
+        height: 48,
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 15,
+        fontFamily: 'Poppins_400Regular',
+        padding: 0,
+    },
+    searchResultItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+    },
+    searchResultImage: {
+        width: 50,
+        height: 70,
+        borderRadius: 6,
+        resizeMode: 'cover',
+    },
+    searchResultTitle: {
+        fontSize: 14,
+        fontFamily: 'Poppins_600SemiBold',
+    },
+    addAnimeBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: '#FACC15',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 8,
+    },
+    addedBadge: {
+        marginLeft: 8,
+        padding: 6,
+    },
 });

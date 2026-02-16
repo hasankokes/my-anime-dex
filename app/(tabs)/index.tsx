@@ -12,7 +12,8 @@ import {
   Keyboard,
   StatusBar,
   ScrollView,
-  Alert
+  Alert,
+  useWindowDimensions
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
@@ -26,6 +27,7 @@ import { useNetwork } from '../../context/NetworkContext';
 import { useAuth } from '../../context/AuthProvider';
 import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../context/LanguageContext';
+import { useWalkthrough } from '../../context/WalkthroughContext';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -34,7 +36,48 @@ export default function HomeScreen() {
   const { isConnected, isInternetReachable } = useNetwork();
   const { session, avatarUrl } = useAuth();
   const { t } = useLanguage();
+  const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, resetKey } = useWalkthrough();
   const flatListRef = useRef<FlatList>(null);
+
+  // Responsive columns: 2 for phones, 3 for tablets, 4 for large tablets
+  const { width: screenWidth } = useWindowDimensions();
+  const numColumns = screenWidth >= 1024 ? 4 : screenWidth >= 768 ? 3 : 2;
+
+  // Walkthrough refs
+  const logoRef = useRef<View>(null);
+  const searchBarRef = useRef<View>(null);
+  const myListsRef = useRef<View>(null);
+  const trendingRef = useRef<View>(null);
+  const themeToggleRef = useRef<View>(null);
+  const profileRef = useRef<View>(null);
+
+  // Measure element positions for walkthrough
+  const measureRef = useCallback((ref: React.RefObject<View | null>, stepIndex: number) => {
+    if (ref.current) {
+      ref.current.measureInWindow((x, y, width, height) => {
+        if (width > 0 && height > 0) {
+          registerStepLayout(stepIndex, { x, y, width, height });
+        }
+      });
+    }
+  }, [registerStepLayout]);
+
+  // Auto-trigger walkthrough on first launch
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      const isFirst = await checkFirstLaunch('home');
+      if (isFirst && !walkthroughActive) {
+        measureRef(logoRef, 0);
+        measureRef(searchBarRef, 1);
+        measureRef(myListsRef, 2);
+        measureRef(trendingRef, 3);
+        measureRef(themeToggleRef, 4);
+        measureRef(profileRef, 5);
+        setTimeout(() => startWalkthrough('home'), 300);
+      }
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [resetKey]);
 
 
 
@@ -234,7 +277,13 @@ export default function HomeScreen() {
   const FixedHeader = () => (
     <View style={[styles.fixedHeader, { paddingTop: insets.top + 2, backgroundColor: colors.background, paddingBottom: 0 }]}>
       {/* Left: Logo + Brand */}
-      <TouchableOpacity style={styles.headerLeft} onPress={scrollToTop}>
+      <TouchableOpacity
+        ref={logoRef as any}
+        {...({ collapsable: false } as any)}
+        style={styles.headerLeft}
+        onPress={scrollToTop}
+        onLayout={() => measureRef(logoRef, 0)}
+      >
         <Image
           source={require('../../assets/images/header-logo.png')}
           style={styles.headerLogo}
@@ -262,13 +311,25 @@ export default function HomeScreen() {
         </TouchableOpacity>
 
         {/* Theme Toggle */}
-        <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
+        <TouchableOpacity
+          ref={themeToggleRef as any}
+          {...({ collapsable: false } as any)}
+          style={styles.iconButton}
+          onPress={toggleTheme}
+          onLayout={() => measureRef(themeToggleRef, 4)}
+        >
           {/* Changed to nicer outline icons based on user feedback */}
           <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
         </TouchableOpacity>
 
         {/* Profile */}
-        <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/(tabs)/profile')}>
+        <TouchableOpacity
+          ref={profileRef as any}
+          {...({ collapsable: false } as any)}
+          style={styles.profileButton}
+          onPress={() => router.push('/(tabs)/profile')}
+          onLayout={() => measureRef(profileRef, 5)}
+        >
           <Image
             source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
             style={styles.headerProfileImage}
@@ -281,11 +342,16 @@ export default function HomeScreen() {
 
 
   const renderHeader = () => (
-    <View style={styles.headerContainer}>
+    <View style={styles.headerContainer} collapsable={false}>
 
       {/* Search Bar & My Lists Button */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 0 }}>
-        <View style={[styles.searchBar, { backgroundColor: colors.inputBg, flex: 1 }]}>
+        <View
+          ref={searchBarRef as any}
+          collapsable={false}
+          style={[styles.searchBar, { backgroundColor: colors.inputBg, flex: 1 }]}
+          onLayout={() => measureRef(searchBarRef, 1)}
+        >
           <TouchableOpacity onPress={performSearch}>
             <Ionicons name="search" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
           </TouchableOpacity>
@@ -311,6 +377,8 @@ export default function HomeScreen() {
 
         {/* My Lists Button */}
         <TouchableOpacity
+          ref={myListsRef as any}
+          {...({ collapsable: false } as any)}
           style={{
             height: 50,
             paddingHorizontal: 16,
@@ -324,6 +392,7 @@ export default function HomeScreen() {
             gap: 8
           }}
           onPress={() => router.push('/lists')}
+          onLayout={() => measureRef(myListsRef, 2)}
         >
           <Ionicons name="list" size={20} color={colors.text} />
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: colors.text }}>
@@ -340,7 +409,12 @@ export default function HomeScreen() {
 
       {/* Trending Now Section */}
       {!isSearching && (
-        <View style={styles.trendingContainer}>
+        <View
+          ref={trendingRef as any}
+          collapsable={false}
+          style={styles.trendingContainer}
+          onLayout={() => measureRef(trendingRef, 3)}
+        >
           <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 12, marginTop: 4 }]}>
             {t('home.trending')}
           </Text>
@@ -449,15 +523,17 @@ export default function HomeScreen() {
       <FixedHeader />
       <FlatList
         ref={flatListRef}
+        key={`grid-${numColumns}`}
         data={animes}
         renderItem={({ item }) => (
           <AnimeCard
             anime={item}
             onPress={() => router.push(`/anime/${item.mal_id}`)}
+            numColumns={numColumns}
           />
         )}
         keyExtractor={(item) => item.mal_id.toString()}
-        numColumns={2}
+        numColumns={numColumns}
         columnWrapperStyle={styles.columnWrapper}
         contentContainerStyle={[styles.listContent, { paddingTop: 0 }]}
         showsVerticalScrollIndicator={false}
