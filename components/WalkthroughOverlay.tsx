@@ -31,7 +31,7 @@ export const WalkthroughOverlay: React.FC = () => {
 
     const MIN_EDGE = 10;
     // On Android 15+ (API 35) edge-to-edge is enforced, requiring offset.
-    const isAndroidNew = Platform.OS === 'android' && Platform.Version >= 35;
+    const isAndroidNew = Platform.OS === 'android' && Platform.Version >= 34;
 
     // Calculate spotlight dimensions and position first, so tooltip can use them
     const spotCoords = useMemo(() => {

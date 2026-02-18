@@ -11,21 +11,14 @@ export default function HelpScreen() {
     const router = useRouter();
     const { colors } = useTheme();
     const { t } = useLanguage();
-    const { startWalkthrough, resetWalkthroughs } = useWalkthrough();
+    const { startWalkthrough } = useWalkthrough();
 
     const handleStartWalkthrough = () => {
         router.replace('/(tabs)');
         setTimeout(() => startWalkthrough('home'), 500);
     };
 
-    const handleResetAllWalkthroughs = async () => {
-        await resetWalkthroughs();
-        Alert.alert(
-            t('common.success'),
-            t('help.walkthrough.resetSuccess' as any),
-            [{ text: t('common.confirm'), onPress: handleStartWalkthrough }]
-        );
-    };
+
 
     const faqs = [
         {
@@ -88,19 +81,7 @@ export default function HelpScreen() {
                 </TouchableOpacity>
 
                 {/* Reset All Walkthroughs */}
-                <TouchableOpacity
-                    style={[styles.guideBanner, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 0 }]}
-                    onPress={handleResetAllWalkthroughs}
-                >
-                    <View style={[styles.guideIcon, { backgroundColor: '#FEE2E2' }]}>
-                        <Ionicons name="refresh" size={24} color="#DC2626" />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={[styles.guideTitle, { color: colors.text }]}>{t('help.walkthrough.resetAll' as any)}</Text>
-                        <Text style={[styles.guideSubtitle, { color: colors.subtext }]}>{t('help.walkthrough.resetDesc' as any)}</Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
-                </TouchableOpacity>
+
 
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('help.faq.title')}</Text>
 

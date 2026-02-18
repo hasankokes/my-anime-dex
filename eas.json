@@ -18,6 +18,10 @@
                 "simulator": true
             }
         },
-        "production": {}
+        "production": {
+            "android": {
+                "buildType": "app-bundle"
+            }
+        }
     }
 }
