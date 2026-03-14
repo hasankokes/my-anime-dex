@@ -54,11 +54,6 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 export default function RootLayout() {
   useFrameworkReady();
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await requestTrackingPermissions();
-    })();
-  }, []);
 
   // Load Google Fonts AND Icon Fonts to prevent "squares"
   const [fontsLoaded] = useFonts({

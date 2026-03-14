@@ -41,7 +41,7 @@ export const useInterstitialAd = () => {
             // Dynamically require the module to avoid crash in Expo Go where the native module is missing
             const mobileAds = require('react-native-google-mobile-ads').default;
             const { InterstitialAd, AdEventType, TestIds } = require('react-native-google-mobile-ads');
-            const { getTrackingPermissionsAsync } = require('expo-tracking-transparency');
+            const { getTrackingPermissionsAsync, requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
 
             // Initialize the AdMob SDK
             mobileAds().initialize().then(async () => {
@@ -124,6 +124,10 @@ export const useInterstitialAd = () => {
                 await AsyncStorage.setItem(storageKey, JSON.stringify(data));
 
                 if (data.count % 2 === 0) {
+                    // Request tracking permission before showing the first ad
+                    const { requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
+                    await requestTrackingPermissionsAsync();
+
                     if (loaded && interstitial) {
                         interstitial.show();
                     }
@@ -149,6 +153,10 @@ export const useInterstitialAd = () => {
                 await AsyncStorage.setItem(storageKey, JSON.stringify(data));
 
                 if (data.count === 1) {
+                    // Request tracking permission before showing the first ad
+                    const { requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
+                    await requestTrackingPermissionsAsync();
+
                     if (loaded && interstitial) {
                         interstitial.show();
                     }
@@ -164,6 +172,10 @@ export const useInterstitialAd = () => {
                 await AsyncStorage.setItem(STORAGE_KEY_AD_COUNT, count.toString());
 
                 if (count % 3 === 0) {
+                    // Request tracking permission before showing the first ad
+                    const { requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
+                    await requestTrackingPermissionsAsync();
+
                     if (loaded && interstitial) {
                         interstitial.show();
                     } else {
