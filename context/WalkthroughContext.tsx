@@ -12,7 +12,7 @@ export type WalkthroughId = 'home' | 'calendar' | 'watching' | 'lists' | 'favori
 
 const WALKTHROUGH_CONFIGS: Record<WalkthroughId, { stepKeys: string[]; storageKey: string }> = {
     home: {
-        stepKeys: ['logo', 'search', 'myLists', 'trending', 'themeToggle', 'profile'],
+        stepKeys: ['logo', 'search', 'discover', 'rollDice', 'myLists', 'trending', 'themeToggle', 'profile'],
         storageKey: 'walkthrough_home_completed',
     },
     calendar: {

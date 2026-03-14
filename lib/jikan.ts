@@ -110,5 +110,23 @@ export const jikanApi = {
 
     getTopAiringAnime: async (page = 1): Promise<JikanResponse<Anime[]>> => {
         return fetchWithRetry(`${BASE_URL}/top/anime?filter=airing&page=${page}`);
+    },
+
+    getPopularAnime: async (page = 1): Promise<JikanResponse<Anime[]>> => {
+        return fetchWithRetry(`${BASE_URL}/top/anime?filter=bypopularity&page=${page}`);
+    },
+
+    getAnimeByGenres: async (genres: string, page = 1, minScore?: number): Promise<JikanResponse<Anime[]>> => {
+        let url = `${BASE_URL}/anime?genres=${genres}&order_by=score&sort=desc&page=${page}`;
+        if (minScore) url += `&min_score=${minScore}`;
+        return fetchWithRetry(url);
+    },
+
+    getSeasonAnime: async (year: number, season: string, page = 1): Promise<JikanResponse<Anime[]>> => {
+        return fetchWithRetry(`${BASE_URL}/seasons/${year}/${season}?page=${page}`);
+    },
+
+    getUpcomingAnime: async (page = 1): Promise<JikanResponse<Anime[]>> => {
+        return fetchWithRetry(`${BASE_URL}/seasons/upcoming?page=${page}`);
     }
 };

@@ -591,7 +591,7 @@ export default function ProfileScreen() {
                 styles.rankTitle,
                 { color: getRank(profile?.level || 1).colorHex, marginRight: 8 }
               ]}>
-                {getRank(profile?.level || 1).name}
+                {t(`profile.ranks.${getRank(profile?.level || 1).name.toLowerCase()}` as any)}
               </Text>
               <TouchableOpacity onPress={() => router.push('/leaderboard')}>
                 <Ionicons name="trophy" size={20} color={getRank(profile?.level || 1).colorHex} />
@@ -599,7 +599,7 @@ export default function ProfileScreen() {
             </View>
 
             <Text style={[styles.memberInfo, { marginBottom: 8, color: getRank(profile?.level || 1).colorHex }]}>
-              Level {profile?.level || 1} • {getLevelProgress(profile?.xp || 0, profile?.level || 1).current}/{getLevelProgress(profile?.xp || 0, profile?.level || 1).total} XP
+              {t('profile.level')} {profile?.level || 1} • {getLevelProgress(profile?.xp || 0, profile?.level || 1).current}/{getLevelProgress(profile?.xp || 0, profile?.level || 1).total} {t('profile.xp')}
             </Text>
 
             <View style={{
@@ -623,17 +623,17 @@ export default function ProfileScreen() {
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
             <Text style={[styles.statValue, { color: colors.text }]}>{stats.watching_count}</Text>
-            <Text style={[styles.statLabel, { color: colors.subtext }]}>Watching</Text>
+            <Text style={[styles.statLabel, { color: colors.subtext }]}>{t('profile.stats_watching')}</Text>
           </View>
           <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
           <View style={styles.statItem}>
             <Text style={[styles.statValue, { color: colors.text }]}>{stats.watched_count.toLocaleString()}</Text>
-            <Text style={[styles.statLabel, { color: colors.subtext }]}>Watched</Text>
+            <Text style={[styles.statLabel, { color: colors.subtext }]}>{t('profile.stats_watched')}</Text>
           </View>
           <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
           <View style={styles.statItem}>
             <Text style={[styles.statValue, { color: colors.text }]}>{stats.favorites_count}</Text>
-            <Text style={[styles.statLabel, { color: colors.subtext }]}>Favs</Text>
+            <Text style={[styles.statLabel, { color: colors.subtext }]}>{t('profile.stats_favs')}</Text>
           </View>
 
         </View>
@@ -645,11 +645,11 @@ export default function ProfileScreen() {
           <View style={[styles.subscriptionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.subHeader}>
               <Ionicons name="star" size={20} color="#FACC15" style={{ marginRight: 8 }} />
-              <Text style={[styles.subTitle, { color: colors.text }]}>Upgrade to AnimeDex Premium</Text>
+              <Text style={[styles.subTitle, { color: colors.text }]}>{t('profile.upgradeTitle')}</Text>
             </View>
 
             <Text style={[styles.subDescription, { color: colors.subtext }]}>
-              Ad-free. Upgrade to unlock offline viewing and exclusive themes.
+              {t('profile.upgradeDesc')}
             </Text>
 
             <TouchableOpacity
@@ -657,8 +657,9 @@ export default function ProfileScreen() {
               onPress={() => router.push('/subscription')}
             >
               <Ionicons name="diamond-outline" size={18} color="#111827" style={{ marginRight: 8 }} />
-              <Text style={styles.upgradeButtonText}>Start monthly plan</Text>
+              <Text style={styles.upgradeButtonText}>{t('profile.upgradeButton')}</Text>
             </TouchableOpacity>
+
 
             <View style={styles.decorativeCircle} />
           </View>
@@ -739,6 +740,7 @@ export default function ProfileScreen() {
                       'es': 'Español',
                       'pt': 'Português',
                       'id': 'Bahasa Indonesia',
+                      'hi': 'हिन्दी',
                       'ar': 'العربية'
                     }[language] || 'English (US)'
                   }

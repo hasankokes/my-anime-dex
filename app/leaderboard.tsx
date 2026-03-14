@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 import { useTheme } from '../context/ThemeContext';
 import { getRank } from '../lib/levelSystem';
+import { useLanguage } from '../context/LanguageContext';
 
 type LeaderboardUser = {
     id: string;
@@ -18,6 +19,7 @@ type LeaderboardUser = {
 export default function LeaderboardScreen() {
     const router = useRouter();
     const { colors } = useTheme();
+    const { t } = useLanguage();
     const [users, setUsers] = useState<LeaderboardUser[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -96,12 +98,12 @@ export default function LeaderboardScreen() {
                         {item.username || 'User'}
                     </Text>
                     <Text style={[styles.userRank, { color: userRank.colorHex }]}>
-                        {userRank.name} • Lvl {item.level || 1}
+                        {t(`profile.ranks.${userRank.name.toLowerCase()}` as any)} • {t('profile.level')} {item.level || 1}
                     </Text>
                 </View>
 
                 <View style={styles.xpContainer}>
-                    <Text style={[styles.xpText, { color: colors.subtext }]}>{item.xp || 0} XP</Text>
+                    <Text style={[styles.xpText, { color: colors.subtext }]}>{item.xp || 0} {t('profile.xp')}</Text>
                 </View>
             </View>
         );
@@ -122,7 +124,7 @@ export default function LeaderboardScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
                     <Ionicons name="chevron-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.headerTitle, { color: colors.text }]}>Top 20 Leaderboard</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>{t('leaderboard.title')}</Text>
                 <View style={{ width: 40 }} />
             </View>
 
@@ -135,7 +137,7 @@ export default function LeaderboardScreen() {
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
                         <Ionicons name="podium-outline" size={64} color={colors.subtext} />
-                        <Text style={[styles.emptyText, { color: colors.subtext }]}>No users found yet.</Text>
+                        <Text style={[styles.emptyText, { color: colors.subtext }]}>{t('leaderboard.noUsers')}</Text>
                     </View>
                 }
             />

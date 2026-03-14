@@ -12,7 +12,8 @@ import {
   ScrollView,
   Image,
   TextInput,
-  Keyboard
+  Keyboard,
+  useWindowDimensions
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather, Ionicons } from '@expo/vector-icons';
@@ -27,13 +28,7 @@ import { AnimeCard } from '../../components/AnimeCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNetwork } from '../../context/NetworkContext';
 
-const SORT_OPTIONS = [
-  { label: 'Date Added (Newest)', value: 'updated_at', ascending: false },
-  { label: 'Date Added (Oldest)', value: 'updated_at', ascending: true },
-  { label: 'Title (A-Z)', value: 'anime_title', ascending: true },
-  { label: 'Title (Z-A)', value: 'anime_title', ascending: false },
-  { label: 'Score (Highest)', value: 'score', ascending: false },
-];
+// Move SORT_OPTIONS inside the component for localization support
 
 export default function FavoritesScreen() {
   const router = useRouter();
@@ -42,6 +37,8 @@ export default function FavoritesScreen() {
   const insets = useSafeAreaInsets();
   const { isConnected, isInternetReachable } = useNetwork();
   const { t } = useLanguage();
+  const { width: screenWidth } = useWindowDimensions();
+  const numColumns = screenWidth >= 1024 ? 4 : screenWidth >= 768 ? 3 : 2;
 
   const [activeFilter, setActiveFilter] = useState('all');
   const [favorites, setFavorites] = useState<AnimeListItem[]>([]);
@@ -57,6 +54,14 @@ export default function FavoritesScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [sortBy, setSortBy] = useState('updated_at');
   const [sortAscending, setSortAscending] = useState(false);
+
+  const sortOptions = React.useMemo(() => [
+    { label: t('favorites.sort.newest'), value: 'updated_at', ascending: false },
+    { label: t('favorites.sort.oldest'), value: 'updated_at', ascending: true },
+    { label: t('favorites.sort.titleAZ'), value: 'anime_title', ascending: true },
+    { label: t('favorites.sort.titleZA'), value: 'anime_title', ascending: false },
+    { label: t('favorites.sort.score'), value: 'score', ascending: false },
+  ], [t]);
 
   const flatListRef = React.useRef<FlatList>(null);
 
@@ -252,6 +257,7 @@ export default function FavoritesScreen() {
       <AnimeCard
         anime={animeAdapter as any}
         onPress={() => handleCardPress(item.anime_id)}
+        numColumns={numColumns}
       />
     );
   };
@@ -325,8 +331,8 @@ export default function FavoritesScreen() {
   );
 
   const getSortLabel = () => {
-    const opt = SORT_OPTIONS.find(o => o.value === sortBy && o.ascending === sortAscending);
-    return opt ? opt.label : 'Sort By';
+    const opt = sortOptions.find(o => o.value === sortBy && o.ascending === sortAscending);
+    return opt ? opt.label : t('favorites.sort.title');
   };
 
   return (
@@ -371,8 +377,9 @@ export default function FavoritesScreen() {
           ref={flatListRef}
           data={filteredFavorites}
           renderItem={renderCard}
+          key={`grid-${numColumns}`}
           keyExtractor={(item) => item.id}
-          numColumns={2}
+          numColumns={numColumns}
           columnWrapperStyle={styles.columnWrapper}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
@@ -383,10 +390,10 @@ export default function FavoritesScreen() {
             <View style={styles.emptyContainer}>
               <Ionicons name={searchQuery ? "search" : "heart-dislike-outline"} size={48} color={colors.subtext} />
               <Text style={[styles.emptyText, { color: colors.subtext }]}>
-                {searchQuery ? 'No favorites found' : 'No favorites yet'}
+                {searchQuery ? t('favorites.noFavoritesFound') : t('favorites.noFavoritesYet')}
               </Text>
               {!searchQuery && (
-                <Text style={[styles.emptySubText, { color: colors.subtext }]}>Add anime to your favorites to see them here.</Text>
+                <Text style={[styles.emptySubText, { color: colors.subtext }]}>{t('favorites.addFavoritesDesc')}</Text>
               )}
             </View>
           }
@@ -407,13 +414,13 @@ export default function FavoritesScreen() {
         >
           <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: colors.text }]}>Sort By</Text>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>{t('favorites.sort.title')}</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Ionicons name="close" size={24} color={colors.text} />
               </TouchableOpacity>
             </View>
 
-            {SORT_OPTIONS.map((option, index) => {
+            {sortOptions.map((option, index) => {
               const isActive = sortBy === option.value && sortAscending === option.ascending;
               return (
                 <TouchableOpacity

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image } from 'expo-image';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -12,15 +13,16 @@ export default function LanguageScreen() {
     const { language, setLanguage, t } = useLanguage();
 
     const languages = [
-        { code: 'en', name: 'English (US)', flag: '🇺🇸' },
-        { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
-        { code: 'ja', name: '日本語 (Japanese)', flag: '🇯🇵' },
-        { code: 'ru', name: 'Русский (Russian)', flag: '🇷🇺' },
-        { code: 'de', name: 'Deutsch (German)', flag: '🇩🇪' },
-        { code: 'es', name: 'Español (Spanish)', flag: '🇪🇸' },
-        { code: 'pt', name: 'Português (Portuguese)', flag: '🇵🇹' },
-        { code: 'id', name: 'Bahasa Indonesia', flag: '🇮🇩' },
-        { code: 'ar', name: 'العربية (Arabic)', flag: '🇸🇦' },
+        { code: 'en', name: 'English (US)', flag: 'us' },
+        { code: 'tr', name: 'Türkçe', flag: 'tr' },
+        { code: 'ja', name: '日本語 (Japanese)', flag: 'jp' },
+        { code: 'ru', name: 'Русский (Russian)', flag: 'ru' },
+        { code: 'de', name: 'Deutsch (German)', flag: 'de' },
+        { code: 'es', name: 'Español (Spanish)', flag: 'es' },
+        { code: 'pt', name: 'Português (Portuguese)', flag: 'pt' },
+        { code: 'id', name: 'Bahasa Indonesia', flag: 'id' },
+        { code: 'hi', name: 'हिन्दी (Hindi)', flag: 'in' },
+        { code: 'ar', name: 'العربية (Arabic)', flag: 'sa' },
     ];
 
     const handleLanguageSelect = async (langCode: string) => {
@@ -47,7 +49,11 @@ export default function LanguageScreen() {
                                 onPress={() => handleLanguageSelect(lang.code)}
                             >
                                 <View style={styles.optionLeft}>
-                                    <Text style={styles.flag}>{lang.flag}</Text>
+                                    <Image 
+                                        source={{ uri: `https://flagcdn.com/w80/${lang.flag}.png` }}
+                                        style={styles.flagImage}
+                                        contentFit="cover"
+                                    />
                                     <Text style={[styles.optionLabel, { color: colors.text }]}>{lang.name}</Text>
                                 </View>
                                 {language === lang.code && (
@@ -106,8 +112,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    flag: {
-        fontSize: 24,
+    flagImage: {
+        width: 28,
+        height: 20,
+        borderRadius: 4,
         marginRight: 12,
     },
     optionLabel: {

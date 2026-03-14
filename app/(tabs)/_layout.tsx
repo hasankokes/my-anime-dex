@@ -26,6 +26,7 @@ export default function TabLayout() {
         tabBarInactiveTintColor: colors.subtext,
         tabBarLabelStyle: styles.tabLabel,
         tabBarButton: (props) => (
+          // @ts-ignore
           <Pressable
             {...props}
             android_ripple={{

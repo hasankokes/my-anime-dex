@@ -16,11 +16,13 @@ import {
   useWindowDimensions
 } from 'react-native';
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
 import { AnimeCard } from '../../components/AnimeCard';
+import { ForYouHeroCard } from '../../components/Home/ForYouHeroCard';
+import { DiceRollModal } from '../../components/Home/DiceRollModal';
 import { useTheme } from '../../context/ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNetwork } from '../../context/NetworkContext';
@@ -28,6 +30,7 @@ import { useAuth } from '../../context/AuthProvider';
 import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../context/LanguageContext';
 import { useWalkthrough } from '../../context/WalkthroughContext';
+import { recommendationService } from '../../services/recommendationService';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -47,6 +50,8 @@ export default function HomeScreen() {
   const logoRef = useRef<View>(null);
   const searchBarRef = useRef<View>(null);
   const myListsRef = useRef<View>(null);
+  const discoverRef = useRef<View>(null);
+  const rollDiceRef = useRef<View>(null);
   const trendingRef = useRef<View>(null);
   const themeToggleRef = useRef<View>(null);
   const profileRef = useRef<View>(null);
@@ -69,10 +74,12 @@ export default function HomeScreen() {
       if (isFirst && !walkthroughActive) {
         measureRef(logoRef, 0);
         measureRef(searchBarRef, 1);
-        measureRef(myListsRef, 2);
-        measureRef(trendingRef, 3);
-        measureRef(themeToggleRef, 4);
-        measureRef(profileRef, 5);
+        measureRef(discoverRef, 2);
+        measureRef(rollDiceRef, 3);
+        measureRef(myListsRef, 4);
+        measureRef(trendingRef, 5);
+        measureRef(themeToggleRef, 6);
+        measureRef(profileRef, 7);
         setTimeout(() => startWalkthrough('home'), 300);
       }
     }, 1500);
@@ -98,12 +105,38 @@ export default function HomeScreen() {
 
   const [animes, setAnimes] = useState<Anime[]>([]);
   const [trendingAnimes, setTrendingAnimes] = useState<Anime[]>([]); // Trending State
+  const [trendingMode, setTrendingMode] = useState<'trending' | 'spring' | 'upcoming'>('trending');
+  const [springAnimes, setSpringAnimes] = useState<Anime[]>([]);
+  const [infiniteSpring, setInfiniteSpring] = useState<Anime[]>([]);
+  const [springLoading, setSpringLoading] = useState(false);
+  const [upcomingAnimes, setUpcomingAnimes] = useState<Anime[]>([]);
+  const [infiniteUpcoming, setInfiniteUpcoming] = useState<Anime[]>([]);
+  const [upcomingLoading, setUpcomingLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [trendingLoading, setTrendingLoading] = useState(true); // Trending Loading
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+
+  // States for Recommendations
+  const [isDiceModalVisible, setIsDiceModalVisible] = useState(false);
+  const [userListCount, setUserListCount] = useState(0);
+  const [topGenre, setTopGenre] = useState<string | undefined>(undefined);
+
+  // Focus effect to reset search when navigating away and check user lists
+  useFocusEffect(
+    useCallback(() => {
+      // Reset search state when navigating away from home screen
+      return () => {
+        setSearchText('');
+        setActiveQuery('');
+        setIsSearching(false);
+        setSelectedCategory(null);
+      };
+    }, [])
+  );
 
   // Search State
   const [searchText, setSearchText] = useState(''); // Text in input
@@ -182,29 +215,27 @@ export default function HomeScreen() {
     return newArr;
   };
 
+  // Helper to process infinite logic
+  const processInfiniteData = (data: Anime[]) => {
+    const top20 = (data || []).slice(0, 20);
+    const shuffled = shuffleArray(top20);
+    const repeated = Array(50).fill(shuffled).flat();
+    return { shuffled, repeated };
+  };
+
   // Fetch Trending Logic
   const fetchTrending = async () => {
     try {
       setTrendingLoading(true);
       const isOnline = isConnected && isInternetReachable !== false;
-
       if (!isOnline) {
         setTrendingLoading(false);
         return;
       }
       const response = await jikanApi.getTopAiringAnime(1);
-
-      // Take top 20 and SHUFFLE
-      const top20 = (response.data || []).slice(0, 20);
-      const shuffled = shuffleArray(top20);
-
+      const { shuffled, repeated } = processInfiniteData(response.data);
       setTrendingAnimes(shuffled);
-
-      // Create "Infinite" list by repeating the shuffled list multiple times
-      // 50 reps * 20 items = 1000 items (virtually infinite for manual scrolling)
-      const repeated = Array(50).fill(shuffled).flat();
       setInfiniteTrending(repeated);
-
     } catch (error) {
       console.error('Error fetching trending:', error);
     } finally {
@@ -212,11 +243,80 @@ export default function HomeScreen() {
     }
   };
 
+  // Fetch Spring 2026 Logic
+  const fetchSpring2026 = async () => {
+    try {
+      setSpringLoading(true);
+      const response = await jikanApi.getSeasonAnime(2026, 'spring', 1);
+      const { shuffled, repeated } = processInfiniteData(response.data);
+      setSpringAnimes(shuffled);
+      setInfiniteSpring(repeated);
+    } catch (error) {
+      console.error('Error fetching spring anime:', error);
+    } finally {
+      setSpringLoading(false);
+    }
+  };
+
+  // Fetch Upcoming Logic
+  const fetchUpcoming = async () => {
+    try {
+      setUpcomingLoading(true);
+      const response = await jikanApi.getUpcomingAnime(1);
+      const { shuffled, repeated } = processInfiniteData(response.data);
+      setUpcomingAnimes(shuffled);
+      setInfiniteUpcoming(repeated);
+    } catch (error) {
+      console.error('Error fetching upcoming anime:', error);
+    } finally {
+      setUpcomingLoading(false);
+    }
+  };
+
+  const toggleTrendingMode = () => {
+    if (trendingMode === 'trending') {
+      setTrendingMode('spring');
+      if (springAnimes.length === 0) fetchSpring2026();
+    } else if (trendingMode === 'spring') {
+      setTrendingMode('upcoming');
+      if (upcomingAnimes.length === 0) fetchUpcoming();
+    } else {
+      setTrendingMode('trending');
+    }
+  };
+
   // Initial load
   useEffect(() => {
+    checkInitialData();
+  }, [session, isConnected]); // added session dependency
+
+  useEffect(() => {
+    const fetchUserListCountAndProfile = async () => {
+      if (!session) return;
+      try {
+        const { count } = await supabase
+          .from('user_anime_list')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', session.user.id);
+        setUserListCount(count || 0);
+
+        if (count && count > 0) {
+          const { profile } = await recommendationService.getUserProfile(session.user.id);
+          if (profile.topGenres.length > 0) {
+            setTopGenre(profile.topGenres[0].name);
+          }
+        }
+      } catch (error) {
+        // ignore
+      }
+    };
+    fetchUserListCountAndProfile();
+  }, [session]);
+
+  const checkInitialData = async () => {
     fetchAnimes(1);
     fetchTrending();
-  }, []);
+  };
 
   const onRefresh = useCallback(() => {
     fetchAnimes(1, true, activeQuery, selectedCategory);
@@ -316,7 +416,7 @@ export default function HomeScreen() {
           {...({ collapsable: false } as any)}
           style={styles.iconButton}
           onPress={toggleTheme}
-          onLayout={() => measureRef(themeToggleRef, 4)}
+          onLayout={() => measureRef(themeToggleRef, 6)}
         >
           {/* Changed to nicer outline icons based on user feedback */}
           <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
@@ -328,7 +428,7 @@ export default function HomeScreen() {
           {...({ collapsable: false } as any)}
           style={styles.profileButton}
           onPress={() => router.push('/(tabs)/profile')}
-          onLayout={() => measureRef(profileRef, 5)}
+          onLayout={() => measureRef(profileRef, 7)}
         >
           <Image
             source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
@@ -381,18 +481,19 @@ export default function HomeScreen() {
           {...({ collapsable: false } as any)}
           style={{
             height: 50,
-            paddingHorizontal: 16,
+            width: 135,
             borderRadius: 16,
             backgroundColor: colors.card,
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
+            paddingLeft: 14,
             borderWidth: 1,
             borderColor: colors.border,
-            gap: 8
+            gap: 12
           }}
           onPress={() => router.push('/lists')}
-          onLayout={() => measureRef(myListsRef, 2)}
+          onLayout={() => measureRef(myListsRef, 4)}
         >
           <Ionicons name="list" size={20} color={colors.text} />
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: colors.text }}>
@@ -400,6 +501,24 @@ export default function HomeScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {!isSearching && (
+        <View style={{ zIndex: 50, elevation: 50 }}>
+          <ForYouHeroCard
+            userListCount={userListCount}
+            topGenre={topGenre}
+            onPress={() => {
+              router.push('/recommendations');
+            }}
+            onDicePress={() => {
+              setIsDiceModalVisible(true);
+            }}
+            discoverRef={discoverRef}
+            rollDiceRef={rollDiceRef}
+            measureRef={measureRef}
+          />
+        </View>
+      )}
 
       {isSearching && (
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
@@ -413,21 +532,34 @@ export default function HomeScreen() {
           ref={trendingRef as any}
           collapsable={false}
           style={styles.trendingContainer}
-          onLayout={() => measureRef(trendingRef, 3)}
+          onLayout={() => measureRef(trendingRef, 5)}
         >
-          <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 12, marginTop: 4 }]}>
-            {t('home.trending')}
-          </Text>
-          {trendingLoading ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12, marginTop: 4, gap: 10 }}>
+            <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 0 }]}>
+              {trendingMode === 'trending' ? t('home.trending') :
+                trendingMode === 'spring' ? t('home.spring2026') :
+                  t('home.upcoming')}
+            </Text>
+            <TouchableOpacity
+              onPress={toggleTrendingMode}
+              style={{ padding: 4 }}
+            >
+              <Ionicons name="swap-horizontal" size={20} color="#FACC15" />
+            </TouchableOpacity>
+          </View>
+
+          {(trendingLoading || springLoading || upcomingLoading) ? (
             <ActivityIndicator size="small" color="#FACC15" style={{ height: 200 }} />
           ) : (
             <FlatList
-              data={infiniteTrending} // Use the repeated list
-              keyExtractor={(item, index) => `trending-${item.mal_id}-${index}`}
+              data={trendingMode === 'trending' ? infiniteTrending :
+                trendingMode === 'spring' ? infiniteSpring :
+                  infiniteUpcoming}
+              keyExtractor={(item, index) => `trending-${item.mal_id}-${index}-${trendingMode}`}
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ gap: 12, paddingRight: 20 }}
-              initialNumToRender={5} // Optimize for performance
+              initialNumToRender={5}
               maxToRenderPerBatch={10}
               windowSize={5}
               renderItem={({ item }) => (
@@ -547,6 +679,10 @@ export default function HomeScreen() {
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="handled"
       />
+      <DiceRollModal
+        visible={isDiceModalVisible}
+        onClose={() => setIsDiceModalVisible(false)}
+      />
     </View>
   );
 }
@@ -613,6 +749,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     marginBottom: 20,
     marginTop: 10,
+    zIndex: 20,
   },
   // branding styles removed (greeting, appName etc) as they are now in FixedHeader
   searchBar: {
@@ -659,7 +796,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_500Medium',
   },
   trendingContainer: {
-    marginTop: 24,
+    marginTop: 8,
     marginBottom: 8,
   },
   trendingCard: {

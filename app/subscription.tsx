@@ -15,25 +15,29 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRevenueCat } from '../context/RevenueCatProvider';
+import { useLanguage } from '../context/LanguageContext';
+
 
 const { width } = Dimensions.get('window');
 
-// Images for the background collage
+// Anime cover images for the background collage
 const COLLAGE_IMAGES = [
-  'https://images.unsplash.com/photo-1541562232579-512a21360020?q=80&w=300&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1620336655055-088d06e36bf0?q=80&w=300&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1601850494422-3cf395d5251e?q=80&w=300&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=300&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=300&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=300&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=300&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=300&auto=format&fit=crop',
+  'https://cdn.myanimelist.net/images/anime/1000/110531l.jpg',  // Attack on Titan
+  'https://cdn.myanimelist.net/images/anime/1286/99889l.jpg',  // Demon Slayer
+  'https://cdn.myanimelist.net/images/anime/1171/109222l.jpg',  // Jujutsu Kaisen
+  'https://cdn.myanimelist.net/images/anime/1244/138851l.jpg',  // One Piece
+  'https://cdn.myanimelist.net/images/anime/1141/142503l.jpg',  // Solo Leveling
+  'https://cdn.myanimelist.net/images/anime/1015/138006l.jpg',  // Death Note
+  'https://cdn.myanimelist.net/images/anime/1506/138982l.jpg',  // Spy x Family
+  'https://cdn.myanimelist.net/images/anime/1806/126216l.jpg',  // Chainsaw Man
 ];
 
 export default function SubscriptionScreen() {
   const router = useRouter();
   const { currentOffering, purchasePackage, restorePermissions, isPro } = useRevenueCat();
+  const { t } = useLanguage();
   const [isPurchasing, setIsPurchasing] = React.useState(false);
+
 
   // If already pro, go back or show success
   React.useEffect(() => {
@@ -60,12 +64,13 @@ export default function SubscriptionScreen() {
     try {
       await restorePermissions();
       // Success handled by useEffect if entitlement found
-      Alert.alert("Success", "Restore completed successfully.");
+      Alert.alert(t('common.success'), t('subscription.restoreSuccess'));
     } catch (e) {
-      Alert.alert("Error", "Failed to restore purchases.");
+      Alert.alert(t('common.error'), t('subscription.restoreError'));
     } finally {
       setIsPurchasing(false);
     }
+
   };
 
   const priceString = currentOffering?.product?.priceString || '$19.99';
@@ -111,24 +116,27 @@ export default function SubscriptionScreen() {
         <View style={styles.contentContainer}>
           {/* Premium Badge */}
           <View style={styles.premiumBadge}>
-            <Text style={styles.premiumText}>PREMIUM</Text>
+            <Text style={styles.premiumText}>{t('subscription.premium')}</Text>
           </View>
+
 
           {/* Headlines */}
           <Text style={styles.headline}>
-            Unlock the Full{'\n'}AnimeDex Experience
+            {t('subscription.headline')}
           </Text>
           <Text style={styles.subheadline}>
-            Support development and track your favorite anime without any interruptions.
+            {t('subscription.subheadline')}
           </Text>
+
 
           {/* Pricing Card */}
           <View style={styles.pricingCard}>
             <View style={styles.bestValueBadge}>
-              <Text style={styles.bestValueText}>BEST VALUE</Text>
+              <Text style={styles.bestValueText}>{t('subscription.bestValue')}</Text>
             </View>
 
-            <Text style={styles.planName}>Monthly Plan</Text>
+            <Text style={styles.planName}>{t('subscription.monthlyPlan')}</Text>
+
             <View style={styles.priceRow}>
               {originalPrice && (
                 <Text style={[styles.priceAmount, { textDecorationLine: 'line-through', fontSize: 24, color: '#9CA3AF', marginRight: 8 }]}>
@@ -136,53 +144,59 @@ export default function SubscriptionScreen() {
                 </Text>
               )}
               <Text style={styles.priceAmount}>{displayPrice}</Text>
-              <Text style={styles.pricePeriod}> / month</Text>
+              <Text style={styles.pricePeriod}> / {t('subscription.month')}</Text>
             </View>
-            <Text style={styles.priceSubtext}>Cancel anytime</Text>
+            <Text style={styles.priceSubtext}>{t('subscription.cancelAnytime')}</Text>
           </View>
 
+
           {/* Benefits Section */}
-          <Text style={styles.benefitsTitle}>PREMIUM BENEFITS</Text>
+          <Text style={styles.benefitsTitle}>{t('subscription.benefitsTitle')}</Text>
+
 
           <View style={styles.benefitItem}>
             <View style={styles.iconContainer}>
               <Ionicons name="ban" size={20} color="#854D0E" />
             </View>
             <View style={styles.benefitTextContainer}>
-              <Text style={styles.benefitTitle}>Ad-Free Experience</Text>
-              <Text style={styles.benefitDesc}>Enjoy zero distractions while browsing.</Text>
+              <Text style={styles.benefitTitle}>{t('subscription.benefitAdFreeTitle')}</Text>
+              <Text style={styles.benefitDesc}>{t('subscription.benefitAdFreeDesc')}</Text>
             </View>
           </View>
+
 
           <View style={styles.benefitItem}>
             <View style={styles.iconContainer}>
               <MaterialCommunityIcons name="infinity" size={20} color="#854D0E" />
             </View>
             <View style={styles.benefitTextContainer}>
-              <Text style={styles.benefitTitle}>Unlimited Tracking</Text>
-              <Text style={styles.benefitDesc}>Add unlimited shows to your lists.</Text>
+              <Text style={styles.benefitTitle}>{t('subscription.benefitUnlimitedTitle')}</Text>
+              <Text style={styles.benefitDesc}>{t('subscription.benefitUnlimitedDesc')}</Text>
             </View>
           </View>
+
 
           <View style={styles.benefitItem}>
             <View style={styles.iconContainer}>
               <MaterialCommunityIcons name="check-decagram" size={20} color="#854D0E" />
             </View>
             <View style={styles.benefitTextContainer}>
-              <Text style={styles.benefitTitle}>Exclusive Badges</Text>
-              <Text style={styles.benefitDesc}>Show off your status to the community.</Text>
+              <Text style={styles.benefitTitle}>{t('subscription.benefitExclusiveTitle')}</Text>
+              <Text style={styles.benefitDesc}>{t('subscription.benefitExclusiveDesc')}</Text>
             </View>
           </View>
+
 
           <View style={styles.benefitItem}>
             <View style={styles.iconContainer}>
               <Ionicons name="rocket" size={20} color="#854D0E" />
             </View>
             <View style={styles.benefitTextContainer}>
-              <Text style={styles.benefitTitle}>Early Access</Text>
-              <Text style={styles.benefitDesc}>Early access to new features.</Text>
+              <Text style={styles.benefitTitle}>{t('subscription.benefitEarlyAccessTitle')}</Text>
+              <Text style={styles.benefitDesc}>{t('subscription.benefitEarlyAccessDesc')}</Text>
             </View>
           </View>
+
 
           <View style={{ height: 180 }} />
         </View>
@@ -196,23 +210,25 @@ export default function SubscriptionScreen() {
           onPress={handlePurchase}
           disabled={isPurchasing}
         >
-          <Text style={styles.ctaButtonText}>{isPurchasing ? "Processing..." : "Start Monthly Plan"}</Text>
+          <Text style={styles.ctaButtonText}>{isPurchasing ? t('subscription.ctaProcessing') : t('subscription.ctaButton')}</Text>
           {!isPurchasing && <Ionicons name="arrow-forward" size={20} color="#111827" />}
         </TouchableOpacity>
 
+
         <View style={styles.footerLinks}>
           <TouchableOpacity onPress={handleRestore} disabled={isPurchasing}>
-            <Text style={styles.footerLinkText}>Restore Purchase</Text>
+            <Text style={styles.footerLinkText}>{t('subscription.restorePurchase')}</Text>
           </TouchableOpacity>
           <Text style={styles.footerLinkText}> • </Text>
           <TouchableOpacity onPress={() => router.push('/settings/terms')}>
-            <Text style={styles.footerLinkText}>Terms</Text>
+            <Text style={styles.footerLinkText}>{t('subscription.terms')}</Text>
           </TouchableOpacity>
           <Text style={styles.footerLinkText}> • </Text>
           <TouchableOpacity onPress={() => router.push('/settings/privacy')}>
-            <Text style={styles.footerLinkText}>Privacy Policy</Text>
+            <Text style={styles.footerLinkText}>{t('subscription.privacyPolicy')}</Text>
           </TouchableOpacity>
         </View>
+
       </View>
     </View>
   );
@@ -224,7 +240,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   collageContainer: {
-    height: 300,
+    height: 340,
     width: '100%',
     position: 'absolute',
     top: 0,
@@ -234,15 +250,16 @@ const styles = StyleSheet.create({
   collageGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    width: width + 20, // Slight overflow
-    marginLeft: -10,
+    width: width,
+    padding: 3,
+    gap: 3,
   },
   collageImage: {
-    width: (width / 4) + 2,
-    height: 120,
+    width: (width - 15) / 4, // 4 columns: padding(3*2) + gaps(3*3) = 15
+    height: 160,
     resizeMode: 'cover',
-    margin: 1,
-    opacity: 0.8,
+    borderRadius: 6,
+    opacity: 0.9,
   },
   collageGradient: {
     position: 'absolute',
@@ -269,7 +286,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingTop: 220, // Push content down below collage
+    paddingTop: 240, // Push content down below collage
   },
   contentContainer: {
     paddingHorizontal: 24,

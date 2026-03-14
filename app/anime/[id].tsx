@@ -361,7 +361,7 @@ const AnimeDetailsScreen = () => {
             style={[styles.backButton, { top: insets.top + 10 }]}
             onPress={() => router.back()}
           >
-            <BlurView intensity={30} tint={isDark ? "light" : "dark"} style={styles.blurButton}>
+            <BlurView intensity={80} tint={isDark ? "light" : "dark"} style={styles.blurButton}>
               <Ionicons name="arrow-back" size={24} color={isDark ? "#000" : "#FFF"} />
             </BlurView>
           </TouchableOpacity>
@@ -371,7 +371,7 @@ const AnimeDetailsScreen = () => {
             style={[styles.favButton, { top: insets.top + 10 }]}
             onPress={toggleFavorite}
           >
-            <BlurView intensity={30} tint={isDark ? "light" : "dark"} style={styles.blurButton}>
+            <BlurView intensity={80} tint={isDark ? "light" : "dark"} style={styles.blurButton}>
               <Ionicons
                 name={userEntry?.is_favorite ? "heart" : "heart-outline"}
                 size={24}
@@ -956,22 +956,24 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: 20,
-    borderRadius: 20,
-    overflow: 'hidden',
+    borderRadius: 22,
     zIndex: 10,
   },
   favButton: {
     position: 'absolute',
     right: 20,
-    borderRadius: 20,
-    overflow: 'hidden',
+    borderRadius: 22,
     zIndex: 10,
   },
   blurButton: {
-    width: 40,
-    height: 40,
+    width: 44, // Increased from 40 for better touch target and presence
+    height: 44, // Increased from 40
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 22,
+    overflow: 'hidden',
   },
   contentContainer: {
     marginTop: -30, // Adjusted overlap
