@@ -22,6 +22,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
 import { AnimeCard } from '../../components/AnimeCard';
 import { ForYouHeroCard } from '../../components/Home/ForYouHeroCard';
+import { AnimePulse } from '../../components/Home/AnimePulse';
 import { DiceRollModal } from '../../components/Home/DiceRollModal';
 import { useTheme } from '../../context/ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -48,7 +49,7 @@ export default function HomeScreen() {
 
   // Walkthrough refs
   const logoRef = useRef<View>(null);
-  const searchBarRef = useRef<View>(null);
+  const pulseRef = useRef<View>(null);
   const myListsRef = useRef<View>(null);
   const discoverRef = useRef<View>(null);
   const rollDiceRef = useRef<View>(null);
@@ -73,7 +74,7 @@ export default function HomeScreen() {
       const isFirst = await checkFirstLaunch('home');
       if (isFirst && !walkthroughActive) {
         measureRef(logoRef, 0);
-        measureRef(searchBarRef, 1);
+        measureRef(pulseRef, 1);
         measureRef(discoverRef, 2);
         measureRef(rollDiceRef, 3);
         measureRef(myListsRef, 4);
@@ -133,6 +134,7 @@ export default function HomeScreen() {
         setSearchText('');
         setActiveQuery('');
         setIsSearching(false);
+        setIsSearchVisible(false);
         setSelectedCategory(null);
       };
     }, [])
@@ -142,6 +144,8 @@ export default function HomeScreen() {
   const [searchText, setSearchText] = useState(''); // Text in input
   const [activeQuery, setActiveQuery] = useState(''); // Text actually searched
   const [isSearching, setIsSearching] = useState(false); // UI mode
+  const [isSearchVisible, setIsSearchVisible] = useState(false); // Visibility of search bar
+  const [isPulseVisible, setIsPulseVisible] = useState(false); // Visibility of community pulse
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const searchInputRef = useRef<TextInput>(null);
 
@@ -355,6 +359,7 @@ export default function HomeScreen() {
     setSearchText('');
     setActiveQuery('');
     setIsSearching(false);
+    setIsSearchVisible(false);
     setPage(1);
     setHasNextPage(true);
     fetchAnimes(1, true, '', selectedCategory);
@@ -399,15 +404,22 @@ export default function HomeScreen() {
       <View style={styles.headerRight}>
         {/* Search Icon */}
         <TouchableOpacity style={styles.iconButton} onPress={() => {
-          scrollToTop();
-          // Wait for scroll to start/finish a bit then focus
-          setTimeout(() => {
-            if (searchInputRef.current) {
-              searchInputRef.current.focus();
+          setIsSearchVisible(prev => {
+            const next = !prev;
+            if (next) {
+              scrollToTop();
+              setTimeout(() => {
+                if (searchInputRef.current) {
+                  searchInputRef.current.focus();
+                }
+              }, 300);
+            } else {
+              cancelSearch();
             }
-          }, 300);
+            return next;
+          });
         }}>
-          <Ionicons name="search-outline" size={24} color={colors.text} />
+          <Ionicons name={isSearchVisible ? "close-outline" : "search-outline"} size={24} color={colors.text} />
         </TouchableOpacity>
 
         {/* Theme Toggle */}
@@ -444,13 +456,14 @@ export default function HomeScreen() {
   const renderHeader = () => (
     <View style={styles.headerContainer} collapsable={false}>
 
-      {/* Search Bar & My Lists Button */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 0 }}>
+      {/* Search Bar */}
+      {isSearchVisible && (
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         <View
-          ref={searchBarRef as any}
+          
           collapsable={false}
           style={[styles.searchBar, { backgroundColor: colors.inputBg, flex: 1 }]}
-          onLayout={() => measureRef(searchBarRef, 1)}
+          
         >
           <TouchableOpacity onPress={performSearch}>
             <Ionicons name="search" size={20} color={colors.subtext} style={{ marginRight: 8 }} />
@@ -469,38 +482,81 @@ export default function HomeScreen() {
           />
 
           {(searchText.length > 0 || isSearching) && (
-            <TouchableOpacity onPress={cancelSearch}>
+            <TouchableOpacity onPress={() => {
+              if (isSearching) {
+                cancelSearch();
+              } else {
+                setSearchText('');
+              }
+            }}>
               <Ionicons name="close-circle" size={20} color={colors.subtext} />
             </TouchableOpacity>
           )}
         </View>
-
-        {/* My Lists Button */}
-        <TouchableOpacity
-          ref={myListsRef as any}
-          {...({ collapsable: false } as any)}
-          style={{
-            height: 50,
-            width: 135,
-            borderRadius: 16,
-            backgroundColor: colors.card,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            paddingLeft: 14,
-            borderWidth: 1,
-            borderColor: colors.border,
-            gap: 12
-          }}
-          onPress={() => router.push('/lists')}
-          onLayout={() => measureRef(myListsRef, 4)}
-        >
-          <Ionicons name="list" size={20} color={colors.text} />
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: colors.text }}>
-            {t('profile.myLists')}
-          </Text>
-        </TouchableOpacity>
       </View>
+      )}
+
+      {/* Pulse & My Lists Row */}
+      {!isSearching && (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 0, zIndex: 10 }}>
+          {/* Community Pulse Button */}
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              height: 50,
+              borderRadius: 16,
+              backgroundColor: isPulseVisible ? 'rgba(239, 68, 68, 0.1)' : colors.card,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: isPulseVisible ? '#EF4444' : colors.border,
+              gap: 8
+            }}
+            onPress={() => setIsPulseVisible(!isPulseVisible)}
+            ref={pulseRef as any}
+            {...({ collapsable: false } as any)}
+            onLayout={() => measureRef(pulseRef, 1)}
+          >
+            <Ionicons name="pulse" size={20} color="#EF4444" />
+            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: isPulseVisible ? '#EF4444' : colors.text }}>
+              {t('pulse.title') || 'Community Pulse'}
+            </Text>
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#EF4444', marginLeft: 4 }} />
+            <Ionicons name={isPulseVisible ? "chevron-up" : "chevron-down"} size={16} color={isPulseVisible ? '#EF4444' : colors.subtext} />
+          </TouchableOpacity>
+
+          {/* My Lists Button */}
+          <TouchableOpacity
+            ref={myListsRef as any}
+            {...({ collapsable: false } as any)}
+            style={{
+              height: 50,
+              width: 135,
+              borderRadius: 16,
+              backgroundColor: colors.card,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              paddingLeft: 14,
+              borderWidth: 1,
+              borderColor: colors.border,
+              gap: 12
+            }}
+            onPress={() => router.push('/lists')}
+            onLayout={() => measureRef(myListsRef, 4)}
+          >
+            <Ionicons name="bookmarks" size={20} color="#FACC15" />
+            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: colors.text }}>
+              {t('profile.myLists')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {!isSearching && isPulseVisible && (
+        <AnimePulse />
+      )}
 
       {!isSearching && (
         <View style={{ zIndex: 50, elevation: 50 }}>
@@ -782,14 +838,13 @@ const styles = StyleSheet.create({
   },
   categoriesContent: {
     paddingRight: 16,
-    gap: 8, // Reduced from 12
+    gap: 8,
   },
   categoryTab: {
-    paddingHorizontal: 12, // Slightly more compact padding
+    paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    marginRight: 6, // Reduced from 8
   },
   categoryText: {
     fontSize: 14,

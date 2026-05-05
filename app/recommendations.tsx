@@ -113,7 +113,7 @@ export default function RecommendationsScreen() {
               <Ionicons name="information-circle" size={18} color="#FACC15" />
             </View>
             <Text style={[styles.infoTriggerText, { color: colors.text }]}>
-              {t('recommendations.tipTrigger', { defaultValue: 'How to get better suggestions?' })}
+              {t('home.recommendations.tipTrigger', { defaultValue: 'How to get better suggestions?' })}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={16} color={colors.subtext} />
@@ -122,12 +122,10 @@ export default function RecommendationsScreen() {
         {profile && profile.topGenres.length > 0 && (
           <View style={[styles.profileCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Text style={[styles.profileTitle, { color: colors.text }]}>
-              {t('recommendations.genreProfile', { defaultValue: 'Your Genre Profile' })}
+              {t('home.recommendations.genreProfile', { defaultValue: 'Your Genre Profile' })}
             </Text>
             <Text style={[styles.profileSub, { color: colors.subtext }]}>
-              {language === 'tr'
-                ? `${profile.totalRated} yüksek puanlı animeye dayanarak, bunları seviyorsunuz:`
-                : `Based on ${profile.totalRated} highly rated anime, you seem to love:`}
+              {t('home.recommendations.profileSubtitle', { count: profile.totalRated })}
             </Text>
             <View style={styles.topGenresRow}>
               {profile.topGenres.map((g: { name: string }, i: number) => (
@@ -150,7 +148,7 @@ export default function RecommendationsScreen() {
           <Ionicons name="chevron-back" size={24} color={colors.text} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text }]}>
-          {t('recommendations.title', { defaultValue: 'Recommended For You' })}
+          {t('home.recommendations.title', { defaultValue: 'Recommended For You' })}
         </Text>
         <View style={{ width: 40 }} />
       </View>
@@ -159,14 +157,14 @@ export default function RecommendationsScreen() {
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color="#FACC15" />
           <Text style={[styles.loadingText, { color: colors.subtext }]}>
-            Analyzing your taste profile...
+            {t('home.recommendations.analyzing', { defaultValue: 'Analyzing your taste profile...' })}
           </Text>
         </View>
       ) : recommendations.length === 0 ? (
         <View style={styles.centerContainer}>
           <Ionicons name="list-outline" size={60} color={colors.subtext} />
           <Text style={[styles.emptyText, { color: colors.text, marginTop: 16 }]}>
-            {t('recommendations.noData', { defaultValue: 'Add more anime to your list to get personalized recommendations!' })}
+            {t('home.recommendations.noData', { defaultValue: 'Add more anime to your list to get personalized recommendations!' })}
           </Text>
         </View>
       ) : (
@@ -208,11 +206,11 @@ export default function RecommendationsScreen() {
               </View>
 
               <Text style={styles.tipTitle}>
-                {t('recommendations.tipTitle', { defaultValue: 'Get Better Suggestions' })}
+                {t('home.recommendations.tipTitle', { defaultValue: 'Get Better Suggestions' })}
               </Text>
 
               <Text style={styles.tipContentLarge}>
-                {t('recommendations.tipContent', { defaultValue: 'For more accurate and precise recommendations, add the anime you like to your favorites and lists, and give them ratings.' })}
+                {t('home.recommendations.tipContent', { defaultValue: 'For more accurate and precise recommendations, add the anime you like to your favorites and lists, and give them ratings.' })}
               </Text>
 
               <TouchableOpacity

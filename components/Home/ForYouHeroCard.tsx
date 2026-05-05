@@ -36,7 +36,7 @@ export const ForYouHeroCard: React.FC<ForYouHeroCardProps> = ({
     subtitle = t('home.forYou.newUserSubtitle');
   } else if (userListCount > 0 && userListCount < 10) {
     title = t('home.forYou.fewItemsTitle');
-    subtitle = t('home.forYou.fewItemsSubtitle');
+    subtitle = t('home.forYou.newUserSubtitle');
   } else {
     // Normal / high count
     title = t('home.forYou.personalTitle');
@@ -58,13 +58,20 @@ export const ForYouHeroCard: React.FC<ForYouHeroCardProps> = ({
           onLayout={() => measureRef && measureRef(discoverRef as any, 2)}
           style={({ pressed }) => [
             styles.splitCard,
-            { flex: 1, backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.9 : 1, paddingVertical: 10 }
+            { 
+              flex: 1, 
+              backgroundColor: colors.card, 
+              borderColor: colors.border, 
+              opacity: pressed ? 0.9 : 1, 
+              paddingVertical: 10,
+              paddingLeft: 19,
+              paddingRight: 12,
+              gap: 8,
+            }
           ]}
           android_ripple={{ color: 'rgba(0,0,0,0.1)' }}
         >
-          <View style={[styles.iconContainer, { backgroundColor: isDark ? '#1F2937' : '#F3F4F6', marginRight: 8 }]}>
-            <Ionicons name="sparkles" size={18} color="#FACC15" />
-          </View>
+          <Ionicons name="sparkles" size={18} color="#FACC15" />
           <View style={[styles.textContainer, { overflow: 'hidden' }]}>
             <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>{title}</Text>
             <TextTicker
@@ -89,19 +96,24 @@ export const ForYouHeroCard: React.FC<ForYouHeroCardProps> = ({
           onLayout={() => measureRef && measureRef(rollDiceRef as any, 3)}
           style={({ pressed }) => [
             styles.splitCard,
-            { width: rightWidth, backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.9 : 1, paddingHorizontal: 12 }
+            { 
+              width: rightWidth, 
+              backgroundColor: colors.card, 
+              borderColor: colors.border, 
+              opacity: pressed ? 0.9 : 1, 
+              paddingLeft: 14,
+              paddingRight: 12,
+              gap: 12,
+              justifyContent: 'flex-start'
+            }
           ]}
 
           android_ripple={{ color: 'rgba(250, 204, 21, 0.2)' }}
         >
-          <View style={[styles.iconContainer, { backgroundColor: isDark ? '#1F2937' : '#F3F4F6', marginRight: 8, width: 32, height: 32 }]}>
-            <Ionicons name="dice" size={20} color="#FACC15" />
-          </View>
-          <View style={[styles.textContainer, { flex: 0 }]}>
-            <Text style={[styles.title, { color: colors.text, fontSize: 12 }]} numberOfLines={1}>
-              {t('home.forYou.rollDice')}
-            </Text>
-          </View>
+          <Ionicons name="dice" size={20} color="#FACC15" />
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: colors.text }} numberOfLines={1}>
+            {t('home.forYou.rollDice')}
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -143,8 +155,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontFamily: 'Poppins_700Bold',
-    fontSize: 12,
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 13,
     marginBottom: 0,
   },
   subtitle: {

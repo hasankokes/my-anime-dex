@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, ActivityIndicator, Image, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import i18n from '../lib/i18n';
+import { useTheme } from '../context/ThemeContext';
 
 interface SocialButtonProps {
   provider: 'apple' | 'google';
@@ -19,12 +20,17 @@ const normalize = (size: number) => Math.round(size * scale);
 
 export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, isLoading, iconOnly, style }) => {
   const isApple = provider === 'apple';
+  const { isDark } = useTheme();
+
+  const appleBg = isDark ? '#FFFFFF' : '#1A1A1A';
+  const appleIconColor = isDark ? '#000000' : '#FFFFFF';
+  const appleTextColor = isDark ? '#000000' : '#FFFFFF';
 
   return (
     <TouchableOpacity
       style={[
         styles.button,
-        isApple ? styles.appleButton : styles.googleButton,
+        isApple ? (isDark ? styles.appleButtonDark : styles.appleButton) : styles.googleButton,
         iconOnly && styles.iconOnlyButton,
         style
       ]}
@@ -40,7 +46,7 @@ export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, i
             <Ionicons
               name="logo-apple"
               size={normalize(24)}
-              color="white"
+              color={appleIconColor}
               style={iconOnly ? undefined : styles.icon}
             />
           ) : (
@@ -50,7 +56,7 @@ export const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, i
             />
           )}
           {!iconOnly && (
-            <Text style={[styles.text, isApple ? styles.appleText : styles.googleText]}>
+            <Text style={[styles.text, isApple ? { color: appleTextColor } : styles.googleText]}>
               {isApple ? i18n.t('common.continueWithApple') : i18n.t('common.continueWithGoogle')}
             </Text>
           )}
@@ -86,6 +92,9 @@ const styles = StyleSheet.create({
   },
   appleButton: {
     backgroundColor: '#1A1A1A',
+  },
+  appleButtonDark: {
+    backgroundColor: '#FFFFFF',
   },
   googleButton: {
     backgroundColor: '#FFFFFF',

@@ -288,9 +288,10 @@ export const DiceRollModal = ({ visible, onClose }: Props) => {
             {/* Action Buttons */}
             <View style={styles.actionRow}>
               <TouchableOpacity 
-                style={[styles.actionButton, { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border }]}
+                style={[styles.actionButton, { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, flexDirection: 'row', gap: 8 }]}
                 onPress={rollDice}
               >
+                <Ionicons name="dice-outline" size={18} color={colors.text} />
                 <Text style={[styles.actionButtonText, { color: colors.text }]}>
                   {t('home.forYou.rollAgain')}
                 </Text>
@@ -354,7 +355,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#FFF',
     letterSpacing: 1,
-    textTransform: 'uppercase',
     textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,

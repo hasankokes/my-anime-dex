@@ -100,7 +100,13 @@ export const getAnimeSchedule = async (day: string, retries = 3): Promise<JikanA
     }
 
     try {
-        const response = await fetch(`${BASE_URL}/schedules?filter=${normalizedDay}`);
+        const response = await fetch(`${BASE_URL}/schedules?filter=${normalizedDay}`, {
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            },
+            cache: 'no-store'
+        });
 
         if (response.status === 429 || response.status === 504) {
             if (retries > 0) {
