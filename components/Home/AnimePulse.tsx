@@ -146,10 +146,6 @@ export const AnimePulse = () => {
                                                 return <Text key={i}>{part}</Text>;
                                             })}
                                         </Text>
-                                        <Text style={styles.timeText}>
-                                            {ev.action_type === 'completed' ? '⭐ ' : '▶ '} 
-                                            {new Date(ev.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </Text>
                                     </View>
                                 </BlurView>
                             </TouchableOpacity>

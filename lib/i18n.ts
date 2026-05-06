@@ -383,6 +383,7 @@ export const translations = {
         }
     },
     tr: {
+        pulse: { title: 'Topluluk Nabzı', watching: '{user}, {anime} izlemeye başladı', completed: '{user}, {anime} serisini tamamladı' },
         common: {
             loading: 'Yükleniyor...',
             error: 'Hata',
@@ -761,6 +762,7 @@ export const translations = {
         }
     },
     ja: {
+        pulse: { title: 'みんなのアクティビティ', watching: '{user}が{anime}を見始めました', completed: '{user}が{anime}を見終わりました' },
         common: {
             loading: '読み込み中...',
             error: 'エラー',
@@ -1133,6 +1135,7 @@ export const translations = {
         }
     },
     ru: {
+        pulse: { title: 'Пульс сообщества', watching: '{user} начал(а) смотреть {anime}', completed: '{user} завершил(а) просмотр {anime}' },
         common: {
             loading: 'Загрузка...',
             error: 'Ошибка',
@@ -1505,6 +1508,7 @@ export const translations = {
         }
     },
     de: {
+        pulse: { title: 'Community-Puls', watching: '{user} hat angefangen {anime} zu schauen', completed: '{user} hat {anime} abgeschlossen' },
         common: {
             loading: 'Laden...',
             error: 'Fehler',
@@ -1876,6 +1880,7 @@ export const translations = {
         }
     },
     ar: {
+        pulse: { title: 'نبض المجتمع', watching: '{user} بدأ مشاهدة {anime}', completed: '{user} أكمل {anime}' },
         common: {
             loading: 'جار التحميل...',
             error: 'خطأ',
@@ -2248,6 +2253,7 @@ export const translations = {
         }
     },
     es: {
+        pulse: { title: 'Actividad de la Comunidad', watching: '{user} empezó a ver {anime}', completed: '{user} completó {anime}' },
         common: {
             loading: 'Cargando...',
             error: 'Error',
@@ -2580,6 +2586,7 @@ export const translations = {
         }
     },
     pt: {
+        pulse: { title: 'Atividade da Comunidade', watching: '{user} começou a assistir {anime}', completed: '{user} completou {anime}' },
         common: {
             loading: 'Carregando...',
             error: 'Erro',
@@ -2912,6 +2919,7 @@ export const translations = {
         }
     },
     id: {
+        pulse: { title: 'Aktivitas Komunitas', watching: '{user} mulai menonton {anime}', completed: '{user} menyelesaikan {anime}' },
         common: {
             loading: 'Memuat...',
             error: 'Kesalahan',
@@ -3245,6 +3253,7 @@ export const translations = {
         }
     },
     hi: {
+        pulse: { title: 'कम्युनिटी पल्स', watching: '{user} ने {anime} देखना शुरू किया', completed: '{user} ने {anime} पूरा किया' },
         common: {
             loading: 'लोड हो रहा है...',
             error: 'त्रुटि',
