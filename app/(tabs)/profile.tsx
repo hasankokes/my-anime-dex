@@ -185,21 +185,14 @@ export default function ProfileScreen() {
   const fetchRandomCharacters = async () => {
     try {
       setLoadingAvatars(true);
-      // Random page between 1 and 100 (top 2000 characters) to ensure quality
-      const randomPage = Math.floor(Math.random() * 100) + 1;
+      // Random page between 1 and 50 (top 1000 characters) to ensure quality
+      const randomPage = Math.floor(Math.random() * 50) + 1;
 
-      const response = await fetch(`https://api.jikan.moe/v4/characters?page=${randomPage}&limit=20&order_by=favorites&sort=desc`);
-      const data = await response.json();
-
-      if (data.data) {
-        const characters = data.data
-          .map((char: any) => char.images?.jpg?.image_url)
-          .filter((url: string) => url)
-          .slice(0, 9);
-        setRandomAvatars(characters);
-      }
+      const { fetchCharacterImages } = await import('../../services/anilist/api');
+      const characters = await fetchCharacterImages(randomPage, 20);
+      setRandomAvatars(characters.slice(0, 9));
     } catch (error) {
-
+      console.warn('[Profile] Error fetching character avatars:', error);
     } finally {
       setLoadingAvatars(false);
     }

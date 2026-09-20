@@ -5,6 +5,7 @@ import { I18n } from 'i18n-js';
 export const translations = {
     en: {
         pulse: { title: 'Community Pulse', watching: '{user} started watching {anime}', completed: '{user} completed {anime}' },
+        arena: { title: 'Anime Arena', choose_category: 'Choose Category', choose_size: 'Choose Size', start_button: 'Start Battle!', your_winner: 'YOUR WINNER!', share: 'Share Result', go_home: 'Go Home', game: 'Arena', result: 'Result', round: 'Round', match: 'Match', go_back: 'Go Back', my_champion: '{name} is my champion!', final: 'FINAL BATTLE', semi_final: 'SEMI FINAL', quarter_final: 'QUARTER FINAL', cat_all_time: 'ALL TIME BEST', cat_movie: 'BEST MOVIES', cat_shounen: 'SHOUNEN', cat_action: 'ACTION & FIGHTS', cat_isekai: 'ISEKAI', cat_romance: 'ROMANCE', cat_comedy: 'COMEDY', cat_horror: 'HORROR & THRILLER', cat_drama: 'DRAMA & TEARS', cat_seinen: 'SEINEN & DARK', cat_worst_sequels: 'WORST SEQUELS', cat_waifu: 'BEST WAIFU', cat_husbando: 'BEST HUSBANDO', total_played: 'Total Played', your_history: 'Your Results', community_winners: 'Community Favorites', rate_quiz: 'Rate this quiz', play_again: 'Play Again', people_played: '{count} played', no_results_yet: 'No results yet. Play your first quiz!', login_to_save: 'Log in to save your results', view_all: 'View All', quizzes: 'quizzes', recent: 'Recent', top_winner: 'Top Winner', hero_tag: '🔥 ULTIMATE ANIME SHOWDOWN', hero_title_1: 'CROWN YOUR', hero_title_2: 'CHAMPION', hero_desc: 'Two legends enter, only one survives. Vote in tournament brackets and crown the ultimate anime!', categories_count: '13 Categories', tournament_mode: 'Bracket Battles', contenders_badge: '+1,000 Contenders', quit_title: 'Quit Battle', quit_confirm: 'Are you sure you want to quit? Your battle progress will be lost.', quit_button: 'Quit' },
         common: {
             loading: 'Loading...',
             error: 'Error',
@@ -115,6 +116,7 @@ export const translations = {
                 noData: 'Add anime to your list so we can make suggestions!',
                 matchGenre: 'Matches your {genre} preference',
                 highScore: 'Highly rated on MAL',
+                popular: 'Highly popular and widely watched',
                 tipTitle: 'Get Better Suggestions',
                 tipContent: 'For more accurate and precise recommendations, add the anime you like to your favorites and lists, and give them ratings.',
                 tipTrigger: 'How to get better suggestions?',
@@ -138,6 +140,7 @@ export const translations = {
             searchPlaceholder: 'Search anime...',
             trending: 'Trending Now',
             spring2026: 'Spring 2026',
+            fall2026: 'Fall 2026',
             upcoming: 'Upcoming',
             categories: 'Categories',
             cats: {
@@ -384,6 +387,7 @@ export const translations = {
     },
     tr: {
         pulse: { title: 'Topluluk Nabzı', watching: '{user}, {anime} izlemeye başladı', completed: '{user}, {anime} serisini tamamladı' },
+        arena: { title: 'Anime Arena', choose_category: 'Kategori Seç', choose_size: 'Soru Sayısı Seç', start_button: 'Savaşı Başlat!', your_winner: 'SENİN KAZANANIN!', share: 'Sonucu Paylaş', go_home: 'Anasayfaya Dön', game: 'Arena', result: 'Sonuç', round: 'Tur', match: 'Eşleşme', go_back: 'Geri Dön', my_champion: '{name} benim şampiyonum!', final: 'BÜYÜK FİNAL', semi_final: 'YARI FİNAL', quarter_final: 'ÇEYREK FİNAL', cat_all_time: 'TÜM ZAMANLAR', cat_movie: 'EN İYİ FİLMLER', cat_shounen: 'SHOUNEN', cat_action: 'AKSİYON & DÖVÜŞ', cat_isekai: 'ISEKAI', cat_romance: 'ROMANTİZM', cat_comedy: 'KOMEDİ', cat_horror: 'KORKU & GERİLİM', cat_drama: 'DRAM & DUYGUSAL', cat_seinen: 'SEINEN & KARANLIK', cat_worst_sequels: 'EN KÖTÜ DEVAM SEZONLARI', cat_waifu: 'EN İYİ WAIFU', cat_husbando: 'EN İYİ HUSBANDO', total_played: 'Toplam Oynanan', your_history: 'Sonuçların', community_winners: 'Topluluk Favorileri', rate_quiz: 'Bu quizi puanla', play_again: 'Tekrar Oyna', people_played: '{count} kişi oynadı', no_results_yet: 'Henüz sonuç yok. İlk quizini oyna!', login_to_save: 'Sonuçlarını kaydetmek için giriş yap', view_all: 'Tümünü Gör', quizzes: 'quiz', recent: 'Son', top_winner: 'En Çok Kazanan', hero_tag: '🔥 EFSANELERİN DÜELLOSU', hero_title_1: 'ŞAMPİYONUNU', hero_title_2: 'ZİRVEYE TAŞI', hero_desc: 'İki efsane karşı karşıya. Eşleşmelerde seçimini yap, kendi şampiyonunu belirle!', categories_count: '13 Kategori', tournament_mode: 'Eleme Usulü', contenders_badge: '+1.000 Efsane', quit_title: 'Savaştan Çık', quit_confirm: 'Savaştan çıkmak istediğinize emin misiniz? İlerlemeniz kaydedilmeyecek.', quit_button: 'Çıkış Yap' },
         common: {
             loading: 'Yükleniyor...',
             error: 'Hata',
@@ -494,6 +498,7 @@ export const translations = {
                 noData: 'Sana özel öneriler yapabilmemiz için listene daha fazla anime ekle!',
                 matchGenre: '{genre} tercihinle eşleşiyor',
                 highScore: 'MAL skoru yüksek',
+                popular: 'Popüler ve çok izlenenler arasında',
                 tipTitle: 'Daha İyi Öneriler Al',
                 tipContent: 'Daha doğru ve hassas anime önerileri için beğendiğiniz animeleri favorilerinize ve listelerinize ekleyin, puan verin.',
                 tipTrigger: 'Daha iyi öneriler nasıl alırım?',
@@ -517,6 +522,7 @@ export const translations = {
             searchPlaceholder: 'Anime ara...',
             trending: 'Trend Olanlar',
             spring2026: 'Bahar 2026',
+            fall2026: 'Sonbahar 2026',
             upcoming: 'Yakında Gelecekler',
             categories: 'Kategoriler',
             cats: {
@@ -763,6 +769,7 @@ export const translations = {
     },
     ja: {
         pulse: { title: 'みんなのアクティビティ', watching: '{user}が{anime}を見始めました', completed: '{user}が{anime}を見終わりました' },
+        arena: { title: 'アニメアリーナ', choose_category: 'カテゴリーを選択', choose_size: 'サイズを選択', start_button: 'バトル開始！', your_winner: 'あなたの勝者！', share: '結果をシェア', go_home: 'ホームへ', game: 'アリーナ', result: '結果', round: 'ラウンド', match: '対戦', go_back: '戻る', my_champion: '{name} が私のチャンピオン！', final: '決勝戦', semi_final: '準決勝', quarter_final: '準々決勝', cat_all_time: '歴代名作', cat_movie: '劇場版映画', cat_shounen: '少年', cat_action: 'アクション・バトル', cat_isekai: '異世界', cat_romance: '恋愛', cat_comedy: 'コメディ', cat_horror: 'ホラー・サスペンス', cat_drama: '感動・ドラマ', cat_seinen: '青年・ダーク', cat_worst_sequels: '最悪の続編', cat_waifu: 'ワイフ', cat_husbando: '夫', total_played: '総プレイ数', your_history: 'あなたの結果', community_winners: 'コミュニティのお気に入り', rate_quiz: 'このクイズを評価', play_again: 'もう一度プレイ', people_played: '{count}回プレイ', no_results_yet: 'まだ結果がありません。最初のクイズをプレイ！', login_to_save: '結果を保存するにはログイン', view_all: 'すべて表示', quizzes: 'クイズ', recent: '最近', top_winner: '最多勝者', hero_tag: '🔥 究極のアニメ対決', hero_title_1: 'チャンピオンを', hero_title_2: '決めろ', hero_desc: '2人のレジェンドが激突。トーナメントを勝ち抜き、最強を決定しよう！', categories_count: '13カテゴリー', tournament_mode: 'トーナメント', contenders_badge: '1,000+ キャラ', quit_title: 'バトルを終了', quit_confirm: '本当に終了しますか？バトルの進行状況は失われます。', quit_button: '終了する' },
         common: {
             loading: '読み込み中...',
             error: 'エラー',
@@ -873,6 +880,7 @@ export const translations = {
                 noData: 'おすすめのために、リストにアニメを追加してください！',
                 matchGenre: '{genre}の好みに一致',
                 highScore: 'MALで高評価',
+                popular: '非常に人気があり広く視聴されています',
                 tipTitle: 'より良いおすすめを得る',
                 tipContent: 'より正確で精密なおすすめを得るために、好きなアニメをお気に入りやリストに追加し、評価を行ってください。',
                 tipTrigger: 'より良いおすすめを得るには？',
@@ -895,6 +903,7 @@ export const translations = {
             searchPlaceholder: 'アニメを検索...',
             trending: 'トレンド',
             spring2026: '2026年春',
+            fall2026: '2026年秋',
             upcoming: '今後のアニメ',
             categories: 'カテゴリー',
             cats: {
@@ -1136,6 +1145,7 @@ export const translations = {
     },
     ru: {
         pulse: { title: 'Пульс сообщества', watching: '{user} начал(а) смотреть {anime}', completed: '{user} завершил(а) просмотр {anime}' },
+        arena: { title: 'Аниме Арена', choose_category: 'Выберите Категорию', choose_size: 'Выберите Размер', start_button: 'Начать Битву!', your_winner: 'ВАШ ПОБЕДИТЕЛЬ!', share: 'Поделиться Результатом', go_home: 'На Главную', game: 'Арена', result: 'Результат', round: 'Раунд', match: 'Матч', go_back: 'Назад', my_champion: '{name} — мой победитель!', final: 'ФИНАЛ', semi_final: 'ПОЛУФИНАЛ', quarter_final: 'ЧЕТВЕРТЬФИНАЛ', cat_all_time: 'ВСЕ ВРЕМЕНА', cat_movie: 'ЛУЧШИЕ ФИЛЬМЫ', cat_shounen: 'СЁНЭН', cat_action: 'ЭКШЕН И БИТВЫ', cat_isekai: 'ИСЭКАЙ', cat_romance: 'РОМАНТИКА', cat_comedy: 'КОМЕДИЯ', cat_horror: 'ХОРРОР И ТРИЛЛЕР', cat_drama: 'ДРАМА', cat_seinen: 'СЭЙНЭН И ДАРК', cat_worst_sequels: 'ХУДШИЕ СИКВЕЛЫ', cat_waifu: 'ВАЙФУ', cat_husbando: 'ХАСБАНДО', total_played: 'Всего сыграно', your_history: 'Ваши результаты', community_winners: 'Фавориты сообщества', rate_quiz: 'Оценить викторину', play_again: 'Играть снова', people_played: '{count} сыграли', no_results_yet: 'Результатов пока нет. Сыграйте первую викторину!', login_to_save: 'Войдите, чтобы сохранить результаты', view_all: 'Показать все', quizzes: 'викторины', recent: 'Недавние', top_winner: 'Топ победитель', hero_tag: '🔥 ГЛАВНАЯ АНИМЕ БИТВА', hero_title_1: 'ВЫБЕРИ СВОЕГО', hero_title_2: 'ЧЕМПИОНА', hero_desc: 'Две легенды сходятся в дуэли. Голосуй в турнирной сетке и определи лучшего!', categories_count: '13 Категорий', tournament_mode: 'Турнирный бой', contenders_badge: '+1000 Персонажей', quit_title: 'Выйти из битвы', quit_confirm: 'Вы уверены, что хотите выйти? Прогресс битвы будет потерян.', quit_button: 'Выйти' },
         common: {
             loading: 'Загрузка...',
             error: 'Ошибка',
@@ -1246,6 +1256,7 @@ export const translations = {
                 noData: 'Добавьте аниме в свой список, чтобы мы могли давать рекомендации!',
                 matchGenre: 'Соответствует вашим предпочтениям в жанре {genre}',
                 highScore: 'Высокий рейтинг в MAL',
+                popular: 'Очень популярно и часто просматривается',
                 tipTitle: 'Получайте лучшие рекомендации',
                 tipContent: 'Для более точных и четких рекомендаций добавляйте понравившееся аниме в избранное и списки, а также ставьте им оценки.',
                 tipTrigger: 'Как получать лучшие рекомендации?',
@@ -1268,6 +1279,7 @@ export const translations = {
             searchPlaceholder: 'Поиск аниме...',
             trending: 'В тренде',
             spring2026: 'Весна 2026',
+            fall2026: 'Осень 2026',
             upcoming: 'Ожидаемые',
             categories: 'Категории',
             cats: {
@@ -1509,6 +1521,7 @@ export const translations = {
     },
     de: {
         pulse: { title: 'Community-Puls', watching: '{user} hat angefangen {anime} zu schauen', completed: '{user} hat {anime} abgeschlossen' },
+        arena: { title: 'Anime Arena', choose_category: 'Kategorie wählen', choose_size: 'Größe wählen', start_button: 'Kampf beginnen!', your_winner: 'DEIN GEWINNER!', share: 'Ergebnis teilen', go_home: 'Zur Startseite', game: 'Arena', result: 'Ergebnis', round: 'Runde', match: 'Duell', go_back: 'Zurück', my_champion: '{name} ist mein Champion!', final: 'FINALE', semi_final: 'HALBFINALE', quarter_final: 'VIERTELFINALE', cat_all_time: 'ALLE ZEITEN', cat_movie: 'BESTE FILME', cat_shounen: 'SHOUNEN', cat_action: 'ACTION & KÄMPFE', cat_isekai: 'ISEKAI', cat_romance: 'ROMANTIK', cat_comedy: 'KOMÖDIE', cat_horror: 'HORROR & THRILLER', cat_drama: 'DRAMA & EMOTION', cat_seinen: 'SEINEN & DARK', cat_worst_sequels: 'SCHLECHTESTE FORTSETZUNGEN', cat_waifu: 'WAIFU', cat_husbando: 'HUSBANDO', total_played: 'Gesamt gespielt', your_history: 'Deine Ergebnisse', community_winners: 'Community-Favoriten', rate_quiz: 'Quiz bewerten', play_again: 'Nochmal spielen', people_played: '{count} gespielt', no_results_yet: 'Noch keine Ergebnisse. Spiel dein erstes Quiz!', login_to_save: 'Anmelden, um Ergebnisse zu speichern', view_all: 'Alle anzeigen', quizzes: 'Quiz', recent: 'Neueste', top_winner: 'Top Gewinner', hero_tag: '🔥 ULTIMATIVER ANIME-KAMPF', hero_title_1: 'KRÖNE DEINEN', hero_title_2: 'CHAMPION', hero_desc: 'Zwei Legenden treten an. Stimme im Turnier ab und küre den ultimativen Sieger!', categories_count: '13 Kategorien', tournament_mode: 'Turnier-Modus', contenders_badge: '+1.000 Legenden', quit_title: 'Kampf verlassen', quit_confirm: 'Möchtest du den Kampf wirklich verlassen? Dein Fortschritt geht verloren.', quit_button: 'Verlassen' },
         common: {
             loading: 'Laden...',
             error: 'Fehler',
@@ -1619,6 +1632,7 @@ export const translations = {
                 noData: 'Füge Anime zu deiner Liste hinzu, damit wir Vorschläge machen können!',
                 matchGenre: 'Entspricht Ihrem {genre}-Präferenz',
                 highScore: 'Hoch bewertet auf MAL',
+                popular: 'Sehr beliebt und viel geschaut',
                 tipTitle: 'Bessere Vorschläge erhalten',
                 tipContent: 'Für genauere und präzisere Empfehlungen fügen Sie die Animes, die Ihnen gefallen, zu Ihren Favoriten und Listen hinzu und bewerten Sie diese.',
                 tipTrigger: 'Wie man bessere Vorschläge erhält?',
@@ -1641,6 +1655,7 @@ export const translations = {
             searchPlaceholder: 'Anime suchen...',
             trending: 'Jetzt im Trend',
             spring2026: 'Frühling 2026',
+            fall2026: 'Herbst 2026',
             upcoming: 'Demnächst',
             categories: 'Kategorien',
             cats: {
@@ -1881,6 +1896,7 @@ export const translations = {
     },
     ar: {
         pulse: { title: 'نبض المجتمع', watching: '{user} بدأ مشاهدة {anime}', completed: '{user} أكمل {anime}' },
+        arena: { title: 'حلبة الأنمي', choose_category: 'اختر الفئة', choose_size: 'اختر الحجم', start_button: 'ابدأ المعركة!', your_winner: 'الفائز الخاص بك!', share: 'مشاركة النتيجة', go_home: 'الرئيسية', game: 'حلبة', result: 'النتيجة', round: 'الجولة', match: 'مباراة', go_back: 'رجوع', my_champion: '{name} هو بطلي!', final: 'النهائي الكبير', semi_final: 'نصف النهائي', quarter_final: 'ربع النهائي', cat_all_time: 'كل الأوقات', cat_movie: 'أفضل الأفلام', cat_shounen: 'شونين', cat_action: 'أكشن وقتال', cat_isekai: 'إيسيكاي', cat_romance: 'رومانسية', cat_comedy: 'كوميديا', cat_horror: 'رعب وإثارة', cat_drama: 'دراما وعواطف', cat_seinen: 'سينين', cat_worst_sequels: 'أسوأ التكملات', cat_waifu: 'وايفو', cat_husbando: 'هوسباندو', total_played: 'مجموع اللعب', your_history: 'نتائجك', community_winners: 'المفضلة لدى المجتمع', rate_quiz: 'قيّم هذا الاختبار', play_again: 'العب مرة أخرى', people_played: '{count} لعبوا', no_results_yet: 'لا توجد نتائج بعد. العب أول اختبار!', login_to_save: 'سجّل الدخول لحفظ النتائج', view_all: 'عرض الكل', quizzes: 'اختبارات', recent: 'الأخيرة', top_winner: 'أكثر فوزاً', hero_tag: '🔥 معركة الأنمي الكبرى', hero_title_1: 'توج', hero_title_2: 'بطلك', hero_desc: 'أسطورتان في مواجهة حاسمة. صوّت في الأدوار الإقصائية وتوّج البطل الحقيقي!', categories_count: '13 فئة', tournament_mode: 'نظام الإقصاء', contenders_badge: '+1,000 متنافس', quit_title: 'الخروج من المعركة', quit_confirm: 'هل أنت متأكد أنك تريد الخروج؟ سيتم فقدان تقدمك في المعركة.', quit_button: 'خروج' },
         common: {
             loading: 'جار التحميل...',
             error: 'خطأ',
@@ -1991,6 +2007,7 @@ export const translations = {
                 noData: 'أضف الأنمي إلى قائمتك حتى نتمكن من تقديم اقتراحات!',
                 matchGenre: 'تطابق تفضيلك لـ {genre}',
                 highScore: 'تقييم عالٍ على MAL',
+                popular: 'شائع جداً ويحظى بمشاهدة واسعة',
                 tipTitle: 'احصل على اقتراحات أفضل',
                 tipContent: 'للحصول على توصيات أكثر دقة وتحديدًا، أضف الأنمي الذي يعجبك إلى مفضلاتك وقوائمك، وقم بتقييمها.',
                 tipTrigger: 'كيف أحصل على اقتراحات أفضل؟',
@@ -2013,6 +2030,7 @@ export const translations = {
             searchPlaceholder: 'البحث عن أنمي...',
             trending: 'شائع الآن',
             spring2026: 'ربيع 2026',
+            fall2026: 'خريف 2026',
             upcoming: 'قادم قريباً',
             categories: 'فئات',
             cats: {
@@ -2254,6 +2272,7 @@ export const translations = {
     },
     es: {
         pulse: { title: 'Actividad de la Comunidad', watching: '{user} empezó a ver {anime}', completed: '{user} completó {anime}' },
+        arena: { title: 'Anime Arena', choose_category: 'Elegir Categoría', choose_size: 'Elegir Tamaño', start_button: '¡Comenzar Batalla!', your_winner: '¡TU GANADOR!', share: 'Compartir Resultado', go_home: 'Inicio', game: 'Arena', result: 'Resultado', round: 'Ronda', match: 'Duelo', go_back: 'Volver', my_champion: '¡{name} es mi campeón!', final: 'GRAN FINAL', semi_final: 'SEMIFINAL', quarter_final: 'CUARTOS DE FINAL', cat_all_time: 'TODOS LOS TIEMPOS', cat_movie: 'MEJORES PELÍCULAS', cat_shounen: 'SHOUNEN', cat_action: 'ACCIÓN Y PELEAS', cat_isekai: 'ISEKAI', cat_romance: 'ROMANCE', cat_comedy: 'COMEDIA', cat_horror: 'TERROR Y SUSPENSO', cat_drama: 'DRAMA', cat_seinen: 'SEINEN Y OSCURO', cat_worst_sequels: 'PEORES SECUELAS', cat_waifu: 'WAIFU', cat_husbando: 'HUSBANDO', total_played: 'Total jugado', your_history: 'Tus resultados', community_winners: 'Favoritos de la comunidad', rate_quiz: 'Califica este quiz', play_again: 'Jugar de nuevo', people_played: '{count} jugaron', no_results_yet: 'Sin resultados aún. ¡Juega tu primer quiz!', login_to_save: 'Inicia sesión para guardar resultados', view_all: 'Ver todo', quizzes: 'quizzes', recent: 'Recientes', top_winner: 'Más ganador', hero_tag: '🔥 DUELO DEFINITIVO DE ANIME', hero_title_1: 'CORONA A TU', hero_title_2: 'CAMPEÓN', hero_desc: 'Dos leyendas se enfrentan. ¡Vota en el torneo y corona al anime definitivo!', categories_count: '13 Categorías', tournament_mode: 'Modo Torneo', contenders_badge: '+1.000 Rivales', quit_title: 'Salir de la Batalla', quit_confirm: '¿Estás seguro de que deseas salir? Se perderá tu progreso.', quit_button: 'Salir' },
         common: {
             loading: 'Cargando...',
             error: 'Error',
@@ -2364,6 +2383,7 @@ export const translations = {
                 noData: '¡Añade anime a tu lista para que podamos hacer sugerencias!',
                 matchGenre: 'Coincide con tu preferencia de {genre}',
                 highScore: 'Alta calificación en MAL',
+                popular: 'Muy popular y ampliamente visto',
                 tipTitle: 'Obtén mejores sugerencias',
                 tipContent: 'Para recomendaciones más exactas y precisas, añade los animes que te gustan a tus favoritos y listas, y dales una calificación.',
                 tipTrigger: '¿Cómo obtener mejores sugerencias?',
@@ -2386,6 +2406,7 @@ export const translations = {
             searchPlaceholder: 'Buscar anime...',
             trending: 'En Tendencia',
             spring2026: 'Primavera 2026',
+            fall2026: 'Otoño 2026',
             upcoming: 'Próximamente',
             categories: 'Categorías',
             cats: {
@@ -2587,6 +2608,7 @@ export const translations = {
     },
     pt: {
         pulse: { title: 'Atividade da Comunidade', watching: '{user} começou a assistir {anime}', completed: '{user} completou {anime}' },
+        arena: { title: 'Anime Arena', choose_category: 'Escolher Categoria', choose_size: 'Escolher Tamanho', start_button: 'Iniciar Batalha!', your_winner: 'SEU VENCEDOR!', share: 'Compartilhar Resultado', go_home: 'Início', game: 'Arena', result: 'Resultado', round: 'Rodada', match: 'Duelo', go_back: 'Voltar', my_champion: '{name} é o meu campeão!', final: 'GRANDE FINAL', semi_final: 'SEMIFINAL', quarter_final: 'QUARTAS DE FINAL', cat_all_time: 'TODOS OS TEMPOS', cat_movie: 'MELHORES FILMES', cat_shounen: 'SHOUNEN', cat_action: 'AÇÃO E LUTAS', cat_isekai: 'ISEKAI', cat_romance: 'ROMANCE', cat_comedy: 'COMÉDIA', cat_horror: 'TERROR E SUSPENSE', cat_drama: 'DRAMA', cat_seinen: 'SEINEN E DARK', cat_worst_sequels: 'PIORES SEQUÊNCIAS', cat_waifu: 'WAIFU', cat_husbando: 'HUSBANDO', total_played: 'Total jogado', your_history: 'Seus resultados', community_winners: 'Favoritos da comunidade', rate_quiz: 'Avalie este quiz', play_again: 'Jogar novamente', people_played: '{count} jogaram', no_results_yet: 'Sem resultados ainda. Jogue seu primeiro quiz!', login_to_save: 'Entre para salvar resultados', view_all: 'Ver tudo', quizzes: 'quizzes', recent: 'Recentes', top_winner: 'Mais vencedor', hero_tag: '🔥 DUELO DEFINITIVO DE ANIME', hero_title_1: 'COROE SEU', hero_title_2: 'CAMPEÃO', hero_desc: 'Duas lendas entram na arena. Vote no torneio e eleja o maior de todos!', categories_count: '13 Categorias', tournament_mode: 'Modo Torneio', contenders_badge: '+1.000 Rivais', quit_title: 'Sair da Batalha', quit_confirm: 'Tem certeza de que deseja sair? Seu progresso será perdido.', quit_button: 'Sair' },
         common: {
             loading: 'Carregando...',
             error: 'Erro',
@@ -2697,6 +2719,7 @@ export const translations = {
                 noData: 'Adicione animes à sua lista para podermos fazer sugestões!',
                 matchGenre: 'Corresponde à sua preferência por {genre}',
                 highScore: 'Altamente avaliado no MAL',
+                popular: 'Muito popular e amplamente assistido',
                 tipTitle: 'Receba melhores sugestões',
                 tipContent: 'Para recomendações mais exatas e precisas, adicione os animes que você gosta aos seus favoritos e listas, e dê notas a eles.',
                 tipTrigger: 'Como obter melhores sugestões?',
@@ -2719,6 +2742,7 @@ export const translations = {
             searchPlaceholder: 'Buscar anime...',
             trending: 'Em Alta',
             spring2026: 'Primavera 2026',
+            fall2026: 'Outono 2026',
             upcoming: 'Próximos',
             categories: 'Categorias',
             cats: {
@@ -2920,6 +2944,7 @@ export const translations = {
     },
     id: {
         pulse: { title: 'Aktivitas Komunitas', watching: '{user} mulai menonton {anime}', completed: '{user} menyelesaikan {anime}' },
+        arena: { title: 'Arena Anime', choose_category: 'Pilih Kategori', choose_size: 'Pilih Ukuran', start_button: 'Mulai Pertarungan!', your_winner: 'PEMENANGMU!', share: 'Bagikan Hasil', go_home: 'Beranda', game: 'Arena', result: 'Hasil', round: 'Ronde', match: 'Pertandingan', go_back: 'Kembali', my_champion: '{name} adalah juara saya!', final: 'FINAL BESAR', semi_final: 'SEMI FINAL', quarter_final: 'PEREMPAT FINAL', cat_all_time: 'SEPANJANG MASA', cat_movie: 'FILM TERBAIK', cat_shounen: 'SHOUNEN', cat_action: 'AKSI & PERTARUNGAN', cat_isekai: 'ISEKAI', cat_romance: 'ROMANSA', cat_comedy: 'KOMEDI', cat_horror: 'HOROR & TEGANG', cat_drama: 'DRAMA', cat_seinen: 'SEINEN & GELAP', cat_worst_sequels: 'SEKUEL TERBURUK', cat_waifu: 'WAIFU', cat_husbando: 'HUSBANDO', total_played: 'Total dimainkan', your_history: 'Hasil Anda', community_winners: 'Favorit komunitas', rate_quiz: 'Nilai kuis ini', play_again: 'Main lagi', people_played: '{count} bermain', no_results_yet: 'Belum ada hasil. Mainkan kuis pertamamu!', login_to_save: 'Masuk untuk menyimpan hasil', view_all: 'Lihat semua', quizzes: 'kuis', recent: 'Terbaru', top_winner: 'Pemenang teratas', hero_tag: '🔥 PERTARUNGAN ANIME TERBESAR', hero_title_1: 'PILIH JUARA', hero_title_2: 'SEJATIMU', hero_desc: 'Dua legenda bertarung. Berikan suaramu di turnamen dan tentukan yang terkuat!', categories_count: '13 Kategori', tournament_mode: 'Sistem Gugur', contenders_badge: '+1.000 Karakter', quit_title: 'Keluar dari Pertarungan', quit_confirm: 'Apakah Anda yakin ingin keluar? Progres pertarungan akan hilang.', quit_button: 'Keluar' },
         common: {
             loading: 'Memuat...',
             error: 'Kesalahan',
@@ -3030,6 +3055,7 @@ export const translations = {
                 noData: 'Tambahkan anime ke daftar Anda agar kami dapat memberi saran!',
                 matchGenre: 'Cocok dengan preferensi {genre} Anda',
                 highScore: 'Peringkat tinggi di MAL',
+                popular: 'Sangat populer dan banyak ditonton',
                 tipTitle: 'Dapatkan Saran yang Lebih Baik',
                 tipContent: 'Untuk rekomendasi yang lebih akurat dan tepat, tambahkan anime yang Anda sukai ke favorit dan daftar Anda, dan berikan peringkat.',
                 tipTrigger: 'Bagaimana cara mendapatkan saran yang lebih baik?',
@@ -3052,6 +3078,7 @@ export const translations = {
             searchPlaceholder: 'Cari anime...',
             trending: 'Sedang Tren',
             spring2026: 'Musim Semi 2026',
+            fall2026: 'Musim Gugur 2026',
             upcoming: 'Akan Datang',
             categories: 'Kategori',
             cats: {
@@ -3254,6 +3281,7 @@ export const translations = {
     },
     hi: {
         pulse: { title: 'कम्युनिटी पल्स', watching: '{user} ने {anime} देखना शुरू किया', completed: '{user} ने {anime} पूरा किया' },
+        arena: { title: 'एनीमे एरिना', choose_category: 'श्रेणी चुनें', choose_size: 'आकार चुनें', start_button: 'लड़ाई शुरू करें!', your_winner: 'आपका विजेता!', share: 'परिणाम साझा करें', go_home: 'होम', game: 'एरिना', result: 'परिणाम', round: 'राउंड', match: 'मैच', go_back: 'वापस जाएं', my_champion: '{name} मेरा चैंपियन है!', final: 'भव्य फाइनल', semi_final: 'सेमीफाइनल', quarter_final: 'क्वार्टरफाइनल', cat_all_time: 'हर समय', cat_movie: 'सर्वश्रेष्ठ फिल्में', cat_shounen: 'शोनेन', cat_action: 'एक्शन और लड़ाई', cat_isekai: 'इसेकाई', cat_romance: 'रोमांस', cat_comedy: 'कॉमेडी', cat_horror: 'हॉरर और थ्रिलर', cat_drama: 'ड्रामा', cat_seinen: 'सीनेन', cat_worst_sequels: 'सबसे खराब सीक्वल', cat_waifu: 'वाइफू', cat_husbando: 'हस्बैंडो', total_played: 'कुल खेले गए', your_history: 'आपके परिणाम', community_winners: 'समुदाय के पसंदीदा', rate_quiz: 'इस क्विज़ को रेट करें', play_again: 'फिर से खेलें', people_played: '{count} ने खेला', no_results_yet: 'अभी तक कोई परिणाम नहीं। अपना पहला क्विज़ खेलें!', login_to_save: 'परिणाम सहेजने के लिए लॉगिन करें', view_all: 'सभी देखें', quizzes: 'क्विज़', recent: 'हालिया', top_winner: 'शीर्ष विजेता', hero_tag: '🔥 महा एनीमे द्वंद्वयुद्ध', hero_title_1: 'अपना चैंपियन', hero_title_2: 'चुनें', hero_desc: 'दो दिग्गजों की टक्कर। टूर्नामेंट में वोट करें और अपने पसंदीदा को ताज पहनाएं!', categories_count: '13 श्रेणियां', tournament_mode: 'नॉकआउट मोड', contenders_badge: '+1,000 दावेदार', quit_title: 'लड़ाई से बाहर निकलें', quit_confirm: 'क्या आप वाकई बाहर निकलना चाहते हैं? आपकी प्रगति खो जाएगी।', quit_button: 'बाहर निकलें' },
         common: {
             loading: 'लोड हो रहा है...',
             error: 'त्रुटि',
@@ -3360,6 +3388,7 @@ export const translations = {
                 noData: 'अपनी सूची में एनीमे जोड़ें ताकि हम सुझाव दे सकें!',
                 matchGenre: 'यह आपकी {genre} पसंद से मेल खाता है',
                 highScore: 'MAL पर उच्च रेटिंग प्राप्त',
+                popular: 'अत्यधिक लोकप्रिय और व्यापक रूप से देखा जाने वाला',
                 tipTitle: 'बेहतर सुझाव प्राप्त करें',
                 tipContent: 'अधिक सटीक अनुशंसाओं के लिए, अपने पसंद के एनीमे को पसंदीदा और सूचियों में जोड़ें, और उन्हें रेटिंग दें।',
                 tipTrigger: 'बेहतर सुझाव कैसे प्राप्त करें?',
@@ -3383,6 +3412,7 @@ export const translations = {
             searchPlaceholder: 'एनीमे खोजें...',
             trending: 'अभी ट्रेंडिंग में है',
             spring2026: 'बसंत 2026',
+            fall2026: 'पतझड़ 2026',
             upcoming: 'आगामी',
             categories: 'शैलियां',
             cats: {

@@ -73,6 +73,10 @@ export const CalendarAnimeCard: React.FC<CalendarAnimeCardProps> = ({ anime }) =
     };
 
     const getEpisodeDisplay = () => {
+        if (anime.airing_episode !== undefined) {
+            return `EP: ${anime.airing_episode}`;
+        }
+
         if (!anime.aired || !anime.aired.from || !targetDate) {
             return anime.episodes ? `EP: ${anime.episodes}` : '';
         }
@@ -137,7 +141,7 @@ export const CalendarAnimeCard: React.FC<CalendarAnimeCardProps> = ({ anime }) =
                         </Text>
                         {timeLeft ? (
                             <View style={[styles.countdownBadge, { backgroundColor: colors.primary + '20' }]}>
-                                <Text style={[styles.countdownText, { color: colors.primary }]}>
+                                <Text style={[styles.countdownText, { color: colors.primary }]} numberOfLines={1} ellipsizeMode="tail">
                                     {timeLeft}
                                 </Text>
                             </View>
@@ -194,6 +198,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
+        flexShrink: 1,
+        marginRight: 8,
     },
     timeText: {
         fontFamily: 'Poppins_600SemiBold', // Creating more visual weight
@@ -207,6 +213,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8, // Slightly more padding
         paddingVertical: 3,
         borderRadius: 6,
+        flexShrink: 1,
     },
     countdownText: {
         fontFamily: 'Poppins_700Bold', // Bold for emphasis

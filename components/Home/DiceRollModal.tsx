@@ -27,6 +27,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { supabase } from '../../lib/supabase';
 import { Anime, jikanApi } from '../../lib/jikan';
+import { translateText } from '../../lib/translation';
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,11 +39,31 @@ interface Props {
 export const DiceRollModal = ({ visible, onClose }: Props) => {
   const router = useRouter();
   const { colors, isDark } = useTheme();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<Anime | null>(null);
+  const [translatedSynopsis, setTranslatedSynopsis] = useState<string>('');
   const [isRolling, setIsRolling] = useState(false);
+
+  // Auto Translate Synopsis
+  useEffect(() => {
+    const translateSynopsis = async () => {
+      if (!result?.synopsis) return;
+      try {
+        const translated = await translateText(result.synopsis, language, result.mal_id.toString());
+        setTranslatedSynopsis(translated);
+      } catch (error) {
+        setTranslatedSynopsis(result.synopsis);
+      }
+    };
+
+    if (result) {
+      translateSynopsis();
+    } else {
+      setTranslatedSynopsis('');
+    }
+  }, [result, language]);
 
   // Animation values
   const rotation = useSharedValue(0);
@@ -133,7 +154,7 @@ export const DiceRollModal = ({ visible, onClose }: Props) => {
       console.log(`[DiceRoll] Received popular anime response. Data length: ${response?.data?.length || 0}`);
       if (response && response.data) {
         // 3. Filter out excluded IDs
-        const availableAnime = response.data.filter(a => !excludedIds.has(a.mal_id));
+        const availableAnime = response.data.filter((a: any) => !excludedIds.has(a.mal_id));
         console.log(`[DiceRoll] Available anime after filtering: ${availableAnime.length}`);
         
         if (availableAnime.length > 0) {
@@ -166,24 +187,21 @@ export const DiceRollModal = ({ visible, onClose }: Props) => {
   };
 
   const finishAction = (anime: Anime) => {
-    // Stop rolling
+    // Stop rolling animation
+    cancelAnimation(rotation);
+    cancelAnimation(scale);
     rotation.value = 0;
     scale.value = withTiming(1, { duration: 200 });
-    
-    // Fade out dice, fade in result
-    diceOpacity.value = withTiming(0, { duration: 300 }, () => {
-      runOnJS(setActualResult)(anime);
-    });
-  };
+    diceOpacity.value = withTiming(0, { duration: 250 });
 
-  const setActualResult = (anime: Anime) => {
-    setResult(anime);
-    setIsLoading(false);
-    setIsRolling(false);
-    
-    // Animate result card in
-    resultOpacity.value = withTiming(1, { duration: 400 });
-    resultScale.value = withTiming(1, { duration: 400, easing: Easing.out(Easing.back(1.5)) });
+    setTimeout(() => {
+      setResult(anime);
+      setIsLoading(false);
+      setIsRolling(false);
+
+      resultOpacity.value = withTiming(1, { duration: 350 });
+      resultScale.value = withTiming(1, { duration: 350, easing: Easing.out(Easing.back(1.4)) });
+    }, 250);
   };
 
   const animatedDiceStyle = useAnimatedStyle(() => {
@@ -224,27 +242,25 @@ export const DiceRollModal = ({ visible, onClose }: Props) => {
         <TouchableOpacity style={StyleSheet.absoluteFill} onPress={onClose} activeOpacity={1} />
         
         {/* Dice Animation View */}
-        <Animated.View 
-          style={styles.diceContainer}
-          pointerEvents={(!result || isRolling) ? 'auto' : 'none'}
-        >
-          <Animated.View style={animatedDiceStyle}>
-            <View style={styles.diceOuterGlow}>
-              <View style={[styles.diceInnerCircle, { backgroundColor: isDark ? '#2D3748' : '#FFF' }]}>
-                <Ionicons name="dice-outline" size={60} color="#FACC15" />
+        {(isRolling || !result) && (
+          <Animated.View style={styles.diceContainer}>
+            <Animated.View style={animatedDiceStyle}>
+              <View style={styles.diceOuterGlow}>
+                <View style={[styles.diceInnerCircle, { backgroundColor: isDark ? '#2D3748' : '#FFF' }]}>
+                  <Ionicons name="dice-outline" size={60} color="#FACC15" />
+                </View>
               </View>
-            </View>
+            </Animated.View>
+            <Text style={[styles.rollingText, { color: '#FFF' }]}>
+              {t('home.forYou.rolling')}
+            </Text>
           </Animated.View>
-          <Text style={[styles.rollingText, { color: '#FFF' }]}>
-            {t('home.forYou.rolling')}
-          </Text>
-        </Animated.View>
+        )}
 
         {/* Result Card */}
-        {result && (
+        {(!isRolling && result) && (
           <Animated.View 
             style={[styles.resultCardContainer, animatedResultStyle]}
-            pointerEvents={(!isRolling) ? 'auto' : 'none'}
           >
             <TouchableOpacity 
               activeOpacity={0.9} 
@@ -252,7 +268,7 @@ export const DiceRollModal = ({ visible, onClose }: Props) => {
               style={[styles.resultCard, { backgroundColor: colors.card, borderColor: colors.border }]}
             >
               <Image
-                source={{ uri: result.images.jpg.large_image_url }}
+                source={{ uri: result.images?.jpg?.large_image_url || result.images?.jpg?.image_url || 'https://via.placeholder.com/300x450' }}
                 style={styles.cardImage}
                 contentFit="cover"
               />
@@ -277,11 +293,11 @@ export const DiceRollModal = ({ visible, onClose }: Props) => {
                   ))}
                 </View>
 
-                {result.synopsis && (
+                {(translatedSynopsis || result.synopsis) ? (
                   <Text style={[styles.synopsisText, { color: colors.subtext }]} numberOfLines={3}>
-                    {result.synopsis}
+                    {translatedSynopsis || result.synopsis}
                   </Text>
-                )}
+                ) : null}
               </View>
             </TouchableOpacity>
 

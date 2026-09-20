@@ -1,7 +1,7 @@
 {
   "name": "my-anime-dex",
   "main": "expo-router/entry",
-  "version": "1.0.10",
+  "version": "1.0.15",
   "private": true,
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
@@ -39,6 +39,7 @@
     "expo-localization": "~16.1.6",
     "expo-network": "~7.1.5",
     "expo-router": "~5.1.10",
+    "expo-sharing": "~13.1.5",
     "expo-splash-screen": "~0.30.10",
     "expo-status-bar": "^2.2.3",
     "expo-store-review": "~8.1.5",
@@ -65,7 +66,9 @@
     "react-native-svg": "15.11.2",
     "react-native-text-ticker": "^1.15.0",
     "react-native-url-polyfill": "^2.0.0",
+    "react-native-view-shot": "4.0.3",
     "react-native-web": "^0.20.0",
+    "react-native-web-webview": "^1.0.2",
     "react-native-webview": "13.13.5",
     "react-native-youtube-iframe": "^2.4.1",
     "react-redux": "^9.2.0"

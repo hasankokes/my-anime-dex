@@ -1,0 +1,12 @@
+env: load .env
+env: export EXPO_PUBLIC_SUPABASE_URL EXPO_PUBLIC_SUPABASE_ANON_KEY
+› Port 8081 is running mobile in another window
+  /Users/hsnkks/Desktop/worldcup2026/wc2026/apps/mobile (pid 54651)
+Input is required, but 'npx expo' is in non-interactive mode.
+Required input:
+> Use port 8084 instead?
+› Skipping dev server
+Unexpected devicectl JSON version output from devicectl. Connecting to physical Apple devices may not work as expected.
+CommandError: Input is required, but 'npx expo' is in non-interactive mode.
+Required input:
+> Select a device

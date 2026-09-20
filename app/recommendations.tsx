@@ -49,15 +49,36 @@ export default function RecommendationsScreen() {
     }
   };
 
+  const getReasonText = (reason: any) => {
+    if (typeof reason === 'string') return reason;
+    if (reason.key === 'matchGenre') {
+      return t('home.recommendations.matchGenre', { genre: reason.params?.genre || '' });
+    }
+    if (reason.key === 'highScore') {
+      return t('home.recommendations.highScore', { defaultValue: 'Highly rated on MAL' });
+    }
+    if (reason.key === 'popular') {
+      return t('home.recommendations.popular', { defaultValue: 'Highly popular and widely watched' });
+    }
+    return '';
+  };
+
   const renderCard = ({ item }: { item: ScoredAnime }) => {
-    const { anime, reasons } = item;
+    const { anime } = item;
+    const reasonsToDisplay = item.reasonKeys && item.reasonKeys.length > 0 
+      ? item.reasonKeys 
+      : (item.reasons || []);
+
+    const imageUrl = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || anime.images?.webp?.large_image_url;
+
     return (
       <TouchableOpacity
         style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
         onPress={() => router.push(`/anime/${anime.mal_id}`)}
+        activeOpacity={0.8}
       >
         <Image
-          source={{ uri: anime.images.jpg.large_image_url }}
+          source={{ uri: imageUrl }}
           style={styles.cardImage}
           contentFit="cover"
         />
@@ -68,29 +89,37 @@ export default function RecommendationsScreen() {
             </Text>
             {anime.score ? (
               <View style={styles.scoreBadge}>
-                <Ionicons name="star" size={12} color="#FFF" />
+                <Ionicons name="star" size={11} color="#FFF" />
                 <Text style={styles.scoreText}>{anime.score}</Text>
               </View>
             ) : null}
           </View>
 
           {/* Genres */}
-          <View style={styles.genreRow}>
-            {anime.genres?.slice(0, 3).map(g => (
-              <View key={g.name} style={[styles.genreTag, { backgroundColor: colors.border }]}>
-                <Text style={[styles.genreText, { color: colors.subtext }]}>{g.name}</Text>
-              </View>
-            ))}
-          </View>
+          {anime.genres && anime.genres.length > 0 && (
+            <View style={styles.genreRow}>
+              {anime.genres.slice(0, 3).map(g => (
+                <View key={g.name} style={[styles.genreTag, { backgroundColor: colors.border }]}>
+                  <Text style={[styles.genreText, { color: colors.subtext }]} numberOfLines={1}>{g.name}</Text>
+                </View>
+              ))}
+            </View>
+          )}
 
           {/* AI Reasons */}
-          {reasons.length > 0 && (
+          {reasonsToDisplay.length > 0 && (
             <View style={[styles.reasonBox, { backgroundColor: colors.background }]}>
-              <Ionicons name="sparkles" size={14} color="#FACC15" style={{ marginRight: 6 }} />
-              <View style={{ flex: 1 }}>
-                {reasons.map((r, i) => (
-                  <Text key={i} style={[styles.reasonText, { color: colors.text }]}>• {r}</Text>
-                ))}
+              <Ionicons name="sparkles" size={13} color="#FACC15" style={styles.reasonIcon} />
+              <View style={styles.reasonList}>
+                {reasonsToDisplay.map((r, i) => {
+                  const text = getReasonText(r);
+                  if (!text) return null;
+                  return (
+                    <Text key={i} style={[styles.reasonText, { color: colors.text }]}>
+                      • {text}
+                    </Text>
+                  );
+                })}
               </View>
             </View>
           )}
@@ -415,29 +444,31 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     overflow: 'hidden',
     marginBottom: 16,
-    height: 140,
+    minHeight: 145,
   },
   cardImage: {
-    width: 100,
-    height: '100%',
+    width: 105,
+    minHeight: 145,
+    alignSelf: 'stretch',
   },
   cardContent: {
     flex: 1,
     padding: 12,
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 8,
+    marginBottom: 6,
+    gap: 6,
   },
   cardTitle: {
     flex: 1,
     fontFamily: 'Poppins_600SemiBold',
-    fontSize: 14,
-    marginRight: 8,
-    lineHeight: 20,
+    fontSize: 13.5,
+    marginRight: 6,
+    lineHeight: 18,
   },
   scoreBadge: {
     flexDirection: 'row',
@@ -447,6 +478,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 6,
     gap: 2,
+    alignSelf: 'flex-start',
   },
   scoreText: {
     color: '#FFF',
@@ -456,8 +488,8 @@ const styles = StyleSheet.create({
   genreRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
-    marginBottom: 10,
+    gap: 5,
+    marginBottom: 8,
   },
   genreTag: {
     paddingHorizontal: 6,
@@ -466,18 +498,26 @@ const styles = StyleSheet.create({
   },
   genreText: {
     fontFamily: 'Poppins_500Medium',
-    fontSize: 9,
+    fontSize: 9.5,
   },
   reasonBox: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     padding: 8,
     borderRadius: 8,
     marginTop: 'auto',
+    gap: 6,
+  },
+  reasonIcon: {
+    marginTop: 2,
+  },
+  reasonList: {
+    flex: 1,
+    gap: 2,
   },
   reasonText: {
     fontFamily: 'Poppins_500Medium',
     fontSize: 11,
-    lineHeight: 16,
+    lineHeight: 15,
   }
 });

@@ -13,7 +13,8 @@ import {
   StatusBar,
   ScrollView,
   Alert,
-  useWindowDimensions
+  useWindowDimensions,
+  Animated
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -42,6 +43,20 @@ export default function HomeScreen() {
   const { t } = useLanguage();
   const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, resetKey } = useWalkthrough();
   const flatListRef = useRef<FlatList>(null);
+
+  // FAB Animation (Shake instead of spin)
+  const shakeAnim = useRef(new Animated.Value(0)).current;
+
+  const handleFabPress = () => {
+    Animated.sequence([
+      Animated.timing(shakeAnim, { toValue: 6, duration: 50, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: -6, duration: 50, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: 6, duration: 50, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true })
+    ]).start(() => {
+      router.push('/arena/setup');
+    });
+  };
 
   // Responsive columns: 2 for phones, 3 for tablets, 4 for large tablets
   const { width: screenWidth } = useWindowDimensions();
@@ -106,10 +121,10 @@ export default function HomeScreen() {
 
   const [animes, setAnimes] = useState<Anime[]>([]);
   const [trendingAnimes, setTrendingAnimes] = useState<Anime[]>([]); // Trending State
-  const [trendingMode, setTrendingMode] = useState<'trending' | 'spring' | 'upcoming'>('trending');
-  const [springAnimes, setSpringAnimes] = useState<Anime[]>([]);
-  const [infiniteSpring, setInfiniteSpring] = useState<Anime[]>([]);
-  const [springLoading, setSpringLoading] = useState(false);
+  const [trendingMode, setTrendingMode] = useState<'trending' | 'fall' | 'upcoming'>('trending');
+  const [fallAnimes, setFallAnimes] = useState<Anime[]>([]);
+  const [infiniteFall, setInfiniteFall] = useState<Anime[]>([]);
+  const [fallLoading, setFallLoading] = useState(false);
   const [upcomingAnimes, setUpcomingAnimes] = useState<Anime[]>([]);
   const [infiniteUpcoming, setInfiniteUpcoming] = useState<Anime[]>([]);
   const [upcomingLoading, setUpcomingLoading] = useState(false);
@@ -189,8 +204,8 @@ export default function HomeScreen() {
         setAnimes(data);
       } else {
         setAnimes(prev => {
-          const existingIds = new Set(prev.map(a => a.mal_id));
-          const newItems = data.filter(a => !existingIds.has(a.mal_id));
+          const existingIds = new Set(prev.map((a: any) => a.mal_id));
+          const newItems = data.filter((a: any) => !existingIds.has(a.mal_id));
           return [...prev, ...newItems];
         });
       }
@@ -200,6 +215,7 @@ export default function HomeScreen() {
 
     } catch (error) {
       console.error('Error fetching animes:', error);
+      setHasNextPage(false); // To prevent infinite loadMore loops on error
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -247,18 +263,18 @@ export default function HomeScreen() {
     }
   };
 
-  // Fetch Spring 2026 Logic
-  const fetchSpring2026 = async () => {
+  // Fetch Fall 2026 Logic
+  const fetchFall2026 = async () => {
     try {
-      setSpringLoading(true);
-      const response = await jikanApi.getSeasonAnime(2026, 'spring', 1);
+      setFallLoading(true);
+      const response = await jikanApi.getSeasonAnime(2026, 'fall', 1);
       const { shuffled, repeated } = processInfiniteData(response.data);
-      setSpringAnimes(shuffled);
-      setInfiniteSpring(repeated);
+      setFallAnimes(shuffled);
+      setInfiniteFall(repeated);
     } catch (error) {
-      console.error('Error fetching spring anime:', error);
+      console.error('Error fetching fall anime:', error);
     } finally {
-      setSpringLoading(false);
+      setFallLoading(false);
     }
   };
 
@@ -279,9 +295,9 @@ export default function HomeScreen() {
 
   const toggleTrendingMode = () => {
     if (trendingMode === 'trending') {
-      setTrendingMode('spring');
-      if (springAnimes.length === 0) fetchSpring2026();
-    } else if (trendingMode === 'spring') {
+      setTrendingMode('fall');
+      if (fallAnimes.length === 0) fetchFall2026();
+    } else if (trendingMode === 'fall') {
       setTrendingMode('upcoming');
       if (upcomingAnimes.length === 0) fetchUpcoming();
     } else {
@@ -508,10 +524,12 @@ export default function HomeScreen() {
               backgroundColor: isPulseVisible ? 'rgba(239, 68, 68, 0.1)' : colors.card,
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
+              paddingLeft: 14,
+              paddingRight: 12,
               borderWidth: 1,
               borderColor: isPulseVisible ? '#EF4444' : colors.border,
-              gap: 8
+              gap: 12
             }}
             onPress={() => setIsPulseVisible(!isPulseVisible)}
             ref={pulseRef as any}
@@ -519,10 +537,20 @@ export default function HomeScreen() {
             onLayout={() => measureRef(pulseRef, 1)}
           >
             <Ionicons name="pulse" size={20} color="#EF4444" />
-            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: isPulseVisible ? '#EF4444' : colors.text }}>
-              {t('pulse.title') || 'Community Pulse'}
-            </Text>
-            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#EF4444', marginLeft: 4 }} />
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Text 
+                numberOfLines={1} 
+                style={{ 
+                  flexShrink: 1,
+                  fontFamily: 'Poppins_600SemiBold', 
+                  fontSize: 13, 
+                  color: isPulseVisible ? '#EF4444' : colors.text 
+                }}
+              >
+                {t('pulse.title') || 'Community Pulse'}
+              </Text>
+              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#EF4444' }} />
+            </View>
             <Ionicons name={isPulseVisible ? "chevron-up" : "chevron-down"} size={16} color={isPulseVisible ? '#EF4444' : colors.subtext} />
           </TouchableOpacity>
 
@@ -593,7 +621,7 @@ export default function HomeScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12, marginTop: 4, gap: 10 }}>
             <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 0 }]}>
               {trendingMode === 'trending' ? t('home.trending') :
-                trendingMode === 'spring' ? t('home.spring2026') :
+                trendingMode === 'fall' ? t('home.fall2026') :
                   t('home.upcoming')}
             </Text>
             <TouchableOpacity
@@ -604,12 +632,12 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          {(trendingLoading || springLoading || upcomingLoading) ? (
+          {(trendingLoading || fallLoading || upcomingLoading) ? (
             <ActivityIndicator size="small" color="#FACC15" style={{ height: 200 }} />
           ) : (
             <FlatList
               data={trendingMode === 'trending' ? infiniteTrending :
-                trendingMode === 'spring' ? infiniteSpring :
+                trendingMode === 'fall' ? infiniteFall :
                   infiniteUpcoming}
               keyExtractor={(item, index) => `trending-${item.mal_id}-${index}-${trendingMode}`}
               horizontal
@@ -739,6 +767,22 @@ export default function HomeScreen() {
         visible={isDiceModalVisible}
         onClose={() => setIsDiceModalVisible(false)}
       />
+
+      {/* Anime Arena FAB */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={handleFabPress}
+        activeOpacity={0.8}
+      >
+        <Animated.View style={{ transform: [{ translateX: shakeAnim }], width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+          {/* İkonu daha belirgin yapmak için büyüttük ve paddingi azalttık */}
+          <Image
+            source={require('../../assets/anime_arena_fab_icon.png')}
+            style={{ width: '85%', height: '85%' }}
+            contentFit="contain"
+          />
+        </Animated.View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -897,5 +941,28 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 12,
     fontFamily: 'Poppins_600SemiBold',
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 100, // Above the bottom tab bar
+    right: 20, // Positioned on the right side
+    width: 60,
+    height: 60,
+    backgroundColor: '#FACC15', // Sarı background
+    borderRadius: 16, // Kareye benzer, hafif yuvarlak köşeler
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 8,
+  },
+  fabGradient: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

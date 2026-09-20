@@ -1,7 +1,19 @@
+/**
+ * Anime data types and API accessor.
+ *
+ * ⚠️  MIGRATION NOTE (August 2026)
+ * Previously this module talked directly to the Jikan REST API.
+ * It now delegates to the AniList GraphQL service under the hood.
+ * All type interfaces are intentionally preserved so that every
+ * component that imports { Anime, jikanApi } continues to work
+ * without any changes.
+ */
 
-import { Alert } from 'react-native';
+import { anilistApi } from '../services/anilist/api';
 
-const BASE_URL = 'https://api.jikan.moe/v4';
+// ---------------------------------------------------------------------------
+// Type interfaces (unchanged — backward compatibility)
+// ---------------------------------------------------------------------------
 
 export interface Anime {
     mal_id: number;
@@ -62,71 +74,8 @@ export interface JikanResponse<T> {
     };
 }
 
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// ---------------------------------------------------------------------------
+// API — now powered by AniList GraphQL
+// ---------------------------------------------------------------------------
 
-// Simple rate limiter handling: Jikan is generous but has limits
-const fetchWithRetry = async (url: string, retries = 3): Promise<any> => {
-    try {
-        const response = await fetch(url);
-
-        if (response.status === 429) { // Too Many Requests
-            if (retries > 0) {
-                await wait(1000); // Wait 1s and retry
-                return fetchWithRetry(url, retries - 1);
-            } else {
-                throw new Error('Rate limit exceeded. Please try again later.');
-            }
-        }
-
-        if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
-};
-
-export const jikanApi = {
-    getTopAnime: async (page = 1): Promise<JikanResponse<Anime[]>> => {
-        return fetchWithRetry(`${BASE_URL}/top/anime?page=${page}`);
-    },
-
-    getAnimeDetails: async (id: string | number): Promise<{ data: Anime }> => {
-        return fetchWithRetry(`${BASE_URL}/anime/${id}`);
-    },
-
-    searchAnime: async (query: string, page = 1, genres?: string): Promise<JikanResponse<Anime[]>> => {
-        let url = `${BASE_URL}/anime?page=${page}`;
-        if (query) url += `&q=${encodeURIComponent(query)}`;
-        if (genres) url += `&genres=${genres}`;
-        return fetchWithRetry(url);
-    },
-
-    getSeasonNow: async (page = 1): Promise<JikanResponse<Anime[]>> => {
-        return fetchWithRetry(`${BASE_URL}/seasons/now?page=${page}`);
-    },
-
-    getTopAiringAnime: async (page = 1): Promise<JikanResponse<Anime[]>> => {
-        return fetchWithRetry(`${BASE_URL}/top/anime?filter=airing&page=${page}`);
-    },
-
-    getPopularAnime: async (page = 1): Promise<JikanResponse<Anime[]>> => {
-        return fetchWithRetry(`${BASE_URL}/top/anime?filter=bypopularity&page=${page}`);
-    },
-
-    getAnimeByGenres: async (genres: string, page = 1, minScore?: number): Promise<JikanResponse<Anime[]>> => {
-        let url = `${BASE_URL}/anime?genres=${genres}&order_by=score&sort=desc&page=${page}`;
-        if (minScore) url += `&min_score=${minScore}`;
-        return fetchWithRetry(url);
-    },
-
-    getSeasonAnime: async (year: number, season: string, page = 1): Promise<JikanResponse<Anime[]>> => {
-        return fetchWithRetry(`${BASE_URL}/seasons/${year}/${season}?page=${page}`);
-    },
-
-    getUpcomingAnime: async (page = 1): Promise<JikanResponse<Anime[]>> => {
-        return fetchWithRetry(`${BASE_URL}/seasons/upcoming?page=${page}`);
-    }
-};
+export const jikanApi = anilistApi;

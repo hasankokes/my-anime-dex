@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Image } from 'expo-image';
 import { ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList, Switch, KeyboardAvoidingView, View, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
@@ -72,6 +72,7 @@ const AnimeDetailsScreen = () => {
 
   const [anime, setAnime] = useState<Anime | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [userEntry, setUserEntry] = useState<any>(null); // Status from DB
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
@@ -110,67 +111,65 @@ const AnimeDetailsScreen = () => {
     }
   }, [anime, language]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!id) return;
-      try {
-        setLoading(true);
-        // 1. Fetch Anime Details from Jikan
-        const { data: animeData } = await jikanApi.getAnimeDetails(id as string);
-        setAnime(animeData);
+  const fetchData = useCallback(async () => {
+    if (!id) return;
+    try {
+      setLoading(true);
+      setFetchError(null);
+      // 1. Fetch Anime Details from Jikan / AniList
+      const { data: animeData } = await jikanApi.getAnimeDetails(id as string);
+      setAnime(animeData);
 
-        // 2. Fetch User Entry from Supabase
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          const { data: entry, error } = await supabase
-            .from('user_anime_list')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .eq('anime_id', id)
-            .maybeSingle();
+      // 2. Fetch User Entry from Supabase
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data: entry, error } = await supabase
+          .from('user_anime_list')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('anime_id', id)
+          .maybeSingle();
 
-          if (entry) {
-            setUserEntry(entry);
-            setEpisodeInput(entry.current_episode?.toString() || '0');
+        if (entry) {
+          setUserEntry(entry);
+          setEpisodeInput(entry.current_episode?.toString() || '0');
 
-            // --- Self-Healing Logic: Check for stale data and update silently ---
-            const needsUpdate =
-              (animeData.episodes && entry.total_episodes !== animeData.episodes) ||
-              (animeData.score && entry.score !== animeData.score) ||
-              (animeData.images?.jpg?.large_image_url && entry.anime_image !== animeData.images.jpg.large_image_url);
+          // --- Self-Healing Logic: Check for stale data and update silently ---
+          const needsUpdate =
+            (animeData.episodes && entry.total_episodes !== animeData.episodes) ||
+            (animeData.score && entry.score !== animeData.score) ||
+            (animeData.images?.jpg?.large_image_url && entry.anime_image !== animeData.images.jpg.large_image_url);
 
-            if (needsUpdate) {
-
-
-              // Silent update
-              supabase
-                .from('user_anime_list')
-                .update({
-                  total_episodes: animeData.episodes || entry.total_episodes,
-                  score: animeData.score || entry.score,
-                  anime_image: animeData.images?.jpg?.large_image_url || entry.anime_image,
-                  anime_title: animeData.title_english || animeData.title || entry.anime_title, // Keep title fresh too
-                  updated_at: new Date().toISOString(),
-                })
-                .eq('id', entry.id)
-                .then(({ error: updateError }) => {
-                  if (updateError) {
-                    console.error('[AnimeDetails] Failed to heal metadata:', updateError);
-                  } else {
-
-                  }
-                });
-            }
+          if (needsUpdate) {
+            supabase
+              .from('user_anime_list')
+              .update({
+                total_episodes: animeData.episodes || entry.total_episodes,
+                score: animeData.score || entry.score,
+                anime_image: animeData.images?.jpg?.large_image_url || entry.anime_image,
+                anime_title: animeData.title_english || animeData.title || entry.anime_title,
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', entry.id)
+              .then(({ error: updateError }) => {
+                if (updateError) {
+                  console.error('[AnimeDetails] Failed to heal metadata:', updateError);
+                }
+              });
           }
         }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
       }
-    };
-    fetchData();
+    } catch (error: any) {
+      console.error('Error fetching data:', error);
+      setFetchError(error?.message || 'Failed to load anime details.');
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const toggleFavorite = async () => {
     if (!anime) return;
@@ -344,11 +343,37 @@ const AnimeDetailsScreen = () => {
     }
   };
 
-  if (loading || !anime) {
+  if (loading) {
     return (
       <View style={[styles.container, styles.center, { backgroundColor: colors.background }]}>
         <Stack.Screen options={{ headerShown: false }} />
         <ActivityIndicator size="large" color="#FACC15" />
+      </View>
+    );
+  }
+
+  if (!anime) {
+    return (
+      <View style={[styles.container, styles.center, { backgroundColor: colors.background, paddingHorizontal: 20 }]}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <Ionicons name="alert-circle-outline" size={56} color="#EF4444" style={{ marginBottom: 12 }} />
+        <Text style={{ fontSize: 16, fontFamily: 'Poppins_600SemiBold', color: colors.text, textAlign: 'center', marginBottom: 8 }}>
+          {fetchError || 'Anime details could not be loaded.'}
+        </Text>
+        <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
+          <TouchableOpacity
+            style={{ paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border }}
+            onPress={() => router.back()}
+          >
+            <Text style={{ color: colors.text, fontFamily: 'Poppins_500Medium' }}>Go Back</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10, backgroundColor: '#FACC15' }}
+            onPress={fetchData}
+          >
+            <Text style={{ color: '#000', fontFamily: 'Poppins_600SemiBold' }}>Try Again</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -502,7 +527,7 @@ const AnimeDetailsScreen = () => {
               style={[styles.synopsisText, { color: colors.subtext }]}
               numberOfLines={isExpanded ? undefined : 4}
             >
-              {isTranslating ? 'Translating...' : (translatedSynopsis || anime.synopsis || 'No synopsis available.')}
+              {translatedSynopsis || anime.synopsis || 'No synopsis available.'}
             </Text>
             {anime.synopsis && anime.synopsis.length > 200 && (
               <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} style={{ marginTop: 8 }}>

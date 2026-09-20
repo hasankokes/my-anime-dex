@@ -5,13 +5,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
-import { getAnimeSchedule } from '../../services/jikanApi';
+import { getAiringSchedule } from '../../services/anilistApi';
 import { DayTabs } from '../../components/Calendar/DayTabs';
 import { CalendarAnimeCard } from '../../components/Calendar/CalendarAnimeCard';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthProvider';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { getNextBroadcastDate } from '../../lib/dateUtils';
+import { getNextBroadcastDate, getBroadcastDateObj } from '../../lib/dateUtils';
 import { useWalkthrough } from '../../context/WalkthroughContext';
 
 // Days mapping for Jikan API
@@ -102,25 +102,38 @@ export default function CalendarScreen() {
     const [inputText, setInputText] = useState(''); // What the user types
     const [searchQuery, setSearchQuery] = useState(''); // What filters the list
 
-    const fetchSchedule = useCallback(async () => {
-        // If we already have data for this day, use it and don't show loading
-        if (allSchedules[selectedDay]) {
-            setSchedule(allSchedules[selectedDay]);
-            return;
-        }
+    const getTimestampsForLocalDay = (localDayStr: string) => {
+        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const localIndex = days.indexOf(localDayStr);
+        
+        const now = new Date();
+        const currentLocalDay = now.getDay();
+        const diff = localIndex - currentLocalDay;
+        
+        const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff);
+        const startOfLocalDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 0, 0, 0);
+        const endOfLocalDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59, 999);
+        
+        return {
+            start: Math.floor(startOfLocalDay.getTime() / 1000),
+            end: Math.floor(endOfLocalDay.getTime() / 1000)
+        };
+    };
 
+    const fetchSchedule = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await getAnimeSchedule(selectedDay);
-            setSchedule(data);
-            setAllSchedules(prev => ({
-                ...prev,
-                [selectedDay]: data
-            }));
+            if (allSchedules[selectedDay]) {
+                setSchedule(allSchedules[selectedDay]);
+            } else {
+                const { start, end } = getTimestampsForLocalDay(selectedDay);
+                const data = await getAiringSchedule(start, end);
+                setAllSchedules(prev => ({ ...prev, [selectedDay]: data }));
+                setSchedule(data);
+            }
         } catch (error) {
-            // console.error(error); // Suppress log box for handled UI errors
-            setError((error as Error).message || 'Failed to load schedule');
+            setError(error instanceof Error ? error.message : JSON.stringify(error));
         } finally {
             setLoading(false);
         }
@@ -164,26 +177,19 @@ export default function CalendarScreen() {
 
     // Filter Logic
     const filteredSchedule = schedule.filter(anime => {
-        // 1. Strict Day Check
-        // Jikan returns days like "Mondays", "Tuesdays".
-        // selectedDay is "monday", "tuesday".
-        // We want to ensure we only show shows regarding the selected day.
-        // Also handle "Unknown" or null?
-
-        let matchesDay = true;
-        if (anime.broadcast && anime.broadcast.day) {
-            // "Mondays" -> "monday"
-            // Some might be null, usually we trust the API filter, but user reported issues.
+        let matchesDay = false;
+        const localDate = getBroadcastDateObj(anime);
+        
+        if (localDate) {
+            const dayMap = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            matchesDay = dayMap[localDate.getDay()] === selectedDay;
+        } else if (anime.broadcast && anime.broadcast.day) {
+            // Fallback: use Jikan's string directly if time parsing fails
             const apiDay = anime.broadcast.day.toLowerCase();
-            // specific check: does "mondays" contain "monday"? Yes.
-            // selectedDay: "monday". apiDay: "mondays".
-            // match if apiDay includes selectedDay?
-            // Or strictly: apiDay.startsWith(selectedDay) because "Mondays" starts with "Monday" (case-insensitive)?
-            // Let's safe check:
-            if (!apiDay.includes(selectedDay.toLowerCase())) {
-                matchesDay = false;
-            }
+            matchesDay = apiDay.includes(selectedDay.toLowerCase());
         }
+        
+        if (!matchesDay) return false;
 
         // 2. Favorites Check
         const matchesFav = favoritesOnly ? favoriteIds.has(anime.mal_id) : true;
@@ -291,9 +297,9 @@ export default function CalendarScreen() {
                         <View style={styles.emptyContainer}>
                             <Ionicons name="alert-circle-outline" size={48} color={colors.primary} />
                             <Text style={[styles.emptyText, { color: colors.text, textAlign: 'center', marginBottom: 8 }]}>
-                                {error.includes('504')
-                                    ? "Service is temporarily unavailable (MyAnimeList timeout)."
-                                    : "Failed to load schedule."}
+                                {error.includes('504') || error.toLowerCase().includes('timeout') || error.toLowerCase().includes('fail')
+                                    ? t('calendar.timeoutError')
+                                    : error}
                             </Text>
                             <TouchableOpacity
                                 onPress={() => fetchSchedule()}

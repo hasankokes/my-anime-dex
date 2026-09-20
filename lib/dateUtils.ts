@@ -19,7 +19,21 @@ export const getCurrentJSTDate = () => {
 
 // Helper to calculate next broadcast date
 export const getNextBroadcastDate = (anime: any) => {
+    if (anime.airingAt) {
+        const jstOffsetMs = 9 * 60 * 60 * 1000;
+        const jstTimeVirtual = new Date(anime.airingAt * 1000 + jstOffsetMs);
+        return new Date(
+            jstTimeVirtual.getUTCFullYear(),
+            jstTimeVirtual.getUTCMonth(),
+            jstTimeVirtual.getUTCDate(),
+            jstTimeVirtual.getUTCHours(),
+            jstTimeVirtual.getUTCMinutes(),
+            jstTimeVirtual.getUTCSeconds()
+        );
+    }
+
     if (!anime.broadcast || !anime.broadcast.time || !anime.broadcast.day) return null;
+
 
     const [hours, minutes] = anime.broadcast.time.split(':').map(Number);
 

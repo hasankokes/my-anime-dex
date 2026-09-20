@@ -99,54 +99,135 @@ export const getAnimeSchedule = async (day: string, retries = 3): Promise<JikanA
         return cached.data;
     }
 
+    let allData: JikanAnime[] = [];
+    let currentPage = 1;
+    let hasNextPage = true;
+    let currentRetries = retries;
+
     try {
-        const response = await fetch(`${BASE_URL}/schedules?filter=${normalizedDay}`, {
-            headers: {
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache'
-            },
-            cache: 'no-store'
-        });
+        while (hasNextPage) {
+            const response = await fetch(`${BASE_URL}/schedules?filter=${normalizedDay}&page=${currentPage}`);
 
-        if (response.status === 429 || response.status === 504) {
-            if (retries > 0) {
-                await wait(1000); // Wait 1s and retry
-                return getAnimeSchedule(day, retries - 1);
-            }
-        }
-
-        if (!response.ok) {
-            let errorMessage = `Jikan API Error: ${response.status}`;
-            try {
-                const errorBody = await response.json();
-                if (errorBody.message) {
-                    errorMessage += ` - ${errorBody.message}`;
-                } else if (errorBody.error) {
-                    errorMessage += ` - ${errorBody.error}`;
-                }
-            } catch (e) {
-                // Could not parse error body, rely on status
-                if (response.statusText) {
-                    errorMessage += ` ${response.statusText}`;
+            if (response.status === 429 || response.status === 504) {
+                if (currentRetries > 0) {
+                    await wait(1000); // Wait 1s and retry
+                    currentRetries--;
+                    continue;
                 }
             }
-            throw new Error(errorMessage);
-        }
 
-        const json: JikanScheduleResponse = await response.json();
+            if (!response.ok) {
+                let errorMessage = `Jikan API Error: ${response.status}`;
+                try {
+                    const errorBody = await response.json();
+                    if (errorBody.message) {
+                        errorMessage += ` - ${errorBody.message}`;
+                    } else if (errorBody.error) {
+                        errorMessage += ` - ${errorBody.error}`;
+                    }
+                } catch (e) {
+                    if (response.statusText) {
+                        errorMessage += ` ${response.statusText}`;
+                    }
+                }
+                throw new Error(errorMessage);
+            }
+
+            const json: JikanScheduleResponse = await response.json();
+            allData = [...allData, ...json.data];
+
+            hasNextPage = json.pagination?.has_next_page || false;
+            if (hasNextPage) {
+                currentPage++;
+                currentRetries = retries; // Reset retries for the new page
+                await wait(333); // Small delay between pages (Jikan limit is 3 requests/second)
+            }
+        }
 
         // Update cache
         scheduleCache.set(normalizedDay, {
-            data: json.data,
+            data: allData,
             timestamp: Date.now()
         });
 
-        return json.data;
+        return allData;
     } catch (error) {
         // console.error('Error fetching anime schedule:', error); // Suppress log, handled by UI
         // Return cached data if available even if expired, as fallback
         if (cached) {
             return cached.data;
+        }
+        throw error;
+    }
+};
+
+const fullScheduleCache = { data: [] as JikanAnime[], timestamp: 0 };
+
+export const getAllAnimeSchedules = async (retries = 3): Promise<JikanAnime[]> => {
+    // Check cache first
+    if (fullScheduleCache.data.length > 0 && Date.now() - fullScheduleCache.timestamp < CACHE_DURATION) {
+        return fullScheduleCache.data;
+    }
+
+    let allData: JikanAnime[] = [];
+    let currentPage = 1;
+    let hasNextPage = true;
+    let currentRetries = retries;
+
+    try {
+        while (hasNextPage) {
+            const response = await fetch(`${BASE_URL}/schedules?page=${currentPage}`, {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                },
+                cache: 'no-store'
+            });
+
+            if (response.status === 429 || response.status === 504) {
+                if (currentRetries > 0) {
+                    await wait(1000); // Wait 1s and retry
+                    currentRetries--;
+                    continue;
+                }
+            }
+
+            if (!response.ok) {
+                let errorMessage = `Jikan API Error: ${response.status}`;
+                try {
+                    const errorBody = await response.json();
+                    if (errorBody.message) {
+                        errorMessage += ` - ${errorBody.message}`;
+                    } else if (errorBody.error) {
+                        errorMessage += ` - ${errorBody.error}`;
+                    }
+                } catch (e) {
+                    if (response.statusText) {
+                        errorMessage += ` ${response.statusText}`;
+                    }
+                }
+                throw new Error(errorMessage);
+            }
+
+            const json: JikanScheduleResponse = await response.json();
+            allData = [...allData, ...json.data];
+
+            hasNextPage = json.pagination?.has_next_page || false;
+            if (hasNextPage) {
+                currentPage++;
+                currentRetries = retries; // Reset retries for the new page
+                await wait(333); // Small delay between pages (Jikan limit is 3 requests/second)
+            }
+        }
+
+        // Update cache
+        fullScheduleCache.data = allData;
+        fullScheduleCache.timestamp = Date.now();
+
+        return allData;
+    } catch (error) {
+        if (fullScheduleCache.data.length > 0) {
+            return fullScheduleCache.data;
         }
         throw error;
     }
