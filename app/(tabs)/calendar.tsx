@@ -107,8 +107,9 @@ export default function CalendarScreen() {
         const localIndex = days.indexOf(localDayStr);
         
         const now = new Date();
-        const currentLocalDay = now.getDay();
-        const diff = localIndex - currentLocalDay;
+        // Week runs Monday → Sunday to match the day tabs
+        const toMondayIndex = (d: number) => (d + 6) % 7;
+        const diff = toMondayIndex(localIndex) - toMondayIndex(now.getDay());
         
         const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff);
         const startOfLocalDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 0, 0, 0);
@@ -120,22 +121,29 @@ export default function CalendarScreen() {
         };
     };
 
+    const latestDayRef = useRef(selectedDay);
+
     const fetchSchedule = useCallback(async () => {
+        const day = selectedDay;
+        latestDayRef.current = day;
         setLoading(true);
         setError(null);
         try {
-            if (allSchedules[selectedDay]) {
-                setSchedule(allSchedules[selectedDay]);
+            if (allSchedules[day]) {
+                setSchedule(allSchedules[day]);
             } else {
-                const { start, end } = getTimestampsForLocalDay(selectedDay);
+                const { start, end } = getTimestampsForLocalDay(day);
                 const data = await getAiringSchedule(start, end);
-                setAllSchedules(prev => ({ ...prev, [selectedDay]: data }));
+                setAllSchedules(prev => ({ ...prev, [day]: data }));
+                // Ignore responses for a day the user has already switched away from
+                if (latestDayRef.current !== day) return;
                 setSchedule(data);
             }
         } catch (error) {
+            if (latestDayRef.current !== day) return;
             setError(error instanceof Error ? error.message : JSON.stringify(error));
         } finally {
-            setLoading(false);
+            if (latestDayRef.current === day) setLoading(false);
         }
     }, [selectedDay, allSchedules]);
 
@@ -178,7 +186,7 @@ export default function CalendarScreen() {
     // Filter Logic
     const filteredSchedule = schedule.filter(anime => {
         let matchesDay = false;
-        const localDate = getBroadcastDateObj(anime);
+        const localDate = anime.airingAt ? new Date(anime.airingAt * 1000) : getBroadcastDateObj(anime);
         
         if (localDate) {
             const dayMap = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];

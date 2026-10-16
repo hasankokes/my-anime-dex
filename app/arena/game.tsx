@@ -51,6 +51,15 @@ export default function ArenaGameScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [roundName, setRoundName] = useState('');
   const [isTransitioning, setIsTransitioning] = useState(false);
+  // Ref lock: state updates are async, so two taps in the same frame would both pass a state check
+  const pickLockRef = useRef(false);
+  const pickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (pickTimeoutRef.current) clearTimeout(pickTimeoutRef.current);
+    };
+  }, []);
   const [matchKey, setMatchKey] = useState(0); // Force re-render on new match
 
   const targetSize = parseInt(size as string) || 16;
@@ -151,17 +160,15 @@ export default function ArenaGameScreen() {
   };
 
   const handlePick = (winner: any, loser: any) => {
-    if (isTransitioning) return;
+    if (pickLockRef.current) return;
+    pickLockRef.current = true;
     setIsTransitioning(true);
-    
-    // Fire and forget stats
-    updateStats(winner.item_id, winner.name, true);
-    updateStats(loser.item_id, loser.name, false);
 
     const updatedNextRound = [...nextRoundItems, winner];
 
     // Delay to allow animation
-    setTimeout(() => {
+    pickTimeoutRef.current = setTimeout(() => {
+      pickTimeoutRef.current = null;
       if (currentIndex + 2 >= currentRoundItems.length) {
         if (updatedNextRound.length === 1) {
           // Tournament over
@@ -194,40 +201,9 @@ export default function ArenaGameScreen() {
         progressWidth.value = withTiming(matchNum / totalInRound, { duration: 400 });
         setMatchKey(prev => prev + 1);
       }
+      pickLockRef.current = false;
       setIsTransitioning(false);
     }, 250);
-  };
-
-  const updateStats = async (itemId: number, name: string, isWin: boolean) => {
-    try {
-      const { data, error } = await supabase.rpc('increment_arena_stats', {
-        p_item_id: itemId,
-        p_name: name,
-        p_is_win: isWin,
-        p_type: 'anime'
-      });
-      if (error) {
-        const { data: curr } = await supabase.from('arena_stats').select('*').eq('item_id', itemId).single();
-        if (curr) {
-          await supabase.from('arena_stats').update({
-            wins: curr.wins + (isWin ? 1 : 0),
-            losses: curr.losses + (!isWin ? 1 : 0),
-            total_matches: curr.total_matches + 1
-          }).eq('item_id', itemId);
-        } else {
-          await supabase.from('arena_stats').insert({
-            item_id: itemId,
-            name: name,
-            wins: isWin ? 1 : 0,
-            losses: !isWin ? 1 : 0,
-            total_matches: 1,
-            type: 'anime'
-          });
-        }
-      }
-    } catch (e) {
-      // Silent fail
-    }
   };
 
   if (loading) {

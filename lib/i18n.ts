@@ -92,6 +92,7 @@ export const translations = {
             restoreError: 'Failed to restore purchases.',
         },
         calendar: {
+            timeoutError: 'The schedule could not be loaded. Please check your connection and try again.',
             title: 'Broadcast Time',
             favoritesOnly: 'Favorites Only',
             days: {
@@ -178,6 +179,7 @@ export const translations = {
             addFavoritesDesc: 'Add anime to your favorites to see them here.'
         },
         animeDetail: {
+            failedToAdd: 'Failed to add to list',
             addToList: 'Add to List',
             saveToCustomList: 'Save to Custom List',
             episodesWatched: 'Episodes Watched',
@@ -474,6 +476,7 @@ export const translations = {
             restoreError: 'Satın almalar geri yüklenemedi.',
         },
         calendar: {
+            timeoutError: 'Yayın programı yüklenemedi. Lütfen bağlantını kontrol edip tekrar dene.',
             title: 'Yayın Saatleri',
             favoritesOnly: 'Sadece Favoriler',
             days: {
@@ -560,6 +563,7 @@ export const translations = {
             addFavoritesDesc: 'Favorilerinizi burada görmek için beğendiğiniz animeleri ekleyin.'
         },
         animeDetail: {
+            failedToAdd: 'Listeye eklenemedi',
             addToList: 'Listeye Ekle',
             saveToCustomList: 'Özel Listeye Kaydet',
             episodesWatched: 'İzlenen Bölümler',
@@ -856,6 +860,7 @@ export const translations = {
             restoreError: '購入の復元に失敗しました。',
         },
         calendar: {
+            timeoutError: 'スケジュールを読み込めませんでした。接続を確認して、もう一度お試しください。',
             title: '放送時間',
             favoritesOnly: 'お気に入りのみ',
             days: {
@@ -941,6 +946,7 @@ export const translations = {
             addFavoritesDesc: 'お気に入りのアニメを追加してここに表示しましょう。'
         },
         animeDetail: {
+            failedToAdd: 'リストに追加できませんでした',
             addToList: 'リストに追加',
             saveToCustomList: 'カスタムリストに保存',
             episodesWatched: '視聴したエピソード',
@@ -1232,6 +1238,7 @@ export const translations = {
             restoreError: 'Не удалось восстановить покупки.',
         },
         calendar: {
+            timeoutError: 'Не удалось загрузить расписание. Проверьте подключение и попробуйте ещё раз.',
             title: 'Время трансляции',
             favoritesOnly: 'Только избранное',
             days: {
@@ -1317,6 +1324,7 @@ export const translations = {
             addFavoritesDesc: 'Добавьте аниме в избранное, чтобы увидеть их здесь.'
         },
         animeDetail: {
+            failedToAdd: 'Не удалось добавить в список',
             addToList: 'Добавить в список',
             saveToCustomList: 'Сохранить в свой список',
             episodesWatched: 'Просмотрено эпизодов',
@@ -1608,6 +1616,7 @@ export const translations = {
             restoreError: 'Käufe konnten nicht wiederhergestellt werden.',
         },
         calendar: {
+            timeoutError: 'Der Sendeplan konnte nicht geladen werden. Bitte überprüfe deine Verbindung und versuche es erneut.',
             title: 'Sendezeit',
             favoritesOnly: 'Nur Favoriten',
             days: {
@@ -1693,6 +1702,7 @@ export const translations = {
             addFavoritesDesc: 'Füge Anime zu deinen Favoriten hinzu, um sie hier zu sehen.'
         },
         animeDetail: {
+            failedToAdd: 'Konnte nicht zur Liste hinzugefügt werden',
             addToList: 'Zur Liste hinzufügen',
             saveToCustomList: 'In benutzerdefinierter Liste speichern',
             episodesWatched: 'Gesehene Episoden',
@@ -1983,6 +1993,7 @@ export const translations = {
             restoreError: 'فشلت استعادة المشتريات.',
         },
         calendar: {
+            timeoutError: 'تعذّر تحميل الجدول. يرجى التحقق من اتصالك والمحاولة مرة أخرى.',
             title: 'وقت البث',
             favoritesOnly: 'المفضلة فقط',
             days: {
@@ -2359,6 +2370,7 @@ export const translations = {
             restoreError: 'Error al restaurar las compras.',
         },
         calendar: {
+            timeoutError: 'No se pudo cargar el calendario. Comprueba tu conexión e inténtalo de nuevo.',
             title: 'Hora de emisión',
             favoritesOnly: 'Solo favoritos',
             days: {
@@ -2695,6 +2707,7 @@ export const translations = {
             restoreError: 'Falha ao restaurar compras.',
         },
         calendar: {
+            timeoutError: 'Não foi possível carregar a programação. Verifique sua conexão e tente novamente.',
             title: 'Horário de Transmissão',
             favoritesOnly: 'Apenas Favoritos',
             days: {
@@ -3031,6 +3044,7 @@ export const translations = {
             restoreError: 'Gagal memulihkan pembelian.',
         },
         calendar: {
+            timeoutError: 'Jadwal tidak dapat dimuat. Periksa koneksi Anda dan coba lagi.',
             title: 'Waktu Tayang',
             favoritesOnly: 'Hanya Favorit',
             days: {
@@ -3364,6 +3378,7 @@ export const translations = {
             restoreError: 'खरीद पुनर्स्थापित करने में विफल।',
         },
         calendar: {
+            timeoutError: 'शेड्यूल लोड नहीं हो सका। कृपया अपना कनेक्शन जांचें और फिर से प्रयास करें।',
             title: 'प्रसारण समय',
             favoritesOnly: 'केवल पसंदीदा',
             days: {
@@ -3450,6 +3465,7 @@ export const translations = {
             addFavoritesDesc: 'उन्हें यहाँ देखने के लिए अपने पसंदीदा में एनीमे जोड़ें।'
         },
         animeDetail: {
+            failedToAdd: 'सूची में जोड़ने में विफल',
             addToList: 'सूची में जोड़ें',
             saveToCustomList: 'कस्टम सूची में सहेजें',
             episodesWatched: 'देखे गए एपिसोड',

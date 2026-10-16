@@ -34,15 +34,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = React.useCallback(() => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
     AsyncStorage.setItem('app_theme', newTheme);
-  };
+  }, [theme]);
 
   const isDark = theme === 'dark';
 
-  const colors = {
+  // Memoized so the context value stays stable and consumers don't re-render on every provider render
+  const colors = React.useMemo(() => ({
     background: isDark ? '#0F0F0F' : '#F9FAFB',
     card: isDark ? '#1F2937' : '#FFFFFF',
     text: isDark ? '#FFFFFF' : '#111827',
@@ -51,14 +52,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     primary: '#FACC15', // Yellow stays same
     tabBar: isDark ? '#121212' : '#FFFFFF',
     inputBg: isDark ? '#1F2937' : '#F3F4F6',
-  };
+  }), [isDark]);
 
   const contextValue = React.useMemo(() => ({
     theme,
     isDark,
     toggleTheme,
     colors
-  }), [theme, isDark, colors]);
+  }), [theme, isDark, toggleTheme, colors]);
 
   return (
     <ThemeContext.Provider value={contextValue}>

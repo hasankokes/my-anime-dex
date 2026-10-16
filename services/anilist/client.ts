@@ -18,7 +18,7 @@ interface FetchOptions {
   cacheKey?: string;
   /** Cache duration in milliseconds (default: 5 minutes) */
   cacheDuration?: number;
-  /** Number of retry attempts on transient errors (default: 3) */
+  /** Number of retry attempts on transient errors (default: 5) */
   retries?: number;
 }
 
@@ -27,8 +27,17 @@ interface FetchOptions {
  * Handles 429 rate-limit responses with exponential back-off.
  */
 // Throttling: Ensure minimum spacing between network requests to avoid AniList rate limits
-let lastRequestTime = 0;
+// Slots are reserved synchronously so concurrent callers queue up instead of all firing together.
+let nextRequestSlot = 0;
 const MIN_REQUEST_INTERVAL = 350; // ms between requests
+const REQUEST_TIMEOUT = 15000; // ms before a request is aborted
+
+function reserveRequestSlot(): number {
+  const now = Date.now();
+  const slot = Math.max(now, nextRequestSlot);
+  nextRequestSlot = slot + MIN_REQUEST_INTERVAL;
+  return slot - now;
+}
 
 export async function fetchGraphQL<T = any>(
   query: string,
@@ -51,15 +60,17 @@ export async function fetchGraphQL<T = any>(
 
   while (true) {
     // Throttle network requests
-    const now = Date.now();
-    const timeSinceLast = now - lastRequestTime;
-    if (timeSinceLast < MIN_REQUEST_INTERVAL) {
-      await wait(MIN_REQUEST_INTERVAL - timeSinceLast);
+    const delay = reserveRequestSlot();
+    if (delay > 0) {
+      await wait(delay);
     }
-    lastRequestTime = Date.now();
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
     try {
       const response = await fetch(ANILIST_URL, {
+        signal: controller.signal,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +84,8 @@ export async function fetchGraphQL<T = any>(
       if (response.status === 429) {
         if (retriesLeft > 0) {
           const retryAfter = response.headers.get('Retry-After');
-          const waitMs = retryAfter ? parseInt(retryAfter, 10) * 1000 : 3500;
+          const retryAfterSec = retryAfter ? parseInt(retryAfter, 10) : NaN;
+          const waitMs = Number.isFinite(retryAfterSec) ? retryAfterSec * 1000 : 3500;
           console.warn(`[AniList] HTTP 429 Rate limited. Waiting ${waitMs}ms… (${retriesLeft} retries left)`);
           await wait(waitMs);
           retriesLeft--;
@@ -125,7 +137,12 @@ export async function fetchGraphQL<T = any>(
         await wait(3000 * (retries - retriesLeft + 1));
         continue;
       }
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('AniList request timed out. Please try again.');
+      }
       throw error;
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 }
