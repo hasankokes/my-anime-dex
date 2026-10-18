@@ -77,6 +77,8 @@
     "@babel/core": "^7.27.1",
     "@supabase/mcp-server-supabase": "^0.7.0",
     "@types/react": "~19.0.10",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~9.2.0",
     "jsonwebtoken": "^9.0.3",
     "typescript": "^5.8.3"
   }
