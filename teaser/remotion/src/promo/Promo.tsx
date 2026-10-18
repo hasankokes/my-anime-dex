@@ -24,7 +24,7 @@ const SHOTS: [React.FC, number][] = [
   [S09, S09_LEN],
 ];
 
-export const PROMO_LEN = SHOTS.reduce((a, [, l]) => a + l, 0); // 750
+export const PROMO_LEN = SHOTS.reduce((a, [, l]) => a + l, 0); // 795 = 26.5s (montage is 120f)
 
 /** PROMO cut (1920×1080 YouTube/Play, 1080×1920 social). `muted` for the web loop. */
 export const Promo: React.FC<{ audio?: string; muted?: boolean }> = ({ audio = "audio/mix.wav", muted = false }) => {

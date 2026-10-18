@@ -1,4 +1,4 @@
-# MyAnimeDex — 25s teaser
+# MyAnimeDex — 26.5s teaser
 
 A code-made app teaser. Everything video-related lives in `teaser/`; the app code is untouched.
 Real UI captured from the iOS Simulator, edited and animated in Remotion, with music and SFX synthesized in Python.
@@ -7,7 +7,7 @@ Real UI captured from the iOS Simulator, edited and animated in Remotion, with m
 
 | File | Format | Use |
 |------|--------|-----|
-| `store_preview_886x1920.mp4` | 886×1920, H.264 High L4.0, 30fps, ~11 Mbps, AAC 256k 48kHz stereo, 25.0s | App Store app preview (6.9" and 6.5" iPhone) |
+| `store_preview_886x1920.mp4` | 886×1920, H.264 High L4.0, 30fps, ~11 Mbps, AAC 256k 48kHz stereo, 26.5s | App Store app preview (6.9" and 6.5" iPhone) |
 | `promo_1920x1080.mp4` | 1920×1080, H.264, 30fps, AAC 48kHz | YouTube → Google Play listing video |
 | `promo_1080x1920.mp4` | 1080×1920, H.264, 30fps, AAC 48kHz | Social / mobile web |
 | `web_loop.mp4` (2.0 MB), `web_loop.webm` (3.3 MB) | 1280×720, muted, seamless loop (last→first frame PSNR 46.6 dB) | Website hero (`<video autoplay muted loop playsinline>`) |
@@ -15,7 +15,7 @@ Real UI captured from the iOS Simulator, edited and animated in Remotion, with m
 | `poster.png` | 1920×1080, promo frame 620 ("Your whole dex. In your pocket.") | `<video poster>` and thumbnail |
 | `contact.png` | promo 1920×1080, one frame per second | Review |
 
-The two cuts are the same 25s edit:
+The two cuts are the same 26.5s edit (795 frames):
 - **STORE** is full-bleed real UI with caption overlays only: no device, badges, pricing or claims. End card is the logo plus "Your Anime Companion."
 - **PROMO** adds a 3D phone, UI elements breaking out of the phone as motion graphics built from the app's tokens, and a logo end card with store badges and the URL.
 
@@ -28,7 +28,7 @@ cd teaser/remotion && npm install
 cd .. && python3 -m venv .venv && .venv/bin/pip install numpy scipy librosa soundfile
 ```
 
-**1. Audio** (deterministic, takes about 2s):
+**1. Audio** (deterministic, takes about 2s; 120 BPM, 26.5s):
 ```bash
 cd teaser
 .venv/bin/python audio/compose.py                     # → audio/out/{music,sfx,mix}.wav

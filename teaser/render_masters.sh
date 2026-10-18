@@ -8,7 +8,7 @@ if (( $# )); then comps=("$@"); else comps=(PromoL PromoP WebLoop Store); fi
 for c in $comps; do
   dir=out/frames/$c
   rm -rf $dir
-  (cd remotion && node render_stills.mjs $c ../$dir 0 749 2)
+  (cd remotion && node render_stills.mjs $c ../$dir 0 "" 2)  # "" = through the composition's last frame
   out=out/master/${c}_master.mov
   [ $c = Store ] && out=out/master/store_master.mov
   if [ $c = WebLoop ]; then

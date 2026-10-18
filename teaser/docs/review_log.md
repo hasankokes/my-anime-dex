@@ -119,3 +119,14 @@ Notes found on the final contact sheet:
 - S08 opens on a 2.5× close-up of the Favorites grid. For about 8 frames the posters fill the frame, but they're
   motion-blurred by the whip. Short, but it's the one moment where artwork is large.
 - Whip frames at the cut points are intentionally blurred.
+
+## v2 — montage slowed (user feedback, 2026-10-18)
+
+The user said: "And so much more" goes too fast to follow, it may run a bit longer, and texts overlap in that section.
+- S07 now gives each feature one beat (15f, 0.5s) instead of about 9f. Montage 75 → 120f; film 750 → 795f (26.5s, still within the store's 30s limit).
+- **Overlaps fixed:** feature chips stay on the phone's far side (landscape x 0.9; portrait x 0.865), alternating high and
+  low. They shrink and fade in place instead of flying across the caption and phone to the dock, and the dock icon pops in at its slot.
+  The tag pill had started at 35% opacity with an offset, so two labels showed at once; it now slides in cleanly.
+- Store cut: same 15f-per-feature montage; S08 → f615, S09 → f705.
+- Audio: montage hats and riser extended to 20.5s; swell 20.5–23.5s; final hit 23.5s; SFX after S07 shifted +45f; one tick per cut.
+- In-points kept inside each clip (detail 12.35s, filters 4.1s, arena 3.25s; +0.5s ≤ clip length).

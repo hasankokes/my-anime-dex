@@ -128,14 +128,15 @@ const ProfileCard: React.FC<{ len: number }> = ({ len }) => {
 };
 
 const MONTAGE: { src: string; inSec: number; len: number; tag: string; focusY?: number; zoom?: number }[] = [
-  { src: "c07a_detail", inSec: 12.55, len: 9, tag: "Add to List", zoom: 1.35, focusY: 1 },
-  { src: "c07b_pulse_blur", inSec: 0.3, len: 9, tag: "Community Pulse", zoom: 1.5, focusY: 0.22 },
-  { src: "c07x_chill_list_collab", inSec: 3.6, len: 9, tag: "Shared lists" },
-  { src: "c07d_fav_filters", inSec: 4.2, len: 10, tag: "Smart filters", zoom: 1.15, focusY: 0.9 },
-  { src: "c07e_leaderboard_blur", inSec: 0.5, len: 9, tag: "Leaderboard" },
-  { src: "c07f_arena_tiles", inSec: 3.4, len: 9, tag: "Anime Arena", zoom: 1.3, focusY: 0.62 },
-  { src: "c07g_language", inSec: 3.2, len: 10, tag: "10 languages", zoom: 1.15, focusY: 0.3 },
-  { src: "c07h_theme", inSec: 2.55, len: 10, tag: "Light & dark" },
+  // one beat (15f) per feature — same in-points as the promo (S07)
+  { src: "c07a_detail", inSec: 12.35, len: 15, tag: "Add to List", zoom: 1.35, focusY: 1 },
+  { src: "c07b_pulse_blur", inSec: 0.3, len: 15, tag: "Community Pulse", zoom: 1.5, focusY: 0.22 },
+  { src: "c07x_chill_list_collab", inSec: 3.6, len: 15, tag: "Shared lists" },
+  { src: "c07d_fav_filters", inSec: 4.1, len: 15, tag: "Smart filters", zoom: 1.15, focusY: 0.9 },
+  { src: "c07e_leaderboard_blur", inSec: 0.5, len: 15, tag: "Leaderboard" },
+  { src: "c07f_arena_tiles", inSec: 3.25, len: 15, tag: "Anime Arena", zoom: 1.3, focusY: 0.62 },
+  { src: "c07g_language", inSec: 3.2, len: 15, tag: "10 languages", zoom: 1.15, focusY: 0.3 },
+  { src: "c07h_theme", inSec: 2.55, len: 15, tag: "Light & dark" },
 ];
 
 const Montage: React.FC = () => {
@@ -224,14 +225,14 @@ export const StoreCut: React.FC<{ audio?: string }> = ({ audio = "audio/mix.wav"
         </ScreenCard>
         <StoreCaption lines={["Can't decide?", "Roll."]} highlight="Roll." />
       </Shot>
-      <Shot from={495} len={75}>
+      <Shot from={495} len={120}>
         <Montage />
       </Shot>
-      <Shot from={570} len={90}>
+      <Shot from={615} len={90}>
         <PayoffCard />
         <StoreCaption lines={["Your whole dex.", "In your pocket."]} highlight="In your pocket." />
       </Shot>
-      <Shot from={660} len={90}>
+      <Shot from={705} len={90}>
         <S09 store />
       </Shot>
       <Audio src={staticFile(audio)} />

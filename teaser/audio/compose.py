@@ -5,7 +5,7 @@ No samples, no third-party audio: everything here is generated, so the result is
 Structure follows docs/shotlist.md:
   0–2s    hook hit + groove start          (S01)
   2–16.5  driving groove, energy rises     (S02–S06)
-  16.5–19 16th hats + riser                (S07 montage)
+  16.5–20.5 16th hats + riser              (S07 montage, 8 features × 1 beat)
   19–22   half-time swell                  (S08 payoff)
   22–25   final hit + "dex" chime + tail   (S09 end card)
 
@@ -19,7 +19,7 @@ from scipy.signal import butter, fftconvolve, sosfilt
 SR = 48000
 BPM = 120
 BEAT = 60 / BPM
-DUR = 25.0
+DUR = 26.5  # 795 frames
 N = int(SR * DUR)
 FPS = 30
 rng = np.random.default_rng(7)
@@ -206,13 +206,13 @@ for b in range(n_beats):
     at = b * BEAT
     bar, pos = divmod(b, 4)
     root, ch = chords[bar % 4]
-    if at < 19.0:  # groove
+    if at < 20.5:  # groove
         music.add(kick(big=b == 0), at, 1.0 if b else 1.25)
         if pos in (1, 3) and at >= 2.0:
             music.add(clap(), at, 0.55)
         hat_gain = 0.16 + 0.1 * min(1, at / 16)
         music.add(hat(), at + BEAT / 2, hat_gain, pan=0.25)
-        if 16.5 <= at < 19.0:
+        if 16.5 <= at < 20.5:
             for k in (0.25, 0.75):
                 music.add(hat(), at + BEAT * k, 0.14, pan=-0.25)
         # bass 8ths
@@ -223,28 +223,28 @@ for b in range(n_beats):
             for k in range(4):
                 n_ = ch[(pos * 4 + k) % len(ch)] + 12
                 music.add(pluck(note(n_), bright=2500 + 4000 * min(1, at / 16)), at + k * BEAT / 4, 0.16, pan=(-0.35 if k % 2 else 0.35))
-    if pos == 0 and at < 19.0:  # chord pads per bar, sidechained by kick below
+    if pos == 0 and at < 20.5:  # chord pads per bar, sidechained by kick below
         music.add(supersaw([note(n) for n in ch], BEAT * 4, cutoff=1800 + 2400 * min(1, at / 16)), at, 0.55)
 
 # 19–22s half-time swell: big pad + slow kicks
-for i, at in enumerate((19.0, 20.0, 21.0)):
+for i, at in enumerate((20.5, 21.5, 22.5)):  # S08 payoff
     root, ch = chords[i % 4 if i < 2 else 2]
     music.add(supersaw([note(n) for n in ch] + [note(ch[0] + 12)], 1.2, voices=9, spread=0.018, cutoff=3200), at, 1.0)
     music.add(kick(), at, 0.95)
     music.add(bass(note(root - 12), 0.9), at, 0.7)
-music.add(noise_riser(2.5), 16.5, 0.35)
-music.add(noise_riser(1.0, 800, 12000), 21.0, 0.3)
+music.add(noise_riser(4.0), 16.5, 0.35)
+music.add(noise_riser(1.0, 800, 12000), 22.5, 0.3)
 
 # 22s final hit + tail
-music.add(kick(big=True), 22.0, 1.3)
-music.add(supersaw([note(n) for n in (57, 64, 69, 72, 76)], 3.0, voices=9, spread=0.02, cutoff=4200) * np.linspace(1, 0, int(3.0 * SR))[:, None] ** 2, 22.0, 0.75)
-music.add(hp(rng.standard_normal(int(2.0 * SR)), 3000) * np.exp(-t_(2.0) * 2.2) * 0.35, 22.0, 0.6)  # crash
+music.add(kick(big=True), 23.5, 1.3)  # S09 start (f705)
+music.add(supersaw([note(n) for n in (57, 64, 69, 72, 76)], 3.0, voices=9, spread=0.02, cutoff=4200) * np.linspace(1, 0, int(3.0 * SR))[:, None] ** 2, 23.5, 0.75)
+music.add(hp(rng.standard_normal(int(2.0 * SR)), 3000) * np.exp(-t_(2.0) * 2.2) * 0.35, 23.5, 0.6)  # crash
 
 # sidechain: duck pads/bass under kicks (groove section)
 duck = np.ones(N)
 for b in range(n_beats):
     at = b * BEAT
-    if at < 19.0 or at in (19.0, 20.0, 21.0):
+    if at < 20.5 or at in (20.5, 21.5, 22.5):
         i = int(at * SR)
         L = int(0.22 * SR)
         duck[i : i + L] = np.minimum(duck[i : i + L], 0.35 + 0.65 * (np.arange(min(L, N - i)) / L))
@@ -268,16 +268,16 @@ cues = [
     # S06 dice
     (F(403), whoosh(0.3), 0.55, 0.4), (F(410), rattle(1.75), 0.45, 0.0), (F(465), pop(800), 0.6, 0.0), (F(465), sparkle(0.9), 0.5, 0.0),
     # S08 payoff
-    (F(568), whoosh(0.45, up=False), 0.5, 0.0), (F(615), bell(1760, 1.4, 0.6), 0.35, 0.0),
+    (F(613), whoosh(0.45, up=False), 0.5, 0.0), (F(660), bell(1760, 1.4, 0.6), 0.35, 0.0),
     # S09 end card: slam + "dex" chime, words, badges
-    (F(660), whoosh(0.5), 0.45, 0.0), (F(675), kick(big=True), 0.6, 0.0), (F(675), bell(880, 2.6, 1.0), 0.5, -0.1),
-    (F(676), bell(1318.5, 2.4, 0.7), 0.4, 0.15), (F(690), pop(900), 0.3, -0.3), (F(697), pop(1000), 0.3, 0.0),
-    (F(705), pop(1200), 0.35, 0.3), (F(710), click(2000), 0.3, -0.2), (F(714), click(2200), 0.3, 0.2),
+    (F(705), whoosh(0.5), 0.45, 0.0), (F(720), kick(big=True), 0.6, 0.0), (F(720), bell(880, 2.6, 1.0), 0.5, -0.1),
+    (F(721), bell(1318.5, 2.4, 0.7), 0.4, 0.15), (F(735), pop(900), 0.3, -0.3), (F(742), pop(1000), 0.3, 0.0),
+    (F(750), pop(1200), 0.35, 0.3), (F(755), click(2000), 0.3, -0.2), (F(759), click(2200), 0.3, 0.2),
 ]
 for at, sig, g, pan in cues:
     sfx.add(sig, at, g, pan)
 # montage ticks on every cut
-for c in (0, 9, 18, 27, 37, 46, 55, 65):
+for c in range(0, 120, 15):  # one cut per beat
     sfx.add(click(2800 + c * 10, 0.03), F(495 + c), 0.45, 0.3 if c % 2 else -0.3)
 sfx.x = reverb(sfx.x, 0.8, 6.0, 0.12)
 
