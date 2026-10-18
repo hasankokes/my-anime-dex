@@ -1,4 +1,4 @@
-# MyAnimeDex — 26.5s teaser
+# MyAnimeDex — app teaser (promo 30.5s, App Store 28.5s)
 
 A code-made app teaser. Everything video-related lives in `teaser/`; the app code is untouched.
 Real UI captured from the iOS Simulator, edited and animated in Remotion, with music and SFX synthesized in Python.
@@ -7,7 +7,7 @@ Real UI captured from the iOS Simulator, edited and animated in Remotion, with m
 
 | File | Format | Use |
 |------|--------|-----|
-| `store_preview_886x1920.mp4` | 886×1920, H.264 High L4.0, 30fps, ~11 Mbps, AAC 256k 48kHz stereo, 26.5s | App Store app preview (6.9" and 6.5" iPhone) |
+| `store_preview_886x1920.mp4` | 886×1920, H.264 High L4.0, 30fps, ~11 Mbps, AAC 256k 48kHz stereo, 28.5s | App Store app preview (6.9" and 6.5" iPhone) |
 | `promo_1920x1080.mp4` | 1920×1080, H.264, 30fps, AAC 48kHz | YouTube → Google Play listing video |
 | `promo_1080x1920.mp4` | 1080×1920, H.264, 30fps, AAC 48kHz | Social / mobile web |
 | `web_loop.mp4` (2.0 MB), `web_loop.webm` (3.3 MB) | 1280×720, muted, seamless loop (last→first frame PSNR 46.6 dB) | Website hero (`<video autoplay muted loop playsinline>`) |
@@ -15,7 +15,7 @@ Real UI captured from the iOS Simulator, edited and animated in Remotion, with m
 | `poster.png` | 1920×1080, promo frame 620 ("Your whole dex. In your pocket.") | `<video poster>` and thumbnail |
 | `contact.png` | promo 1920×1080, one frame per second | Review |
 
-The two cuts are the same 26.5s edit (795 frames):
+The two cuts share one edit. The promo is 30.5s (915f, 8 montage features); the store cut is 28.5s (855f, 6 montage features, to stay under Apple's 30s limit):
 - **STORE** is full-bleed real UI with caption overlays only: no device, badges, pricing or claims. End card is the logo plus "Your Anime Companion."
 - **PROMO** adds a 3D phone, UI elements breaking out of the phone as motion graphics built from the app's tokens, and a logo end card with store badges and the URL.
 
@@ -28,12 +28,12 @@ cd teaser/remotion && npm install
 cd .. && python3 -m venv .venv && .venv/bin/pip install numpy scipy librosa soundfile
 ```
 
-**1. Audio** (deterministic, takes about 2s; 120 BPM, 26.5s):
+**1. Audio** (deterministic; 120 BPM; one mix per cut):
 ```bash
 cd teaser
-.venv/bin/python audio/compose.py                     # → audio/out/{music,sfx,mix}.wav
-.venv/bin/python audio/beats.py audio/out/music.wav --out audio/beats.json
-ffmpeg -y -i audio/out/mix.wav -af "loudnorm=I=-14:TP=-1.0:LRA=11" -ar 48000 remotion/public/audio/mix.wav
+.venv/bin/python audio/compose.py promo               # → audio/out/promo/{music,sfx,mix}.wav (30.5s)
+.venv/bin/python audio/compose.py store               # → audio/out/store/… (28.5s)
+for c in promo store; do ffmpeg -y -i audio/out/$c/mix.wav -af "loudnorm=I=-14:TP=-1.0:LRA=11" -ar 48000 remotion/public/audio/mix_$c.wav; done
 ```
 
 **2. Captures → CFR clips.** Only needed if `remotion/public/full` is missing. The raw takes are gitignored.
@@ -49,7 +49,7 @@ cd teaser
 ./render_masters.sh                 # PromoL PromoP WebLoop Store → out/master/*_master.mov (~5 min each)
 ```
 Every frame goes through `renderStill` (a fresh page per frame, software GL `swiftshader`), and the PNG sequence plus
-`remotion/public/audio/mix.wav` are muxed into ProRes HQ. **Don't use plain `npx remotion render` for the promo.**
+`remotion/public/audio/mix_promo.wav` (or `mix_store.wav`) are muxed into ProRes HQ. **Don't use plain `npx remotion render` for the promo.**
 On this machine it silently dropped 3D layers or returned black `<OffthreadVideo>` frames on 5–17% of frames, a
 different set each run. `render_verified.py` (render twice, diff, report) is the diagnostic that found this; see
 `out/master/verified.log`. The still-based renderer is bit-identical run-to-run and matches the CLI stills.
@@ -73,6 +73,7 @@ Per-shot test renders are available: `npx remotion still S04-L ../out/review/x.p
 ## How it's built
 
 - `docs/feature_inventory.md`: every feature, the ranking, and why the hero features were picked.
+- **Logo:** the end card uses the app's colour logo (`captures/make_logo.py` cuts it out of `assets/images/splash-lightcover.png`), not the dark-splash neon variant.
 - `docs/style_guide.md`: tokens (#0F0F0F / #1F2937 / #FACC15, Poppins, Ionicons, radii 12/16).
 - `docs/shotlist.md` and `captures/edl.json`: shot timing (120 BPM grid, 15 frames per beat) and in-points.
 - `docs/ANIMATION_GUIDE.md`: the contract every shot follows (breakout grammar, motion vocabulary, review loop).

@@ -12,7 +12,7 @@ export const S09_LEN = 90;
  * Logo end card with a designed build-up (beats every 15f):
  *  0–8   handoff: yellow core from S08 + halftone wave (transition FX)
  *  2–15  comic burst rays grow (echo of the logo's own burst)
- *  15    logo slams in (spring overshoot), neon flicker, impact flash + shockwave, 3f camera shake
+ *  15    colour app logo slams in (spring overshoot), impact flash + shockwave, 3f camera shake
  *  30/37/45  in-app tagline "Track · Discover · Watch" (login screen copy) word by word
  *  45–60 promo: store badges rise; URL. store: "Your Anime Companion." (splash copy) only
  *  60–75 hold, rays drift, logo breathes
@@ -40,8 +40,7 @@ export const S09: React.FC<{ store?: boolean }> = ({ store = false }) => {
   const s = pop(f, 9, fps, { damping: 11, stiffness: 170 });
   const logoScale = interpolate(s, [0, 1], [2.4, 1]) * (1 + Math.sin(f / 9) * 0.008) * (1 - collapse * 0.7);
   const logoRot = interpolate(s, [0, 1], [-8, 0]);
-  const flicker = f >= 15 && f < 21 ? [1, 0.45, 1, 0.7, 1, 0.85][f - 15] : 1;
-  const logoOpacity = Math.min(1, s * 2) * flicker * keep;
+  const logoOpacity = Math.min(1, s * 2) * keep;
 
   // rays
   const rayP = prog(f, 2, 16) * keep;
@@ -112,7 +111,7 @@ export const S09: React.FC<{ store?: boolean }> = ({ store = false }) => {
 
       {/* logo */}
       <Img
-        src={staticFile("brand/logo_neon.png")}
+        src={staticFile("brand/logo_color.png")} // the app's colour logo (header/light splash), not the dark-splash neon
         style={{
           position: "absolute",
           height: logoH,
@@ -120,7 +119,8 @@ export const S09: React.FC<{ store?: boolean }> = ({ store = false }) => {
           top: cy,
           transform: `translate(-50%, -50%) rotate(${logoRot}deg) scale(${logoScale})`,
           opacity: logoOpacity,
-          filter: `drop-shadow(0 0 ${20 * u}px rgba(250,204,21,${0.25 + flash * 0.5}))`,
+          // thin light rim keeps the logo's black outline readable on the dark stage, plus the accent glow
+          filter: `drop-shadow(0 0 ${2.5 * u}px rgba(255,255,255,0.55)) drop-shadow(0 0 ${22 * u}px rgba(250,204,21,${0.22 + flash * 0.5}))`,
         }}
       />
 

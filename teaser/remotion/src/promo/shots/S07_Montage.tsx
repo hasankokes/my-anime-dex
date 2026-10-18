@@ -4,36 +4,36 @@ import { Phone } from "../../lib/Phone";
 import { SpeedLines, whipIn } from "../../lib/Transitions";
 import { useLayout } from "../../kit/layout";
 import { drift, easeInOut, easeOut, lerp, pop, prog } from "../../kit/motion";
-import { Screen } from "../../kit/screen";
+import { MontageScreen } from "../../kit/screen";
 import { DockIcon, FeatureChip, Float3D, PreloadIcons, TagPill } from "../../kit/S07_extra";
 
-export const S07_LEN = 120; // 8 features × 15f (one beat each). Was 75 (~9f each): too fast to follow.
+export const S07_LEN = 240; // 8 features × 30f (2 beats, 1s each). v1 75f and v2 120f were both too fast to follow.
 
-type Item = { src: string; inSec: number; len: number; tag: string; icon: string; backIcon?: string; zoom?: number; focusY?: number };
+type Item = { src: string; inSec: number; holdAt?: number; len: number; tag: string; icon: string; backIcon?: string };
 
-/** In-points = Animatic MONTAGE. One beat (15f) per feature so each screen can be read.
- *  Pulse/Leaderboard only from the *_blur clips (blur windows: Pulse 1.7s, Leaderboard 2.9s → in + 0.5s fits). */
+/** One second (30f) per feature. The screen is never zoomed: the whole capture sits inside the phone, so no
+ *  text is cropped by the bezel. In-points keep in + 1.0s inside each clip.
+ *  Pulse/Leaderboard only from the *_blur clips (blur windows 1.7s / 2.9s). */
 const ITEMS: Item[] = [
-  { src: "c07a_detail", inSec: 12.35, len: 15, tag: "Add to List", icon: "bookmarks", zoom: 1.15, focusY: 1 },
-  { src: "c07b_pulse_blur", inSec: 0.3, len: 15, tag: "Community Pulse", icon: "pulse", zoom: 1.15, focusY: 0.2 },
-  { src: "c07x_chill_list_collab", inSec: 3.6, len: 15, tag: "Shared lists", icon: "people", zoom: 1.12, focusY: 0.15 },
-  { src: "c07d_fav_filters", inSec: 4.1, len: 15, tag: "Smart filters", icon: "list", zoom: 1.1, focusY: 0.9 },
-  { src: "c07e_leaderboard_blur", inSec: 0.5, len: 15, tag: "Leaderboard", icon: "trophy" },
-  // tiles only: the banner above them has character art
-  { src: "c07f_arena_tiles", inSec: 3.25, len: 15, tag: "Anime Arena", icon: "flame", zoom: 1.45, focusY: 0.95 },
-  { src: "c07g_language", inSec: 3.2, len: 15, tag: "10 languages", icon: "globe-outline", zoom: 1.1, focusY: 0.25 },
-  // screen flips dark → light at local ≈ 4.5f
-  { src: "c07h_theme", inSec: 2.55, len: 15, tag: "Light & dark", icon: "moon-outline", backIcon: "sunny-outline" },
+  { src: "c07a_detail", inSec: 12.45, holdAt: 12.7, len: 30, tag: "Add to List", icon: "bookmarks" }, // sheet slides in, then holds open
+  { src: "c07b_pulse_blur", inSec: 0.3, len: 30, tag: "Community Pulse", icon: "pulse" },
+  { src: "c07x_chill_list_collab", inSec: 3.6, len: 30, tag: "Shared lists", icon: "people" },
+  { src: "c07d_fav_filters", inSec: 3.6, len: 30, tag: "Smart filters", icon: "list" }, // sort sheet opens at +0.5s
+  { src: "c07e_leaderboard_blur", inSec: 0.5, len: 30, tag: "Leaderboard", icon: "trophy" },
+  { src: "c07f_arena_tiles", inSec: 2.7, len: 30, tag: "Anime Arena", icon: "flame" }, // whole setup screen; Comedy picked at +1.0s
+  { src: "c07g_language", inSec: 3.2, len: 30, tag: "10 languages", icon: "globe-outline" },
+  // screen flips dark → light at +0.3s
+  { src: "c07h_theme", inSec: 2.4, len: 30, tag: "Light & dark", icon: "moon-outline", backIcon: "sunny-outline" },
 ];
 
 const STARTS = ITEMS.reduce<number[]>((a, it, i) => [...a, i === 0 ? 0 : a[i - 1] + ITEMS[i - 1].len], []);
 const N = ITEMS.length;
-const LAST_DOCK = 112; // the last chip docks 112 → 116 so the row is complete before the cut
+const LAST_DOCK = 228; // the last chip docks 228 → 232 so the row is complete before the cut
 
 /** Hero slots for the lifted chip (fractions of the frame): always on the phone's far side, away from the
  *  caption / tag / dock, alternating high-low so consecutive chips never collide. */
 const SLOTS_L: [number, number][] = [
-  [0.9, 0.3], [0.9, 0.68], [0.9, 0.3], [0.9, 0.68], [0.9, 0.3], [0.9, 0.68], [0.9, 0.3], [0.9, 0.68],
+  [0.865, 0.3], [0.865, 0.68], [0.865, 0.3], [0.865, 0.68], [0.865, 0.3], [0.865, 0.68], [0.865, 0.3], [0.865, 0.68],
 ];
 const SLOTS_P: [number, number][] = [
   [0.865, 0.5], [0.865, 0.78], [0.865, 0.5], [0.865, 0.78], [0.865, 0.5], [0.865, 0.78], [0.865, 0.5], [0.865, 0.78],
@@ -52,18 +52,18 @@ export const S07: React.FC = () => {
   // ── phone: whip in, then a punch + alternating tilt on every cut
   const w = whipIn(f, -1, 6);
   const ph = landscape ? { x: L.phone.x / W, y: 0.5, h: 0.8 } : { x: 0.5, y: 0.65, h: 0.56 };
-  const punch = lerp(local, 0, 5, 1.065, 1);
-  const tilt = idx % 2 === 0 ? -11 : -4;
+  const punch = lerp(local, 0, 6, 1.045, 1);
+  const tilt = idx % 2 === 0 ? -6 : -3; // gentle: a strong tilt foreshortens the screen text
   const cam = {
     x: ph.x + w.dx,
     y: ph.y,
     h: ph.h,
     rotY: (landscape ? tilt : tilt * 0.6) + lerp(local, 0, 6, idx % 2 === 0 ? 3 : -3, 0),
     rotX: 3,
-    rotZ: (idx % 2 === 0 ? -1 : 1) * lerp(local, 0, 6, 2.2, 1),
+    rotZ: (idx % 2 === 0 ? -1 : 1) * lerp(local, 0, 6, 1.6, 0.5),
     scale: punch * lerp(f, 0, S07_LEN, 0.98, 1.03, drift),
-    zoom: cur.zoom ?? 1,
-    focusY: cur.focusY ?? 0.5,
+    zoom: 1,
+    focusY: 0.5,
     blurPx: w.blur,
   };
 
@@ -73,7 +73,7 @@ export const S07: React.FC = () => {
   const tagY = landscape ? H * 0.555 : H * 0.215;
   const dockSize = (landscape ? 66 : 62) * u;
   const dockGap = (landscape ? 80 : 76) * u;
-  const dockY = landscape ? H * 0.68 : H * 0.278;
+  const dockY = landscape ? H * 0.725 : H * 0.285; // clear gap under the tag pill
   const dockX = (i: number) => (landscape ? W * 0.07 + dockSize / 2 + i * dockGap : W / 2 + (i - (N - 1) / 2) * dockGap);
 
   const slots = landscape ? SLOTS_L : SLOTS_P;
@@ -108,7 +108,7 @@ export const S07: React.FC = () => {
     const y = hy;
     const z = (40 + 200 * lift) * (1 - d);
     const scale = (0.45 + 0.55 * sp) * (1 - 0.7 * d);
-    const flip = it.backIcon ? prog(f, s + 2, s + 6, easeInOut) : 0;
+    const flip = it.backIcon ? prog(f, s + 8, s + 14, easeInOut) : 0; // matches the captured theme flip (+0.3s)
     const wob = Math.sin((f - s) * 0.45) * 4 * (1 - d);
     chips.push(
       <Float3D key={i} x={x} y={y} z={z} opacity={1 - d} rotY={side * -(22 - 14 * lift) * (1 - d) + wob} rotX={(8 - 4 * lift) * (1 - d)} rotZ={side * 6 * (1 - lift) * (1 - d)} scale={scale}>
@@ -129,7 +129,7 @@ export const S07: React.FC = () => {
       {ITEMS.map((it, i) => (
         <Sequence key={i} from={STARTS[i]} durationInFrames={it.len} layout="none">
           <Phone cam={cam}>
-            <Screen src={it.src} inSec={it.inSec} />
+            <MontageScreen src={it.src} inSec={it.inSec} holdAt={it.holdAt} />
           </Phone>
         </Sequence>
       ))}

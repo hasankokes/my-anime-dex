@@ -27,7 +27,7 @@ const SHOTS: [React.FC, number][] = [
 export const PROMO_LEN = SHOTS.reduce((a, [, l]) => a + l, 0); // 795 = 26.5s (montage is 120f)
 
 /** PROMO cut (1920×1080 YouTube/Play, 1080×1920 social). `muted` for the web loop. */
-export const Promo: React.FC<{ audio?: string; muted?: boolean }> = ({ audio = "audio/mix.wav", muted = false }) => {
+export const Promo: React.FC<{ audio?: string; muted?: boolean }> = ({ audio = "audio/mix_promo.wav", muted = false }) => {
   const f = useCurrentFrame();
   // global glow: platinum on Profile (330–405), building on Dice (405–495)
   const glow = f >= 330 && f < 405 ? C.platinum : C.primary;

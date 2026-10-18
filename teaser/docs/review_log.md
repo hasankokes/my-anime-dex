@@ -130,3 +130,17 @@ The user said: "And so much more" goes too fast to follow, it may run a bit long
 - Store cut: same 15f-per-feature montage; S08 → f615, S09 → f705.
 - Audio: montage hats and riser extended to 20.5s; swell 20.5–23.5s; final hit 23.5s; SFX after S07 shifted +45f; one tick per cut.
 - In-points kept inside each clip (detail 12.35s, filters 4.1s, arena 3.25s; +0.5s ≤ clip length).
+
+## v3 — user feedback round 2 (2026-10-18)
+
+1. **Wrong logo.** The neon logo is the dark-theme splash asset. The end card now uses the colour app logo, cut out of
+   `splash-lightcover.png` (the header logo is the same artwork at 500px). A light 2.5u rim keeps its black outline readable on #0F0F0F.
+2. **Still too fast.** Promo montage: 1s (30f, 2 beats) per feature → S07 = 240f; promo = 915f / 30.5s
+   (YouTube/Play have no limit). Store montage: 6 features × 1s; Community Pulse and Leaderboard are dropped from the
+   store cut (blurred names look broken in a store preview), so it's 855f / 28.5s, still under Apple's 30s.
+3. **Screens not fitting the phone.** The montage no longer zooms into captures: the whole screen sits inside the phone,
+   Arena shows the full setup screen including its banner, and the tilt is reduced (−6/−3°). "Add to List" plays the
+   status sheet sliding in, then holds it open from a PNG still (an OffthreadVideo `<Freeze>` near the clip end returned a wrong frame).
+4. **Landscape tag vs dock row touching.** The dock row moved down (0.68H → 0.725H); there's now a ~50px gap. Feature chips moved in from the
+   right edge (x 0.9 → 0.865).
+Audio: `compose.py promo|store` parametrized by montage length; ticks on every montage cut (every 30f).

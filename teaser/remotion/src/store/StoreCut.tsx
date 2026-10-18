@@ -6,7 +6,7 @@
  */
 import { AbsoluteFill, Audio, interpolate, Sequence, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { lerp, drift, easeIn, prog } from "../kit/motion";
-import { FrozenScreen, Screen } from "../kit/screen";
+import { FrozenScreen, MontageScreen, Screen } from "../kit/screen";
 import { Grain, Stage } from "../lib/Stage";
 import { poppins } from "../lib/fonts";
 import { S09 } from "../promo/shots/S09_EndCard";
@@ -127,17 +127,18 @@ const ProfileCard: React.FC<{ len: number }> = ({ len }) => {
   );
 };
 
-const MONTAGE: { src: string; inSec: number; len: number; tag: string; focusY?: number; zoom?: number }[] = [
-  // one beat (15f) per feature — same in-points as the promo (S07)
-  { src: "c07a_detail", inSec: 12.35, len: 15, tag: "Add to List", zoom: 1.35, focusY: 1 },
-  { src: "c07b_pulse_blur", inSec: 0.3, len: 15, tag: "Community Pulse", zoom: 1.5, focusY: 0.22 },
-  { src: "c07x_chill_list_collab", inSec: 3.6, len: 15, tag: "Shared lists" },
-  { src: "c07d_fav_filters", inSec: 4.1, len: 15, tag: "Smart filters", zoom: 1.15, focusY: 0.9 },
-  { src: "c07e_leaderboard_blur", inSec: 0.5, len: 15, tag: "Leaderboard" },
-  { src: "c07f_arena_tiles", inSec: 3.25, len: 15, tag: "Anime Arena", zoom: 1.3, focusY: 0.62 },
-  { src: "c07g_language", inSec: 3.2, len: 15, tag: "10 languages", zoom: 1.15, focusY: 0.3 },
-  { src: "c07h_theme", inSec: 2.55, len: 15, tag: "Light & dark" },
+const MONTAGE: { src: string; inSec: number; holdAt?: number; len: number; tag: string; focusY?: number; zoom?: number }[] = [
+  // 1s (30f) per feature, whole screen (no zoom). Community Pulse / Leaderboard are left out of the store cut:
+  // their blurred user names would look broken in an App Store preview, and the 30s limit leaves room for 6.
+  { src: "c07a_detail", inSec: 12.45, holdAt: 12.7, len: 30, tag: "Add to List" },
+  { src: "c07x_chill_list_collab", inSec: 3.6, len: 30, tag: "Shared lists" },
+  { src: "c07d_fav_filters", inSec: 3.6, len: 30, tag: "Smart filters" },
+  { src: "c07f_arena_tiles", inSec: 2.7, len: 30, tag: "Anime Arena" },
+  { src: "c07g_language", inSec: 3.2, len: 30, tag: "10 languages" },
+  { src: "c07h_theme", inSec: 2.4, len: 30, tag: "Light & dark" },
 ];
+export const STORE_MONTAGE_LEN = MONTAGE.reduce((a, m) => a + m.len, 0); // 180
+export const STORE_LEN = 495 + STORE_MONTAGE_LEN + 90 + 90; // 855 = 28.5s (Apple max 30s)
 
 const Montage: React.FC = () => {
   const f = useCurrentFrame();
@@ -149,9 +150,9 @@ const Montage: React.FC = () => {
     <>
       {MONTAGE.map((m, i) => (
         <Sequence key={i} from={starts[i]} durationInFrames={m.len} layout="none">
-          <ScreenCard len={m.len} entry={false} zoomTo={(m.zoom ?? 1) * 1.02} focusY={m.focusY ?? 0.5}>
+          <ScreenCard len={m.len} entry={false} zoomTo={1} focusY={m.focusY ?? 0.5}>
             <div style={{ position: "absolute", inset: 0, transform: `scale(${m.zoom ?? 1})`, transformOrigin: `50% ${(m.focusY ?? 0.5) * 100}%` }}>
-              <Screen src={m.src} inSec={m.inSec} />
+              <MontageScreen src={m.src} inSec={m.inSec} holdAt={m.holdAt} />
             </div>
           </ScreenCard>
         </Sequence>
@@ -186,7 +187,7 @@ const Shot: React.FC<{ from: number; len: number; children: React.ReactNode }> =
   </Sequence>
 );
 
-export const StoreCut: React.FC<{ audio?: string }> = ({ audio = "audio/mix.wav" }) => {
+export const StoreCut: React.FC<{ audio?: string }> = ({ audio = "audio/mix_store.wav" }) => {
   const f = useCurrentFrame();
   const glow = f >= 330 && f < 405 ? C.platinum : C.primary;
   return (
@@ -225,14 +226,14 @@ export const StoreCut: React.FC<{ audio?: string }> = ({ audio = "audio/mix.wav"
         </ScreenCard>
         <StoreCaption lines={["Can't decide?", "Roll."]} highlight="Roll." />
       </Shot>
-      <Shot from={495} len={120}>
+      <Shot from={495} len={STORE_MONTAGE_LEN}>
         <Montage />
       </Shot>
-      <Shot from={615} len={90}>
+      <Shot from={495 + STORE_MONTAGE_LEN} len={90}>
         <PayoffCard />
         <StoreCaption lines={["Your whole dex.", "In your pocket."]} highlight="In your pocket." />
       </Shot>
-      <Shot from={705} len={90}>
+      <Shot from={585 + STORE_MONTAGE_LEN} len={90}>
         <S09 store />
       </Shot>
       <Audio src={staticFile(audio)} />

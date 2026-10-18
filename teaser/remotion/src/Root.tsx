@@ -2,7 +2,7 @@ import { Composition } from "remotion";
 import { Animatic } from "./Animatic";
 import { Smoke } from "./Smoke";
 import { KitTest } from "./kit/KitTest";
-import { StoreCut } from "./store/StoreCut";
+import { STORE_LEN, StoreCut } from "./store/StoreCut";
 import { Promo, PROMO_LEN } from "./promo/Promo";
 import { Grain, Stage } from "./lib/Stage";
 import { S01 } from "./promo/shots/S01_Hook";
@@ -33,7 +33,7 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="PromoL" component={Promo} durationInFrames={PROMO_LEN} fps={30} width={1920} height={1080} />
     <Composition id="PromoP" component={Promo} durationInFrames={PROMO_LEN} fps={30} width={1080} height={1920} />
     <Composition id="WebLoop" component={Promo} durationInFrames={PROMO_LEN} fps={30} width={1280} height={720} defaultProps={{ muted: true }} />
-    <Composition id="Store" component={StoreCut} durationInFrames={PROMO_LEN} fps={30} width={886} height={1920} />
+    <Composition id="Store" component={StoreCut} durationInFrames={STORE_LEN} fps={30} width={886} height={1920} />
     <Composition id="KitTest" component={KitTest} durationInFrames={60} fps={30} width={1920} height={1080} />
     <Composition id="S01-L" component={shotTest(S01)} durationInFrames={60} fps={30} width={1920} height={1080} />
     <Composition id="S01-P" component={shotTest(S01)} durationInFrames={60} fps={30} width={1080} height={1920} />
