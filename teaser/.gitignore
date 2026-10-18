@@ -1,0 +1,18 @@
+node_modules/
+.venv/
+out/
+captures/raw/
+captures/*.log
+audio/tmp/
+.env
+captures/clean/
+remotion/public/proxy/
+remotion/public/full/
+audio/out/
+audio/gen/
+remotion/public/audio/*.wav
+audio/*.wav
+remotion/public/thumbs/*.tmp
+# never commit unblurred Pulse/Leaderboard frames (other users' names)
+captures/stills/c07b_pulse*.png
+captures/stills/c07e_leaderboard*.png
