@@ -109,8 +109,14 @@ Per-shot test renders are available: `npx remotion still S04-L ../out/review/x.p
 2. In Play Console → Grow → Store presence → Main store listing → **Video**, paste the YouTube URL (`https://www.youtube.com/watch?v=…`).
 3. `promo_1080x1920.mp4` is for Shorts/social. Play only uses the landscape link.
 
+## Store badges
+The promo end card uses the official, unmodified badge artwork (`remotion/public/badges/`):
+- `app-store-badge.svg`: Apple, https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg (US-UK black)
+- `google-play-badge.png`: Google, https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png
+  (only the built-in transparent padding was trimmed, so both badges align at equal height)
+Both are only scaled and faded in; follow each company's badge guidelines if the layout changes.
+
 ## Open items
-- **Store badges in the promo end card are drawn placeholders.** Replace them with the official Apple "Download on the App Store" and Google "Get it on Google Play" artwork (both companies' marketing guidelines require it) before publishing the promo.
-- Optional re-capture on a **Release build** with denser touch paths, for smoother in-screen scrolling (see review_log "3 biggest problems" #1).
+- Optional re-capture on a **Release build** with denser touch paths, for smoother in-screen scrolling.
 - Revert the demo account with `seed/demo_cleanup.sql` when finished.
-- The ElevenLabs API key was shared in chat: rotate it.
+- The ElevenLabs API key and the demo account password were shared in chat: rotate them.

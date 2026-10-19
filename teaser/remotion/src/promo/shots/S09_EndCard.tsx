@@ -3,7 +3,6 @@ import { poppins } from "../../lib/fonts";
 import { BurstRays, Glow, Halftone } from "../../kit/fx";
 import { useLayout } from "../../kit/layout";
 import { easeIn, lerp, pop, prog } from "../../kit/motion";
-import { Icon } from "../../kit/ui";
 import { C } from "../../theme";
 
 export const S09_LEN = 90;
@@ -197,33 +196,17 @@ export const S09: React.FC<{ store?: boolean }> = ({ store = false }) => {
   );
 };
 
-/** Placeholder store badges drawn to Apple/Google layout (black, white text, grey hairline).
- *  TODO before release: replace with the official badge artwork (marketing guidelines require it). */
+/** Official store badges, unmodified artwork (public/badges/):
+ *  - app-store-badge.svg: developer.apple.com/assets/elements/badges/download-on-the-app-store.svg
+ *  - google-play-badge.png: play.google.com/intl/en_us/badges/…/en_badge_web_generic.png (transparent padding trimmed)
+ *  Shown at equal visual height, only scaled and faded/slid in (no recolouring, no distortion). */
 const StoreBadge: React.FC<{ kind: "apple" | "google"; p: number; sub: number }> = ({ kind, p, sub }) => {
   const h = sub * 1.55;
   return (
-    <div
-      style={{
-        height: h,
-        display: "flex",
-        alignItems: "center",
-        gap: h * 0.18,
-        padding: `0 ${h * 0.32}px`,
-        borderRadius: h * 0.2,
-        background: "#000",
-        border: `${Math.max(1, h * 0.02)}px solid #A6A6A6`,
-        opacity: Math.min(1, p),
-        transform: `translateY(${(1 - p) * h * 0.8}px)`,
-        fontFamily: poppins,
-        color: "#fff",
-      }}
-    >
-      <Icon name={kind === "apple" ? "logo-apple" : "logo-google-playstore"} size={h * 0.58} color="#fff" />
-      <div style={{ lineHeight: 1.05 }}>
-        <div style={{ fontSize: h * 0.2, fontWeight: 500 }}>{kind === "apple" ? "Download on the" : "GET IT ON"}</div>
-        <div style={{ fontSize: h * 0.36, fontWeight: 600 }}>{kind === "apple" ? "App Store" : "Google Play"}</div>
-      </div>
-    </div>
+    <Img
+      src={staticFile(kind === "apple" ? "badges/app-store-badge.svg" : "badges/google-play-badge.png")}
+      style={{ height: h, width: "auto", display: "block", opacity: Math.min(1, p), transform: `translateY(${(1 - p) * h * 0.8}px)` }}
+    />
   );
 };
 
