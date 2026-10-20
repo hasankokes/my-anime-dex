@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="{{htmlLang}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+{{robots}}
+<meta name="theme-color" content="#0F0F0F">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="{{canonical}}">
+{{hreflang}}
+<meta name="apple-itunes-app" content="app-id=6758043488">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MyAnimeDex">
+<meta property="og:title" content="{{title}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:url" content="{{canonical}}">
+<meta property="og:image" content="https://myanimedex.com/assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="{{ogLocale}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{title}}">
+<meta name="twitter:description" content="{{description}}">
+<meta name="twitter:image" content="https://myanimedex.com/assets/img/og.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://graphql.anilist.co" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<link rel="preload" as="image" href="assets/clips/home.webp" imagesrcset="assets/clips/home-300.webp 300w, assets/clips/home.webp 540w" imagesizes="(min-width: 900px) 300px, 230px" fetchpriority="high">
+<style>{{css}}</style>
+<script type="importmap">{"imports":{"three":"./assets/vendor/three/three.module.min.js","three/addons/":"./assets/vendor/three/addons/"}}</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"MobileApplication","name":"MyAnimeDex","operatingSystem":"iOS, Android","applicationCategory":"EntertainmentApplication","inLanguage":"{{htmlLang}}","description":"{{description}}","image":"https://myanimedex.com/assets/img/og.jpg","url":"{{canonical}}","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":"{{featureList}}","installUrl":["https://apps.apple.com/app/id6758043488","https://play.google.com/store/apps/details?id=com.myanimedex.app"]}
+</script>
+</head>
+<body>
+<div class="fx-bg" aria-hidden="true"><div class="fx-spot"></div><div class="fx-grain"></div></div>
+<a class="skip" href="#play">{{navFeatures}}</a>
+
+<header class="nav" id="top">
+  <a class="brand" href="{{home}}">
+    <img src="assets/img/logo-96.png" width="40" height="40" alt="">
+    <span class="wordmark">ANIME<b>DEX</b></span>
+  </a>
+  <nav class="nav-links" aria-label="Main">
+    <a href="#play">{{navFeatures}}</a>
+    <button type="button" class="linklike" data-trailer>{{navTrailer}}</button>
+  </nav>
+  <details class="lang">
+    <summary><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-2.95a15.7 15.7 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.9 8ZM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96ZM4.26 14a8.2 8.2 0 0 1 0-4h3.38a16.5 16.5 0 0 0 0 4H4.26Zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A8 8 0 0 1 5.08 16Zm2.95-8H5.08a8 8 0 0 1 4.33-3.56A15.7 15.7 0 0 0 8.03 8ZM12 19.96A14.1 14.1 0 0 1 10.09 16h3.82A14.1 14.1 0 0 1 12 19.96ZM14.34 14H9.66a14.7 14.7 0 0 1 0-4h4.68a14.7 14.7 0 0 1 0 4Zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56ZM16.36 14a16.5 16.5 0 0 0 0-4h3.38a8.2 8.2 0 0 1 0 4h-3.38Z"/></svg><span class="sr">{{language}}: </span><span>{{short}}</span></summary>
+    <div class="lang-menu">{{langLinks}}</div>
+  </details>
+  <a class="btn btn-primary nav-cta" href="#download" data-store-link>{{download}}</a>
+</header>
+
+<main>
+  <!-- HERO: 3D phone (WebGL, lazy) over a CSS phone that is the first paint -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="eyebrow">{{heroEyebrow}}</p>
+      <div class="h1-wrap"><h1 id="hero-title" class="kinetic" style="--fit:{{heroFit}}">{{heroTitleLines}}</h1></div>
+      <p class="lede">{{heroPitch}}</p>
+      <div class="badges">{{badges}}</div>
+      <button type="button" class="btn btn-ghost play" data-trailer>
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 8.2v7.6l6-3.8z" fill="currentColor"/></svg>
+        {{watchTrailer}}
+      </button>
+    </div>
+
+    <div class="hero-stage" aria-hidden="true">
+      <div class="hero-glow"></div>
+      <div class="css-phone">
+        <div class="css-screen">
+          <img src="assets/clips/home.webp" srcset="assets/clips/home-300.webp 300w, assets/clips/home.webp 540w" sizes="(min-width: 900px) 300px, 230px" width="540" height="1174" alt="" fetchpriority="high">
+        </div>
+      </div>
+      <div class="gl-host"></div>
+      <div class="orbit">
+        <div class="ui o1" data-depth="1.2"><span class="y">★</span> 9.07</div>
+        <div class="ui o2 ui-track" data-depth="0.8">
+          <div class="ui-row"><strong>Frieren</strong><span class="muted">80%</span></div>
+          <div class="ui-row"><span class="y">Ep 8 / 10</span></div>
+          <div class="bar"><i style="--w:80%"></i></div>
+        </div>
+        <div class="ui o3" data-depth="1.5"><strong class="plat">PLATINUM</strong> 🏆</div>
+        <div class="ui o4 ui-cal" data-depth="1"><span class="y big">17:00</span><span class="tag">3h 7m</span></div>
+        <div class="o5" data-depth="1.8"><div class="dice sm"><div class="cube"><i class="d1"></i><i class="d2"></i><i class="d3"></i><i class="d4"></i><i class="d5"></i><i class="d6"></i></div></div></div>
+      </div>
+      <p class="drag-hint"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12 4 8l4-4v3h8V4l4 4-4 4V9H8v3Zm0 8-4-4 4-4v3h8v-3l4 4-4 4v-3H8v3Z"/></svg>{{dragHint}}</p>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true"><div class="marquee-track">{{marquee}}</div></div>
+
+  <!-- PLAYGROUND: pinned phone + one playable demo per feature -->
+  <section class="story" id="play" aria-labelledby="play-title">
+    <header class="story-head">
+      <p class="eyebrow">{{playKicker}}</p>
+      <h2 id="play-title">{{playTitle}}</h2>
+    </header>
+
+    <div class="story-body">
+      <div class="stage" aria-hidden="true">
+        <svg class="speed" viewBox="-100 -100 200 200" preserveAspectRatio="xMidYMid slice">{{speedLines}}</svg>
+        <div class="rig">
+          <div class="phone">
+            <div class="phone-edge"></div>
+            <div class="screen">
+              <div class="layer is-active" data-clip="tracker"><img src="assets/clips/tracker.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+              <div class="layer" data-clip="calendar"><img src="assets/clips/calendar.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+              <div class="layer" data-clip="lists"><img src="assets/clips/lists.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+              <div class="layer" data-clip="profile"><img src="assets/clips/profile.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+              <div class="layer" data-clip="dice"><img src="assets/clips/dice.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+              <div class="layer" data-still><img src="assets/clips/favorites.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+            </div>
+          </div>
+        </div>
+        <ol class="dots">{{dots}}</ol>
+      </div>
+
+      <div class="steps">
+        <article class="step" data-step="0">
+          <div class="step-copy">
+            <p class="step-tag"><span>01</span>{{s1Tag}}</p>
+            <h3>{{s1Title}}</h3>
+            <p class="step-body">{{s1Body}}</p>
+            <div class="demo demo-track" data-demo="track">
+              <div class="ui card-track">
+                <div class="ui-row"><strong>Frieren: Beyond Journey's End</strong><span class="muted pct">70%</span></div>
+                <div class="ui-row"><span class="y ep">Ep 7 / 10</span><span class="done-pill">✓ {{trackCompleted}}</span></div>
+                <div class="bar"><i class="fill" style="--w:70%"></i></div>
+                <div class="ui-row controls">
+                  <button type="button" class="round minus" aria-label="−1 {{cardEpisode}}">−</button>
+                  <span class="muted">{{cardEpisode}} <b class="epn">7</b></span>
+                  <button type="button" class="round plus" aria-label="+1 {{cardEpisode}}">+</button>
+                </div>
+              </div>
+              <p class="hint">{{trackHint}}</p>
+            </div>
+          </div>
+          {{media0}}
+        </article>
+
+        <article class="step" data-step="1">
+          <div class="step-copy">
+            <p class="step-tag"><span>02</span>{{s2Tag}}</p>
+            <h3>{{s2Title}}</h3>
+            <p class="step-body">{{s2Body}}</p>
+            <div class="demo demo-cal" data-demo="calendar">
+              <div class="chips" role="tablist" aria-label="{{s2Tag}}"></div>
+              <ul class="cal-list" aria-live="polite"><li class="cal-msg">{{calLoading}}</li></ul>
+              <p class="hint"><span class="live-dot"></span>{{calHint}}</p>
+            </div>
+          </div>
+          {{media1}}
+        </article>
+
+        <article class="step" data-step="2">
+          <div class="step-copy">
+            <p class="step-tag"><span>03</span>{{s3Tag}}</p>
+            <h3>{{s3Title}}</h3>
+            <p class="step-body">{{s3Body}}</p>
+            <div class="demo demo-list" data-demo="list">
+              <ol class="rank-list">
+                <li tabindex="0"><span class="num"></span><span class="t">Steins;Gate</span><span class="tag">{{cardMyScore}}: 10</span><span class="grip" aria-hidden="true">≡</span></li>
+                <li tabindex="0"><span class="num"></span><span class="t">Attack on Titan Season 3 Part 2</span><span class="tag">{{cardMyScore}}: 10</span><span class="grip" aria-hidden="true">≡</span></li>
+                <li tabindex="0"><span class="num"></span><span class="t">Gintama Season 2</span><span class="tag">{{cardMyScore}}: 10</span><span class="grip" aria-hidden="true">≡</span></li>
+                <li tabindex="0"><span class="num"></span><span class="t">Frieren: Beyond Journey's End</span><span class="tag">{{cardMyScore}}: 10</span><span class="grip" aria-hidden="true">≡</span></li>
+              </ol>
+              <p class="hint">{{listHint}}</p>
+            </div>
+          </div>
+          {{media2}}
+        </article>
+
+        <article class="step" data-step="3">
+          <div class="step-copy">
+            <p class="step-tag"><span>04</span>{{s4Tag}}</p>
+            <h3>{{s4Title}}</h3>
+            <p class="step-body">{{s4Body}}</p>
+            <div class="demo demo-prof" data-demo="profile">
+              <div class="ui card-prof">
+                <div class="avatar"><img src="assets/img/logo-96.png" width="48" height="48" alt=""></div>
+                <div class="prof-main">
+                  <div class="ui-row"><strong class="rank-name">BRONZE</strong><span>🏆</span></div>
+                  <div class="muted"><span class="lvl-label">{{cardLevel}} 1 • 0/30 XP</span></div>
+                  <div class="bar"><i class="fill" style="--w:0%"></i></div>
+                </div>
+              </div>
+              <div class="prof-stats">
+                <div><b data-stat="eps">0</b><span>{{profEps}}</span></div>
+                <div><b data-stat="favs">0</b><span>{{cardFavs}}</span></div>
+                <div><b data-stat="rolls">0</b><span>{{profRolls}}</span></div>
+              </div>
+              <p class="hint">{{profHint}}</p>
+            </div>
+          </div>
+          {{media3}}
+        </article>
+
+        <article class="step" data-step="4">
+          <div class="step-copy">
+            <p class="step-tag"><span>05</span>{{s5Tag}}</p>
+            <h3>{{s5Title}}</h3>
+            <p class="step-body">{{s5Body}}</p>
+            <div class="demo demo-dice" data-demo="dice">
+              <div class="dice-row">
+                <button type="button" class="dice-btn" aria-label="{{diceRoll}}"><div class="dice"><div class="cube"><i class="d1"></i><i class="d2"></i><i class="d3"></i><i class="d4"></i><i class="d5"></i><i class="d6"></i></div></div></button>
+                <button type="button" class="btn btn-primary roll">{{diceRoll}}</button>
+              </div>
+              <div class="ui dice-result" aria-live="polite" hidden>
+                <img class="cover" alt="" width="56" height="80">
+                <div class="dr-main">
+                  <strong class="dr-title"></strong>
+                  <div class="ui-row"><span class="y dr-score"></span><span class="muted dr-eps"></span></div>
+                  <div class="dr-genres"></div>
+                </div>
+              </div>
+              <p class="hint">{{diceHint}}</p>
+            </div>
+          </div>
+          {{media4}}
+        </article>
+
+        <article class="step" data-step="5">
+          <div class="step-copy">
+            <p class="step-tag"><span>06</span>{{s6Tag}}</p>
+            <h3>{{s6Title}}</h3>
+            <p class="step-body">{{s6Body}}</p>
+            <div class="chips static"><span class="ui ui-stat"><b class="y">♥</b> {{cardFavs}}</span><span class="ui ui-stat">🌙 / ☀️</span><span class="ui ui-pill">🌐 {{cardLanguages}}</span></div>
+          </div>
+          {{media5}}
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="download">
+    <div class="cta-glow" aria-hidden="true"></div>
+    <img src="assets/img/icon-192.png" width="112" height="112" alt="" loading="lazy" class="cta-logo">
+    <h2>{{ctaTitle}}</h2>
+    <p class="lede cta-xp">{{ctaBody}}</p>
+    <div class="badges center">{{badges}}</div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="foot-top">
+    <a class="brand" href="{{home}}"><img src="assets/img/logo-96.png" width="32" height="32" alt="" loading="lazy"><span class="wordmark">ANIME<b>DEX</b></span></a>
+    <p class="muted">{{footerTagline}}</p>
+  </div>
+  <nav class="foot-links" aria-label="Footer">
+    <a href="anime/index.html">{{footerTop100}}</a>
+    <a href="{{privacy}}">{{footerPrivacy}}</a>
+    <a href="terms.html">{{footerTerms}}</a>
+    <a href="{{deleteAccount}}">{{footerDelete}}</a>
+    <a href="{{contactFile}}">{{footerContact}}</a>
+    <a href="https://www.instagram.com/myanimedex/" rel="noopener" target="_blank">Instagram</a>
+  </nav>
+  <nav class="foot-lang" aria-label="{{language}}">{{langLinks}}</nav>
+  <p class="fine">© 2026 MyAnimeDex. {{rights}}<br>{{trademarks}}</p>
+</footer>
+
+<!-- XP HUD: fills as the visitor plays with the demos -->
+<div class="hud" aria-live="polite" hidden>
+  <div class="hud-ring"><span class="hud-lvl">1</span></div>
+  <div class="hud-main"><span class="hud-rank">BRONZE</span><span class="hud-xp">0/30 XP</span><div class="bar"><i class="fill" style="--w:0%"></i></div></div>
+</div>
+<div class="toast" role="status" hidden><span class="toast-k">{{levelUp}}</span><strong class="toast-v"></strong></div>
+<canvas class="confetti" aria-hidden="true"></canvas>
+
+<dialog class="trailer" aria-label="{{trailerTitle}}">
+  <button type="button" class="close" aria-label="{{close}}">✕</button>
+  <div class="trailer-box"></div>
+</dialog>
+
+<script>window.MAD = {{jsStrings}};</script>
+<script src="assets/v2/main.js?v={{version}}" defer></script>
+</body>
+</html>

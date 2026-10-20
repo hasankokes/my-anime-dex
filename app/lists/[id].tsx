@@ -321,7 +321,7 @@ export default function ListDetailsScreen() {
     const addAnimeToList = async (anime: Anime) => {
         try {
             setAddingAnimeId(anime.mal_id);
-            const { error } = await supabase
+            const { data: inserted, error } = await supabase
                 .from('list_items')
                 .insert({
                     list_id: id,
@@ -329,7 +329,10 @@ export default function ListDetailsScreen() {
                     anime_title: anime.title_english || anime.title,
                     anime_image: anime.images.jpg.large_image_url,
                     score: anime.score,
-                });
+                    position: items.length,
+                })
+                .select()
+                .single();
 
             if (error) {
                 if (error.code === '23505') {
@@ -339,15 +342,10 @@ export default function ListDetailsScreen() {
                 }
             } else {
                 // Add to local state
+                // Use the real row so edit/delete/reorder work without a refresh
                 const newItem: ListItem = {
-                    id: Date.now().toString(), // temp id until refresh
-                    list_id: id as string,
-                    anime_id: anime.mal_id.toString(),
-                    anime_title: anime.title_english || anime.title,
-                    anime_image: anime.images.jpg.large_image_url,
-                    score: anime.score,
-                    added_at: new Date().toISOString(),
-                    position: items.length,
+                    ...(inserted as ListItem),
+                    position: inserted?.position ?? items.length,
                 };
                 setItems(prev => [...prev, newItem]);
                 Alert.alert(t('common.success'), t('lists.animeAdded'));

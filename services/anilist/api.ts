@@ -107,20 +107,6 @@ export const anilistApi = {
       return { data: normalizeMedia(result.Media) };
     }
 
-    // 3. Ultimate Fallback: Fetch directly from Jikan REST API if AniList returns nothing or rate limits
-    try {
-      console.log(`[AniList] Falling back to Jikan REST API for anime ID ${numericId}…`);
-      const res = await fetch(`https://api.jikan.moe/v4/anime/${numericId}`);
-      if (res.ok) {
-        const jikanJson = await res.json();
-        if (jikanJson?.data) {
-          return { data: jikanJson.data };
-        }
-      }
-    } catch (jikanErr) {
-      console.warn(`[AniList] Jikan REST fallback failed for anime ID ${numericId}:`, jikanErr);
-    }
-
     throw new Error(`Anime not found: ${id}`);
   },
 

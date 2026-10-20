@@ -89,9 +89,10 @@ export const getAiringSchedule = async (start: number, end: number, retries = 3)
 
     try {
         while (hasNextPage) {
+            // airingAt_greater / airingAt_lesser are exclusive, so widen by 1s to include the day's boundaries
             const data = await fetchGraphQL(AIRING_SCHEDULE_QUERY, {
-                start,
-                end,
+                start: start - 1,
+                end: end + 1,
                 page: currentPage,
             });
 

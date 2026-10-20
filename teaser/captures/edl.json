@@ -1,0 +1,191 @@
+{
+  "_doc": "Edit decision list. Timeline frames at 30fps (750 total). Source `in` = seconds into the CFR proxy/full clip (same timing as captures/raw). Beat grid assumes 120 BPM (15f/beat) until audio/beats.json replaces it. `segments` = multiple sub-clips played back-to-back inside one shot. `freeze` = hold that source time as a still. v2 (2026-10-18): montage slowed to one beat (15f) per feature after user feedback; film is 795f = 26.5s.",
+  "fps": 30,
+  "duration": 795,
+  "shots": [
+    {
+      "id": "S01",
+      "name": "hook",
+      "from": 0,
+      "len": 60,
+      "src": "c01_home",
+      "in": 1.0,
+      "caption": [
+        "Your anime.",
+        "All of it."
+      ],
+      "highlight": "All of it.",
+      "note": "static 1.0–7.8s; camera move carries the shot"
+    },
+    {
+      "id": "S02",
+      "name": "watching",
+      "from": 60,
+      "len": 90,
+      "src": "c02_watching",
+      "segments": [
+        {
+          "in": 5.29,
+          "len": 45
+        },
+        {
+          "in": 8.87,
+          "len": 45
+        }
+      ],
+      "caption": [
+        "Track every episode."
+      ],
+      "highlight": "every",
+      "note": "Ep 6→7 lands at +15f (beat 6), Ep 7→8 at +60f (beat 9). Tap latency made the raw gap 3.6s, hence two segments."
+    },
+    {
+      "id": "S03",
+      "name": "calendar",
+      "from": 150,
+      "len": 90,
+      "src": "c03_calendar",
+      "in": 1.0,
+      "caption": [
+        "Never miss a drop."
+      ],
+      "highlight": "drop.",
+      "note": "countdown badges visible throughout; stepped scroll 1.8–3.0s"
+    },
+    {
+      "id": "S04",
+      "name": "lists",
+      "from": 240,
+      "len": 90,
+      "src": "c04_list",
+      "in": 2.2,
+      "caption": [
+        "Rank it. Share it."
+      ],
+      "highlight": "Rank it.",
+      "note": "lift at 2.48 (+8f), drag 3.43–4.15, settle ~4.6; trim first 0.5s banner already excluded"
+    },
+    {
+      "id": "S05",
+      "name": "profile",
+      "from": 330,
+      "len": 75,
+      "src": "c05_profile",
+      "in": 3.05,
+      "caption": [
+        "Level up your watchlist."
+      ],
+      "highlight": "Level up",
+      "crop": "top 55% only — hide the Premium card (claims unimplemented features)",
+      "note": "spinner → profile pops at 3.01 (+15f, beat 24)"
+    },
+    {
+      "id": "S06",
+      "name": "dice",
+      "from": 405,
+      "len": 90,
+      "src": "c06_dice",
+      "in": 3.0,
+      "caption": [
+        "Can't decide? Roll."
+      ],
+      "highlight": "Roll.",
+      "note": "rolling 3.0–5.0, result card fades/pops 5.0–5.5 (+60f = frame 465, beat 31)"
+    },
+    {
+      "id": "S07",
+      "name": "montage",
+      "from": 495,
+      "len": 120,
+      "caption": [
+        "And so much more."
+      ],
+      "highlight": "more.",
+      "items": [
+        {
+          "src": "c07a_detail",
+          "in": 12.35,
+          "len": 15,
+          "tag": "Add to List",
+          "crop": "lower half"
+        },
+        {
+          "src": "c07b_pulse_blur",
+          "in": 0.3,
+          "len": 15,
+          "tag": "Community Pulse"
+        },
+        {
+          "src": "c07x_chill_list_collab",
+          "in": 3.6,
+          "len": 15,
+          "tag": "Shared lists"
+        },
+        {
+          "src": "c07d_fav_filters",
+          "in": 4.1,
+          "len": 15,
+          "tag": "Smart filters"
+        },
+        {
+          "src": "c07e_leaderboard_blur",
+          "in": 0.5,
+          "len": 15,
+          "tag": "Leaderboard"
+        },
+        {
+          "src": "c07f_arena_tiles",
+          "in": 3.25,
+          "len": 15,
+          "tag": "Anime Arena",
+          "crop": "tiles only"
+        },
+        {
+          "src": "c07g_language",
+          "in": 3.2,
+          "len": 15,
+          "tag": "10 languages"
+        },
+        {
+          "src": "c07h_theme",
+          "in": 2.55,
+          "len": 15,
+          "tag": "Light & dark"
+        }
+      ],
+      "note": "one beat per feature; chips stay on the phone's far side (never over caption/tag); c07c_recs dropped (app bug)"
+    },
+    {
+      "id": "S08",
+      "name": "payoff",
+      "from": 615,
+      "len": 90,
+      "src": "c08_favorites",
+      "freeze": 2.5,
+      "caption": [
+        "Your whole dex.",
+        "In your pocket."
+      ],
+      "highlight": "In your pocket.",
+      "note": "raw scroll is stepped (~4fps) → freeze the pre-scroll frame and let the camera pull back"
+    },
+    {
+      "id": "S09",
+      "name": "end",
+      "from": 705,
+      "len": 90,
+      "src": null,
+      "promo": [
+        "logo",
+        "ANIME+DEX wordmark",
+        "App Store + Google Play badges",
+        "myanimedex.com"
+      ],
+      "store": [
+        "logo",
+        "Your Anime Companion."
+      ],
+      "note": "last 15f fade to #0F0F0F + yellow glow = S01 frame 0 for the loop"
+    }
+  ]
+}

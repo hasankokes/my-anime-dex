@@ -20,7 +20,6 @@ import { StarRating } from './StarRating';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { formatDistanceToNow } from 'date-fns';
-import { calculateLevelFromXp } from '../lib/levelSystem';
 
 type Review = {
     id: string;
@@ -145,29 +144,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                     return [data, ...others];
                 });
                 setMyReview(data);
-
-                // --- AWARD XP LOGIC ---
-                // Fetch current profile to get current XP
-                const { data: profileData, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('xp')
-                    .eq('id', session.user.id)
-                    .single();
-
-                if (!profileError && profileData) {
-                    const currentXp = profileData.xp || 0;
-                    const newXp = currentXp + 2;
-                    const newLevel = calculateLevelFromXp(newXp);
-
-                    // Update profile
-                    await supabase
-                        .from('profiles')
-                        .update({ xp: newXp, level: newLevel })
-                        .eq('id', session.user.id);
-
-
-                }
-                // ----------------------
+                // XP/level are computed server-side (on_list_change_update_xp trigger); clients can't write them.
             }
 
             setModalVisible(false);
