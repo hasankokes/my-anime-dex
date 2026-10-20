@@ -18,6 +18,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthProvider';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { translateText } from '../../lib/translation';
+import { analytics } from '../../lib/analytics';
 import { WebView } from 'react-native-webview';
 import YoutubePlayer from "react-native-youtube-iframe";
 
@@ -123,6 +124,14 @@ const AnimeDetailsScreen = () => {
       // 1. Fetch Anime Details from Jikan / AniList
       const { data: animeData } = await jikanApi.getAnimeDetails(id as string);
       setAnime(animeData);
+      analytics.track('anime_viewed', {
+        anime_id: String(id),
+        anime_title: animeData.title_english || animeData.title,
+        genres: animeData.genres?.map((g: { name: string }) => g.name).slice(0, 5),
+        anime_score: animeData.score,
+        airing: animeData.airing,
+        from_screen: analytics.previousScreen(),
+      });
 
       // 2. Fetch User Entry from Supabase
       const { data: { session } } = await supabase.auth.getSession();
@@ -165,6 +174,7 @@ const AnimeDetailsScreen = () => {
       }
     } catch (error: any) {
       console.error('Error fetching data:', error);
+      analytics.track('anime_load_failed', { anime_id: String(id), error: error?.message });
       setFetchError(error?.message || 'Failed to load anime details.');
     } finally {
       setLoading(false);
@@ -238,6 +248,7 @@ const AnimeDetailsScreen = () => {
         .single();
 
       if (error) throw error;
+      analytics.track(newIsFavorite ? 'anime_favorited' : 'anime_unfavorited', { anime_id: anime.mal_id.toString() });
 
     } catch (error) {
       console.error('Error toggling favorite:', error);
@@ -306,6 +317,12 @@ const AnimeDetailsScreen = () => {
       if (error) throw error;
       setUserEntry(newEntry);
       logPulseActivity(newStatus, userEntry?.status, session, anime);
+      analytics.track('anime_episode_progress', {
+        anime_id: anime.mal_id.toString(),
+        episode: validatedEp,
+        total_episodes: totalepisodes,
+        status: newStatus,
+      });
 
     } catch (error) {
       console.error('Error updating episode:', error);
@@ -346,6 +363,7 @@ const AnimeDetailsScreen = () => {
         if (error) throw error;
         setUserEntry(null);
         setEpisodeInput('0');
+        analytics.track('anime_list_status_changed', { anime_id: anime.mal_id.toString(), from: userEntry?.status ?? null, to: 'remove' });
       } else {
         const { data: newEntry, error } = await supabase
           .from('user_anime_list')
@@ -362,6 +380,7 @@ const AnimeDetailsScreen = () => {
         setUserEntry(newEntry);
         setEpisodeInput(newEntry.current_episode?.toString() || '0');
         logPulseActivity(status, userEntry?.status, session, anime);
+        analytics.track('anime_list_status_changed', { anime_id: anime.mal_id.toString(), from: userEntry?.status ?? null, to: status });
 
         // Track for Rate Us prompt (only for new adds or positive updates, avoiding remove)
         if (status !== 'remove') {
@@ -554,6 +573,7 @@ const AnimeDetailsScreen = () => {
                 onPress={() => {
                   if (anime.trailer?.embed_url) {
                     showAdIfNeeded('trailer');
+                    analytics.track('anime_trailer_played', { anime_id: anime.mal_id.toString() });
                     setShowTrailerModal(true);
                   }
                 }}
@@ -840,6 +860,7 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
 
       if (error) throw error;
 
+      analytics.track('list_created', { source: 'anime_detail', is_public: isPublic });
       // Add the new list to local state immediately
       setLists([data, ...lists]);
       setNewListName('');
@@ -877,6 +898,7 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
           throw error;
         }
       } else {
+        analytics.track('list_item_added', { list_id: listId, anime_id: anime.mal_id.toString(), source: 'anime_detail' });
         onClose();
         showAdIfNeeded(); // <--- Trigger Ad
         // Slight delay to ensure modal animation doesn't interfere with Alert

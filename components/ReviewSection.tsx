@@ -21,6 +21,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { formatDistanceToNow } from 'date-fns';
 import { useRequireAuth } from '../hooks/useRequireAuth';
+import { analytics } from '../lib/analytics';
 
 type Review = {
     id: string;
@@ -138,6 +139,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                 .single();
 
             if (error) throw error;
+            analytics.track('review_submitted', { anime_id: String(animeId), rating, has_comment: comment.trim().length > 0, is_edit: !!myReview });
 
             // Update Local State optimally
             if (data) {
@@ -225,6 +227,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                                 .eq('anime_id', animeId);
 
                             if (error) throw error;
+                            analytics.track('review_deleted', { anime_id: String(animeId) });
 
                             setReviews(prev => prev.filter(r => r.user_id !== session.user.id));
                             setMyReview(null);

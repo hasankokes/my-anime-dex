@@ -1419,6 +1419,18 @@
   resolved "https://registry.npmjs.org/@pkgjs/parseargs/-/parseargs-0.11.0.tgz"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
+"@posthog/core@^1.59.1":
+  version "1.59.1"
+  resolved "https://registry.npmjs.org/@posthog/core/-/core-1.59.1.tgz"
+  integrity sha512-P39YgzQVDh6oz6wAzQXEnoHgTYpM7gifonmVKq1scAJco79h31XmmNVurRq9tTmmyIrr1uX8FHT0riCsyfV9AQ==
+  dependencies:
+    "@posthog/types" "^1.416.0"
+
+"@posthog/types@^1.416.0":
+  version "1.416.0"
+  resolved "https://registry.npmjs.org/@posthog/types/-/types-1.416.0.tgz"
+  integrity sha512-0/9+02s/0uDyrH4G/qUg1yyl6gXUg8Uuxw/PlDad3KLzo9FFS9zS/kAQaEshx/saVGupj1aAy/4EUBxWisBogw==
+
 "@radix-ui/react-compose-refs@1.1.2":
   version "1.1.2"
   resolved "https://registry.npmjs.org/@radix-ui/react-compose-refs/-/react-compose-refs-1.1.2.tgz"
@@ -1431,7 +1443,7 @@
   dependencies:
     "@radix-ui/react-compose-refs" "1.1.2"
 
-"@react-native-async-storage/async-storage@^2.2.0":
+"@react-native-async-storage/async-storage@^2.2.0", "@react-native-async-storage/async-storage@>=1.0.0":
   version "2.2.0"
   resolved "https://registry.npmjs.org/@react-native-async-storage/async-storage/-/async-storage-2.2.0.tgz"
   integrity sha512-gvRvjR5JAaUZF8tv2Kcq/Gbt3JHwbKFYfmb445rhOj6NUMx3qPLixmDx5pZAyb9at1bYvJ4/eTUipU5aki45xw==
@@ -1622,7 +1634,7 @@
     "@react-navigation/elements" "^2.4.6"
     warn-once "^0.1.1"
 
-"@react-navigation/native@^7.1.13", "@react-navigation/native@^7.1.6":
+"@react-navigation/native@^7.1.13", "@react-navigation/native@^7.1.6", "@react-navigation/native@>= 5.0.0":
   version "7.1.13"
   resolved "https://registry.npmjs.org/@react-navigation/native/-/native-7.1.13.tgz"
   integrity sha512-d00S5iAxv1QMBMrg+oTRv0QvAccrFROhzWWi6fZDWQUtu5OHA6sduzgkp/bQQQqWCAKUVHCSVaWeXJ12Dm6POw==
@@ -3833,7 +3845,7 @@ expo-apple-authentication@~7.2.4:
   resolved "https://registry.npmjs.org/expo-apple-authentication/-/expo-apple-authentication-7.2.4.tgz"
   integrity sha512-T2agaLLPT4Ax97FeXImB7BCCEzEJ0gB+ZwlFa/FXBtbp6WFKcGRlTVKiX2YPYLZzN5QjXcmQ9HHJ17jRthNHMg==
 
-expo-application@~6.1.5:
+"expo-application@>= 4.0.0", expo-application@~6.1.5:
   version "6.1.5"
   resolved "https://registry.npmjs.org/expo-application/-/expo-application-6.1.5.tgz"
   integrity sha512-ToImFmzw8luY043pWFJhh2ZMm4IwxXoHXxNoGdlhD4Ym6+CCmkAvCglg0FK8dMLzAb+/XabmOE7Rbm8KZb6NZg==
@@ -3893,7 +3905,14 @@ expo-crypto@~14.1.5:
   dependencies:
     base64-js "^1.3.0"
 
-expo-file-system@~18.1.11:
+"expo-device@>= 4.0.0", expo-device@~7.1.4:
+  version "7.1.4"
+  resolved "https://registry.npmjs.org/expo-device/-/expo-device-7.1.4.tgz"
+  integrity sha512-HS04IiE1Fy0FRjBLurr9e5A6yj3kbmQB+2jCZvbSGpsjBnCLdSk/LCii4f5VFhPIBWJLyYuN5QqJyEAw6BcS4Q==
+  dependencies:
+    ua-parser-js "^0.7.33"
+
+"expo-file-system@>= 13.0.0", expo-file-system@~18.1.11:
   version "18.1.11"
   resolved "https://registry.npmjs.org/expo-file-system/-/expo-file-system-18.1.11.tgz"
   integrity sha512-HJw/m0nVOKeqeRjPjGdvm+zBi5/NxcdPf8M8P3G2JFvH5Z8vBWqVDic2O58jnT1OFEy0XXzoH9UqFu7cHg9DTQ==
@@ -3945,7 +3964,7 @@ expo-linking@*, expo-linking@~7.1.7:
     expo-constants "~17.1.7"
     invariant "^2.2.4"
 
-expo-localization@~16.1.6:
+"expo-localization@>= 11.0.0", expo-localization@~16.1.6:
   version "16.1.6"
   resolved "https://registry.npmjs.org/expo-localization/-/expo-localization-16.1.6.tgz"
   integrity sha512-v4HwNzs8QvyKHwl40MvETNEKr77v1o9/eVC8WCBY++DIlBAvonHyJe2R9CfqpZbC4Tlpl7XV+07nLXc8O5PQsA==
@@ -6276,6 +6295,14 @@ postcss@~8.4.32:
     picocolors "^1.1.1"
     source-map-js "^1.2.1"
 
+posthog-react-native@^4.81.5:
+  version "4.81.5"
+  resolved "https://registry.npmjs.org/posthog-react-native/-/posthog-react-native-4.81.5.tgz"
+  integrity sha512-ryghqzkj2OCcc9ZMw3lMaDsZPRQOIfOB4dpWr+6PBhdb1uzDXMJXYynh5L+KpWvPqhou/0hXDSQBwV0bC13V7Q==
+  dependencies:
+    "@posthog/core" "^1.59.1"
+    "@posthog/types" "^1.416.0"
+
 prelude-ls@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.2.1.tgz"
@@ -6550,7 +6577,7 @@ react-native-screens@*, react-native-screens@^4.10.0, "react-native-screens@>= 4
     react-native-is-edge-to-edge "^1.1.7"
     warn-once "^0.1.0"
 
-"react-native-svg@^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0", react-native-svg@15.11.2:
+"react-native-svg@^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0", "react-native-svg@>= 15.0.0", react-native-svg@15.11.2:
   version "15.11.2"
   resolved "https://registry.npmjs.org/react-native-svg/-/react-native-svg-15.11.2.tgz"
   integrity sha512-+YfF72IbWQUKzCIydlijV1fLuBsQNGMT6Da2kFlo1sh+LE3BIm/2Q7AR1zAAR6L0BFLi1WaQPLfFUC9bNZpOmw==
@@ -7692,6 +7719,11 @@ typescript@^5.8.3, typescript@>=4.8.4, "typescript@>=4.8.4 <6.1.0":
   version "5.8.3"
   resolved "https://registry.npmjs.org/typescript/-/typescript-5.8.3.tgz"
   integrity sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==
+
+ua-parser-js@^0.7.33:
+  version "0.7.41"
+  resolved "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.41.tgz"
+  integrity sha512-O3oYyCMPYgNNHuO7Jjk3uacJWZF8loBgwrfd/5LE/HyZ3lUIOdniQ7DNXJcIgZbwioZxk0fLfI4EVnetdiX5jg==
 
 ua-parser-js@^1.0.35:
   version "1.0.40"

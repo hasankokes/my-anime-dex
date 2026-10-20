@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { analytics } from '../lib/analytics';
 import i18n, { translations } from '../lib/i18n';
 import * as Localization from 'expo-localization';
 
@@ -46,6 +47,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
 
     const setLanguage = async (lang: string) => {
         try {
+            analytics.track('language_changed', { from: i18n.locale, to: lang });
             i18n.locale = lang;
             setLanguageState(lang);
             await AsyncStorage.setItem('user-language', lang);

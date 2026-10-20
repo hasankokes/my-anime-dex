@@ -28,6 +28,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { supabase } from '../../lib/supabase';
 import { Anime, jikanApi } from '../../lib/jikan';
 import { translateText } from '../../lib/translation';
+import { analytics } from '../../lib/analytics';
 
 const { width, height } = Dimensions.get('window');
 
@@ -93,6 +94,7 @@ export const DiceRollModal = ({ visible, onClose }: Props) => {
 
   const rollDice = async () => {
     console.log('[DiceRoll] Starting dice roll...');
+    analytics.track('dice_rolled');
     setIsRolling(true);
     setIsLoading(true);
     setResult(null);

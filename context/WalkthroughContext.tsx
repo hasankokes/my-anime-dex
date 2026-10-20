@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { analytics } from '../lib/analytics';
 
 export interface StepLayout {
     x: number;
@@ -70,7 +71,15 @@ export const WalkthroughProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return stepLayoutsRef.current[step];
     }, []);
 
+    // Analytics: the step the user saw last, so a skip tells where they gave up
+    useEffect(() => {
+        if (isActive && activeWalkthroughId) {
+            analytics.track('walkthrough_step_viewed', { walkthrough: activeWalkthroughId, step: currentStep, total_steps: totalSteps });
+        }
+    }, [isActive, activeWalkthroughId, currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
+
     const startWalkthrough = useCallback((id: WalkthroughId) => {
+        analytics.track('walkthrough_started', { walkthrough: id });
         // Do not clear stepLayoutsRef here, as onLayout events might have already populated it.
         // stepLayoutsRef.current = {}; 
         setActiveWalkthroughId(id);
@@ -86,6 +95,7 @@ export const WalkthroughProvider: React.FC<{ children: React.ReactNode }> = ({ c
             } else {
                 setIsActive(false);
                 if (activeWalkthroughId) {
+                    analytics.track('walkthrough_completed', { walkthrough: activeWalkthroughId, total_steps: stepsCount });
                     AsyncStorage.setItem(WALKTHROUGH_CONFIGS[activeWalkthroughId].storageKey, 'true');
                 }
                 setActiveWalkthroughId(null);
@@ -95,13 +105,16 @@ export const WalkthroughProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }, [activeWalkthroughId]);
 
     const skipWalkthrough = useCallback(() => {
+        if (activeWalkthroughId) {
+            analytics.track('walkthrough_skipped', { walkthrough: activeWalkthroughId, step: currentStep, total_steps: totalSteps });
+        }
         setIsActive(false);
         setCurrentStep(0);
         if (activeWalkthroughId) {
             AsyncStorage.setItem(WALKTHROUGH_CONFIGS[activeWalkthroughId].storageKey, 'true');
         }
         setActiveWalkthroughId(null);
-    }, [activeWalkthroughId]);
+    }, [activeWalkthroughId, currentStep, totalSteps]);
 
     const checkFirstLaunch = useCallback(async (id: WalkthroughId) => {
         const completed = await AsyncStorage.getItem(WALKTHROUGH_CONFIGS[id].storageKey);

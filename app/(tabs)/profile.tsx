@@ -25,6 +25,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { getRank, getLevelProgress } from '../../lib/levelSystem';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthProvider';
+import { analytics } from '../../lib/analytics';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -224,6 +225,7 @@ export default function ProfileScreen() {
 
       if (updateError) throw updateError;
 
+      analytics.track('profile_edited', { field: 'avatar', avatar_source: 'predefined' });
       setProfile(prev => prev ? { ...prev, avatar_url: url } : null);
       await refreshProfile(); // Refresh global state
       Alert.alert('Success', 'Profile picture updated!');
@@ -268,6 +270,7 @@ export default function ProfileScreen() {
 
       if (updateError) throw updateError;
 
+      analytics.track('profile_edited', { field: 'avatar', avatar_source: 'upload' });
       setProfile(prev => prev ? { ...prev, avatar_url: data.publicUrl } : null);
       await refreshProfile(); // Refresh global state
       Alert.alert('Success', 'Profile picture updated!');
@@ -297,6 +300,7 @@ export default function ProfileScreen() {
 
       if (error) throw error;
 
+      analytics.track('profile_edited', { field: 'username' });
       setProfile(prev => prev ? { ...prev, username: newUsername } : null);
       setIsEditing(false);
       Alert.alert('Success', 'Profile updated!');
@@ -315,6 +319,8 @@ export default function ProfileScreen() {
         const { error } = await supabase.rpc('delete_user_account');
 
         if (error) throw error;
+        analytics.track('account_deleted');
+        await analytics.flushNow();
 
         // Force sign out locally to clear session
         await supabase.auth.signOut();
@@ -373,6 +379,7 @@ export default function ProfileScreen() {
           .eq('user_id', session.user.id);
 
         if (error) throw error;
+        analytics.track('progress_reset');
 
         if (Platform.OS === 'web') {
           window.alert('Success: Your progress has been reset.');
@@ -653,7 +660,7 @@ export default function ProfileScreen() {
 
             <TouchableOpacity
               style={styles.upgradeButton}
-              onPress={() => router.push('/subscription')}
+              onPress={() => router.push({ pathname: '/subscription', params: { source: 'profile' } })}
             >
               <Ionicons name="diamond-outline" size={18} color="#111827" style={{ marginRight: 8 }} />
               <Text style={styles.upgradeButtonText}>{t('profile.upgradeButton')}</Text>

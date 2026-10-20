@@ -3,6 +3,7 @@ import Constants from 'expo-constants';
 // import { InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../lib/supabase';
+import { analytics } from '../lib/analytics';
 
 import { Platform } from 'react-native';
 
@@ -91,6 +92,15 @@ export const useInterstitialAd = () => {
         };
     }, []);
 
+    const showAd = (trigger: string) => {
+        if (loaded && interstitial) {
+            interstitial.show();
+            analytics.track('ad_shown', { trigger });
+        } else {
+            analytics.track('ad_failed', { trigger, error: 'not_loaded' });
+        }
+    };
+
     const showAdIfNeeded = async (actionType: 'general' | 'trailer' | 'create_list' = 'general') => {
         try {
             // 1. Check if user is PRO
@@ -128,9 +138,7 @@ export const useInterstitialAd = () => {
                     const { requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
                     await requestTrackingPermissionsAsync();
 
-                    if (loaded && interstitial) {
-                        interstitial.show();
-                    }
+                    showAd(actionType);
                 }
                 return;
             }
@@ -157,9 +165,7 @@ export const useInterstitialAd = () => {
                     const { requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
                     await requestTrackingPermissionsAsync();
 
-                    if (loaded && interstitial) {
-                        interstitial.show();
-                    }
+                    showAd(actionType);
                 }
                 return;
             }
@@ -176,11 +182,7 @@ export const useInterstitialAd = () => {
                     const { requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
                     await requestTrackingPermissionsAsync();
 
-                    if (loaded && interstitial) {
-                        interstitial.show();
-                    } else {
-                        console.log('Ad not loaded yet');
-                    }
+                    showAd(actionType);
                 }
             }
 

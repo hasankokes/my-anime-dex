@@ -35,6 +35,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useWalkthrough } from '../../context/WalkthroughContext';
 import { recommendationService } from '../../services/recommendationService';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
+import { analytics, queryShape } from '../../lib/analytics';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -57,6 +58,7 @@ export default function HomeScreen() {
       Animated.timing(shakeAnim, { toValue: 6, duration: 50, useNativeDriver: true }),
       Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true })
     ]).start(() => {
+      analytics.track('home_section_clicked', { section: 'arena_fab' });
       router.push('/arena/setup');
     });
   };
@@ -369,6 +371,7 @@ export default function HomeScreen() {
     setActiveQuery(query);
 
     if (query.length > 0) {
+      analytics.track('search_performed', { source: 'home', ...queryShape(query), category_id: selectedCategory });
       setIsSearching(true);
       setPage(1);
       setHasNextPage(true);
@@ -391,6 +394,7 @@ export default function HomeScreen() {
 
   const handleCategorySelect = (categoryId: number | null) => {
     if (selectedCategory === categoryId) return;
+    analytics.track('home_section_clicked', { section: 'category_filter', category_id: categoryId });
 
     setSelectedCategory(categoryId);
     setPage(1);
@@ -596,9 +600,11 @@ export default function HomeScreen() {
             userListCount={userListCount}
             topGenre={topGenre}
             onPress={() => {
+              analytics.track('home_section_clicked', { section: 'for_you' });
               requireAuth('recommendations', () => router.push('/recommendations'));
             }}
             onDicePress={() => {
+              analytics.track('home_section_clicked', { section: 'dice' });
               setIsDiceModalVisible(true);
             }}
             discoverRef={discoverRef}
@@ -650,10 +656,13 @@ export default function HomeScreen() {
               initialNumToRender={5}
               maxToRenderPerBatch={10}
               windowSize={5}
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <TouchableOpacity
                   style={[styles.trendingCard, { backgroundColor: colors.card }]}
-                  onPress={() => router.push(`/anime/${item.mal_id}`)}
+                  onPress={() => {
+                    analytics.track('home_section_clicked', { section: trendingMode, anime_id: String(item.mal_id), position: index });
+                    router.push(`/anime/${item.mal_id}`);
+                  }}
                 >
                   <Image
                     source={{ uri: item.images.jpg.large_image_url }}
@@ -745,10 +754,17 @@ export default function HomeScreen() {
         ref={flatListRef}
         key={`grid-${numColumns}`}
         data={animes}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <AnimeCard
             anime={item}
-            onPress={() => router.push(`/anime/${item.mal_id}`)}
+            onPress={() => {
+              if (isSearching) {
+                analytics.track('search_result_clicked', { source: 'home', anime_id: String(item.mal_id), position: index, ...queryShape(activeQuery) });
+              } else {
+                analytics.track('home_section_clicked', { section: 'grid', category_id: selectedCategory, anime_id: String(item.mal_id), position: index });
+              }
+              router.push(`/anime/${item.mal_id}`);
+            }}
             numColumns={numColumns}
           />
         )}

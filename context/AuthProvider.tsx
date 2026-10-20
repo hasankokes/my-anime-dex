@@ -7,6 +7,22 @@ import { supabase } from '../lib/supabase';
 import { authIntent } from '../lib/authIntent';
 import { pendingArenaResult } from '../lib/pendingArenaResult';
 import { recommendationService } from '../services/recommendationService';
+import { analytics } from '../lib/analytics';
+
+// A sign-in within this window of account creation counts as the sign-up (covers email confirmation delays)
+const NEW_ACCOUNT_WINDOW_MS = 30 * 60 * 1000;
+const trackedSignIns = new Set<string>();
+
+const trackSignIn = (user: User) => {
+    if (trackedSignIns.has(user.id)) return;
+    trackedSignIns.add(user.id);
+    analytics.identify(user);
+    const isNew = Date.now() - new Date(user.created_at).getTime() < NEW_ACCOUNT_WINDOW_MS;
+    analytics.track(isNew ? 'signup_completed' : 'login_completed', {
+        method: user.app_metadata?.provider ?? 'email',
+        trigger_reason: analytics.takePendingAuthReason() ?? 'direct',
+    });
+};
 
 export type AuthStatus = 'loading' | 'guest' | 'authenticated';
 
@@ -61,6 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const signOut = async () => {
+        analytics.track('logout');
         setSession(null);
         setAvatarUrl(null);
         await supabase.auth.signOut();
@@ -115,7 +132,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         // Listen for changes to auth state
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session?.user) trackSignIn(session.user);
             setSession(session);
             if (session?.user) {
                 // Always fetch from DB first, passing metadata as fallback

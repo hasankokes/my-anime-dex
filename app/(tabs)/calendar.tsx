@@ -15,6 +15,7 @@ import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { getNextBroadcastDate, getBroadcastDateObj } from '../../lib/dateUtils';
 import { useWalkthrough } from '../../context/WalkthroughContext';
+import { analytics, queryShape } from '../../lib/analytics';
 
 // Days mapping for Jikan API
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -93,6 +94,13 @@ export default function CalendarScreen() {
     };
 
     const [selectedDay, setSelectedDay] = useState(getToday());
+
+    const initialDayRef = useRef(selectedDay);
+    useEffect(() => {
+        if (selectedDay === initialDayRef.current) return;
+        initialDayRef.current = '';
+        analytics.track('calendar_day_changed', { day: selectedDay });
+    }, [selectedDay]);
     const [schedule, setSchedule] = useState<any[]>([]);
     const [allSchedules, setAllSchedules] = useState<Record<string, any[]>>({}); // Cache for loaded days
     const [loading, setLoading] = useState(true);
@@ -247,6 +255,7 @@ export default function CalendarScreen() {
     };
 
     const handleSearchSubmit = () => {
+        if (inputText.trim()) analytics.track('search_performed', { source: 'calendar', ...queryShape(inputText) });
         setSearchQuery(inputText.trim());
         Keyboard.dismiss();
     };

@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as StoreReview from 'expo-store-review';
 import { Alert, Platform } from 'react-native';
 import { useState } from 'react';
+import { analytics } from '../lib/analytics';
 
 const STORAGE_KEY_COUNT = 'rateUs_addCount';
 const STORAGE_KEY_HAS_RATED = 'rateUs_hasRated';
@@ -25,6 +26,7 @@ export const useRateUs = () => {
 
             // 3. Check condition: every 5 adds
             if (count % 5 === 0) {
+                analytics.track('rate_prompt_shown', { add_count: count });
                 setShowRateSheet(true);
             }
         } catch (error) {
@@ -34,6 +36,7 @@ export const useRateUs = () => {
 
     const handleRate = async () => {
         setShowRateSheet(false);
+        analytics.track('rate_prompt_accepted');
         try {
             if (await StoreReview.hasAction()) {
                 await StoreReview.requestReview();
@@ -54,6 +57,7 @@ export const useRateUs = () => {
 
     const handleLater = () => {
         setShowRateSheet(false);
+        analytics.track('rate_prompt_later');
 
     };
 

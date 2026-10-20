@@ -21,6 +21,7 @@ interface CollaboratorProfile {
 }
 
 import { useLanguage } from '../../context/LanguageContext';
+import { analytics } from '../../lib/analytics';
 
 export default function ListDetailsScreen() {
     const { id } = useLocalSearchParams();
@@ -175,9 +176,12 @@ export default function ListDetailsScreen() {
         const message = `Check out my anime list "${list.title}"! 📺\n\n${list.description ? list.description + '\n\n' : ''}${allItems}\n\nView details:\nUse Link: ${webUrl}\nApp Link: ${appUrl}`;
 
         try {
-            await Share.share({
+            const result = await Share.share({
                 message: message,
             });
+            if (result.action === Share.sharedAction) {
+                analytics.track('list_shared', { list_id: String(id), item_count: items.length });
+            }
         } catch (error) {
             // ignore
         }
@@ -213,6 +217,7 @@ export default function ListDetailsScreen() {
 
             if (error) throw error;
 
+            analytics.track('list_item_removed', { list_id: String(id) });
             setItems(prev => prev.filter(i => i.id !== itemId));
         } catch (error) {
             Alert.alert('Error', 'Failed to remove item');
@@ -247,6 +252,7 @@ export default function ListDetailsScreen() {
                 .delete()
                 .eq('id', id);
             if (error) throw error;
+            analytics.track('list_deleted', { list_id: String(id), item_count: items.length });
             router.back();
         } catch (error) {
             Alert.alert('Error', 'Failed to delete list');
@@ -348,6 +354,7 @@ export default function ListDetailsScreen() {
                     position: inserted?.position ?? items.length,
                 };
                 setItems(prev => [...prev, newItem]);
+                analytics.track('list_item_added', { list_id: String(id), anime_id: anime.mal_id.toString(), source: 'list_detail' });
                 Alert.alert(t('common.success'), t('lists.animeAdded'));
             }
         } catch (error) {

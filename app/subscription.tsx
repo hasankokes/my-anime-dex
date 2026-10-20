@@ -10,12 +10,13 @@ import {
   Platform,
   Alert
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRevenueCat } from '../context/RevenueCatProvider';
 import { useLanguage } from '../context/LanguageContext';
+import { analytics } from '../lib/analytics';
 
 
 const { width } = Dimensions.get('window');
@@ -37,6 +38,20 @@ export default function SubscriptionScreen() {
   const { currentOffering, purchasePackage, restorePermissions, isPro } = useRevenueCat();
   const { t } = useLanguage();
   const [isPurchasing, setIsPurchasing] = React.useState(false);
+  const { source } = useLocalSearchParams<{ source?: string }>();
+  const isProRef = React.useRef(isPro);
+  isProRef.current = isPro;
+
+  // Paywall funnel: viewed -> purchase_* (from RevenueCatProvider) or dismissed
+  React.useEffect(() => {
+    const openedAt = Date.now();
+    analytics.track('paywall_viewed', { source: source ?? 'unknown' });
+    return () => {
+      if (!isProRef.current) {
+        analytics.track('paywall_dismissed', { source: source ?? 'unknown', seconds_open: Math.round((Date.now() - openedAt) / 1000) });
+      }
+    };
+  }, []);
 
 
   // If already pro, go back or show success

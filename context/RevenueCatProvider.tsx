@@ -5,6 +5,7 @@ import Purchases, { CustomerInfo, PurchasesPackage } from 'react-native-purchase
 import { REVENUECAT_ANDROID_API_KEY, REVENUECAT_IOS_API_KEY } from '../constants/Config';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthProvider'; // Import useAuth
+import { analytics } from '../lib/analytics';
 
 interface RevenueCatContextType {
     isPro: boolean;
@@ -85,15 +86,27 @@ export const RevenueCatProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         const isProActive = typeof info.entitlements.active['animedex_premium_monthly'] !== "undefined";
         setIsPro(isProActive);
         await syncStatusToSupabase(isProActive);
+        return isProActive;
     };
 
     const purchasePackage = async (pkg: PurchasesPackage) => {
+        const productProps = {
+            product_id: pkg.product.identifier,
+            price: pkg.product.price,
+            currency: pkg.product.currencyCode,
+            has_intro_offer: !!pkg.product.introPrice,
+        };
+        analytics.track('purchase_started', productProps);
         try {
             const { customerInfo } = await Purchases.purchasePackage(pkg);
             setCustomerInfo(customerInfo);
-            await checkProStatus(customerInfo);
+            const active = await checkProStatus(customerInfo);
+            analytics.track('purchase_completed', { ...productProps, entitlement_active: active });
         } catch (e: any) {
-            if (!e.userCancelled) {
+            if (e.userCancelled) {
+                analytics.track('purchase_cancelled', productProps);
+            } else {
+                analytics.track('purchase_failed', { ...productProps, error: e.code ?? e.message });
                 console.error('Purchase error:', e);
                 throw e;
             }
@@ -104,9 +117,11 @@ export const RevenueCatProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         try {
             const info = await Purchases.restorePurchases();
             setCustomerInfo(info);
-            await checkProStatus(info);
+            const active = await checkProStatus(info);
+            analytics.track('restore_completed', { entitlement_active: active });
             return info;
-        } catch (e) {
+        } catch (e: any) {
+            analytics.track('restore_failed', { error: e?.code ?? e?.message });
             console.error('Restore error:', e);
             throw e;
         }

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { analytics } from '../lib/analytics';
 import { StatusBar } from 'expo-status-bar';
 
 type Theme = 'light' | 'dark';
@@ -38,6 +39,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
     AsyncStorage.setItem('app_theme', newTheme);
+    analytics.track('theme_changed', { theme: newTheme });
   }, [theme]);
 
   const isDark = theme === 'dark';

@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { supabase } from '../../lib/supabase';
+import { analytics } from '../../lib/analytics';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   FadeIn,
@@ -55,11 +56,24 @@ export default function ArenaGameScreen() {
   const pickLockRef = useRef(false);
   const pickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Analytics: a game that started but never reached the result screen counts as abandoned
+  const gameStatsRef = useRef({ startedAt: 0, picks: 0, bracketSize: 0, completed: false });
+
   useEffect(() => {
     return () => {
       if (pickTimeoutRef.current) clearTimeout(pickTimeoutRef.current);
+      const stats = gameStatsRef.current;
+      if (stats.startedAt && !stats.completed) {
+        analytics.track('arena_game_abandoned', {
+          category: categoryName,
+          bracket_size: stats.bracketSize,
+          picks: stats.picks,
+          total_picks: stats.bracketSize - 1,
+          seconds_played: Math.round((Date.now() - stats.startedAt) / 1000),
+        });
+      }
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [matchKey, setMatchKey] = useState(0); // Force re-render on new match
 
   const targetSize = parseInt(size as string) || 16;
@@ -117,6 +131,8 @@ export default function ArenaGameScreen() {
       }
 
       const contestants = shuffled.slice(0, actualSize);
+      gameStatsRef.current = { startedAt: Date.now(), picks: 0, bracketSize: actualSize, completed: false };
+      analytics.track('arena_game_started', { category: categoryName, bracket_size: actualSize });
       setCurrentRoundItems(contestants);
       updateRoundName(actualSize);
       
@@ -165,6 +181,7 @@ export default function ArenaGameScreen() {
     setIsTransitioning(true);
 
     const updatedNextRound = [...nextRoundItems, winner];
+    gameStatsRef.current.picks += 1;
 
     // Delay to allow animation
     pickTimeoutRef.current = setTimeout(() => {
@@ -172,6 +189,15 @@ export default function ArenaGameScreen() {
       if (currentIndex + 2 >= currentRoundItems.length) {
         if (updatedNextRound.length === 1) {
           // Tournament over
+          const stats = gameStatsRef.current;
+          stats.completed = true;
+          analytics.track('arena_game_completed', {
+            category: categoryName,
+            bracket_size: stats.bracketSize,
+            winner_id: String(updatedNextRound[0].item_id),
+            winner_name: String(updatedNextRound[0].name || ''),
+            seconds_played: Math.round((Date.now() - stats.startedAt) / 1000),
+          });
           router.replace({
             pathname: '/arena/result',
             params: {

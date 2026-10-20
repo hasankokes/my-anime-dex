@@ -22,6 +22,7 @@ import { supabase } from '../../lib/supabase';
 import Animated, { FadeInDown, FadeInRight, useSharedValue, useAnimatedStyle, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { useFocusEffect } from '@react-navigation/native';
 import TextTicker from 'react-native-text-ticker';
+import { analytics } from '../../lib/analytics';
 
 const { width } = Dimensions.get('window');
 
@@ -147,6 +148,7 @@ export default function ArenaSetupScreen() {
   };
 
   const handleStart = () => {
+    analytics.track('arena_setup_started', { category: selectedCategory, bracket_size: selectedSize });
     router.push({
       pathname: '/arena/game',
       params: { category: selectedCategory, size: selectedSize }

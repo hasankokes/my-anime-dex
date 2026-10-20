@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
+import { analytics } from '../../lib/analytics';
 
 export default function CreateListScreen() {
     const router = useRouter();
@@ -43,6 +44,7 @@ export default function CreateListScreen() {
 
             if (error) throw error;
 
+            analytics.track('list_created', { source: 'lists', is_public: isPublic, has_description: !!description.trim() });
             Alert.alert('Success', 'List created!');
             showAdIfNeeded('create_list');
             router.back();

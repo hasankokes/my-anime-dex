@@ -13,6 +13,7 @@ import * as Sharing from 'expo-sharing';
 import Animated, { ZoomIn, FadeInDown, FadeInUp, useSharedValue, useAnimatedStyle, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { supabase } from '../../lib/supabase';
 import { pendingArenaResult } from '../../lib/pendingArenaResult';
+import { analytics } from '../../lib/analytics';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 const { width } = Dimensions.get('window');
@@ -160,10 +161,14 @@ export default function ArenaResultScreen() {
             dialogTitle: shareTitle,
             UTI: 'image/png',
           });
+          analytics.track('arena_result_shared', { category: String(category || ''), method: 'image' });
         } else {
-          await Share.share({
+          const result = await Share.share({
             message: `${(winnerName as string)} won my Anime Arena championship! 🏆⚔️ #AnimeDex`,
           });
+          if (result.action === Share.sharedAction) {
+            analytics.track('arena_result_shared', { category: String(category || ''), method: 'text' });
+          }
         }
       }
     } catch (error) {
