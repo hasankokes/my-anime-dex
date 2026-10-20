@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -21,7 +21,9 @@ import { supabase } from '../../lib/supabase';
 import { AnimeListItem } from '../../types';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
+import { HeaderAvatar } from '../../components/HeaderAvatar';
 import { useAuth } from '../../context/AuthProvider'; // Added useAuth import
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { useLanguage } from '../../context/LanguageContext';
 import { useWalkthrough } from '../../context/WalkthroughContext';
 import { AnimeCard } from '../../components/AnimeCard';
@@ -33,7 +35,8 @@ import { useNetwork } from '../../context/NetworkContext';
 export default function FavoritesScreen() {
   const router = useRouter();
   const { colors, toggleTheme, isDark } = useTheme();
-  const { avatarUrl } = useAuth(); // Added avatarUrl from auth context
+  const { avatarUrl, session: authSession } = useAuth(); // Added avatarUrl from auth context
+  const requireAuth = useRequireAuth();
   const insets = useSafeAreaInsets();
   const { isConnected, isInternetReachable } = useNetwork();
   const { t } = useLanguage();
@@ -111,7 +114,10 @@ export default function FavoritesScreen() {
       const isOnline = isConnected && isInternetReachable !== false;
 
       if (!session) {
+        // Guest: never show a previous user's data
+        setFavorites([]);
         setLoading(false);
+        setRefreshing(false);
         return;
       }
 
@@ -160,6 +166,14 @@ export default function FavoritesScreen() {
       };
     }, []) // Removed dependencies to prevent re-fetching on local state changes
   );
+
+  // Refetch when the user signs in or out while this tab is mounted (focus handles the first load)
+  const lastUserIdRef = React.useRef(authSession?.user?.id);
+  useEffect(() => {
+    if (lastUserIdRef.current === authSession?.user?.id) return;
+    lastUserIdRef.current = authSession?.user?.id;
+    fetchFavorites();
+  }, [authSession?.user?.id]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -318,11 +332,8 @@ export default function FavoritesScreen() {
             <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
               <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/(tabs)/profile')}>
-              <Image
-                source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
-                style={styles.headerProfileImage}
-              />
+            <TouchableOpacity style={styles.profileButton} onPress={() => requireAuth('profile', () => router.push('/(tabs)/profile'))}>
+              <HeaderAvatar uri={avatarUrl} />
             </TouchableOpacity>
           </View>
         </>
@@ -387,6 +398,18 @@ export default function FavoritesScreen() {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FACC15" />
           }
           ListEmptyComponent={
+            !authSession ? (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="person-circle-outline" size={48} color={colors.subtext} />
+                <Text style={[styles.emptySubText, { color: colors.subtext, maxWidth: 280 }]}>{t('guest.favorites_empty')}</Text>
+                <TouchableOpacity
+                  style={[styles.signInButton, { backgroundColor: colors.primary }]}
+                  onPress={() => requireAuth('favorite')}
+                >
+                  <Text style={styles.signInButtonText}>{t('guest.sign_in')}</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
             <View style={styles.emptyContainer}>
               <Ionicons name={searchQuery ? "search" : "heart-dislike-outline"} size={48} color={colors.subtext} />
               <Text style={[styles.emptyText, { color: colors.subtext }]}>
@@ -396,6 +419,7 @@ export default function FavoritesScreen() {
                 <Text style={[styles.emptySubText, { color: colors.subtext }]}>{t('favorites.addFavoritesDesc')}</Text>
               )}
             </View>
+            )
           }
         />
       )}
@@ -581,6 +605,17 @@ const styles = StyleSheet.create({
   },
   columnWrapper: {
     justifyContent: 'space-between',
+  },
+  signInButton: {
+    marginTop: 16,
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    borderRadius: 24,
+  },
+  signInButtonText: {
+    color: '#000',
+    fontSize: 15,
+    fontFamily: 'Poppins_600SemiBold',
   },
   emptyContainer: {
     alignItems: 'center',

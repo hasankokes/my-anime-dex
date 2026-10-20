@@ -1,11 +1,33 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import * as Linking from 'expo-linking';
-import { Session } from '@supabase/supabase-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { authIntent } from '../lib/authIntent';
+import { pendingArenaResult } from '../lib/pendingArenaResult';
+import { recommendationService } from '../services/recommendationService';
+
+export type AuthStatus = 'loading' | 'guest' | 'authenticated';
+
+// Removes everything cached for the previous user (keys are per-user, e.g. favorites_cache_<id>)
+const clearUserCaches = async () => {
+    authIntent.clear();
+    recommendationService.clearCache();
+    await pendingArenaResult.clear();
+    try {
+        const keys = await AsyncStorage.getAllKeys();
+        const userKeys = keys.filter(k => k.startsWith('favorites_cache_'));
+        if (userKeys.length) await AsyncStorage.multiRemove(userKeys);
+    } catch {
+        // ignore
+    }
+};
 
 type AuthContextType = {
     session: Session | null;
+    user: User | null;
+    status: AuthStatus;
     loading: boolean;
     signIn: (email: string) => Promise<void>;
     signOut: () => Promise<void>;
@@ -16,6 +38,8 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>({
     session: null,
+    user: null,
+    status: 'loading',
     loading: true,
     signIn: async () => { },
     signOut: async () => { },
@@ -142,15 +166,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return () => sub.remove();
     }, []);
 
+    // When a signed-in user becomes a guest (logout, expired/revoked session), drop their caches
+    const userId = session?.user?.id ?? null;
+    const prevUserId = React.useRef<string | null>(null);
+    useEffect(() => {
+        if (prevUserId.current && prevUserId.current !== userId) {
+            clearUserCaches();
+        }
+        prevUserId.current = userId;
+    }, [userId]);
+
+    const status: AuthStatus = loading ? 'loading' : session ? 'authenticated' : 'guest';
+
     const contextValue = React.useMemo(() => ({
         session,
+        user: session?.user ?? null,
+        status,
         loading,
         signIn,
         signOut,
         signUp,
         avatarUrl,
         refreshProfile
-    }), [session, loading, avatarUrl]);
+    }), [session, status, loading, avatarUrl]);
 
     return (
         <AuthContext.Provider value={contextValue}>

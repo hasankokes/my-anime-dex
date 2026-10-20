@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -30,7 +30,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { colors, isDark, toggleTheme } = useTheme();
   const { t, language } = useLanguage();
-  const { signOut, refreshProfile } = useAuth();
+  const { signOut, refreshProfile, status } = useAuth();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [stats, setStats] = useState<UserAnimeStats>({
@@ -53,6 +53,12 @@ export default function ProfileScreen() {
       fetchProfile();
     }, [])
   );
+
+  // Profile is for signed-in users only: after logout, account deletion or an expired session
+  // the user continues as a guest on Home.
+  useEffect(() => {
+    if (status === 'guest') router.replace('/(tabs)');
+  }, [status]);
 
 
 
@@ -127,7 +133,7 @@ export default function ProfileScreen() {
   const handleSignOut = async () => {
     try {
       await signOut(); // Use the context signOut which clears local state immediately
-      router.replace('/login'); // Explicitly redirect to login page
+      router.replace('/(tabs)'); // Continue as a guest on Home
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert('Error', error.message);
@@ -318,7 +324,7 @@ export default function ProfileScreen() {
         } else {
           Alert.alert('Account Deleted', 'Your account has been permanently deleted.');
         }
-        // Router will auto-redirect to login due to AuthGuard
+        // The status effect above sends the (now guest) user to Home
       } catch (error) {
         if (Platform.OS === 'web') {
           window.alert(`Error: ${(error as Error).message}`);

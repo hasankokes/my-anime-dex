@@ -1,12 +1,24 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthProvider';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 export default function TabLayout() {
   const { colors, isDark } = useTheme();
   const { t } = useLanguage();
+  const router = useRouter();
+  const { session } = useAuth();
+  const requireAuth = useRequireAuth();
+
+  const rippleConfig = {
+    color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+    radius: 30,
+    borderless: true,
+    foreground: true,
+  };
 
   return (
     <Tabs
@@ -29,12 +41,7 @@ export default function TabLayout() {
           // @ts-ignore
           <Pressable
             {...props}
-            android_ripple={{
-              color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-              radius: 30,
-              borderless: true,
-              foreground: true,
-            }}
+            android_ripple={rippleConfig}
           />
         ),
       }}
@@ -106,6 +113,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
+          // Guests get the login modal instead of the tab; after signing in they land on their profile.
+          // Handled in the button (not a tabPress listener) because on web the tab is a link
+          // whose navigation preventDefault() can't stop.
+          tabBarButton: (props) => (
+            // @ts-ignore
+            <Pressable
+              {...props}
+              {...(!session && { href: undefined })}
+              onPress={(e) => {
+                if (session) props.onPress?.(e);
+                else requireAuth('profile', () => router.navigate('/(tabs)/profile'));
+              }}
+              android_ripple={rippleConfig}
+            />
+          ),
           title: t('tabs.profile'),
           headerShown: false,
           tabBarIcon: ({ focused, color }) => (

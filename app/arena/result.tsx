@@ -12,6 +12,8 @@ import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import Animated, { ZoomIn, FadeInDown, FadeInUp, useSharedValue, useAnimatedStyle, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { supabase } from '../../lib/supabase';
+import { pendingArenaResult } from '../../lib/pendingArenaResult';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 const { width } = Dimensions.get('window');
 
@@ -21,6 +23,7 @@ export default function ArenaResultScreen() {
   const { colors, isDark } = useTheme();
   const { t } = useLanguage();
   const { session } = useAuth();
+  const requireAuth = useRequireAuth();
   const insets = useSafeAreaInsets();
   
   const viewShotRef = useRef<ViewShot>(null);
@@ -28,6 +31,9 @@ export default function ArenaResultScreen() {
   const [userRating, setUserRating] = useState<number>(0);
   const [savedResultId, setSavedResultId] = useState<string | null>(null);
   const [savingResult, setSavingResult] = useState(false);
+  // Guest's unsaved result (kept in memory + AsyncStorage until they sign in)
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
+  const ratingRef = useRef(0);
 
   // Crown bounce animation
   const crownScale = useSharedValue(1);
@@ -46,10 +52,48 @@ export default function ArenaResultScreen() {
     transform: [{ scale: crownScale.value }],
   }));
 
-  // Automatically save result to arena_results on mount
+  // Signed in: save result to arena_results on mount. Guest: keep it pending until sign-in.
   useEffect(() => {
-    saveQuizResult();
+    if (session?.user) saveQuizResult();
+    else keepPendingResult();
   }, []);
+
+  // Once the guest signs in (from "Save score" or anywhere else), save the pending result once
+  useEffect(() => {
+    if (session?.user && pendingKey && !savedResultId) savePendingResult();
+  }, [session?.user?.id, pendingKey]);
+
+  const keepPendingResult = async () => {
+    if (!winnerId || !winnerName) return;
+    const key = await pendingArenaResult.set({
+      category: (category as string) || 'all_time_anime',
+      size: parseInt(size as string, 10) || 16,
+      winner_id: parseInt(winnerId as string, 10) || 0,
+      winner_name: winnerName as string,
+      winner_image: (winnerImage as string) || '',
+    });
+    setPendingKey(key);
+  };
+
+  const savePendingResult = async () => {
+    if (!pendingKey || savedResultId) return;
+    try {
+      setSavingResult(true);
+      // flush() is shared with the root-level flush, so the result is inserted only once
+      const id = await pendingArenaResult.flush(pendingKey);
+      if (id) {
+        setSavedResultId(id);
+        // A star tapped while the insert was in flight
+        if (ratingRef.current > 0) {
+          await supabase.from('arena_results').update({ rating: ratingRef.current }).eq('id', id);
+        }
+      }
+    } catch (err) {
+      console.log('Error saving pending arena result:', err);
+    } finally {
+      setSavingResult(false);
+    }
+  };
 
   const saveQuizResult = async () => {
     if (!winnerId || !winnerName) return;
@@ -87,7 +131,11 @@ export default function ArenaResultScreen() {
 
   const handleRate = async (stars: number) => {
     setUserRating(stars);
-    if (!savedResultId) return;
+    ratingRef.current = stars;
+    if (!savedResultId) {
+      if (pendingKey) pendingArenaResult.setRating(pendingKey, stars);
+      return;
+    }
 
     try {
       await supabase
@@ -216,6 +264,30 @@ export default function ArenaResultScreen() {
           </View>
         </View>
 
+        {/* Save score (guest, or a pending save that failed) */}
+        {pendingKey && !savedResultId ? (
+          <TouchableOpacity
+            style={[styles.saveScoreButton, { backgroundColor: colors.primary }]}
+            onPress={() => requireAuth('arena', () => savePendingResult())}
+            disabled={savingResult}
+            activeOpacity={0.8}
+          >
+            {savingResult ? (
+              <ActivityIndicator color="#000" size="small" />
+            ) : (
+              <>
+                <Ionicons name="cloud-upload-outline" size={20} color="#000" />
+                <Text style={styles.saveScoreText}>{t('guest.save_score')}</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        ) : pendingKey && savedResultId ? (
+          <View style={styles.savedRow}>
+            <Ionicons name="checkmark-circle" size={18} color="#10B981" />
+            <Text style={[styles.savedText, { color: colors.subtext }]}>{t('guest.score_saved')}</Text>
+          </View>
+        ) : null}
+
         {/* Action Buttons */}
         <View style={styles.buttonRow}>
           {/* Play Again */}
@@ -288,6 +360,29 @@ const styles = StyleSheet.create({
   closeButton: {
     padding: 8,
     marginRight: -8,
+  },
+  saveScoreButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 50,
+    borderRadius: 16,
+  },
+  saveScoreText: {
+    color: '#000',
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 15,
+  },
+  savedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  savedText: {
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 13,
   },
   scrollContent: {
     flexGrow: 1,

@@ -7,7 +7,7 @@ import { Ionicons, Feather, MaterialIcons, MaterialCommunityIcons } from '@expo/
 import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider, useAuth } from '../context/AuthProvider';
-import { useRouter, useSegments } from 'expo-router';
+import { pendingArenaResult } from '../lib/pendingArenaResult';
 import { NetworkProvider } from '../context/NetworkContext';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { LanguageProvider } from '../context/LanguageContext';
@@ -19,26 +19,27 @@ import { requestTrackingPermissions } from '../lib/tracking';
 
 SplashScreen.preventAutoHideAsync();
 
+// No forced login: guests browse freely and the login modal opens only via requireAuth.
+// While the stored session is being restored we keep the native splash up and decide nothing,
+// so signed-in users never see the login screen flash.
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
-  const { session, loading } = useAuth();
-  const segments = useSegments() as string[];
-  const router = useRouter();
+  const { loading, user } = useAuth();
 
   useEffect(() => {
-    if (loading) return;
-
-    // In Expo Router, the root index route often has an empty segment array or ['index']
-    const isLogin = segments[0] === 'login';
-    const isResetPassword = segments[0] === 'reset-password';
-    const inPublicArea = isLogin || isResetPassword;
-
-    if (!session && !inPublicArea) {
-      router.replace('/login');
-    } else if (session && isLogin) {
-      router.replace('/(tabs)');
+    if (!loading) {
+      SplashScreen.hideAsync();
+      return;
     }
-    // If session && isResetPassword, we stay there to allow checking/updating password
-  }, [session, loading, segments]);
+    // Safety net: never keep the native splash forever if session restore hangs
+    const timer = setTimeout(() => SplashScreen.hideAsync(), 6000);
+    return () => clearTimeout(timer);
+  }, [loading]);
+
+  // A guest's finished Arena result is saved once, as soon as they are signed in
+  // (also covers app restarts and email-verification sign-ins).
+  useEffect(() => {
+    if (user?.id) pendingArenaResult.flush();
+  }, [user?.id]);
 
   if (loading) {
     return (
@@ -66,12 +67,6 @@ export default function RootLayout() {
     ...MaterialCommunityIcons.font,
   });
 
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
   if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
@@ -93,7 +88,14 @@ export default function RootLayout() {
                     <Stack screenOptions={{ headerShown: false }}>
                       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                       <Stack.Screen name="index" options={{ headerShown: false }} />
-                      <Stack.Screen name="login" options={{ headerShown: false }} />
+                      <Stack.Screen
+                        name="login"
+                        options={{
+                          presentation: 'modal',
+                          headerShown: false,
+                          animation: 'slide_from_bottom'
+                        }}
+                      />
                       <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
 
                       <Stack.Screen

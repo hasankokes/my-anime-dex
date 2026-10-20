@@ -26,6 +26,7 @@ import { ForYouHeroCard } from '../../components/Home/ForYouHeroCard';
 import { AnimePulse } from '../../components/Home/AnimePulse';
 import { DiceRollModal } from '../../components/Home/DiceRollModal';
 import { useTheme } from '../../context/ThemeContext';
+import { HeaderAvatar } from '../../components/HeaderAvatar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNetwork } from '../../context/NetworkContext';
 import { useAuth } from '../../context/AuthProvider';
@@ -33,6 +34,7 @@ import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../context/LanguageContext';
 import { useWalkthrough } from '../../context/WalkthroughContext';
 import { recommendationService } from '../../services/recommendationService';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -40,6 +42,7 @@ export default function HomeScreen() {
   const { colors, isDark, toggleTheme } = useTheme();
   const { isConnected, isInternetReachable } = useNetwork();
   const { session, avatarUrl } = useAuth();
+  const requireAuth = useRequireAuth();
   const { t } = useLanguage();
   const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, resetKey } = useWalkthrough();
   const flatListRef = useRef<FlatList>(null);
@@ -312,7 +315,12 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const fetchUserListCountAndProfile = async () => {
-      if (!session) return;
+      if (!session) {
+        // Guest (or just logged out): show the default, non-personal state
+        setUserListCount(0);
+        setTopGenre(undefined);
+        return;
+      }
       try {
         const { count } = await supabase
           .from('user_anime_list')
@@ -455,14 +463,10 @@ export default function HomeScreen() {
           ref={profileRef as any}
           {...({ collapsable: false } as any)}
           style={styles.profileButton}
-          onPress={() => router.push('/(tabs)/profile')}
+          onPress={() => requireAuth('profile', () => router.push('/(tabs)/profile'))}
           onLayout={() => measureRef(profileRef, 7)}
         >
-          <Image
-            source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
-            style={styles.headerProfileImage}
-            contentFit="cover"
-          />
+          <HeaderAvatar uri={avatarUrl} />
         </TouchableOpacity>
       </View>
     </View>
@@ -571,7 +575,7 @@ export default function HomeScreen() {
               borderColor: colors.border,
               gap: 12
             }}
-            onPress={() => router.push('/lists')}
+            onPress={() => requireAuth('lists', () => router.push('/lists'))}
             onLayout={() => measureRef(myListsRef, 4)}
           >
             <Ionicons name="bookmarks" size={20} color="#FACC15" />
@@ -592,7 +596,7 @@ export default function HomeScreen() {
             userListCount={userListCount}
             topGenre={topGenre}
             onPress={() => {
-              router.push('/recommendations');
+              requireAuth('recommendations', () => router.push('/recommendations'));
             }}
             onDicePress={() => {
               setIsDiceModalVisible(true);

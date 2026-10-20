@@ -47,7 +47,14 @@ const genreNameToIdMap: Record<string, string> = {
 };
 
 export const recommendationService = {
-  
+
+  // Drops the per-user profile cache (called on sign-out)
+  clearCache() {
+    cachedProfileResult = null;
+    lastProfileUserId = null;
+    lastProfileFetchTime = 0;
+  },
+
   // 1. Analyze User Profile based on their existing list
   async getUserProfile(userId: string): Promise<{ profile: UserGenreProfile; excludedIds: Set<number> }> {
     // Return in-memory cache if fetched within 5 minutes for the same user

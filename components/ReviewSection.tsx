@@ -20,6 +20,7 @@ import { StarRating } from './StarRating';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { formatDistanceToNow } from 'date-fns';
+import { useRequireAuth } from '../hooks/useRequireAuth';
 
 type Review = {
     id: string;
@@ -55,6 +56,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
     const [comment, setComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const router = useRouter(); // Initialize Router
+    const requireAuth = useRequireAuth();
 
     useEffect(() => {
         fetchReviews();
@@ -280,7 +282,11 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                     ) : (
                         <TouchableOpacity
                             style={[styles.addButton, { backgroundColor: colors.primary }]}
-                            onPress={() => setModalVisible(true)}
+                            onPress={() => requireAuth('review', async ({ resumed }) => {
+                                // After sign-in, load the user's existing review (if any) before editing
+                                if (resumed) await fetchReviews();
+                                setModalVisible(true);
+                            })}
                         >
                             <Text style={styles.addButtonText}>
                                 {t('animeDetail.writeReview')}

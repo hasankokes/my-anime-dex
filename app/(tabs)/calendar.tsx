@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Image, TextInput, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
+import { HeaderAvatar } from '../../components/HeaderAvatar';
 import { useLanguage } from '../../context/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
 import { getAiringSchedule } from '../../services/anilistApi';
@@ -10,6 +11,7 @@ import { DayTabs } from '../../components/Calendar/DayTabs';
 import { CalendarAnimeCard } from '../../components/Calendar/CalendarAnimeCard';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthProvider';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { getNextBroadcastDate, getBroadcastDateObj } from '../../lib/dateUtils';
 import { useWalkthrough } from '../../context/WalkthroughContext';
@@ -22,6 +24,7 @@ export default function CalendarScreen() {
     const { t } = useLanguage();
     const insets = useSafeAreaInsets();
     const { session, avatarUrl } = useAuth();
+    const requireAuth = useRequireAuth();
     const router = useRouter();
     const flatListRef = useRef<FlatList>(null);
     const searchInputRef = useRef<TextInput>(null);
@@ -148,7 +151,10 @@ export default function CalendarScreen() {
     }, [selectedDay, allSchedules]);
 
     const fetchFavorites = useCallback(async () => {
-        if (!session?.user?.id) return;
+        if (!session?.user?.id) {
+            setFavoriteIds(new Set());
+            return;
+        }
         try {
             const { data, error } = await supabase
                 .from('user_anime_list')
@@ -269,6 +275,7 @@ export default function CalendarScreen() {
                 isDark={isDark}
                 toggleTheme={toggleTheme}
                 avatarUrl={avatarUrl}
+                requireAuth={requireAuth}
                 router={router}
                 searchInputRef={searchInputRef}
             />
@@ -347,6 +354,7 @@ const CalendarHeader = ({
     isDark,
     toggleTheme,
     avatarUrl,
+    requireAuth,
     router,
     searchInputRef
 }: any) => (
@@ -392,11 +400,8 @@ const CalendarHeader = ({
                     <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
                         <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/(tabs)/profile')}>
-                        <Image
-                            source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
-                            style={styles.headerProfileImage}
-                        />
+                    <TouchableOpacity style={styles.profileButton} onPress={() => requireAuth('profile', () => router.push('/(tabs)/profile'))}>
+                        <HeaderAvatar uri={avatarUrl} />
                     </TouchableOpacity>
                 </View>
             </>

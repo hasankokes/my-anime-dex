@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthProvider';
 import { View, ActivityIndicator } from 'react-native';
 
 export default function Index() {
-  const { session, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return (
@@ -13,9 +13,6 @@ export default function Index() {
     );
   }
 
-  if (session) {
-    return <Redirect href="/(tabs)" />;
-  }
-
-  return <Redirect href="/login" />;
+  // Guests and signed-in users both start on Home; login opens only when needed.
+  return <Redirect href="/(tabs)" />;
 }
