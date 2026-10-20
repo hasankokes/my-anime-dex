@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="{{htmlLang}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{contactTitle}} – MyAnimeDex</title>
+<meta name="description" content="{{contactLede}}">
+<meta name="theme-color" content="#0F0F0F">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="{{contactCanonical}}">
+{{contactHreflang}}
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<style>{{css}}</style>
+</head>
+<body>
+<div class="fx-bg" aria-hidden="true"><div class="fx-grain"></div></div>
+
+<header class="nav">
+  <a class="brand" href="{{home}}">
+    <img src="assets/img/logo-96.png" width="40" height="40" alt="">
+    <span class="wordmark">ANIME<b>DEX</b></span>
+  </a>
+  <details class="lang">
+    <summary>{{globe}}<span class="sr">{{language}}: </span><span>{{short}}</span></summary>
+    <div class="lang-menu">{{langLinks}}</div>
+  </details>
+  <a class="btn btn-primary nav-cta" href="{{home}}#download" data-store-link>{{download}}</a>
+</header>
+
+<main class="contact">
+  <div class="contact-glow" aria-hidden="true"></div>
+  <header class="contact-head">
+    <p class="eyebrow">{{footerContact}}</p>
+    <h1>{{contactTitle}}</h1>
+    <p class="lede">{{contactLede}}</p>
+  </header>
+
+  <div class="contact-grid">
+    <form class="ui contact-form" name="contact" method="POST" action="{{contactFile}}?sent=1" data-netlify="true" netlify-honeypot="company">
+      <input type="hidden" name="form-name" value="contact">
+      <input type="hidden" name="language" value="{{htmlLang}}">
+      <p class="hp" aria-hidden="true"><label>Company <input name="company" tabindex="-1" autocomplete="off"></label></p>
+      <div class="row2">
+        <label class="field"><span>{{formName}}</span><input name="name" autocomplete="name" maxlength="80" required></label>
+        <label class="field"><span>{{formEmail}}</span><input name="email" type="email" autocomplete="email" inputmode="email" maxlength="120" required></label>
+      </div>
+      <label class="field"><span>{{formTopic}}</span>
+        <select name="topic">
+          <option>{{topicGeneral}}</option>
+          <option>{{topicBug}}</option>
+          <option>{{topicAccount}}</option>
+          <option>{{topicFeature}}</option>
+          <option>{{topicBusiness}}</option>
+        </select>
+      </label>
+      <label class="field"><span>{{formMessage}}</span><textarea name="message" rows="6" maxlength="4000" required></textarea></label>
+      <p class="fine-print">{{formPrivacy}}</p>
+      <button type="submit" class="btn btn-primary send">{{formSend}}</button>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+
+    <aside class="contact-side">
+      <div class="ui side-card">
+        <p class="side-k">{{contactEmailLabel}}</p>
+        <a class="mail" href="mailto:support@myanimedex.com">support@myanimedex.com</a>
+        <button type="button" class="btn btn-ghost copy" data-copied="{{copied}}">{{copy}}</button>
+      </div>
+      <div class="ui side-card">
+        <p class="side-k">{{contactReply}}</p>
+        <p class="muted">{{contactReplyBody}}</p>
+      </div>
+      <div class="ui side-card">
+        <p class="side-k">{{contactAccountK}}</p>
+        <p class="muted">{{contactAccountBody}} <a class="y" href="{{deleteAccount}}">{{footerDelete}} →</a></p>
+      </div>
+      <a class="ui side-card insta" href="https://www.instagram.com/myanimedex/" rel="noopener" target="_blank">
+        <span class="side-k">Instagram</span><span class="muted">@myanimedex →</span>
+      </a>
+    </aside>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-top">
+    <a class="brand" href="{{home}}"><img src="assets/img/logo-96.png" width="32" height="32" alt="" loading="lazy"><span class="wordmark">ANIME<b>DEX</b></span></a>
+    <p class="muted">{{footerTagline}}</p>
+  </div>
+  <nav class="foot-links" aria-label="Footer">
+    <a href="anime/index.html">{{footerTop100}}</a>
+    <a href="{{privacy}}">{{footerPrivacy}}</a>
+    <a href="terms.html">{{footerTerms}}</a>
+    <a href="{{deleteAccount}}">{{footerDelete}}</a>
+    <a href="{{contactFile}}" aria-current="page">{{footerContact}}</a>
+    <a href="https://www.instagram.com/myanimedex/" rel="noopener" target="_blank">Instagram</a>
+  </nav>
+  <p class="fine">© 2026 MyAnimeDex. {{rights}}<br>{{trademarks}}</p>
+</footer>
+
+<script>
+(() => {
+  const S = { sending: {{jsSending}}, sent: {{jsSent}}, error: {{jsError}} };
+  const form = document.querySelector('.contact-form');
+  const status = form.querySelector('.form-status');
+  const btn = form.querySelector('.send');
+  const show = (msg, ok) => { status.textContent = msg; status.className = 'form-status ' + (ok ? 'ok' : 'err'); };
+  if (new URLSearchParams(location.search).has('sent')) show(S.sent, true);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    btn.disabled = true; show(S.sending, true);
+    try {
+      const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(form)).toString() });
+      if (!res.ok) throw new Error(res.status);
+      form.reset(); show(S.sent, true);
+    } catch { show(S.error, false); }
+    btn.disabled = false;
+  });
+  const copy = document.querySelector('.copy');
+  copy.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText('support@myanimedex.com'); const t = copy.textContent; copy.textContent = copy.dataset.copied; setTimeout(() => (copy.textContent = t), 1800); } catch { location.href = 'mailto:support@myanimedex.com'; }
+  });
+  const ua = navigator.userAgent;
+  const store = /iPhone|iPad|iPod/.test(ua) ? 'https://apps.apple.com/app/id6758043488' : /Android/.test(ua) ? 'https://play.google.com/store/apps/details?id=com.myanimedex.app' : null;
+  if (store) document.querySelectorAll('[data-store-link]').forEach((a) => (a.href = store));
+  const lang = document.querySelector('details.lang');
+  document.addEventListener('click', (e) => { if (lang.open && !lang.contains(e.target)) lang.open = false; });
+})();
+</script>
+</body>
+</html>

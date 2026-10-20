@@ -1,318 +1,289 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyAnimeDex - 究極のアニメ追跡＆マンガリストアプリ</title>
-    <meta name="description" content="何話まで見たかもう忘れない！MyAnimeDexでアニメの進捗を管理し、ライブラリを整理して、新しいシリーズを見つけよう。今すぐ無料で参加。">
-    <meta name="keywords"
-        content="アニメ追跡, アニメリスト, マンガ管理, myanimelist 代替, anilist 代替, 視聴順, アニメ進捗, 無料アニメアプリ, オタク, myanimedex">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <!-- Ionicons for Icons -->
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "MyAnimeDex",
-      "operatingSystem": "iOS, Android",
-      "applicationCategory": "EntertainmentApplication",
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "5.0",
-        "ratingCount": "100"
-      },
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "downloadUrl": "https://myanimedex.com",
-      "featureList": "アニメ追跡, マンガライブラリ, リリース通知",
-      "installUrl": [
-        "https://apps.apple.com/us/app/myanimedex/id6758043488",
-        "https://play.google.com/store/apps/details?id=com.myanimedex.app"
-      ]
-    }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MyAnimeDex – アニメ管理アプリ：視聴記録・放送カレンダー・ランキングリスト</title>
+<meta name="description" content="全話の視聴を記録し、放送を見逃さず、お気に入りをランキングしてレベルアップ。MyAnimeDex は iPhone と Android 向けの無料アニメ管理アプリです。">
+
+<meta name="theme-color" content="#0F0F0F">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://myanimedex.com/jp">
+<link rel="alternate" hreflang="en" href="https://myanimedex.com/">
+<link rel="alternate" hreflang="tr" href="https://myanimedex.com/tr">
+<link rel="alternate" hreflang="ja" href="https://myanimedex.com/jp">
+<link rel="alternate" hreflang="id" href="https://myanimedex.com/id">
+<link rel="alternate" hreflang="x-default" href="https://myanimedex.com/">
+<meta name="apple-itunes-app" content="app-id=6758043488">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MyAnimeDex">
+<meta property="og:title" content="MyAnimeDex – アニメ管理アプリ：視聴記録・放送カレンダー・ランキングリスト">
+<meta property="og:description" content="全話の視聴を記録し、放送を見逃さず、お気に入りをランキングしてレベルアップ。MyAnimeDex は iPhone と Android 向けの無料アニメ管理アプリです。">
+<meta property="og:url" content="https://myanimedex.com/jp">
+<meta property="og:image" content="https://myanimedex.com/assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MyAnimeDex – アニメ管理アプリ：視聴記録・放送カレンダー・ランキングリスト">
+<meta name="twitter:description" content="全話の視聴を記録し、放送を見逃さず、お気に入りをランキングしてレベルアップ。MyAnimeDex は iPhone と Android 向けの無料アニメ管理アプリです。">
+<meta name="twitter:image" content="https://myanimedex.com/assets/img/og.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://graphql.anilist.co" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<link rel="preload" as="image" href="assets/clips/home.webp" imagesrcset="assets/clips/home-300.webp 300w, assets/clips/home.webp 540w" imagesizes="(min-width: 900px) 300px, 230px" fetchpriority="high">
+<style>:root{--bg:#0F0F0F;--bg-lift:#161616;--surface:#121212;--card:#1F2937;--border:#374151;--text:#FFFFFF;--sub:#9CA3AF;--primary:#FACC15;--amber:#F59E0B;--r-sm:12px;--r:16px;--nav-h:64px;--ease-out:cubic-bezier(0.16,1,0.3,1);--gutter:max(16px,env(safe-area-inset-left));--max:1240px;color-scheme:dark}*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-padding-top:var(--nav-h);overflow-x:clip}body{margin:0;background:var(--bg);color:var(--text);font-family:'Poppins',system-ui,-apple-system,'Segoe UI','Hiragino Sans','Noto Sans JP',sans-serif;font-weight:500;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}img,video{display:block;max-width:100%}a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}h1,h2,h3{font-weight:700;line-height:1.08;letter-spacing:-0.01em;margin:0;text-wrap:balance}h1 em,h2 em,h3 em{font-style:normal;color:var(--primary)}p{margin:0}:focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:6px}.skip{position:absolute;left:-9999px;top:8px;z-index:100;background:var(--primary);color:#111;padding:8px 14px;border-radius:var(--r-sm)}.skip:focus{left:8px}.muted{color:var(--sub)}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.y{color:var(--primary)}.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:0.8125rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--primary);margin-bottom:16px}.eyebrow::before{content:"";width:18px;height:2px;border-radius:2px;background:var(--primary)}.lede{color:var(--sub);font-size:1.0625rem;max-width:34rem}.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:0 20px;border-radius:999px;font-weight:600;font-size:0.9375rem;white-space:nowrap;cursor:pointer;border:1px solid transparent;transition:transform 0.2s var(--ease-out),background-color 0.2s,border-color 0.2s}.btn:active{transform:scale(0.97)}.btn-primary{background:var(--primary);color:#111827;box-shadow:0 6px 24px rgba(250,204,21,0.25)}.btn-primary:hover{background:#fde047}.btn-ghost{background:transparent;border-color:var(--border)}.btn-ghost:hover{border-color:var(--primary)}.linklike{background:none;border:0;padding:0;cursor:pointer}.badges{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.badges.center{justify-content:center}.badge{display:block;border-radius:10px;transition:transform 0.2s var(--ease-out)}.badge:hover{transform:translateY(-2px)}.badge img{height:50px;width:auto}.brand{display:inline-flex;align-items:center;gap:10px}.wordmark{font-weight:700;font-size:1.125rem;letter-spacing:0.005em}.wordmark b{color:var(--primary);font-weight:700}.nav{position:sticky;top:0;z-index:50;height:var(--nav-h);display:flex;align-items:center;gap:12px;padding:0 var(--gutter);padding-right:max(16px,env(safe-area-inset-right));background:rgba(15,15,15,0.78);-webkit-backdrop-filter:saturate(140%) blur(14px);backdrop-filter:saturate(140%) blur(14px);border-bottom:1px solid rgba(55,65,81,0.45)}.nav .brand img{width:36px;height:36px}.nav-links{display:none;gap:28px;margin-left:auto;font-size:0.9375rem;color:var(--sub)}.nav-links a:hover,.nav-links button:hover{color:var(--text)}.lang{position:relative;margin-left:auto}.lang summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 10px;border-radius:999px;color:var(--sub);font-size:0.875rem;font-weight:600}.lang summary::-webkit-details-marker{display:none}.lang summary:hover{color:var(--text)}.lang-menu{position:absolute;right:0;top:calc(100% + 6px);display:grid;min-width:190px;padding:6px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 20px 50px rgba(0,0,0,0.5)}.lang-menu a{padding:10px 12px;border-radius:10px;font-size:0.9375rem}.lang-menu a:hover{background:rgba(255,255,255,0.06)}.lang-menu a[aria-current]{color:var(--primary)}.nav-cta{min-height:40px;padding:0 18px}.hero{position:relative;display:grid;gap:36px;padding:40px var(--gutter) 56px;max-width:var(--max);margin:0 auto;overflow:clip;overflow-clip-margin:0}.hero::before{content:"";position:absolute;z-index:-1;pointer-events:none;left:50%;top:62%;width:140vw;max-width:1100px;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(250,204,21,0.16),rgba(250,204,21,0.04) 55%,transparent 72%)}.hero h1{font-size:clamp(2.375rem,9.5vw,4.75rem);margin-bottom:18px}.hero .lede{margin-bottom:28px}.hero .play{margin-top:18px}.hero-media{display:grid;place-items:center}.hero-frame{position:relative;overflow:hidden;height:min(72svh,620px);aspect-ratio:9 / 16;max-width:100%;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);box-shadow:0 30px 60px rgba(0,0,0,0.55),0 0 80px rgba(250,204,21,0.14)}.hero-poster,.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.hero-video{opacity:0;transition:opacity 0.6s}.hero-video.is-playing{opacity:1}.story{position:relative;padding-top:72px}.story-head{text-align:center;padding:0 var(--gutter);max-width:760px;margin:0 auto 8px}.story-head .eyebrow{justify-content:center}.story-head h2{font-size:clamp(2rem,7vw,3.5rem)}.stage{display:none}.step{display:grid;gap:28px;align-items:center;padding:56px var(--gutter);max-width:1000px;margin:0 auto}.step-tag{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px;font-size:0.875rem;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:0.06em}.step-tag span{display:inline-grid;place-items:center;min-width:34px;height:26px;padding:0 8px;border-radius:999px;background:rgba(250,204,21,0.12);color:var(--primary);font-size:0.8125rem;letter-spacing:0}.step h3{font-size:clamp(1.875rem,7vw,2.75rem);margin-bottom:14px}.step-copy p:last-child{color:var(--sub);font-size:1.0625rem;max-width:30rem}.step-media{display:grid;place-items:center;perspective:1000px}.mini-phone{position:relative;width:min(62vw,270px);aspect-ratio:540 / 1174;border-radius:34px;overflow:hidden;background:#0F0F11;border:7px solid #050505;box-shadow:0 0 0 1px var(--border),0 30px 60px rgba(0,0,0,0.6),0 0 70px rgba(250,204,21,0.16);transform:rotateY(-10deg) rotateX(5deg)}.step:nth-child(even) .mini-phone{transform:rotateY(10deg) rotateX(5deg)}.mini-phone img,.mini-phone video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.mini-phone video{opacity:0;transition:opacity 0.4s}.mini-phone video.is-playing{opacity:1}.ui{background:rgba(31,41,55,0.94);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 24px 48px rgba(0,0,0,0.55);padding:14px 16px;font-size:0.875rem;font-weight:600;line-height:1.35;white-space:nowrap}.ui-row{display:flex;align-items:center;justify-content:space-between;gap:14px}.ui strong{font-weight:700;font-size:0.9375rem}.ui .tag{background:rgba(250,204,21,0.14);color:var(--primary);border-radius:8px;padding:2px 8px;font-size:0.8125rem}.ui .big{font-size:1.25rem;font-weight:700}.bar{height:6px;border-radius:6px;background:#374151;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;width:var(--w);border-radius:inherit;background:linear-gradient(90deg,var(--primary),var(--amber))}.ui-track{width:270px}.ui-track strong{overflow:hidden;text-overflow:ellipsis}.ui-chip,.ui-pill,.ui-stat{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 16px}.ui-pill{background:var(--primary);color:#111827;border-color:transparent}.ui-chip .ico{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;font-size:0.875rem;line-height:1}.ui-stat b{font-size:1.125rem}.ui-cal{width:230px}.ui-rank{display:flex;gap:12px;align-items:center;border-color:var(--primary)}.ui-rank .num{font-size:1.5rem;font-weight:700;color:var(--primary)}.ui-rankcard{width:240px}.plat{color:#E5E4E2;letter-spacing:0.08em}.plat-bar i{background:#E5E4E2}.dice{width:76px;height:76px;perspective:600px}.cube{position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(-24deg) rotateY(34deg)}.cube i{position:absolute;inset:0;border-radius:16px;background-color:var(--primary);box-shadow:inset 0 0 0 2px rgba(0,0,0,0.08),inset 0 -10px 18px rgba(245,158,11,0.55);--p:radial-gradient(circle,#111827 0 6px,transparent 7px)}.cube .d1{transform:translateZ(38px);background-image:var(--p);background-size:100% 100%}.cube .d6{transform:rotateY(180deg) translateZ(38px);background-image:var(--p),var(--p),var(--p),var(--p),var(--p),var(--p);background-size:50% 33.3%;background-position:0 0,0 50%,0 100%,100% 0,100% 50%,100% 100%;background-repeat:no-repeat}.cube .d2{transform:rotateY(90deg) translateZ(38px);background-image:var(--p),var(--p);background-size:50% 50%;background-position:0 0,100% 100%;background-repeat:no-repeat}.cube .d5{transform:rotateY(-90deg) translateZ(38px);background-image:var(--p),var(--p),var(--p),var(--p),var(--p);background-size:33.3% 33.3%;background-position:0 0,100% 0,50% 50%,0 100%,100% 100%;background-repeat:no-repeat}.cube .d3{transform:rotateX(90deg) translateZ(38px);background-image:var(--p),var(--p),var(--p);background-size:33.3% 33.3%;background-position:0 0,50% 50%,100% 100%;background-repeat:no-repeat}.cube .d4{transform:rotateX(-90deg) translateZ(38px);background-image:var(--p),var(--p),var(--p),var(--p);background-size:50% 50%;background-position:0 0,100% 0,0 100%,100% 100%;background-repeat:no-repeat}.dice{filter:drop-shadow(0 0 28px rgba(250,204,21,0.45))}@media (min-width:900px){.nav-links{display:flex}.lang{margin-left:8px}.hero{grid-template-columns:minmax(0,0.9fr) minmax(0,1.25fr);align-items:center;gap:56px;min-height:calc(100svh - var(--nav-h));padding-top:24px;padding-bottom:48px}.hero::before{left:68%;top:50%}.hero-frame{height:auto;width:100%;aspect-ratio:16 / 9}.step{grid-template-columns:1fr 1fr;gap:64px;padding:72px var(--gutter)}.step:nth-child(even) .step-copy{order:2}.mini-phone{width:280px}}.has-3d .story-body{position:relative}.has-3d .stage{display:block;position:sticky;top:0;height:100svh;pointer-events:none;overflow:hidden;perspective:1500px}.has-3d .stage::before{content:"";position:absolute;left:64%;top:52%;width:760px;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(250,204,21,0.2),rgba(250,204,21,0.05) 50%,transparent 72%)}.has-3d .rig{--pw:clamp(230px,34svh,320px);position:absolute;left:64%;top:calc(50% + var(--nav-h) / 2);width:var(--pw);transform-style:preserve-3d;transform:translate(-50%,-50%) rotateX(var(--rx,6deg)) rotateY(var(--ry,-14deg)) translateY(var(--fy,0px));will-change:transform}.phone{position:relative;transform-style:preserve-3d;padding:10px;border-radius:48px;background:#050505;box-shadow:inset 0 0 0 1px var(--border),0 40px 80px rgba(0,0,0,0.6)}.phone-edge{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,#262626,#0b0b0b 30%,#0b0b0b 70%,#262626);transform:translateZ(-14px)}.screen{position:relative;aspect-ratio:540 / 1174;border-radius:38px;overflow:hidden;background:#0F0F11;transform:translateZ(1px)}.layer{position:absolute;inset:0;opacity:0;transition:opacity 0.5s var(--ease-out)}.layer.is-active{opacity:1}.layer img,.layer video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.pop{position:absolute;inset:0;transform-style:preserve-3d}.pop>*{position:absolute;opacity:0;transform:translate3d(var(--x),calc(var(--par,0) * var(--k,-90px)),calc(var(--z) - 80px));transition:opacity 0.45s var(--ease-out),transform 0.7s var(--ease-out)}.pop.on>*{opacity:1;transform:translate3d(var(--x),calc(var(--par,0) * var(--k,-90px)),var(--z));transition-delay:var(--d,0s)}.pop .f1{left:0;top:20%;--x:-62%;--z:90px;--k:-110px}.pop .f2{right:0;top:62%;--x:58%;--z:130px;--k:-160px;--d:0.08s}.pop .f3{left:0;top:78%;--x:-38%;--z:60px;--k:-70px;--d:0.14s}.pop[data-for="0"] .f2{top:54%}.pop[data-for="4"] .f1{left:auto;right:0;--x:66%;top:16%}.pop[data-for="4"] .f2{right:auto;left:0;--x:-40%;top:70%}.pop.on .cube{animation:roll 2.4s var(--ease-out) infinite}@keyframes roll{0%{transform:rotateX(-24deg) rotateY(34deg)}55%{transform:rotateX(336deg) rotateY(394deg) rotateZ(180deg)}100%{transform:rotateX(336deg) rotateY(394deg) rotateZ(180deg)}}.dots{position:absolute;right:max(24px,3vw);top:50%;transform:translateY(-50%);list-style:none;margin:0;padding:0;display:grid;gap:10px}.dots li{width:6px;height:6px;border-radius:6px;background:var(--border);transition:height 0.3s var(--ease-out),background-color 0.3s}.dots li.on{height:22px;background:var(--primary)}.has-3d .story-body{height:calc(6 * 90svh + 10svh)}.has-3d .steps{position:sticky;top:0;z-index:2;height:100svh;margin-top:-100svh;pointer-events:none}.has-3d .step{position:absolute;inset:0;display:flex;align-items:center;max-width:none;padding:var(--nav-h) var(--gutter) 0;opacity:0;transform:translateY(28px);transition:opacity 0.5s var(--ease-out),transform 0.7s var(--ease-out)}.has-3d .step.on{opacity:1;transform:none;transition-delay:0.08s}.has-3d .step-copy{width:min(420px,36vw);margin-left:max(0px,calc((100vw - var(--max)) / 2))}.has-3d .step-media{display:none}.cta{position:relative;text-align:center;padding:120px var(--gutter) 112px;overflow:hidden}.cta-glow{position:absolute;left:50%;top:45%;width:900px;max-width:160vw;aspect-ratio:1;transform:translate(-50%,-50%);z-index:-1;background:radial-gradient(closest-side,rgba(250,204,21,0.18),transparent 70%)}.cta-logo{margin:0 auto 24px;width:112px;height:112px;filter:drop-shadow(0 12px 30px rgba(0,0,0,0.6))}.cta h2{font-size:clamp(2.125rem,7vw,3.75rem);margin-bottom:14px}.cta .lede{margin:0 auto 32px}.foot{border-top:1px solid rgba(55,65,81,0.6);background:var(--surface);padding:40px var(--gutter) calc(32px + env(safe-area-inset-bottom));display:grid;gap:22px;font-size:0.9375rem}.foot>*{max-width:var(--max);width:100%;margin:0 auto}.foot-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}.foot-links,.foot-lang{display:flex;flex-wrap:wrap;gap:6px 22px}.foot-links a,.foot-lang a{color:var(--sub);padding:6px 0}.foot-links a:hover,.foot-lang a:hover{color:var(--text)}.foot-lang a[aria-current]{color:var(--primary)}.fine{color:#8B93A1;font-size:0.75rem;line-height:1.6}.trailer{border:0;padding:0;background:transparent;color:var(--text);width:min(1100px,92vw);max-width:none;max-height:none;overflow:visible}.trailer::backdrop{background:rgba(0,0,0,0.88)}.trailer-box{aspect-ratio:16 / 9;width:100%;border-radius:var(--r);overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,0.7)}.trailer-box iframe,.trailer-box video{width:100%;height:100%;border:0;display:block}.trailer .close{position:absolute;right:0;top:-52px;width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:1rem}@media (orientation:portrait) and (max-width:899px){.trailer{width:min(92vw,calc(80svh * 9 / 16))}.trailer-box{aspect-ratio:9 / 16}}@media (max-width:340px){.wordmark{display:none}.badge img{height:44px}}@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0.01ms !important;animation:none !important}.mini-phone,.step:nth-child(even) .mini-phone{transform:none}}:lang(tr) .eyebrow,:lang(tr) .step-tag{text-transform:none;letter-spacing:0.02em}.fx-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}.fx-spot{position:absolute;inset:0;background:radial-gradient(600px circle at var(--sx,70%) var(--sy,30%),rgba(250,204,21,0.07),transparent 60%)}.fx-grain{position:absolute;inset:-50%;opacity:0.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 0.5s steps(2) infinite}@keyframes grain{0%{transform:translate(0,0)}50%{transform:translate(-3%,2%)}100%{transform:translate(2%,-3%)}}.hero{overflow:visible}.hero::before{display:none}.kinetic .line{display:block;overflow:hidden;padding-bottom:0.06em;margin-bottom:-0.06em}.kinetic .line>span{display:inline-block;will-change:transform}.hero-stage{position:relative;height:560px;margin:0 calc(-1 * var(--gutter));touch-action:pan-y;user-select:none;-webkit-user-select:none}.hero-glow{position:absolute;left:50%;top:50%;width:620px;max-width:150vw;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(250,204,21,0.28),rgba(250,204,21,0.08) 45%,transparent 72%);pointer-events:none}.css-phone{--w:230px;position:absolute;left:50%;top:50%;width:var(--w);padding:8px;border-radius:40px;background:#050505;box-shadow:inset 0 0 0 1px var(--border),0 40px 80px rgba(0,0,0,0.6);transform:translate(-50%,-50%) perspective(1200px) rotateY(var(--ty,-12deg)) rotateX(var(--tx,6deg));transition:opacity 0.6s}.css-screen{position:relative;aspect-ratio:540 / 1174;border-radius:32px;overflow:hidden;background:#0F0F11}.css-screen img,.css-screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.gl-host{position:absolute;inset:0;opacity:0;transition:opacity 0.8s}.gl-host canvas{display:block;width:100%;height:100%;cursor:grab}.gl-host canvas:active{cursor:grabbing}.hero-stage.gl-ready .gl-host{opacity:1}.hero-stage.gl-ready .css-phone{opacity:0}.orbit{position:absolute;inset:0;pointer-events:none}.orbit>*{position:absolute;transform:translate3d(calc(var(--px,0px) + var(--rx,0px)),calc(var(--py,0px) + var(--ry,0px)),0);animation:bob 6s ease-in-out infinite}.orbit .ui{padding:10px 14px;font-size:0.8125rem}.orbit .o1{left:12%;top:12%;animation-delay:-1s}.orbit .o2{right:4%;top:24%;width:200px;animation-delay:-3s}.orbit .o3{left:4%;top:58%;animation-delay:-2s}.orbit .o4{right:8%;top:72%;display:flex;gap:10px;align-items:center;width:auto;animation-delay:-4s}.orbit .o5{left:22%;top:82%;animation-delay:-5s}@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -10px}}.drag-hint{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);display:inline-flex;gap:8px;align-items:center;white-space:nowrap;color:var(--sub);font-size:0.8125rem;opacity:0;transition:opacity 0.6s}.hero-stage.gl-ready .drag-hint{opacity:1}.dice.sm{width:52px;height:52px}.dice.sm .cube i{border-radius:11px;--p:radial-gradient(circle,#111827 0 4px,transparent 5px)}.dice.sm .cube .d1{transform:translateZ(26px)}.dice.sm .cube .d6{transform:rotateY(180deg) translateZ(26px)}.dice.sm .cube .d2{transform:rotateY(90deg) translateZ(26px)}.dice.sm .cube .d5{transform:rotateY(-90deg) translateZ(26px)}.dice.sm .cube .d3{transform:rotateX(90deg) translateZ(26px)}.dice.sm .cube .d4{transform:rotateX(-90deg) translateZ(26px)}.orbit .cube{animation:spin 9s linear infinite}@keyframes spin{to{transform:rotateX(336deg) rotateY(394deg)}}.marquee{overflow:hidden;padding:28px 0;border-block:1px solid rgba(55,65,81,0.5);background:rgba(18,18,18,0.6)}.marquee-track{display:flex;width:max-content;gap:48px;will-change:transform}.marquee-track span{font-size:clamp(2.25rem,7vw,5rem);font-weight:800;line-height:1;text-transform:uppercase;white-space:nowrap;color:var(--sub);-webkit-text-fill-color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,0.5)}.marquee-track span:nth-child(odd){color:var(--primary);-webkit-text-fill-color:var(--primary);-webkit-text-stroke:0}:lang(ja) .marquee-track span{text-transform:none}.step-body{margin-bottom:22px;color:var(--sub);font-size:1.0625rem;max-width:30rem}.foot{padding-bottom:calc(96px + env(safe-area-inset-bottom))}.demo{width:100%;max-width:400px}.demo .ui{white-space:normal}.hint{color:var(--sub);font-size:0.8125rem;margin-top:12px;display:flex;align-items:center;gap:8px}.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:12px}.chips::-webkit-scrollbar{display:none}.chips button{flex:none;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--sub);font-size:0.8125rem;font-weight:600;cursor:pointer}.chips button[aria-selected="true"]{background:var(--primary);color:#111827;border-color:transparent}.chips.static{flex-wrap:wrap;overflow:visible}.card-track{padding:16px}.card-track strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-track .bar{height:8px}.card-track .fill{transition:width 0.6s var(--ease-out)}.controls{margin-top:14px}.round{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--sub);background:transparent;font-size:1.375rem;line-height:1;cursor:pointer;transition:transform 0.15s,border-color 0.2s,background-color 0.2s}.round.plus{border-color:var(--primary);color:var(--primary)}.round:hover{background:rgba(255,255,255,0.06)}.round:active{transform:scale(0.88)}.round:disabled{opacity:0.35;cursor:default}.done-pill{display:none;background:rgba(16,185,129,0.15);color:#10B981;border-radius:999px;padding:2px 10px;font-size:0.75rem}.card-track.done{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary),0 0 50px rgba(250,204,21,0.25)}.card-track.done .done-pill{display:inline-block}.cal-list{list-style:none;margin:0;padding:0;display:grid;gap:8px;min-height:236px}.cal-list li.row{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px}.cal-list .time{font-weight:700;color:var(--primary);font-size:0.9375rem}.cal-list .title{font-size:0.875rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cal-list .meta{grid-column:2;display:flex;gap:8px;align-items:center;font-size:0.75rem;color:var(--sub)}.cal-list .count{background:rgba(250,204,21,0.14);color:var(--primary);border-radius:8px;padding:1px 8px;font-variant-numeric:tabular-nums}.cal-list .count.now{background:rgba(239,68,68,0.16);color:#EF4444}.cal-list .heart{grid-row:1 / span 2;grid-column:3;width:40px;height:40px;border-radius:50%;border:0;background:transparent;color:var(--sub);font-size:1.125rem;cursor:pointer}.cal-list .heart[aria-pressed="true"]{color:var(--primary)}.cal-list .heart:active{transform:scale(0.85)}.cal-msg{color:var(--sub);font-size:0.875rem;padding:12px 0}.live-dot{width:8px;height:8px;border-radius:50%;background:#10B981;box-shadow:0 0 0 0 rgba(16,185,129,0.6);animation:live 1.6s infinite;flex:none}@keyframes live{70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}.rank-list{list-style:none;margin:0;padding:0;display:grid;gap:8px;position:relative;touch-action:pan-y}.rank-list li{display:grid;grid-template-columns:36px 1fr auto 24px;gap:10px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;transition:box-shadow 0.2s,border-color 0.2s}.rank-list li .num{font-weight:800;font-size:1.125rem;color:var(--sub)}.rank-list li:first-child{border-color:var(--primary)}.rank-list li:first-child .num{color:var(--primary)}.rank-list li .t{font-size:0.875rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rank-list li .tag{background:var(--primary);color:#111827;border-radius:6px;padding:1px 6px;font-size:0.6875rem;font-weight:700;white-space:nowrap}.rank-list li .grip{color:var(--sub);font-size:1.125rem;text-align:center}.rank-list li.dragging{cursor:grabbing;z-index:2;box-shadow:0 20px 40px rgba(0,0,0,0.6),0 0 0 1px var(--primary);scale:1.04;transition:none}.rank-list li.flash{animation:flash 0.9s var(--ease-out)}@keyframes flash{0%{box-shadow:0 0 0 0 rgba(250,204,21,0.8)}100%{box-shadow:0 0 0 18px rgba(250,204,21,0)}}.card-prof{display:flex;gap:14px;align-items:center;padding:16px}.card-prof .avatar{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:#111;border:4px solid var(--rank,#CD7F32);box-shadow:0 0 24px color-mix(in srgb,var(--rank,#CD7F32) 45%,transparent);transition:border-color 0.4s,box-shadow 0.4s}.card-prof .prof-main{flex:1;min-width:0}.card-prof .rank-name{color:var(--rank,#CD7F32);letter-spacing:0.08em}.card-prof .fill,.hud .fill{transition:width 0.6s var(--ease-out);background:linear-gradient(90deg,var(--primary),var(--amber))}.prof-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm)}.prof-stats div{display:grid;justify-items:center;padding:10px 4px}.prof-stats div + div{border-left:1px solid var(--border)}.prof-stats b{font-size:1.25rem}.prof-stats span{color:var(--sub);font-size:0.75rem}.dice-row{display:flex;align-items:center;gap:22px}.dice-btn{background:none;border:0;padding:12px;cursor:pointer;border-radius:20px}.demo-dice .cube{transition:none}.dice-result{display:flex;gap:14px;align-items:center;margin-top:16px;padding:12px;border-color:var(--primary)}.dice-result[hidden]{display:none}.dice-result .cover{width:56px;height:80px;object-fit:cover;border-radius:8px;background:#111;flex:none}.dr-main{min-width:0;flex:1;display:grid;gap:4px}.dr-title{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.dr-genres{display:flex;flex-wrap:wrap;gap:6px}.dr-genres span{font-size:0.6875rem;color:var(--sub);border:1px solid var(--border);border-radius:999px;padding:1px 8px}.speed{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}.speed line{stroke:var(--primary);stroke-linecap:round}.speed.go{animation:speed 0.42s var(--ease-out)}@keyframes speed{0%{opacity:0;transform:scale(1.25)}30%{opacity:0.55}100%{opacity:0;transform:scale(0.9)}}@media (min-width:900px){.hero{grid-template-columns:minmax(0,0.95fr) minmax(0,1.05fr)}.hero-stage{height:min(78svh,720px);margin:0}.css-phone{--w:300px}.orbit .ui{font-size:0.875rem}}.has-3d .rig{left:66%}.has-3d .stage::before{left:66%}.has-3d .steps{pointer-events:none}.has-3d .step.on .step-copy{pointer-events:auto}.has-3d .step-copy{width:min(440px,38vw)}.has-3d .step h3{font-size:clamp(1.875rem,3.2vw,2.75rem)}.has-3d .step-body{font-size:1rem}@media (min-width:900px) and (max-height:820px){.has-3d .step-body{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:14px}.has-3d .step-tag{margin-bottom:8px}.has-3d .step h3{margin-bottom:8px}.has-3d .hint{display:none}}@media (max-width:899px){.step{gap:24px}.step-media{order:2}.mini-phone{width:min(56vw,240px)}}.hud{position:fixed;z-index:60;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center;padding:8px 14px 8px 8px;background:rgba(31,41,55,0.92);border:1px solid var(--border);border-radius:999px;box-shadow:0 16px 40px rgba(0,0,0,0.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transform:translateY(0);transition:transform 0.4s var(--ease-out)}.hud[hidden]{display:none}.hud-ring{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:3px solid var(--rank,#CD7F32);font-weight:800}.hud-main{display:grid;min-width:112px;font-size:0.75rem;line-height:1.3}.hud-rank{color:var(--rank,#CD7F32);font-weight:700;letter-spacing:0.08em}.hud-xp{color:var(--sub)}.hud .bar{margin-top:4px;height:4px}.hud.bump{animation:bump 0.5s var(--ease-out)}@keyframes bump{30%{transform:scale(1.12)}}.xp-pop{position:fixed;z-index:70;pointer-events:none;font-weight:800;color:var(--primary);font-size:1rem;text-shadow:0 2px 12px rgba(0,0,0,0.8);animation:xp-pop 1s var(--ease-out) forwards}@keyframes xp-pop{from{opacity:1;transform:translate(-50%,0) scale(0.8)}30%{transform:translate(-50%,-20px) scale(1.15)}to{opacity:0;transform:translate(-50%,-60px) scale(1)}}.toast{position:fixed;z-index:80;left:50%;top:calc(var(--nav-h) + 20px);transform:translateX(-50%);display:grid;justify-items:center;gap:2px;padding:14px 26px;border-radius:var(--r);background:var(--primary);color:#111827;box-shadow:0 20px 60px rgba(250,204,21,0.35);animation:toast 2.6s var(--ease-out) forwards}.toast[hidden]{display:none}.toast-k{font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase}.toast-v{font-size:1.25rem;font-weight:800}@keyframes toast{0%{opacity:0;transform:translate(-50%,-16px) scale(0.9)}12%,80%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-10px)}}.confetti{position:fixed;inset:0;width:100%;height:100%;z-index:75;pointer-events:none}.cta-xp b{color:var(--primary)}@media (max-width:899px){.hud{left:50%;transform:translateX(-50%)}.hud.bump{animation:bump-m 0.5s var(--ease-out)}@keyframes bump-m{30%{transform:translateX(-50%) scale(1.12)}}.orbit .o2{width:168px;right:2%;top:8%}.orbit .o1{left:6%;top:20%}.orbit .o3{left:2%;top:64%}.orbit .o4{right:2%;top:74%}.orbit .o5{display:none}}@media (prefers-reduced-motion:reduce){.fx-grain,.orbit>*,.orbit .cube,.live-dot{animation:none !important}}@property --kick{syntax:'<angle>';inherits:false;initial-value:0deg}.has-3d .rig{transform:translate(-50%,-50%) rotateX(var(--rx,6deg)) rotateY(calc(var(--ry,-14deg) + var(--kick))) translateY(var(--fy,0px))}.kinetic .line>span{animation:rise 1s var(--ease-out) both}.kinetic .line:nth-child(2)>span{animation-delay:0.09s}.kinetic .line:nth-child(3)>span{animation-delay:0.18s}@keyframes rise{from{transform:translateY(55%) rotate(2deg)}to{transform:none}}@media (prefers-reduced-motion:reduce){.kinetic .line>span{animation:none}}.step-copy,.demo{min-width:0}.cal-list li.row{min-width:0}.cal-list .title,.cal-list .meta{min-width:0}.h1-wrap{container-type:inline-size}.hero h1{font-size:clamp(1.75rem,calc(100cqi / var(--fit,12)),4.75rem);line-height:1.1;margin-bottom:18px}.kinetic .line{white-space:nowrap}:lang(ja) .hero h1{line-height:1.25}@media (max-width:359px){.kinetic .line{white-space:normal}}@media (max-width:899px) and (orientation:portrait),(max-width:599px){.hero{gap:0;padding-top:28px;padding-bottom:32px}.hero-copy{display:contents}.hero .eyebrow{order:1;margin-bottom:12px}.h1-wrap{order:2}.hero h1{margin-bottom:18px}.hero .badges{order:3}.hero-stage{order:4;height:clamp(360px,52svh,560px);margin-top:4px}.hero .lede{order:5;margin:4px 0 18px}.hero .play{order:6;margin-top:0;justify-self:start}}@media (max-width:360px){.badge img{height:42px}}@media (min-width:600px) and (max-width:899px) and (orientation:landscape){.hero{grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);align-items:center;gap:24px;padding-top:16px}.hero-stage{height:max(300px,calc(100svh - var(--nav-h) - 32px));margin:0}.css-phone{--w:150px}.orbit{display:none}}@media (min-width:900px){.hero{grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr)}.nav-links a,.nav-links button{display:inline-flex;align-items:center;min-height:40px;padding:0 4px}}.chips button{min-height:40px}@media (min-width:1800px){:root{--max:1560px}.hero-stage{height:min(80svh,900px)}.css-phone{--w:360px}.hero .lede,.step-body{font-size:1.25rem;max-width:38rem}.has-3d .rig{--pw:clamp(260px,38svh,420px)}.has-3d .step-copy{width:min(540px,34vw)}.demo{max-width:480px}.orbit .ui{font-size:1rem}}.css-phone{width:auto;height:82%;aspect-ratio:556 / 1190}.css-screen{height:100%;aspect-ratio:auto}@media (max-width:400px){.orbit .o3,.orbit .o4{display:none}}.brand{min-height:44px}</style>
+<script type="importmap">{"imports":{"three":"./assets/vendor/three/three.module.min.js","three/addons/":"./assets/vendor/three/addons/"}}</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"MobileApplication","name":"MyAnimeDex","operatingSystem":"iOS, Android","applicationCategory":"EntertainmentApplication","inLanguage":"ja","description":"全話の視聴を記録し、放送を見逃さず、お気に入りをランキングしてレベルアップ。MyAnimeDex は iPhone と Android 向けの無料アニメ管理アプリです。","image":"https://myanimedex.com/assets/img/og.jpg","url":"https://myanimedex.com/jp","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":"視聴記録, 放送カレンダー, ランキング・共有リスト, XP とランク, ダイスでおすすめ","installUrl":["https://apps.apple.com/app/id6758043488","https://play.google.com/store/apps/details?id=com.myanimedex.app"]}
+</script>
 </head>
-
 <body>
+<div class="fx-bg" aria-hidden="true"><div class="fx-spot"></div><div class="fx-grain"></div></div>
+<a class="skip" href="#play">機能</a>
 
-    <!-- Header / Navbar -->
-    <header class="navbar">
-        <a href="index.html" class="logo-link">
-            <img src="header-logo.png" alt="MyAnimeDex Logo" class="nav-logo">
-            <span class="logo-text">MYANIME<span class="accent">DEX</span></span>
-        </a>
-        <nav class="desktop-nav">
-            <a href="#features">特徴</a>
-            <a href="#about">概要</a>
-            <a href="privacy.html">プライバシー</a>
+<header class="nav" id="top">
+  <a class="brand" href="jp.html">
+    <img src="assets/img/logo-96.png" width="40" height="40" alt="">
+    <span class="wordmark">ANIME<b>DEX</b></span>
+  </a>
+  <nav class="nav-links" aria-label="Main">
+    <a href="#play">機能</a>
+    <button type="button" class="linklike" data-trailer>トレーラー</button>
+  </nav>
+  <details class="lang">
+    <summary><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-2.95a15.7 15.7 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.9 8ZM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96ZM4.26 14a8.2 8.2 0 0 1 0-4h3.38a16.5 16.5 0 0 0 0 4H4.26Zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A8 8 0 0 1 5.08 16Zm2.95-8H5.08a8 8 0 0 1 4.33-3.56A15.7 15.7 0 0 0 8.03 8ZM12 19.96A14.1 14.1 0 0 1 10.09 16h3.82A14.1 14.1 0 0 1 12 19.96ZM14.34 14H9.66a14.7 14.7 0 0 1 0-4h4.68a14.7 14.7 0 0 1 0 4Zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56ZM16.36 14a16.5 16.5 0 0 0 0-4h3.38a8.2 8.2 0 0 1 0 4h-3.38Z"/></svg><span class="sr">言語: </span><span>JP</span></summary>
+    <div class="lang-menu"><a href="index.html" hreflang="en" lang="en">English</a><a href="tr.html" hreflang="tr" lang="tr">Türkçe</a><a href="jp.html" hreflang="ja" lang="ja" aria-current="page">日本語</a><a href="id.html" hreflang="id" lang="id">Bahasa Indonesia</a></div>
+  </details>
+  <a class="btn btn-primary nav-cta" href="#download" data-store-link>ダウンロード</a>
+</header>
 
-            <!-- Language Switcher -->
-            <div class="lang-dropdown">
-                <span class="lang-current">JP <ion-icon name="chevron-down-outline"></ion-icon></span>
-                <div class="lang-menu">
-                    <a href="index.html">English</a>
-                    <a href="tr.html">Türkçe</a>
-                    <a href="jp.html" class="active">日本語</a>
-                    <a href="id.html">Bahasa Indonesia</a>
-                </div>
-            </div>
+<main>
+  <!-- HERO: 3D phone (WebGL, lazy) over a CSS phone that is the first paint -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="eyebrow">iPhone・Android で無料</p>
+      <div class="h1-wrap"><h1 id="hero-title" class="kinetic" style="--fit:11.5"><span class="line"><span>あなたのアニメライフを</span></span><span class="line"><span><em>記録・発見・ランキング</em></span></span></h1></div>
+      <p class="lede">見ている話数を覚えて、新エピソードまでカウントダウン。見た作品はすべてランキングリストと XP に。あなただけのアニメ相棒です。</p>
+      <div class="badges"><a class="badge" href="https://apps.apple.com/app/id6758043488" data-store="ios" rel="noopener"><img src="assets/badges/app-store.svg" width="150" height="50" alt="App Store からダウンロード"></a><a class="badge" href="https://play.google.com/store/apps/details?id=com.myanimedex.app" data-store="android" rel="noopener"><img src="assets/badges/google-play.png" width="169" height="50" alt="Google Play で手に入れよう"></a></div>
+      <button type="button" class="btn btn-ghost play" data-trailer>
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 8.2v7.6l6-3.8z" fill="currentColor"/></svg>
+        トレーラーを見る
+      </button>
+    </div>
 
-            <a href="#download" class="btn btn-primary">アプリをダウンロード</a>
-        </nav>
-
-        <!-- Mobile Menu Toggle -->
-        <div class="mobile-menu-toggle">
-            <ion-icon name="menu-outline"></ion-icon>
+    <div class="hero-stage" aria-hidden="true">
+      <div class="hero-glow"></div>
+      <div class="css-phone">
+        <div class="css-screen">
+          <img src="assets/clips/home.webp" srcset="assets/clips/home-300.webp 300w, assets/clips/home.webp 540w" sizes="(min-width: 900px) 300px, 230px" width="540" height="1174" alt="" fetchpriority="high">
         </div>
-
-        <!-- Mobile Menu -->
-        <div class="mobile-menu">
-            <a href="#features">特徴</a>
-            <a href="#about">概要</a>
-            <a href="privacy.html">プライバシー</a>
-
-            <div class="mobile-lang-links">
-                <a href="index.html">English</a>
-                <a href="tr.html">Türkçe</a>
-                <a href="jp.html" class="active">日本語</a>
-                <a href="id.html">Indonesia</a>
-            </div>
-
-            <a href="#download" class="btn btn-primary">アプリをダウンロード</a>
-            <div class="close-menu">
-                <ion-icon name="close-outline"></ion-icon>
-            </div>
+      </div>
+      <div class="gl-host"></div>
+      <div class="orbit">
+        <div class="ui o1" data-depth="1.2"><span class="y">★</span> 9.07</div>
+        <div class="ui o2 ui-track" data-depth="0.8">
+          <div class="ui-row"><strong>Frieren</strong><span class="muted">80%</span></div>
+          <div class="ui-row"><span class="y">Ep 8 / 10</span></div>
+          <div class="bar"><i style="--w:80%"></i></div>
         </div>
+        <div class="ui o3" data-depth="1.5"><strong class="plat">PLATINUM</strong> 🏆</div>
+        <div class="ui o4 ui-cal" data-depth="1"><span class="y big">17:00</span><span class="tag">3h 7m</span></div>
+        <div class="o5" data-depth="1.8"><div class="dice sm"><div class="cube"><i class="d1"></i><i class="d2"></i><i class="d3"></i><i class="d4"></i><i class="d5"></i><i class="d6"></i></div></div></div>
+      </div>
+      <p class="drag-hint"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12 4 8l4-4v3h8V4l4 4-4 4V9H8v3Zm0 8-4-4 4-4v3h8v-3l4 4-4 4v-3H8v3Z"/></svg>ドラッグで回転</p>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>記録</span><span>カレンダー</span><span>リスト</span><span>プロフィール</span><span>ダイス</span><span>あなたの図鑑</span><span>記録</span><span>カレンダー</span><span>リスト</span><span>プロフィール</span><span>ダイス</span><span>あなたの図鑑</span></div></div>
+
+  <!-- PLAYGROUND: pinned phone + one playable demo per feature -->
+  <section class="story" id="play" aria-labelledby="play-title">
+    <header class="story-head">
+      <p class="eyebrow">ここで試す</p>
+      <h2 id="play-title">読むだけじゃなく、<em>遊んでみて。</em></h2>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1><span class="accent">アニメライフ</span>を追跡、発見、共有しよう</h1>
-            <p>アニメ愛好家のための究極のモバイルコンパニオン。シームレスに同期し、ライブアップデートを取得し、アニメの世界を探索しよう。</p>
-            <div class="hero-buttons">
-                <a href="https://apps.apple.com/us/app/myanimedex/id6758043488" class="btn btn-ios"
-                    aria-label="iOS App StoreでMyAnimeDexをダウンロード"><ion-icon name="logo-apple"></ion-icon> App Store</a>
-                <a href="https://play.google.com/store/apps/details?id=com.myanimedex.app" class="btn btn-android"
-                    aria-label="Google Play StoreでMyAnimeDexを入手"><ion-icon name="logo-google-playstore"></ion-icon>
-                    Google Play</a>
+    <div class="story-body">
+      <div class="stage" aria-hidden="true">
+        <svg class="speed" viewBox="-100 -100 200 200" preserveAspectRatio="xMidYMid slice"><line x1="46.0" y1="0.0" x2="92.0" y2="0.0" stroke-width="1.4"/><line x1="51.7" y1="11.8" x2="95.5" y2="21.8" stroke-width="0.7"/><line x1="56.4" y1="20.5" x2="97.7" y2="35.6" stroke-width="0.7"/><line x1="38.6" y1="25.0" x2="92.4" y2="59.7" stroke-width="1.4"/><line x1="40.6" y1="34.1" x2="70.5" y2="59.1" stroke-width="0.7"/><line x1="36.2" y1="47.8" x2="59.2" y2="78.1" stroke-width="0.7"/><line x1="23.0" y1="39.8" x2="52.0" y2="90.1" stroke-width="1.4"/><line x1="15.6" y1="50.6" x2="32.4" y2="105.1" stroke-width="0.7"/><line x1="10.4" y1="59.1" x2="16.0" y2="90.6" stroke-width="0.7"/><line x1="-2.3" y1="45.9" x2="-4.9" y2="97.9" stroke-width="1.4"/><line x1="-9.2" y1="52.2" x2="-18.1" y2="102.4" stroke-width="0.7"/><line x1="-23.3" y1="55.3" x2="-42.7" y2="101.4" stroke-width="0.7"/><line x1="-23.0" y1="39.8" x2="-46.0" y2="79.7" stroke-width="1.4"/><line x1="-36.1" y1="38.8" x2="-66.7" y2="71.8" stroke-width="0.7"/><line x1="-46.0" y1="38.6" x2="-79.7" y2="66.8" stroke-width="0.7"/><line x1="-40.9" y1="21.0" x2="-97.9" y2="50.2" stroke-width="1.4"/><line x1="-49.8" y1="18.1" x2="-86.5" y2="31.5" stroke-width="0.7"/><line x1="-59.5" y1="7.5" x2="-97.2" y2="12.2" stroke-width="0.7"/><line x1="-46.0" y1="0.0" x2="-104.0" y2="0.0" stroke-width="1.4"/><line x1="-51.7" y1="-11.8" x2="-107.2" y2="-24.5" stroke-width="0.7"/><line x1="-56.4" y1="-20.5" x2="-86.5" y2="-31.5" stroke-width="0.7"/><line x1="-38.6" y1="-25.0" x2="-82.3" y2="-53.2" stroke-width="1.4"/><line x1="-40.6" y1="-34.1" x2="-79.7" y2="-66.8" stroke-width="0.7"/><line x1="-36.2" y1="-47.8" x2="-66.4" y2="-87.7" stroke-width="0.7"/><line x1="-23.0" y1="-39.8" x2="-46.0" y2="-79.7" stroke-width="1.4"/><line x1="-15.6" y1="-50.6" x2="-28.9" y2="-93.6" stroke-width="0.7"/><line x1="-10.4" y1="-59.1" x2="-18.1" y2="-102.4" stroke-width="0.7"/><line x1="2.3" y1="-45.9" x2="5.5" y2="-109.9" stroke-width="1.4"/><line x1="9.2" y1="-52.2" x2="16.0" y2="-90.6" stroke-width="0.7"/><line x1="23.3" y1="-55.3" x2="38.1" y2="-90.3" stroke-width="0.7"/><line x1="23.0" y1="-39.8" x2="52.0" y2="-90.1" stroke-width="1.4"/><line x1="36.1" y1="-38.8" x2="74.8" y2="-80.6" stroke-width="0.7"/><line x1="46.0" y1="-38.6" x2="70.5" y2="-59.1" stroke-width="0.7"/><line x1="40.9" y1="-21.0" x2="87.2" y2="-44.7" stroke-width="1.4"/><line x1="49.8" y1="-18.1" x2="97.7" y2="-35.6" stroke-width="0.7"/><line x1="59.5" y1="-7.5" x2="109.1" y2="-13.7" stroke-width="0.7"/></svg>
+        <div class="rig">
+          <div class="phone">
+            <div class="phone-edge"></div>
+            <div class="screen">
+              <div class="layer is-active" data-clip="tracker"><img src="assets/clips/tracker.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+              <div class="layer" data-clip="calendar"><img src="assets/clips/calendar.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+              <div class="layer" data-clip="lists"><img src="assets/clips/lists.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+              <div class="layer" data-clip="profile"><img src="assets/clips/profile.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+              <div class="layer" data-clip="dice"><img src="assets/clips/dice.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
+              <div class="layer" data-still><img src="assets/clips/favorites.webp" alt="" width="540" height="1174" loading="lazy" decoding="async"></div>
             </div>
-            <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-num">10k+</span>
-                    <span class="stat-label">アニメ</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-num">ライブ</span>
-                    <span class="stat-label">アップデート</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-num">無料</span>
-                    <span class="stat-label">永久に</span>
-                </div>
-            </div>
+          </div>
         </div>
-        <div class="hero-image">
-            <div class="phone-mockup">
-                <div class="phone-screen">
-                    <img src="ss/screen-dark.png" alt="MyAnimeDex アプリスクリーンショット"
-                        style="width: 100%; height: 100%; object-fit: cover;">
+        <ol class="dots"><li class="on"></li><li></li><li></li><li></li><li></li><li></li></ol>
+      </div>
+
+      <div class="steps">
+        <article class="step" data-step="0">
+          <div class="step-copy">
+            <p class="step-tag"><span>01</span>記録</p>
+            <h3><em>全話</em>しっかり記録。</h3>
+            <p class="step-body">見終わったら + をタップ。進捗バーが伸びて、最終話を見ると自動で「視聴完了」に移動します。</p>
+            <div class="demo demo-track" data-demo="track">
+              <div class="ui card-track">
+                <div class="ui-row"><strong>Frieren: Beyond Journey's End</strong><span class="muted pct">70%</span></div>
+                <div class="ui-row"><span class="y ep">Ep 7 / 10</span><span class="done-pill">✓ 視聴完了</span></div>
+                <div class="bar"><i class="fill" style="--w:70%"></i></div>
+                <div class="ui-row controls">
+                  <button type="button" class="round minus" aria-label="−1 エピソード">−</button>
+                  <span class="muted">エピソード <b class="epn">7</b></span>
+                  <button type="button" class="round plus" aria-label="+1 エピソード">+</button>
                 </div>
+              </div>
+              <p class="hint">+ をタップして次の話へ。最後まで見るとボーナス XP。</p>
             </div>
-            <div class="glow-effect"></div>
-        </div>
-    </section>
+          </div>
+          <div class="step-media" aria-hidden="true"><div class="mini-phone"><img src="assets/clips/tracker.webp" srcset="assets/clips/tracker-300.webp 300w, assets/clips/tracker.webp 540w" sizes="(min-width: 900px) 280px, min(62vw, 270px)" alt="" width="540" height="1174" loading="lazy" decoding="async"><video muted loop playsinline preload="none" data-clip="tracker"></video></div></div>
+        </article>
 
-    <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="section-header">
-            <h2>なぜ <span class="accent">MyAnimeDex?</span></h2>
-            <p>アニメライフを管理するために必要なすべて。</p>
-        </div>
-
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="icon-box">
-                    <ion-icon name="list-outline"></ion-icon>
-                </div>
-                <h3>スマートトラッキング</h3>
-                <p>見ているもの、見たもの、見ようと思っているものを追跡します。お気に入りのサービスと同期します。</p>
+        <article class="step" data-step="1">
+          <div class="step-copy">
+            <p class="step-tag"><span>02</span>カレンダー</p>
+            <h3>新エピソードを<em>見逃さない</em>。</h3>
+            <p class="step-body">あなたのタイムゾーンで表示される週間放送カレンダー。次の話までライブでカウントダウン。お気に入りだけの表示も。</p>
+            <div class="demo demo-cal" data-demo="calendar">
+              <div class="chips" role="tablist" aria-label="カレンダー"></div>
+              <ul class="cal-list" aria-live="polite"><li class="cal-msg">今週のエピソードを読み込み中…</li></ul>
+              <p class="hint"><span class="live-dot"></span>AniList からライブ配信、あなたのタイムゾーンで</p>
             </div>
+          </div>
+          <div class="step-media" aria-hidden="true"><div class="mini-phone"><img src="assets/clips/calendar.webp" srcset="assets/clips/calendar-300.webp 300w, assets/clips/calendar.webp 540w" sizes="(min-width: 900px) 280px, min(62vw, 270px)" alt="" width="540" height="1174" loading="lazy" decoding="async"><video muted loop playsinline preload="none" data-clip="calendar"></video></div></div>
+        </article>
 
-            <div class="feature-card">
-                <div class="icon-box">
-                    <ion-icon name="trending-up-outline"></ion-icon>
-                </div>
-                <h3>トレンド中</h3>
-                <p>今放送中の最もホットなアニメの最新情報を入手。話題を見逃さないでください。</p>
+        <article class="step" data-step="2">
+          <div class="step-copy">
+            <p class="step-tag"><span>03</span>リスト</p>
+            <h3>ランキングして、<em>シェア</em>。</h3>
+            <p class="step-body">ランキングリストを作って、ドラッグで並べ替え。自分のスコアと一言コメントも。友だちと一緒にリストを作れます。</p>
+            <div class="demo demo-list" data-demo="list">
+              <ol class="rank-list">
+                <li tabindex="0"><span class="num"></span><span class="t">Steins;Gate</span><span class="tag">マイスコア: 10</span><span class="grip" aria-hidden="true">≡</span></li>
+                <li tabindex="0"><span class="num"></span><span class="t">Attack on Titan Season 3 Part 2</span><span class="tag">マイスコア: 10</span><span class="grip" aria-hidden="true">≡</span></li>
+                <li tabindex="0"><span class="num"></span><span class="t">Gintama Season 2</span><span class="tag">マイスコア: 10</span><span class="grip" aria-hidden="true">≡</span></li>
+                <li tabindex="0"><span class="num"></span><span class="t">Frieren: Beyond Journey's End</span><span class="tag">マイスコア: 10</span><span class="grip" aria-hidden="true">≡</span></li>
+              </ol>
+              <p class="hint">ドラッグで並べ替え、または選択して ↑ ↓</p>
             </div>
+          </div>
+          <div class="step-media" aria-hidden="true"><div class="mini-phone"><img src="assets/clips/lists.webp" srcset="assets/clips/lists-300.webp 300w, assets/clips/lists.webp 540w" sizes="(min-width: 900px) 280px, min(62vw, 270px)" alt="" width="540" height="1174" loading="lazy" decoding="async"><video muted loop playsinline preload="none" data-clip="lists"></video></div></div>
+        </article>
 
-            <div class="feature-card">
-                <div class="icon-box">
-                    <ion-icon name="person-outline"></ion-icon>
+        <article class="step" data-step="3">
+          <div class="step-copy">
+            <p class="step-tag"><span>04</span>プロフィール</p>
+            <h3>見るほど<em>レベルアップ</em>。</h3>
+            <p class="step-body">作品を追加・視聴・お気に入り登録するたびに XP を獲得。ブロンズからダイヤモンドへランクを上げて、リーダーボードで順位をチェック。</p>
+            <div class="demo demo-prof" data-demo="profile">
+              <div class="ui card-prof">
+                <div class="avatar"><img src="assets/img/logo-96.png" width="48" height="48" alt=""></div>
+                <div class="prof-main">
+                  <div class="ui-row"><strong class="rank-name">BRONZE</strong><span>🏆</span></div>
+                  <div class="muted"><span class="lvl-label">レベル 1 • 0/30 XP</span></div>
+                  <div class="bar"><i class="fill" style="--w:0%"></i></div>
                 </div>
-                <h3>カスタムプロフィール</h3>
-                <p>ユニークなアバターやテーマで自分を表現しましょう。コレクションをスタイリッシュに披露しましょう。</p>
+              </div>
+              <div class="prof-stats">
+                <div><b data-stat="eps">0</b><span>エピソード</span></div>
+                <div><b data-stat="favs">0</b><span>お気に入り</span></div>
+                <div><b data-stat="rolls">0</b><span>ダイス</span></div>
+              </div>
+              <p class="hint">このページで獲得した、あなたのランクです。</p>
             </div>
+          </div>
+          <div class="step-media" aria-hidden="true"><div class="mini-phone"><img src="assets/clips/profile.webp" srcset="assets/clips/profile-300.webp 300w, assets/clips/profile.webp 540w" sizes="(min-width: 900px) 280px, min(62vw, 270px)" alt="" width="540" height="1174" loading="lazy" decoding="async"><video muted loop playsinline preload="none" data-clip="profile"></video></div></div>
+        </article>
 
-            <div class="feature-card">
-                <div class="icon-box">
-                    <ion-icon name="share-social-outline"></ion-icon>
+        <article class="step" data-step="4">
+          <div class="step-copy">
+            <p class="step-tag"><span>05</span>ダイス</p>
+            <h3>迷ったら<em>ダイス</em>。</h3>
+            <p class="step-body">まだリストにない作品をダイスがピックアップ。スコア・ジャンル・あらすじ付き。気分じゃなければもう一回。</p>
+            <div class="demo demo-dice" data-demo="dice">
+              <div class="dice-row">
+                <button type="button" class="dice-btn" aria-label="ダイスを振る"><div class="dice"><div class="cube"><i class="d1"></i><i class="d2"></i><i class="d3"></i><i class="d4"></i><i class="d5"></i><i class="d6"></i></div></div></button>
+                <button type="button" class="btn btn-primary roll">ダイスを振る</button>
+              </div>
+              <div class="ui dice-result" aria-live="polite" hidden>
+                <img class="cover" alt="" width="56" height="80">
+                <div class="dr-main">
+                  <strong class="dr-title"></strong>
+                  <div class="ui-row"><span class="y dr-score"></span><span class="muted dr-eps"></span></div>
+                  <div class="dr-genres"></div>
                 </div>
-                <h3>友達と共有</h3>
-                <p>自分だけのアニメリストを作成して友達と共有しましょう。何を見ているか知らせましょう！</p>
+              </div>
+              <p class="hint">AniList から実在のアニメを選びます。</p>
             </div>
-        </div>
-    </section>
+          </div>
+          <div class="step-media" aria-hidden="true"><div class="mini-phone"><img src="assets/clips/dice.webp" srcset="assets/clips/dice-300.webp 300w, assets/clips/dice.webp 540w" sizes="(min-width: 900px) 280px, min(62vw, 270px)" alt="" width="540" height="1174" loading="lazy" decoding="async"><video muted loop playsinline preload="none" data-clip="dice"></video></div></div>
+        </article>
 
-    <!-- App Showcase -->
-    <section id="showcase" class="showcase">
-        <div class="section-header">
-            <h2>アプリ <span class="accent">ショーケース</span></h2>
-            <p>MyAnimeDexを詳しく見てみましょう。</p>
-        </div>
+        <article class="step" data-step="5">
+          <div class="step-copy">
+            <p class="step-tag"><span>06</span>あなたの図鑑</p>
+            <h3>あなたのアニメ図鑑を、<em>ポケットに。</em></h3>
+            <p class="step-body">お気に入り、フィルター、並べ替えをひとつのグリッドで。ダーク／ライトテーマ、10 言語対応。</p>
+            <div class="chips static"><span class="ui ui-stat"><b class="y">♥</b> お気に入り</span><span class="ui ui-stat">🌙 / ☀️</span><span class="ui ui-pill">🌐 10 言語</span></div>
+          </div>
+          <div class="step-media" aria-hidden="true"><div class="mini-phone"><img src="assets/clips/favorites.webp" srcset="assets/clips/favorites-300.webp 300w, assets/clips/favorites.webp 540w" sizes="(min-width: 900px) 280px, min(62vw, 270px)" alt="" width="540" height="1174" loading="lazy" decoding="async"></div></div>
+        </article>
+      </div>
+    </div>
+  </section>
 
-        <div class="showcase-wrapper">
-            <button class="nav-btn prev-btn" aria-label="前へ">
-                <ion-icon name="chevron-back-outline"></ion-icon>
-            </button>
-            <div class="showcase-grid">
-                <div class="showcase-item">
-                    <div class="phone-mockup small">
-                        <div class="phone-screen">
-                            <img src="ss/screen-light.png" alt="ライトモードのスクリーンショット">
-                        </div>
-                    </div>
-                    <h3>ライトモード</h3>
-                </div>
+  <section class="cta" id="download">
+    <div class="cta-glow" aria-hidden="true"></div>
+    <img src="assets/img/icon-192.png" width="112" height="112" alt="" loading="lazy" class="cta-logo">
+    <h2>今日から、あなたの<em>図鑑</em>を。</h2>
+    <p class="lede cta-xp">ダウンロード無料。リストは端末間で同期されます。</p>
+    <div class="badges center"><a class="badge" href="https://apps.apple.com/app/id6758043488" data-store="ios" rel="noopener"><img src="assets/badges/app-store.svg" width="150" height="50" alt="App Store からダウンロード"></a><a class="badge" href="https://play.google.com/store/apps/details?id=com.myanimedex.app" data-store="android" rel="noopener"><img src="assets/badges/google-play.png" width="169" height="50" alt="Google Play で手に入れよう"></a></div>
+  </section>
+</main>
 
-                <div class="showcase-item">
-                    <div class="phone-mockup small">
-                        <div class="phone-screen">
-                            <img src="ss/watching_dark.png" alt="追跡リストのスクリーンショット">
-                        </div>
-                    </div>
-                    <h3>スマートトラッキング</h3>
-                </div>
+<footer class="foot">
+  <div class="foot-top">
+    <a class="brand" href="jp.html"><img src="assets/img/logo-96.png" width="32" height="32" alt="" loading="lazy"><span class="wordmark">ANIME<b>DEX</b></span></a>
+    <p class="muted">アニメファンのために ❤️ を込めて。</p>
+  </div>
+  <nav class="foot-links" aria-label="Footer">
+    <a href="anime/index.html">人気アニメ TOP100</a>
+    <a href="privacy_jp.html">プライバシーポリシー</a>
+    <a href="terms.html">利用規約</a>
+    <a href="delete-account_jp.html">アカウント削除</a>
+    <a href="contact-jp.html">お問い合わせ</a>
+    <a href="https://www.instagram.com/myanimedex/" rel="noopener" target="_blank">Instagram</a>
+  </nav>
+  <nav class="foot-lang" aria-label="言語"><a href="index.html" hreflang="en" lang="en">English</a><a href="tr.html" hreflang="tr" lang="tr">Türkçe</a><a href="jp.html" hreflang="ja" lang="ja" aria-current="page">日本語</a><a href="id.html" hreflang="id" lang="id">Bahasa Indonesia</a></nav>
+  <p class="fine">© 2026 MyAnimeDex. All rights reserved.<br>Apple および Apple ロゴは Apple Inc. の商標です。Google Play および Google Play ロゴは Google LLC の商標です。</p>
+</footer>
 
-                <div class="showcase-item">
-                    <div class="phone-mockup small">
-                        <div class="phone-screen">
-                            <img src="ss/favorites_dark.png" alt="お気に入りのスクリーンショット">
-                        </div>
-                    </div>
-                    <h3>お気に入り</h3>
-                </div>
+<!-- XP HUD: fills as the visitor plays with the demos -->
+<div class="hud" aria-live="polite" hidden>
+  <div class="hud-ring"><span class="hud-lvl">1</span></div>
+  <div class="hud-main"><span class="hud-rank">BRONZE</span><span class="hud-xp">0/30 XP</span><div class="bar"><i class="fill" style="--w:0%"></i></div></div>
+</div>
+<div class="toast" role="status" hidden><span class="toast-k">レベルアップ！</span><strong class="toast-v"></strong></div>
+<canvas class="confetti" aria-hidden="true"></canvas>
 
-                <!-- Explore Details -->
-                <div class="showcase-item">
-                    <div class="phone-mockup small">
-                        <div class="phone-screen">
-                            <img src="ss/anime-detail.png" alt="詳細情報のスクリーンショット">
-                        </div>
-                    </div>
-                    <h3>詳細情報</h3>
-                </div>
+<dialog class="trailer" aria-label="MyAnimeDex トレーラー">
+  <button type="button" class="close" aria-label="閉じる">✕</button>
+  <div class="trailer-box"></div>
+</dialog>
 
-                <!-- Shared Lists -->
-                <div class="showcase-item">
-                    <div class="phone-mockup small">
-                        <div class="phone-screen">
-                            <img src="ss/collaborator.png" alt="共有リストのスクリーンショット">
-                        </div>
-                    </div>
-                    <h3>共有リスト</h3>
-                </div>
-
-                <!-- Release Dates -->
-                <div class="showcase-item">
-                    <div class="phone-mockup small">
-                        <div class="phone-screen">
-                            <img src="ss/calendar.png" alt="放送予定のスクリーンショット">
-                        </div>
-                    </div>
-                    <h3>放送予定</h3>
-                </div>
-
-                <!-- Avatar -->
-                <div class="showcase-item">
-                    <div class="phone-mockup small">
-                        <div class="phone-screen">
-                            <img src="ss/avatar.png" alt="カスタマイズのスクリーンショット">
-                        </div>
-                    </div>
-                    <h3>カスタマイズ</h3>
-                </div>
-            </div>
-            <button class="nav-btn next-btn" aria-label="次へ">
-                <ion-icon name="chevron-forward-outline"></ion-icon>
-            </button>
-        </div>
-    </section>
-
-    <!-- Call to Action -->
-    <section id="download" class="cta">
-        <div class="cta-content">
-            <h2>冒険を始める準備はできましたか？</h2>
-            <p>今すぐMyAnimeDexをダウンロードして、数千人のアニメファンに参加しましょう。</p>
-            <div class="cta-buttons">
-                <a href="https://apps.apple.com/us/app/myanimedex/id6758043488" class="btn btn-large btn-ios"
-                    aria-label="iOS App StoreでMyAnimeDexをダウンロード"><ion-icon name="logo-apple"></ion-icon> App Store</a>
-                <a href="https://play.google.com/store/apps/details?id=com.myanimedex.app"
-                    class="btn btn-large btn-android" aria-label="Google Play StoreでMyAnimeDexを入手"><ion-icon
-                        name="logo-google-playstore"></ion-icon>
-                    Google Play</a>
-            </div>
-
-        </div>
-    </section>
-
-    <section class="social-section" style="padding: 40px 0; text-align: center;">
-        <div class="footer-social">
-            <h3>フォローする</h3>
-            <p>ソーシャルメディアにいます！連絡を取り合いましょう。</p>
-            <div class="social-icons">
-                <a href="https://www.instagram.com/myanimedex/" target="_blank" aria-label="Instagramでフォロー">
-                    <ion-icon name="logo-instagram"></ion-icon>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-brand">
-                <div class="logo-container">
-                    <img src="header-logo.png" alt="MyAnimeDex Logo" class="footer-logo">
-                    <span class="logo-text">MY ANIME <span class="accent">DEX</span></span>
-                </div>
-                <p>アニメファンのために ❤️ で作られました。</p>
-            </div>
-
-            <div class="footer-links">
-                <a href="#features">特徴</a>
-                <a href="anime/index.html">トップ100アニメ</a>
-                <a href="privacy.html">プライバシーポリシー</a>
-                <a href="delete-account.html">アカウント削除</a>
-                <a href="mailto:support@myanimedex.com">お問い合わせ</a>
-            </div>
-        </div>
-        <div class="copyright">
-            &copy; 2025 MyAnimeDex. 全著作権所有。
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
+<script>window.MAD = {"locale":"ja","trackCompleted":"視聴完了","calError":"スケジュールを読み込めませんでした。","calAiring":"放送中","calFav":"お気に入りに追加","calNone":"この日は大きな放送がありません。","listNew1":"新しい 1 位！","diceRoll":"ダイスを振る","diceAgain":"もう一回","diceErr":"ダイスが転がり落ちました。もう一度どうぞ。","levelUp":"レベルアップ！","ctaXp":"このページで \u003cb>{xp} XP\u003c/b> 獲得：レベル {level} · {rank}。アプリでレベルアップを続けよう。","ctaXpZero":"ダウンロード無料。リストは端末間で同期されます。","cardLevel":"レベル"};</script>
+<script src="assets/v2/main.js?v=mvgjlnvc" defer></script>
 </body>
-
 </html>
