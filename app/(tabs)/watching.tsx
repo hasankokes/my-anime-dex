@@ -19,7 +19,11 @@ import { supabase } from '../../lib/supabase';
 import { AnimeListItem } from '../../types';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
+import { HeaderAvatar } from '../../components/HeaderAvatar';
 import { useWalkthrough } from '../../context/WalkthroughContext';
+import { useAuth } from '../../context/AuthProvider';
+import { useLanguage } from '../../context/LanguageContext';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 const { width } = Dimensions.get('window');
 
@@ -93,6 +97,9 @@ export default function WatchingScreen() {
   const router = useRouter();
   const { colors, toggleTheme, isDark } = useTheme(); // Added toggleTheme, isDark
   const insets = useSafeAreaInsets(); // Added insets
+  const { session: authSession } = useAuth();
+  const { t } = useLanguage();
+  const requireAuth = useRequireAuth();
   const [watchingList, setWatchingList] = useState<AnimeListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -166,7 +173,11 @@ export default function WatchingScreen() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
+        // Guest: never show a previous user's data
+        setWatchingList([]);
+        setAvatarUrl(null);
         setLoading(false);
+        setRefreshing(false);
         return;
       }
 
@@ -196,6 +207,14 @@ export default function WatchingScreen() {
       setRefreshing(false);
     }
   };
+
+  // Refetch when the user signs in or out while this tab is mounted (focus handles the first load)
+  const lastUserIdRef = React.useRef(authSession?.user?.id);
+  useEffect(() => {
+    if (lastUserIdRef.current === authSession?.user?.id) return;
+    lastUserIdRef.current = authSession?.user?.id;
+    fetchData();
+  }, [authSession?.user?.id]);
 
   useFocusEffect(
     useCallback(() => {
@@ -336,11 +355,8 @@ export default function WatchingScreen() {
             </TouchableOpacity>
 
             {/* Profile */}
-            <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/(tabs)/profile')}>
-              <Image
-                source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
-                style={styles.headerProfileImage}
-              />
+            <TouchableOpacity style={styles.profileButton} onPress={() => requireAuth('profile', () => router.push('/(tabs)/profile'))}>
+              <HeaderAvatar uri={avatarUrl} />
             </TouchableOpacity>
           </View>
         </>
@@ -369,15 +385,28 @@ export default function WatchingScreen() {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FACC15" />
           }
           ListEmptyComponent={
+            !authSession ? (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="person-circle-outline" size={48} color={colors.subtext} />
+                <Text style={[styles.emptySubText, { color: colors.subtext, maxWidth: 280 }]}>{t('guest.watching_empty')}</Text>
+                <TouchableOpacity
+                  style={[styles.signInButton, { backgroundColor: colors.primary }]}
+                  onPress={() => requireAuth('list')}
+                >
+                  <Text style={styles.signInButtonText}>{t('guest.sign_in')}</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
             <View style={styles.emptyContainer}>
               <Ionicons name={searchQuery ? "search" : "play-circle-outline"} size={48} color={colors.subtext} />
               <Text style={[styles.emptyText, { color: colors.subtext }]}>
-                {searchQuery ? 'No results found' : 'Nothing being watched'}
+                {searchQuery ? t('watchingTab.noResults') : t('watchingTab.emptyTitle')}
               </Text>
               {!searchQuery && (
-                <Text style={[styles.emptySubText, { color: colors.subtext }]}>Start watching an anime to track your progress here.</Text>
+                <Text style={[styles.emptySubText, { color: colors.subtext }]}>{t('watchingTab.emptyDesc')}</Text>
               )}
             </View>
+            )
           }
         />
       )}
@@ -536,6 +565,17 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#FACC15',
     borderRadius: 3,
+  },
+  signInButton: {
+    marginTop: 16,
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    borderRadius: 24,
+  },
+  signInButtonText: {
+    color: '#000',
+    fontSize: 15,
+    fontFamily: 'Poppins_600SemiBold',
   },
   emptyContainer: {
     alignItems: 'center',

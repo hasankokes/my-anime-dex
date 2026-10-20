@@ -57,6 +57,10 @@ export const translateText = async (text: string, targetLang: string, animeId?: 
 
 const saveTranslation = async (animeId: string, language: string, synopsis: string) => {
     try {
+        // Cache writes are for signed-in users only (RLS); guests just use the in-memory cache
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
         const { error } = await supabase
             .from('anime_translations')
             .insert({

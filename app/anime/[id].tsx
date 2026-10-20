@@ -15,6 +15,8 @@ import { RateAppSheet } from '../../components/RateAppSheet';
 
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthProvider';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { translateText } from '../../lib/translation';
 import { WebView } from 'react-native-webview';
 import YoutubePlayer from "react-native-youtube-iframe";
@@ -85,6 +87,8 @@ const AnimeDetailsScreen = () => {
   const [translatedSynopsis, setTranslatedSynopsis] = useState<string>('');
   const [isTranslating, setIsTranslating] = useState(false);
   const [showTrailerModal, setShowTrailerModal] = useState(false);
+  const { session: authSession } = useAuth();
+  const requireAuth = useRequireAuth();
 
   useEffect(() => {
     const translateSynopsis = async () => {
@@ -171,7 +175,36 @@ const AnimeDetailsScreen = () => {
     fetchData();
   }, [fetchData]);
 
-  const toggleFavorite = async () => {
+  // Re-reads this anime's list entry from the DB (used after a guest signs in, so a
+  // resumed action works on the user's real saved state instead of the guest's empty one)
+  const reloadUserEntry = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || !id) {
+      setUserEntry(null);
+      setEpisodeInput('0');
+      return null;
+    }
+    const { data: entry } = await supabase
+      .from('user_anime_list')
+      .select('*')
+      .eq('user_id', session.user.id)
+      .eq('anime_id', id)
+      .maybeSingle();
+    setUserEntry(entry ?? null);
+    setEpisodeInput(entry?.current_episode?.toString() || '0');
+    return entry ?? null;
+  }, [id]);
+
+  // Sign-in / sign-out while this screen is open: refresh the user's entry
+  const lastUserIdRef = React.useRef(authSession?.user?.id);
+  useEffect(() => {
+    if (lastUserIdRef.current === authSession?.user?.id) return;
+    lastUserIdRef.current = authSession?.user?.id;
+    reloadUserEntry();
+  }, [authSession?.user?.id, reloadUserEntry]);
+
+  // base: entry to build on (defaults to current state); forceValue: set instead of toggle
+  const toggleFavorite = async (base: any = userEntry, forceValue?: boolean) => {
     if (!anime) return;
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -180,8 +213,9 @@ const AnimeDetailsScreen = () => {
         return;
       }
 
-      const newIsFavorite = !userEntry?.is_favorite;
-      const optimisticEntry = { ...userEntry, is_favorite: newIsFavorite };
+      const newIsFavorite = forceValue ?? !base?.is_favorite;
+      if (!!base?.is_favorite === newIsFavorite) return; // already in the requested state
+      const optimisticEntry = { ...base, is_favorite: newIsFavorite };
       setUserEntry(optimisticEntry); // Optimistic update
 
       const payload = {
@@ -197,7 +231,7 @@ const AnimeDetailsScreen = () => {
       const { error } = await supabase
         .from('user_anime_list')
         .upsert({
-          ...userEntry,
+          ...base,
           ...payload
         }, { onConflict: 'user_id, anime_id' })
         .select()
@@ -207,7 +241,7 @@ const AnimeDetailsScreen = () => {
 
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      setUserEntry(userEntry); // Revert on error
+      setUserEntry(base); // Revert on error
       Alert.alert('Error', 'Failed to update favorite.');
     }
   };
@@ -421,7 +455,15 @@ const AnimeDetailsScreen = () => {
           {/* Favorite Button */}
           <TouchableOpacity
             style={[styles.favButton, { top: insets.top + 10 }]}
-            onPress={toggleFavorite}
+            onPress={() => requireAuth('favorite', async ({ resumed }) => {
+              if (resumed) {
+                // Guest tapped "like": after sign-in, favorite it on top of the saved entry (never un-favorite)
+                const fresh = await reloadUserEntry();
+                await toggleFavorite(fresh, true);
+              } else {
+                await toggleFavorite();
+              }
+            })}
           >
             <BlurView intensity={80} tint={isDark ? "light" : "dark"} style={styles.blurButton}>
               <Ionicons
@@ -491,6 +533,15 @@ const AnimeDetailsScreen = () => {
                 <Text style={{ color: colors.subtext, fontSize: 16 }}>
                   / {anime.episodes || '?'}
                 </Text>
+                {!authSession && (
+                  // Guests can't edit progress: tapping asks them to sign in
+                  <TouchableOpacity
+                    style={StyleSheet.absoluteFill}
+                    onPress={() => requireAuth('list', async ({ resumed }) => {
+                      if (resumed) await reloadUserEntry();
+                    })}
+                  />
+                )}
               </View>
 
               {/* Trailer Box */}
@@ -560,7 +611,10 @@ const AnimeDetailsScreen = () => {
               styles.actionButton,
               currentStatus ? styles.actionButtonActive : null
             ]}
-            onPress={() => setShowStatusModal(true)}
+            onPress={() => requireAuth('list', async ({ resumed }) => {
+              if (resumed) await reloadUserEntry();
+              setShowStatusModal(true);
+            })}
             disabled={actionLoading}
           >
             {actionLoading ? (
@@ -584,7 +638,7 @@ const AnimeDetailsScreen = () => {
 
           <TouchableOpacity
             style={[styles.actionButton, { marginTop: 12, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border }]}
-            onPress={() => setShowListModal(true)}
+            onPress={() => requireAuth('custom_list', () => setShowListModal(true))}
           >
             <Ionicons name="list" size={20} color={colors.text} />
             <Text style={[styles.actionButtonText, { color: colors.text }]}>{t('animeDetail.saveToCustomList')}</Text>

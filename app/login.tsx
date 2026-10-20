@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, Alert, Platform, ActivityIndicator, AppState, TouchableOpacity, TextInput, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../lib/supabase';
 import { SocialButton } from '../components/SocialButton';
@@ -11,6 +11,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PREDEFINED_AVATARS } from '../lib/constants';
 import { signInWithAppleNative } from '../lib/appleAuth';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthProvider';
+import { authIntent } from '../lib/authIntent';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -31,15 +33,45 @@ import { useTheme } from '../context/ThemeContext';
 export default function LoginScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const { isDark, colors } = useTheme();
   const { t } = useLanguage();
+  const { session } = useAuth();
+  const { reason } = useLocalSearchParams<{ reason?: string }>();
+  const completedRef = useRef(false);
 
   const [loading, setLoading] = useState(false);
-  const [checkingSession, setCheckingSession] = useState(true);
+  const [checkingSession, setCheckingSession] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [authMessage, setAuthMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  // Login is a modal: track that it is open, and drop the pending action if it closes without a sign-in
+  useEffect(() => {
+    authIntent.setLoginOpen(true);
+    return () => {
+      authIntent.setLoginOpen(false);
+      if (!completedRef.current) authIntent.clear();
+    };
+  }, []);
+
+  const closeLogin = () => {
+    if (router.canGoBack()) router.back();
+    else router.replace('/(tabs)');
+  };
+
+  // Signed in (email, Apple, Google, deep link): close the modal and run the pending action once
+  useEffect(() => {
+    if (!session || completedRef.current) return;
+    completedRef.current = true;
+    const action = authIntent.take();
+    closeLogin();
+    if (action) {
+      setTimeout(() => {
+        Promise.resolve(action({ resumed: true })).catch((e) => console.error('Pending action failed:', e));
+      }, 0);
+    }
+  }, [session]);
 
   useEffect(() => {
     checkSession();
@@ -334,6 +366,9 @@ export default function LoginScreen() {
             />
 
             <Text style={styles.tagline}>{t('login.tagline')}</Text>
+            <Text style={[styles.reasonText, { color: colors.text }]}>
+              {t(`guest.reason_${reason || 'default'}`, { defaultValue: t('guest.reason_default') })}
+            </Text>
           </View>
 
           {/* Social Section (Moved to Top) */}
@@ -438,6 +473,16 @@ export default function LoginScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <TouchableOpacity
+        style={[styles.closeButton, { top: insets.top + 12 }]}
+        onPress={closeLogin}
+        accessibilityRole="button"
+        accessibilityLabel={t('common.cancel')}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      >
+        <Ionicons name="close" size={normalize(26)} color={colors.text} />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -466,6 +511,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: normalize(24),
     justifyContent: 'center',
     paddingBottom: normalize(40),
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 20,
+    padding: 4,
+    zIndex: 10,
+  },
+  reasonText: {
+    marginTop: normalize(12),
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: normalize(15),
+    textAlign: 'center',
   },
   logoContainer: {
     alignItems: 'center',
