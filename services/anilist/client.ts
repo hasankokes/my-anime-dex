@@ -13,6 +13,30 @@ const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const cache = new Map<string, { data: any; timestamp: number }>();
 const DEFAULT_CACHE_DURATION = 1000 * 60 * 5; // 5 minutes
 
+// Service availability: flips to 'down' when AniList itself is unreachable
+// (outage, 403 "API disabled", 5xx, timeouts) so the UI can explain empty screens.
+export type AniListStatus = 'ok' | 'down';
+let serviceStatus: AniListStatus = 'ok';
+const statusListeners = new Set<(status: AniListStatus) => void>();
+
+function setServiceStatus(next: AniListStatus) {
+  if (next === serviceStatus) return;
+  serviceStatus = next;
+  statusListeners.forEach(listener => listener(next));
+}
+
+export function getAniListStatus(): AniListStatus {
+  return serviceStatus;
+}
+
+export function subscribeAniListStatus(listener: (status: AniListStatus) => void): () => void {
+  statusListeners.add(listener);
+  return () => { statusListeners.delete(listener); };
+}
+
+/** HTTP statuses that mean the service is unavailable (not "your query was wrong / not found") */
+const isOutageStatus = (status: number) => status === 403 || status >= 500;
+
 interface FetchOptions {
   /** Cache key — if provided, result is cached and reused until expiry */
   cacheKey?: string;
@@ -95,7 +119,16 @@ export async function fetchGraphQL<T = any>(
       }
 
       if (!response.ok) {
-        throw new Error(`AniList API returned HTTP ${response.status}`);
+        if (isOutageStatus(response.status)) setServiceStatus('down');
+        // Keep AniList's reason (e.g. "Private User" vs "Not Found" are both 404)
+        let detail = '';
+        try {
+          const body = await response.json();
+          detail = (body?.errors ?? []).map((e: any) => e.message).filter(Boolean).join('; ');
+        } catch {
+          // non-JSON body
+        }
+        throw new Error(`AniList API returned HTTP ${response.status}${detail ? `: ${detail}` : ''}`);
       }
 
       const json = await response.json();
@@ -113,6 +146,10 @@ export async function fetchGraphQL<T = any>(
           continue;
         }
 
+        if (json.errors.some((e: any) => typeof e.status === 'number' && isOutageStatus(e.status))) {
+          setServiceStatus('down');
+        }
+
         const msg = json.errors.map((e: any) => e.message).join('; ');
         const err: any = new Error(`GraphQL Error: ${msg}`);
         err.gqlErrors = json.errors;
@@ -120,6 +157,7 @@ export async function fetchGraphQL<T = any>(
       }
 
       const data = json.data as T;
+      setServiceStatus('ok');
 
       // Store in cache
       if (fullCacheKey) {
@@ -138,6 +176,7 @@ export async function fetchGraphQL<T = any>(
         continue;
       }
       if (error instanceof Error && error.name === 'AbortError') {
+        setServiceStatus('down');
         throw new Error('AniList request timed out. Please try again.');
       }
       throw error;
@@ -150,4 +189,18 @@ export async function fetchGraphQL<T = any>(
 /** Clear the entire in-memory query cache */
 export function clearAniListCache(): void {
   cache.clear();
+}
+
+/**
+ * Lightweight probe used by the "try again" button: one tiny uncached query.
+ * Updates the shared status either way and resolves to whether AniList is back.
+ */
+export async function checkAniListStatus(): Promise<boolean> {
+  try {
+    await fetchGraphQL('query { Media(id: 1, type: ANIME) { id } }', undefined, { retries: 0 });
+    setServiceStatus('ok');
+    return true;
+  } catch {
+    return getAniListStatus() === 'ok';
+  }
 }

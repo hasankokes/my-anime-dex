@@ -46,6 +46,8 @@ export interface Anime {
     season: string;
     year: number;
     genres: { name: string }[];
+    /** Main studios (filled by the AniList detail query) */
+    studios?: { name: string }[];
     trailer: {
         youtube_id: string;
         url: string;

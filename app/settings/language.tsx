@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { needsFontRestart } from '../../hooks/useAppFonts';
 
 export default function LanguageScreen() {
     const router = useRouter();
@@ -23,10 +24,19 @@ export default function LanguageScreen() {
         { code: 'id', name: 'Bahasa Indonesia', flag: 'id' },
         { code: 'hi', name: 'हिन्दी (Hindi)', flag: 'in' },
         { code: 'ar', name: 'العربية (Arabic)', flag: 'sa' },
+        { code: 'fr', name: 'Français (French)', flag: 'fr' },
+        { code: 'it', name: 'Italiano (Italian)', flag: 'it' },
+        { code: 'pl', name: 'Polski (Polish)', flag: 'pl' },
+        { code: 'vi', name: 'Tiếng Việt (Vietnamese)', flag: 'vn' },
+        { code: 'th', name: 'ไทย (Thai)', flag: 'th' },
     ];
 
     const handleLanguageSelect = async (langCode: string) => {
+        if (langCode === language) return;
+        const restartNeeded = needsFontRestart(language, langCode);
         await setLanguage(langCode);
+        // Fonts are picked at startup; this language uses a different one
+        if (restartNeeded) Alert.alert(t('settings.language'), t('settings.fontRestart'));
     };
 
     return (
@@ -39,7 +49,7 @@ export default function LanguageScreen() {
             </View>
 
             <ScrollView contentContainerStyle={styles.content}>
-                <Text style={[styles.sectionTitle, { color: colors.subtext }]}>Select Language</Text>
+                <Text style={[styles.sectionTitle, { color: colors.subtext }]}>{t('settings.selectLanguage')}</Text>
 
                 <View style={[styles.optionsContainer, { backgroundColor: colors.card }]}>
                     {languages.map((lang, index) => (

@@ -1,14 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ActivityIndicator, Platform, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Platform, Alert, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../../context/ThemeContext';
-import { useLanguage } from '../../context/LanguageContext';
-import { supabase } from '../../lib/supabase';
-import { analytics } from '../../lib/analytics';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
   FadeIn,
   FadeOut,
@@ -21,14 +16,26 @@ import Animated, {
   withSpring,
   withRepeat,
   withSequence,
-  runOnJS,
   Easing,
 } from 'react-native-reanimated';
+import { PosterImage } from '../../components/PosterImage';
+import { VsMark } from '../../components/Arena/VsMark';
+import { ARENA_GOLD, getArenaCategory, getRoundLabel } from '../../components/Arena/arenaTheme';
+import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { supabase } from '../../lib/supabase';
+import { analytics } from '../../lib/analytics';
 
-const { width, height } = Dimensions.get('window');
+// AniList covers are roughly 0.7 wide per 1 tall
+const POSTER_ASPECT = 0.7;
+// Below this side width the name doesn't fit next to the poster; fall back to the stacked layout
+const MIN_SIDE_WIDTH = 100;
+const NAME_OVERLAY_HEIGHT = 58;
+// Long enough to see the pick land, short enough not to feel slow over 31 picks
+const PICK_FEEDBACK_MS = 420;
+const ROUND_INTRO_MS = 1100;
 
-// Fisher-Yates shuffle
-const shuffleArray = (array: any[]) => {
+const shuffleArray = <T,>(array: T[]) => {
   const newArr = [...array];
   for (let i = newArr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -37,31 +44,40 @@ const shuffleArray = (array: any[]) => {
   return newArr;
 };
 
+type Side = 'top' | 'bottom';
+
 export default function ArenaGameScreen() {
   const { category, size } = useLocalSearchParams();
   const router = useRouter();
   const { colors, isDark } = useTheme();
   const { t } = useLanguage();
-  const insets = useSafeAreaInsets();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [currentRoundItems, setCurrentRoundItems] = useState<any[]>([]);
   const [nextRoundItems, setNextRoundItems] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [roundName, setRoundName] = useState('');
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  // Ref lock: state updates are async, so two taps in the same frame would both pass a state check
-  const pickLockRef = useRef(false);
-  const pickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [picked, setPicked] = useState<Side | null>(null);
+  const [roundIntro, setRoundIntro] = useState<string | null>(null);
+  const [matchKey, setMatchKey] = useState(0);
+  const [cardSize, setCardSize] = useState<{ width: number; height: number } | null>(null);
 
-  // Analytics: a game that started but never reached the result screen counts as abandoned
+  const pickLockRef = useRef(false);
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const gameStatsRef = useRef({ startedAt: 0, picks: 0, bracketSize: 0, completed: false });
 
+  const targetSize = parseInt(size as string) || 16;
+  const categoryName = (category as string) || 'all_time_anime';
+  const cat = getArenaCategory(categoryName);
+
+  const later = (fn: () => void, ms: number) => {
+    timeoutsRef.current.push(setTimeout(fn, ms));
+  };
+
   useEffect(() => {
+    fetchContestants();
     return () => {
-      if (pickTimeoutRef.current) clearTimeout(pickTimeoutRef.current);
+      timeoutsRef.current.forEach(clearTimeout);
       const stats = gameStatsRef.current;
       if (stats.startedAt && !stats.completed) {
         analytics.track('arena_game_abandoned', {
@@ -74,72 +90,59 @@ export default function ArenaGameScreen() {
       }
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const [matchKey, setMatchKey] = useState(0); // Force re-render on new match
 
-  const targetSize = parseInt(size as string) || 16;
-  const categoryName = (category as string) || 'all_time_anime';
-
-  // VS badge pulse animation
+  // Idle VS breathing
   const vsPulse = useSharedValue(1);
-  
   useEffect(() => {
     vsPulse.value = withRepeat(
       withSequence(
-        withTiming(1.15, { duration: 800, easing: Easing.inOut(Easing.ease) }),
-        withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) })
+        withTiming(1.08, { duration: 900, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1, { duration: 900, easing: Easing.inOut(Easing.ease) })
       ),
       -1,
       true
     );
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const vsStyle = useAnimatedStyle(() => ({ transform: [{ scale: vsPulse.value }] }));
 
-  const vsAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: vsPulse.value }],
-  }));
+  // Pick feedback: winner pops, loser sinks
+  const topScale = useSharedValue(1);
+  const bottomScale = useSharedValue(1);
+  const topOpacity = useSharedValue(1);
+  const bottomOpacity = useSharedValue(1);
+  const topStyle = useAnimatedStyle(() => ({ transform: [{ scale: topScale.value }], opacity: topOpacity.value }));
+  const bottomStyle = useAnimatedStyle(() => ({ transform: [{ scale: bottomScale.value }], opacity: bottomOpacity.value }));
 
-  // Progress bar animation
-  const progressWidth = useSharedValue(0);
-  const progressAnimStyle = useAnimatedStyle(() => ({
-    width: `${progressWidth.value * 100}%` as any,
-  }));
+  const resetCards = () => {
+    topScale.value = 1;
+    bottomScale.value = 1;
+    topOpacity.value = 1;
+    bottomOpacity.value = 1;
+  };
 
-  useEffect(() => {
-    fetchContestants();
-  }, []);
+  const showRoundIntro = (remaining: number) => {
+    setRoundIntro(getRoundLabel(remaining, t));
+    later(() => setRoundIntro(null), ROUND_INTRO_MS);
+  };
 
   const fetchContestants = async () => {
     try {
       setLoading(true);
       setError(null);
-
-      const { data, error: sbError } = await supabase
-        .from('arena_pools')
-        .select('*')
-        .eq('category', categoryName);
-
+      const { data, error: sbError } = await supabase.from('arena_pools').select('*').eq('category', categoryName);
       if (sbError) throw sbError;
+      if (!data || data.length < 2) throw new Error('Not enough contestants found for this category.');
 
-      if (!data || data.length < 2) {
-        throw new Error('Not enough contestants found for this category.');
-      }
-
-      let shuffled = shuffleArray(data);
+      const shuffled = shuffleArray(data);
       let actualSize = targetSize;
-      if (shuffled.length < targetSize) {
-        const power = Math.floor(Math.log2(shuffled.length));
-        actualSize = Math.pow(2, power);
-      }
+      if (shuffled.length < targetSize) actualSize = Math.pow(2, Math.floor(Math.log2(shuffled.length)));
 
       const contestants = shuffled.slice(0, actualSize);
       gameStatsRef.current = { startedAt: Date.now(), picks: 0, bracketSize: actualSize, completed: false };
       analytics.track('arena_game_started', { category: categoryName, bracket_size: actualSize });
       setCurrentRoundItems(contestants);
-      updateRoundName(actualSize);
-      
-      // Set initial progress
-      progressWidth.value = withTiming(1 / (actualSize / 2), { duration: 500 });
-      
       setLoading(false);
+      showRoundIntro(actualSize);
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'An error occurred while loading data.');
@@ -147,471 +150,368 @@ export default function ArenaGameScreen() {
     }
   };
 
-  const updateRoundName = (remaining: number) => {
-    if (remaining === 2) setRoundName(t('arena.final') || 'FINAL');
-    else if (remaining === 4) setRoundName(t('arena.semi_final') || 'SEMI FINAL');
-    else if (remaining === 8) setRoundName(t('arena.quarter_final') || 'QUARTER FINAL');
-    else setRoundName(`${t('arena.round') || 'Round'} (${remaining})`);
-  };
-
   const handleQuit = () => {
+    const message = t('arena.quit_confirm');
     if (Platform.OS === 'web') {
-      if (window.confirm(t('arena.quit_confirm') || 'Are you sure you want to quit? Your battle progress will be lost.')) {
-        router.back();
-      }
-    } else {
-      Alert.alert(
-        t('arena.quit_title') || 'Quit Battle',
-        t('arena.quit_confirm') || 'Are you sure you want to quit? Your battle progress will be lost.',
-        [
-          { text: t('common.cancel') || 'Cancel', style: 'cancel' },
-          {
-            text: t('arena.quit_button') || 'Quit',
-            style: 'destructive',
-            onPress: () => router.back()
-          }
-        ]
-      );
+      if (window.confirm(message)) router.back();
+      return;
     }
+    Alert.alert(t('arena.quit_title'), message, [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('arena.quit_button'), style: 'destructive', onPress: () => router.back() },
+    ]);
   };
 
-  const handlePick = (winner: any, loser: any) => {
-    if (pickLockRef.current) return;
+  const handlePick = (side: Side) => {
+    if (pickLockRef.current || roundIntro) return;
     pickLockRef.current = true;
-    setIsTransitioning(true);
+    setPicked(side);
 
+    const [winScale, loseScale, loseOpacity] = side === 'top'
+      ? [topScale, bottomScale, bottomOpacity]
+      : [bottomScale, topScale, topOpacity];
+    winScale.value = withSequence(withSpring(1.04, { damping: 10, stiffness: 260 }), withTiming(1.02, { duration: 150 }));
+    loseScale.value = withTiming(0.94, { duration: 260 });
+    loseOpacity.value = withTiming(0.3, { duration: 260 });
+
+    const winner = side === 'top' ? currentRoundItems[currentIndex] : currentRoundItems[currentIndex + 1];
     const updatedNextRound = [...nextRoundItems, winner];
     gameStatsRef.current.picks += 1;
 
-    // Delay to allow animation
-    pickTimeoutRef.current = setTimeout(() => {
-      pickTimeoutRef.current = null;
+    later(() => {
       if (currentIndex + 2 >= currentRoundItems.length) {
         if (updatedNextRound.length === 1) {
-          // Tournament over
           const stats = gameStatsRef.current;
           stats.completed = true;
           analytics.track('arena_game_completed', {
             category: categoryName,
             bracket_size: stats.bracketSize,
-            winner_id: String(updatedNextRound[0].item_id),
-            winner_name: String(updatedNextRound[0].name || ''),
+            winner_id: String(winner.item_id),
+            winner_name: String(winner.name || ''),
             seconds_played: Math.round((Date.now() - stats.startedAt) / 1000),
           });
           router.replace({
             pathname: '/arena/result',
             params: {
-              winnerId: String(updatedNextRound[0].item_id),
-              winnerName: String(updatedNextRound[0].name || ''),
-              winnerImage: String(updatedNextRound[0].image_url || ''),
-              category: String(categoryName || ''),
-              size: String(targetSize || '16'),
-            }
+              winnerId: String(winner.item_id),
+              winnerName: String(winner.name || ''),
+              winnerImage: String(winner.image_url || ''),
+              category: categoryName,
+              size: String(stats.bracketSize || targetSize),
+            },
           });
-        } else {
-          // New round
-          setCurrentRoundItems(updatedNextRound);
-          setNextRoundItems([]);
-          setCurrentIndex(0);
-          updateRoundName(updatedNextRound.length);
-          progressWidth.value = withTiming(1 / (updatedNextRound.length / 2), { duration: 400 });
-          setMatchKey(prev => prev + 1);
+          return;
         }
+        setCurrentRoundItems(updatedNextRound);
+        setNextRoundItems([]);
+        setCurrentIndex(0);
+        showRoundIntro(updatedNextRound.length);
       } else {
-        // Next match in same round
         setNextRoundItems(updatedNextRound);
-        const newIdx = currentIndex + 2;
-        setCurrentIndex(newIdx);
-        const totalInRound = currentRoundItems.length / 2;
-        const matchNum = (newIdx / 2) + 1;
-        progressWidth.value = withTiming(matchNum / totalInRound, { duration: 400 });
-        setMatchKey(prev => prev + 1);
+        setCurrentIndex(currentIndex + 2);
       }
+      resetCards();
+      setPicked(null);
+      setMatchKey(k => k + 1);
       pickLockRef.current = false;
-      setIsTransitioning(false);
-    }, 250);
+    }, PICK_FEEDBACK_MS);
   };
 
   if (loading) {
     return (
-      <View style={[styles.centerContainer, { backgroundColor: colors.background }]}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FACC15" />
-          <Text style={[styles.loadingText, { color: colors.subtext }]}>
-            Loading contestants...
-          </Text>
-        </View>
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <VsMark size={64} />
+        <ActivityIndicator color={ARENA_GOLD} style={{ marginTop: 20 }} />
+        <Text style={[styles.loadingText, { color: colors.subtext }]}>{t('arena.loading_contestants')}</Text>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={[styles.centerContainer, { backgroundColor: colors.background, padding: 20 }]}>
-        <View style={styles.errorBox}>
-          <Ionicons name="warning" size={48} color="#EF4444" style={{ marginBottom: 16 }} />
-          <Text style={[styles.errorText, { color: colors.text }]}>{error}</Text>
-          <TouchableOpacity style={styles.errorBackButton} onPress={() => router.back()}>
-            <Text style={styles.backText}>{t('arena.go_back') || 'Go Back'}</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={[styles.center, { backgroundColor: colors.background, padding: 24 }]}>
+        <Ionicons name="warning" size={44} color="#EF4444" />
+        <Text style={[styles.errorText, { color: colors.text }]}>{error}</Text>
+        <TouchableOpacity style={[styles.errorBtn, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={() => router.back()}>
+          <Text style={[styles.errorBtnText, { color: colors.text }]}>{t('arena.go_back')}</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   const item1 = currentRoundItems[currentIndex];
   const item2 = currentRoundItems[currentIndex + 1];
-
   if (!item1 || !item2) return null;
 
-  const totalMatchesInRound = currentRoundItems.length / 2;
-  const currentMatch = (currentIndex / 2) + 1;
+  const totalMatches = currentRoundItems.length / 2;
+  const currentMatch = currentIndex / 2 + 1;
+  const roundLabel = getRoundLabel(currentRoundItems.length, t);
+  const isFinal = currentRoundItems.length === 2;
 
-  // Get full resolution image
-  const getFullImage = (url: string) => {
-    if (!url) return '';
-    return url;
+  const sideWidth = cardSize ? cardSize.width - Math.min(cardSize.width, cardSize.height * POSTER_ASPECT) : 0;
+  const sideLayout = sideWidth >= MIN_SIDE_WIDTH;
+
+  // Shrink the side name so its longest word fits on one line instead of breaking mid-word
+  const sideNameFont = (name: string) => {
+    const longest = Math.max(...String(name || '').split(/\s+/).map(w => w.length), 1);
+    const fontSize = Math.max(11, Math.min(17, Math.floor((sideWidth - 24) / (longest * 0.66))));
+    return { fontSize, lineHeight: Math.round(fontSize * 1.35) };
+  };
+
+  const renderCard = (item: any, side: Side) => {
+    const isWinner = picked === side;
+    const posterOnLeft = side === 'top';
+    return (
+      <>
+        {sideLayout ? (
+          <>
+            <PosterImage
+              uri={item.image_url}
+              style={StyleSheet.absoluteFill}
+              posterInset={posterOnLeft ? { right: sideWidth } : { left: sideWidth }}
+              priority="high"
+            />
+            <LinearGradient
+              colors={posterOnLeft ? ['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.6)'] : ['rgba(0,0,0,0.6)', 'rgba(0,0,0,0.1)']}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={[styles.sideColumn, { width: sideWidth }, posterOnLeft ? { right: 0 } : { left: 0 }]}
+            />
+            <View style={[styles.sideColumn, styles.sideName, { width: sideWidth }, posterOnLeft ? { right: 0 } : { left: 0 }]}>
+              <Text style={[styles.sideNameText, sideNameFont(item.name)]} numberOfLines={4}>{item.name}</Text>
+            </View>
+          </>
+        ) : (
+          <>
+            <PosterImage
+              uri={item.image_url}
+              style={StyleSheet.absoluteFill}
+              posterInset={side === 'top' ? { top: NAME_OVERLAY_HEIGHT } : { bottom: NAME_OVERLAY_HEIGHT }}
+              priority="high"
+            />
+            <LinearGradient
+              colors={side === 'top' ? ['rgba(0,0,0,0.9)', 'transparent'] : ['transparent', 'rgba(0,0,0,0.9)']}
+              style={[styles.nameShade, side === 'top' ? { top: 0 } : { bottom: 0 }]}
+            />
+            <View style={[styles.stackedName, side === 'top' ? { top: 0 } : { bottom: 0 }]}>
+              <Text style={styles.nameText} numberOfLines={2}>{item.name}</Text>
+            </View>
+          </>
+        )}
+        {/* Selection ring + badge */}
+        <View
+          pointerEvents="none"
+          style={[styles.ring, { borderColor: isWinner ? ARENA_GOLD : 'rgba(255,255,255,0.08)', borderWidth: isWinner ? 3 : 1 }]}
+        />
+        {isWinner && (
+          <Animated.View entering={ZoomIn.duration(220)} style={styles.winBadge}>
+            <Ionicons name="checkmark" size={20} color="#000" />
+          </Animated.View>
+        )}
+      </>
+    );
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
-      {/* Header */}
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <TouchableOpacity onPress={handleQuit} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color={colors.text} />
-        </TouchableOpacity>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
+      {/* Category glow behind the stage */}
+      <LinearGradient
+        colors={[`${cat.color}${isDark ? '33' : '26'}`, 'transparent']}
+        style={styles.stageGlow}
+        pointerEvents="none"
+      />
 
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleQuit} style={[styles.iconBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }]}>
+          <Ionicons name="close" size={20} color={colors.text} />
+        </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Text style={[styles.roundText, { color: colors.text }]}>{roundName}</Text>
+          <View style={[styles.roundPill, { backgroundColor: isFinal ? ARENA_GOLD : `${cat.color}26` }]}>
+            {isFinal && <Ionicons name="trophy" size={12} color="#000" />}
+            <Text style={[styles.roundText, { color: isFinal ? '#000' : (isDark ? '#FFF' : colors.text) }]} numberOfLines={1}>
+              {roundLabel}
+            </Text>
+          </View>
           <Text style={[styles.matchText, { color: colors.subtext }]}>
-            {t('arena.match') || 'Match'} {currentMatch}/{totalMatchesInRound}
+            {t('arena.match')} {currentMatch}/{totalMatches}
           </Text>
         </View>
-
-        <TouchableOpacity
-          onPress={handleQuit}
-          style={[
-            styles.quitPill,
-            {
-              backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.1)',
-              borderColor: isDark ? 'rgba(239, 68, 68, 0.35)' : 'rgba(239, 68, 68, 0.25)',
-            }
-          ]}
-        >
-          <Ionicons name="exit-outline" size={15} color="#EF4444" style={{ marginRight: 4 }} />
-          <Text style={styles.quitPillText}>{t('arena.quit_button') || 'Quit'}</Text>
-        </TouchableOpacity>
+        <View style={[styles.iconBtn, { backgroundColor: `${cat.color}22` }]}>
+          <Ionicons name={cat.icon as any} size={18} color={cat.color} />
+        </View>
       </View>
 
-      {/* Animated Progress Bar */}
-      <View style={[styles.progressContainer, { backgroundColor: isDark ? 'rgba(250,204,21,0.1)' : 'rgba(250,204,21,0.15)' }]}>
-        <Animated.View style={[styles.progressBar, progressAnimStyle]}>
-          <LinearGradient
-            colors={['#FACC15', '#F59E0B']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.progressGradient}
+      {/* Match pips: done / current / upcoming in this round */}
+      <View style={styles.pipRow}>
+        {Array.from({ length: totalMatches }).map((_, i) => (
+          <View
+            key={i}
+            style={[
+              styles.pip,
+              {
+                backgroundColor:
+                  i < currentMatch - 1 ? ARENA_GOLD : i === currentMatch - 1 ? cat.color : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'),
+                flex: i === currentMatch - 1 ? 2 : 1,
+              },
+            ]}
           />
+        ))}
+      </View>
+
+      {/* Stage */}
+      <View style={styles.stage} key={matchKey}>
+        <Animated.View entering={SlideInLeft.duration(320)} style={[styles.cardWrap, topStyle]}>
+          <Pressable
+            style={styles.card}
+            onPress={() => handlePick('top')}
+            onLayout={(e) => {
+              const { width: w, height: h } = e.nativeEvent.layout;
+              if (!cardSize || cardSize.width !== w || cardSize.height !== h) setCardSize({ width: w, height: h });
+            }}
+          >
+            {renderCard(item1, 'top')}
+          </Pressable>
+        </Animated.View>
+
+        <View style={styles.vsRow} pointerEvents="none">
+          <View style={[styles.vsLine, { backgroundColor: isDark ? 'rgba(250,204,21,0.25)' : 'rgba(0,0,0,0.1)' }]} />
+          <Animated.View style={vsStyle}>
+            <VsMark size={58} />
+          </Animated.View>
+          <View style={[styles.vsLine, { backgroundColor: isDark ? 'rgba(250,204,21,0.25)' : 'rgba(0,0,0,0.1)' }]} />
+        </View>
+
+        <Animated.View entering={SlideInRight.duration(320)} style={[styles.cardWrap, bottomStyle]}>
+          <Pressable style={styles.card} onPress={() => handlePick('bottom')}>
+            {renderCard(item2, 'bottom')}
+          </Pressable>
         </Animated.View>
       </View>
 
-      {/* VS Arena */}
-      <View style={styles.arena} key={matchKey}>
-        {/* Top Card */}
-        <TouchableOpacity
-          style={styles.card}
-          activeOpacity={0.85}
-          onPress={() => handlePick(item1, item2)}
-          disabled={isTransitioning}
-        >
-          <Animated.View entering={SlideInLeft.duration(450).springify()} style={styles.cardInner}>
-            <Image
-              source={{ uri: item1.image_url }}
-              style={styles.cardImage}
-              contentFit="cover"
-              priority="high"
-              cachePolicy="memory-disk"
-              transition={200}
-            />
-            {/* Top Gradient for text readability */}
-            <LinearGradient
-              colors={['rgba(0,0,0,0.88)', 'rgba(0,0,0,0.4)', 'transparent']}
-              style={styles.cardGradientTop}
-            />
-            {/* Name overlay at top */}
-            <View style={styles.nameContainerTop}>
-              <Text style={styles.nameText} numberOfLines={2}>{item1.name}</Text>
-            </View>
-            {/* Tap hint */}
-            <View style={styles.tapHintTop}>
-              <Ionicons name="hand-left" size={14} color="rgba(255,255,255,0.7)" />
-            </View>
-          </Animated.View>
-        </TouchableOpacity>
+      {matchKey === 0 && !roundIntro && (
+        <Animated.Text entering={FadeIn.delay(200)} style={[styles.hint, { color: colors.subtext }]}>
+          {t('arena.tap_to_pick')}
+        </Animated.Text>
+      )}
 
-        {/* VS Badge */}
-        <View style={styles.vsContainer}>
-          <Animated.View style={[styles.vsBadge, vsAnimatedStyle]}>
-            <LinearGradient
-              colors={['#EF4444', '#DC2626']}
-              style={styles.vsGradient}
-            >
-              <Text style={styles.vsText}>VS</Text>
-            </LinearGradient>
+      {/* Round intro overlay */}
+      {roundIntro && (
+        <Animated.View entering={FadeIn.duration(180)} exiting={FadeOut.duration(220)} style={styles.introOverlay}>
+          <Animated.View entering={ZoomIn.duration(420).springify().damping(12)} style={styles.introInner}>
+            <VsMark size={72} />
+            <Text style={styles.introText}>{roundIntro}</Text>
+            <Text style={[styles.introSub, { color: cat.color }]}>{t(cat.labelKey)}</Text>
           </Animated.View>
-          {/* Bottom Line */}
-        <View style={[styles.vsLine, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)', top: '75%' }]} />
-      </View>
-
-        {/* Bottom Card */}
-        <TouchableOpacity
-          style={styles.card}
-          activeOpacity={0.85}
-          onPress={() => handlePick(item2, item1)}
-          disabled={isTransitioning}
-        >
-          <Animated.View entering={SlideInRight.duration(450).springify()} style={styles.cardInner}>
-            <Image
-              source={{ uri: item2.image_url }}
-              style={styles.cardImage}
-              contentFit="cover"
-              priority="high"
-              cachePolicy="memory-disk"
-              transition={200}
-            />
-            {/* Bottom Gradient for text readability */}
-            <LinearGradient
-              colors={['transparent', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0.88)']}
-              style={styles.cardGradientBottom}
-            />
-            {/* Name overlay at bottom */}
-            <View style={styles.nameContainerBottom}>
-              <Text style={styles.nameText} numberOfLines={2}>{item2.name}</Text>
-            </View>
-            <View style={styles.tapHintBottom}>
-              <Ionicons name="hand-left" size={14} color="rgba(255,255,255,0.7)" />
-            </View>
-          </Animated.View>
-        </TouchableOpacity>
-      </View>
+        </Animated.View>
+      )}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingContainer: {
-    alignItems: 'center',
-    gap: 12,
-  },
-  loadingText: {
-    fontFamily: 'Poppins_500Medium',
-    fontSize: 14,
-  },
-  container: {
-    flex: 1,
-  },
-  // Header
+  container: { flex: 1 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  loadingText: { fontFamily: 'Poppins_500Medium', fontSize: 13, marginTop: 10 },
+  errorText: { fontFamily: 'Poppins_500Medium', fontSize: 15, textAlign: 'center', marginVertical: 20, lineHeight: 22 },
+  errorBtn: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 14, borderWidth: 1 },
+  errorBtnText: { fontFamily: 'Poppins_600SemiBold', fontSize: 14 },
+
+  stageGlow: { position: 'absolute', top: 0, left: 0, right: 0, height: 260 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
+    paddingTop: 6,
   },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  headerCenter: {
-    alignItems: 'center',
-  },
-  roundText: {
-    fontFamily: 'Poppins_700Bold',
-    fontSize: 16,
-    letterSpacing: 0.5,
-  },
-  matchText: {
-    fontFamily: 'Poppins_500Medium',
-    fontSize: 12,
-  },
-  quitPill: {
+  iconBtn: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
+  headerCenter: { alignItems: 'center', flex: 1, marginHorizontal: 10 },
+  roundPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    borderWidth: 1,
+    gap: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 999,
   },
-  quitPillText: {
-    color: '#EF4444',
-    fontFamily: 'Poppins_600SemiBold',
-    fontSize: 12,
-  },
-  // Progress
-  progressContainer: {
-    height: 3,
-    width: '100%',
-    overflow: 'hidden',
-  },
-  progressBar: {
-    height: '100%',
-    overflow: 'hidden',
-  },
-  progressGradient: {
-    flex: 1,
-  },
-  // Arena
-  arena: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 16,
-    gap: 0,
+  roundText: { fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 0.8 },
+  matchText: { fontFamily: 'Poppins_500Medium', fontSize: 11, marginTop: 2 },
+
+  pipRow: { flexDirection: 'row', gap: 3, paddingHorizontal: 16, marginTop: 10 },
+  pip: { height: 4, borderRadius: 2 },
+
+  stage: { flex: 1, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
+  cardWrap: { flex: 1 },
+  card: { flex: 1, borderRadius: 24, overflow: 'hidden', backgroundColor: '#111' },
+  ring: { ...StyleSheet.absoluteFillObject, borderRadius: 24 },
+  winBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: ARENA_GOLD,
+    alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: ARENA_GOLD,
+    shadowOpacity: 0.7,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 8,
   },
-  card: {
-    flex: 1,
-    maxHeight: (height - 200) / 2,
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
-  cardInner: {
-    width: '100%',
-    height: '100%',
-    position: 'relative',
-  },
-  cardImage: {
-    width: '100%',
-    height: '100%',
-  },
-  cardGradientTop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '50%',
-  },
-  cardGradientBottom: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: '50%',
-  },
-  nameContainerTop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    padding: 14,
-    paddingTop: 12,
-  },
-  nameContainerBottom: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 14,
-    paddingBottom: 12,
-  },
+  nameShade: { position: 'absolute', left: 0, right: 0, height: '45%' },
+  stackedName: { position: 'absolute', left: 0, right: 0, paddingHorizontal: 18, paddingVertical: 14 },
   nameText: {
     color: '#FFF',
     fontSize: 18,
     fontFamily: 'Poppins_700Bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.75)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 8,
+  },
+  sideColumn: { position: 'absolute', top: 0, bottom: 0 },
+  sideName: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
+  sideNameText: {
+    color: '#FFF',
+    fontSize: 17,
+    lineHeight: 23,
+    fontFamily: 'Poppins_700Bold',
     textAlign: 'center',
-    paddingHorizontal: 8,
+    textShadowColor: 'rgba(0,0,0,0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 8,
   },
-  tapHintTop: {
-    position: 'absolute',
-    bottom: 12,
-    right: 12,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tapHintBottom: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  // VS Badge
-  vsContainer: {
-    height: 0,
+
+  vsRow: {
+    height: 14,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 20,
+    gap: 6,
   },
-  vsBadge: {
-    position: 'absolute',
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    overflow: 'hidden',
-    shadowColor: '#EF4444',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 15,
-  },
-  vsGradient: {
-    flex: 1,
+  vsLine: { flex: 1, height: 1 },
+
+  hint: { textAlign: 'center', fontFamily: 'Poppins_500Medium', fontSize: 12, paddingBottom: 6 },
+
+  introOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(5,5,8,0.82)',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: 'rgba(0,0,0,0.3)',
-    borderRadius: 26,
+    zIndex: 50,
   },
-  vsText: {
+  introInner: { alignItems: 'center', paddingHorizontal: 24 },
+  introText: {
     color: '#FFF',
-    fontFamily: 'Poppins_800ExtraBold',
-    fontSize: 16,
-    letterSpacing: 1,
-  },
-  vsLine: {
-    position: 'absolute',
-    height: 1,
-    left: 20,
-    right: 20,
-    zIndex: -1,
-  },
-  // Error
-  errorBox: {
-    alignItems: 'center',
-  },
-  errorText: {
-    fontFamily: 'Poppins_500Medium',
-    fontSize: 15,
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 34,
+    letterSpacing: 1.5,
     textAlign: 'center',
-    marginBottom: 24,
-    lineHeight: 22,
+    marginTop: 18,
   },
-  errorBackButton: {
-    backgroundColor: '#374151',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 12,
-  },
-  backText: {
-    color: '#FFF',
-    fontFamily: 'Poppins_600SemiBold',
-    fontSize: 15,
-  },
+  introSub: { fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 1, marginTop: 4, textAlign: 'center' },
 });

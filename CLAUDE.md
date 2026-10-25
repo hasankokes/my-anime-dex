@@ -41,7 +41,7 @@ Claude performs GitHub and Supabase operations directly in this repo.
 - Always install current Expo-compatible package versions (`npx expo install <pkg>`).
 - **Ask before changing anything in Supabase** (schema, RLS, functions, data).
 - Respect theme colors: new components must use `useTheme().colors` / `isDark` from `context/ThemeContext.tsx` so they work in light and dark mode (primary is `#FACC15`, default theme is dark).
-- Every new module/feature must add strings for **all** app languages in `lib/i18n.ts`: `en, tr, ja, ru, de, ar, es, pt, id, hi`.
+- Every new module/feature must add strings for **all** app languages in `lib/i18n.ts`: `en, tr, ja, ru, de, ar, es, pt, id, hi, fr, it, pl, vi, th`.
 
 ## Architecture
 

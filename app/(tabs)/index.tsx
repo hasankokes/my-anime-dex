@@ -14,17 +14,19 @@ import {
   ScrollView,
   Alert,
   useWindowDimensions,
-  Animated
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
+import { getCurrentSeason } from '../../services/anilist/api';
 import { AnimeCard } from '../../components/AnimeCard';
 import { ForYouHeroCard } from '../../components/Home/ForYouHeroCard';
 import { AnimePulse } from '../../components/Home/AnimePulse';
 import { DiceRollModal } from '../../components/Home/DiceRollModal';
+import { ArenaHomeBanner } from '../../components/Arena/ArenaHomeBanner';
+import { ContentCardSlot } from '../../components/ContentCard/ContentCardSlot';
 import { useTheme } from '../../context/ThemeContext';
 import { HeaderAvatar } from '../../components/HeaderAvatar';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -32,9 +34,10 @@ import { useNetwork } from '../../context/NetworkContext';
 import { useAuth } from '../../context/AuthProvider';
 import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../context/LanguageContext';
-import { useWalkthrough } from '../../context/WalkthroughContext';
+import { useWalkthroughStatus, useWalkthroughTargets, useWalkthroughAutoStart } from '../../context/WalkthroughContext';
 import { recommendationService } from '../../services/recommendationService';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
+import { useAniListStatus } from '../../hooks/useAniListStatus';
 import { analytics, queryShape } from '../../lib/analytics';
 
 export default function HomeScreen() {
@@ -45,23 +48,8 @@ export default function HomeScreen() {
   const { session, avatarUrl } = useAuth();
   const requireAuth = useRequireAuth();
   const { t } = useLanguage();
-  const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, resetKey } = useWalkthrough();
+  const { isActive: walkthroughActive, activeWalkthroughId } = useWalkthroughStatus();
   const flatListRef = useRef<FlatList>(null);
-
-  // FAB Animation (Shake instead of spin)
-  const shakeAnim = useRef(new Animated.Value(0)).current;
-
-  const handleFabPress = () => {
-    Animated.sequence([
-      Animated.timing(shakeAnim, { toValue: 6, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: -6, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: 6, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true })
-    ]).start(() => {
-      analytics.track('home_section_clicked', { section: 'arena_fab' });
-      router.push('/arena/setup');
-    });
-  };
 
   // Responsive columns: 2 for phones, 3 for tablets, 4 for large tablets
   const { width: screenWidth } = useWindowDimensions();
@@ -77,38 +65,33 @@ export default function HomeScreen() {
   const themeToggleRef = useRef<View>(null);
   const profileRef = useRef<View>(null);
 
-  // Measure element positions for walkthrough
-  const measureRef = useCallback((ref: React.RefObject<View | null>, stepIndex: number) => {
-    if (ref.current) {
-      ref.current.measureInWindow((x, y, width, height) => {
-        if (width > 0 && height > 0) {
-          registerStepLayout(stepIndex, { x, y, width, height });
-        }
-      });
-    }
-  }, [registerStepLayout]);
+  const searchButtonRef = useRef<View>(null);
+  const arenaRef = useRef<View>(null);
+  const trendingToggleRef = useRef<View>(null);
+  const scrollOffsetRef = useRef(0);
 
-  // Auto-trigger walkthrough on first launch
+  useWalkthroughTargets(
+    'home',
+    {
+      logo: logoRef, search: searchButtonRef, themeToggle: themeToggleRef, profile: profileRef,
+      pulse: pulseRef, myLists: myListsRef, discover: discoverRef, rollDice: rollDiceRef,
+      arena: arenaRef, trending: trendingRef, trendingToggle: trendingToggleRef,
+    },
+    (dy) => {
+      const offset = Math.max(0, scrollOffsetRef.current + dy);
+      if (Math.abs(offset - scrollOffsetRef.current) < 1) return false;
+      flatListRef.current?.scrollToOffset({ offset, animated: true });
+      return true;
+    },
+  );
+  useWalkthroughAutoStart('home', true, 1200);
+
+  // The tour walks the header top-down, so start it from the top of the feed
   useEffect(() => {
-    const timer = setTimeout(async () => {
-      const isFirst = await checkFirstLaunch('home');
-      if (isFirst && !walkthroughActive) {
-        measureRef(logoRef, 0);
-        measureRef(pulseRef, 1);
-        measureRef(discoverRef, 2);
-        measureRef(rollDiceRef, 3);
-        measureRef(myListsRef, 4);
-        measureRef(trendingRef, 5);
-        measureRef(themeToggleRef, 6);
-        measureRef(profileRef, 7);
-        setTimeout(() => startWalkthrough('home'), 300);
-      }
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, [resetKey]);
-
-
-
+    if (walkthroughActive && activeWalkthroughId === 'home') {
+      flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+    }
+  }, [walkthroughActive, activeWalkthroughId]);
 
   // Categories
   const CATEGORIES = [
@@ -126,10 +109,10 @@ export default function HomeScreen() {
 
   const [animes, setAnimes] = useState<Anime[]>([]);
   const [trendingAnimes, setTrendingAnimes] = useState<Anime[]>([]); // Trending State
-  const [trendingMode, setTrendingMode] = useState<'trending' | 'fall' | 'upcoming'>('trending');
-  const [fallAnimes, setFallAnimes] = useState<Anime[]>([]);
-  const [infiniteFall, setInfiniteFall] = useState<Anime[]>([]);
-  const [fallLoading, setFallLoading] = useState(false);
+  const [trendingMode, setTrendingMode] = useState<'trending' | 'season' | 'upcoming'>('trending');
+  const [seasonAnimes, setSeasonAnimes] = useState<Anime[]>([]);
+  const [infiniteSeason, setInfiniteSeason] = useState<Anime[]>([]);
+  const [seasonLoading, setSeasonLoading] = useState(false);
   const [upcomingAnimes, setUpcomingAnimes] = useState<Anime[]>([]);
   const [infiniteUpcoming, setInfiniteUpcoming] = useState<Anime[]>([]);
   const [upcomingLoading, setUpcomingLoading] = useState(false);
@@ -219,7 +202,7 @@ export default function HomeScreen() {
       setPage(pageNum);
 
     } catch (error) {
-      console.error('Error fetching animes:', error);
+      console.warn('Error fetching animes:', error);
       setHasNextPage(false); // To prevent infinite loadMore loops on error
     } finally {
       setLoading(false);
@@ -262,24 +245,25 @@ export default function HomeScreen() {
       setTrendingAnimes(shuffled);
       setInfiniteTrending(repeated);
     } catch (error) {
-      console.error('Error fetching trending:', error);
+      console.warn('Error fetching trending:', error);
     } finally {
       setTrendingLoading(false);
     }
   };
 
-  // Fetch Fall 2026 Logic
-  const fetchFall2026 = async () => {
+  // Fetch current season (computed from today's date, so it rolls over automatically)
+  const fetchCurrentSeason = async () => {
     try {
-      setFallLoading(true);
-      const response = await jikanApi.getSeasonAnime(2026, 'fall', 1);
+      setSeasonLoading(true);
+      const { season, year } = getCurrentSeason();
+      const response = await jikanApi.getSeasonAnime(year, season, 1);
       const { shuffled, repeated } = processInfiniteData(response.data);
-      setFallAnimes(shuffled);
-      setInfiniteFall(repeated);
+      setSeasonAnimes(shuffled);
+      setInfiniteSeason(repeated);
     } catch (error) {
-      console.error('Error fetching fall anime:', error);
+      console.warn('Error fetching season anime:', error);
     } finally {
-      setFallLoading(false);
+      setSeasonLoading(false);
     }
   };
 
@@ -292,17 +276,20 @@ export default function HomeScreen() {
       setUpcomingAnimes(shuffled);
       setInfiniteUpcoming(repeated);
     } catch (error) {
-      console.error('Error fetching upcoming anime:', error);
+      console.warn('Error fetching upcoming anime:', error);
     } finally {
       setUpcomingLoading(false);
     }
   };
 
+  const currentSeason = getCurrentSeason();
+  const seasonTitle = t(`home.seasons.${currentSeason.season.toLowerCase()}`, { year: currentSeason.year });
+
   const toggleTrendingMode = () => {
     if (trendingMode === 'trending') {
-      setTrendingMode('fall');
-      if (fallAnimes.length === 0) fetchFall2026();
-    } else if (trendingMode === 'fall') {
+      setTrendingMode('season');
+      if (seasonAnimes.length === 0) fetchCurrentSeason();
+    } else if (trendingMode === 'season') {
       setTrendingMode('upcoming');
       if (upcomingAnimes.length === 0) fetchUpcoming();
     } else {
@@ -352,6 +339,16 @@ export default function HomeScreen() {
     fetchAnimes(1, true, activeQuery, selectedCategory);
     fetchTrending(); // Refresh trending too
   }, [activeQuery, selectedCategory]);
+
+  // Reload automatically once AniList comes back after an outage
+  const aniListStatus = useAniListStatus();
+  const prevAniListStatus = useRef(aniListStatus);
+  useEffect(() => {
+    if (prevAniListStatus.current === 'down' && aniListStatus === 'ok') {
+      onRefresh();
+    }
+    prevAniListStatus.current = aniListStatus;
+  }, [aniListStatus, onRefresh]);
 
   const loadMore = () => {
     if (!loadingMore && !loading && hasNextPage) {
@@ -415,7 +412,6 @@ export default function HomeScreen() {
         {...({ collapsable: false } as any)}
         style={styles.headerLeft}
         onPress={scrollToTop}
-        onLayout={() => measureRef(logoRef, 0)}
       >
         <Image
           source={require('../../assets/images/header-logo.png')}
@@ -431,7 +427,7 @@ export default function HomeScreen() {
       {/* Right: Controls */}
       <View style={styles.headerRight}>
         {/* Search Icon */}
-        <TouchableOpacity style={styles.iconButton} onPress={() => {
+        <TouchableOpacity ref={searchButtonRef as any} {...({ collapsable: false } as any)} style={styles.iconButton} onPress={() => {
           setIsSearchVisible(prev => {
             const next = !prev;
             if (next) {
@@ -456,7 +452,6 @@ export default function HomeScreen() {
           {...({ collapsable: false } as any)}
           style={styles.iconButton}
           onPress={toggleTheme}
-          onLayout={() => measureRef(themeToggleRef, 6)}
         >
           {/* Changed to nicer outline icons based on user feedback */}
           <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
@@ -468,7 +463,6 @@ export default function HomeScreen() {
           {...({ collapsable: false } as any)}
           style={styles.profileButton}
           onPress={() => requireAuth('profile', () => router.push('/(tabs)/profile'))}
-          onLayout={() => measureRef(profileRef, 7)}
         >
           <HeaderAvatar uri={avatarUrl} />
         </TouchableOpacity>
@@ -542,7 +536,6 @@ export default function HomeScreen() {
             onPress={() => setIsPulseVisible(!isPulseVisible)}
             ref={pulseRef as any}
             {...({ collapsable: false } as any)}
-            onLayout={() => measureRef(pulseRef, 1)}
           >
             <Ionicons name="pulse" size={20} color="#EF4444" />
             <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -580,9 +573,8 @@ export default function HomeScreen() {
               gap: 12
             }}
             onPress={() => requireAuth('lists', () => router.push('/lists'))}
-            onLayout={() => measureRef(myListsRef, 4)}
           >
-            <Ionicons name="bookmarks" size={20} color="#FACC15" />
+            <Ionicons name="albums" size={20} color="#FACC15" />
             <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: colors.text }}>
               {t('profile.myLists')}
             </Text>
@@ -601,7 +593,8 @@ export default function HomeScreen() {
             topGenre={topGenre}
             onPress={() => {
               analytics.track('home_section_clicked', { section: 'for_you' });
-              requireAuth('recommendations', () => router.push('/recommendations'));
+              // Guests can discover too: they pick genres instead of using a list
+              router.push('/recommendations');
             }}
             onDicePress={() => {
               analytics.track('home_section_clicked', { section: 'dice' });
@@ -609,7 +602,19 @@ export default function HomeScreen() {
             }}
             discoverRef={discoverRef}
             rollDiceRef={rollDiceRef}
-            measureRef={measureRef}
+          />
+        </View>
+      )}
+
+      {!isSearching && <ContentCardSlot placement="home" style={{ marginTop: 12 }} />}
+
+      {!isSearching && (
+        <View ref={arenaRef} collapsable={false}>
+          <ArenaHomeBanner
+            onPress={() => {
+              analytics.track('home_section_clicked', { section: 'arena_banner' });
+              router.push('/arena/setup');
+            }}
           />
         </View>
       )}
@@ -626,15 +631,16 @@ export default function HomeScreen() {
           ref={trendingRef as any}
           collapsable={false}
           style={styles.trendingContainer}
-          onLayout={() => measureRef(trendingRef, 5)}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12, marginTop: 4, gap: 10 }}>
             <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 0 }]}>
               {trendingMode === 'trending' ? t('home.trending') :
-                trendingMode === 'fall' ? t('home.fall2026') :
+                trendingMode === 'season' ? seasonTitle :
                   t('home.upcoming')}
             </Text>
             <TouchableOpacity
+              ref={trendingToggleRef as any}
+              {...({ collapsable: false } as any)}
               onPress={toggleTrendingMode}
               style={{ padding: 4 }}
             >
@@ -642,12 +648,12 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          {(trendingLoading || fallLoading || upcomingLoading) ? (
+          {(trendingLoading || seasonLoading || upcomingLoading) ? (
             <ActivityIndicator size="small" color="#FACC15" style={{ height: 200 }} />
           ) : (
             <FlatList
               data={trendingMode === 'trending' ? infiniteTrending :
-                trendingMode === 'fall' ? infiniteFall :
+                trendingMode === 'season' ? infiniteSeason :
                   infiniteUpcoming}
               keyExtractor={(item, index) => `trending-${item.mal_id}-${index}-${trendingMode}`}
               horizontal
@@ -749,7 +755,7 @@ export default function HomeScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <FixedHeader />
+      {FixedHeader()}
       <FlatList
         ref={flatListRef}
         key={`grid-${numColumns}`}
@@ -782,27 +788,13 @@ export default function HomeScreen() {
         }
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="handled"
+        onScroll={(e) => { scrollOffsetRef.current = e.nativeEvent.contentOffset.y; }}
+        scrollEventThrottle={32}
       />
       <DiceRollModal
         visible={isDiceModalVisible}
         onClose={() => setIsDiceModalVisible(false)}
       />
-
-      {/* Anime Arena FAB */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={handleFabPress}
-        activeOpacity={0.8}
-      >
-        <Animated.View style={{ transform: [{ translateX: shakeAnim }], width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-          {/* İkonu daha belirgin yapmak için büyüttük ve paddingi azalttık */}
-          <Image
-            source={require('../../assets/anime_arena_fab_icon.png')}
-            style={{ width: '85%', height: '85%' }}
-            contentFit="contain"
-          />
-        </Animated.View>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -961,28 +953,5 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 12,
     fontFamily: 'Poppins_600SemiBold',
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 100, // Above the bottom tab bar
-    right: 20, // Positioned on the right side
-    width: 60,
-    height: 60,
-    backgroundColor: '#FACC15', // Sarı background
-    borderRadius: 16, // Kareye benzer, hafif yuvarlak köşeler
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 8,
-  },
-  fabGradient: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

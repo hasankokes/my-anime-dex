@@ -49,6 +49,8 @@ type AuthContextType = {
     signOut: () => Promise<void>;
     signUp: (email: string) => Promise<void>;
     avatarUrl: string | null;
+    /** profiles.is_pro — written only by the RevenueCat webhook; the premium source on web */
+    serverIsPro: boolean;
     refreshProfile: () => Promise<void>;
 };
 
@@ -61,6 +63,7 @@ const AuthContext = createContext<AuthContextType>({
     signOut: async () => { },
     signUp: async () => { },
     avatarUrl: null,
+    serverIsPro: false,
     refreshProfile: async () => { },
 });
 
@@ -70,6 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null); // State for avatarUrl
+    const [serverIsPro, setServerIsPro] = useState(false);
 
     const signIn = async (email: string) => {
         const { error } = await supabase.auth.signInWithOtp({ email });
@@ -80,6 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         analytics.track('logout');
         setSession(null);
         setAvatarUrl(null);
+        setServerIsPro(false);
         await supabase.auth.signOut();
     };
 
@@ -91,9 +96,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchProfile = async (userId: string, metadataAvatar?: string) => {
         const { data } = await supabase
             .from('profiles')
-            .select('avatar_url')
+            .select('avatar_url, is_pro')
             .eq('id', userId)
             .single();
+
+        setServerIsPro(!!data?.is_pro);
 
         if (data?.avatar_url) {
             setAvatarUrl(data.avatar_url);
@@ -140,6 +147,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 fetchProfile(session.user.id, session.user.user_metadata?.avatar_url);
             } else {
                 setAvatarUrl(null);
+                setServerIsPro(false);
             }
             setLoading(false);
         });
@@ -205,8 +213,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         signOut,
         signUp,
         avatarUrl,
+        serverIsPro,
         refreshProfile
-    }), [session, status, loading, avatarUrl]);
+    }), [session, status, loading, avatarUrl, serverIsPro]);
 
     return (
         <AuthContext.Provider value={contextValue}>

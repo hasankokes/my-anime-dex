@@ -1,5 +1,7 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Image, Alert, Platform } from 'react-native';
+import React, { useState, useCallback, useRef } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert, Platform } from 'react-native';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,45 +9,33 @@ import { supabase } from '../../lib/supabase';
 import { List } from '../../types/lists';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { useWalkthrough } from '../../context/WalkthroughContext';
+import { useWalkthroughTargets, useWalkthroughAutoStart } from '../../context/WalkthroughContext';
+
+// Lists come back with their item count and the first few covers for the mosaic
+type ListWithCovers = List & {
+    list_items?: { count: number }[];
+    covers?: { anime_image: string | null; position: number }[];
+};
+
+const LIST_SELECT = '*, list_items(count), covers:list_items(anime_image, position)';
+const COVER_LIMIT = 4;
 
 export default function MyListsScreen() {
     const router = useRouter();
     const { colors, isDark } = useTheme();
     const { t } = useLanguage();
-    const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, resetKey } = useWalkthrough();
-    const [lists, setLists] = useState<List[]>([]);
+    const [lists, setLists] = useState<ListWithCovers[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'my' | 'shared'>('my');
-    const [sharedLists, setSharedLists] = useState<List[]>([]);
+    const [sharedLists, setSharedLists] = useState<ListWithCovers[]>([]);
     const [refreshing, setRefreshing] = useState(false);
 
     // Walkthrough refs
     const addListButtonRef = useRef<View>(null);
     const tabFilterRef = useRef<View>(null);
 
-    const measureRef = useCallback((ref: React.RefObject<View | null>, stepIndex: number) => {
-        if (ref.current) {
-            ref.current.measureInWindow((x, y, width, height) => {
-                if (width > 0 && height > 0) {
-                    registerStepLayout(stepIndex, { x, y, width, height });
-                }
-            });
-        }
-    }, [registerStepLayout]);
-
-    // Auto-trigger walkthrough on first visit
-    useEffect(() => {
-        const timer = setTimeout(async () => {
-            const isFirst = await checkFirstLaunch('lists');
-            if (isFirst && !walkthroughActive) {
-                measureRef(addListButtonRef, 0);
-                measureRef(tabFilterRef, 1);
-                setTimeout(() => startWalkthrough('lists'), 300);
-            }
-        }, 1000);
-        return () => clearTimeout(timer);
-    }, [resetKey]);
+    useWalkthroughTargets('lists', { addListButton: addListButtonRef, tabFilter: tabFilterRef });
+    useWalkthroughAutoStart('lists', !loading);
 
     const fetchLists = async () => {
         try {
@@ -61,18 +51,22 @@ export default function MyListsScreen() {
             // Fetch My Lists
             const { data: myData, error: myError } = await supabase
                 .from('lists')
-                .select('*')
+                .select(LIST_SELECT)
                 .eq('user_id', session.user.id)
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false })
+                .order('position', { referencedTable: 'covers', ascending: true })
+                .limit(COVER_LIMIT, { referencedTable: 'covers' });
 
             if (myError) throw myError;
-            setLists(myData || []);
+            setLists((myData as ListWithCovers[]) || []);
 
             // Fetch Shared Lists
             const { data: sharedData, error: sharedError } = await supabase
                 .from('list_collaborators')
-                .select('list:lists(*)') // Select the related list data
-                .eq('user_id', session.user.id);
+                .select(`list:lists(${LIST_SELECT})`)
+                .eq('user_id', session.user.id)
+                .order('position', { referencedTable: 'list.covers', ascending: true })
+                .limit(COVER_LIMIT, { referencedTable: 'list.covers' });
 
             if (sharedError) throw sharedError;
 
@@ -145,44 +139,102 @@ export default function MyListsScreen() {
         }
     };
 
-    const renderItem = ({ item }: { item: List }) => (
-        <TouchableOpacity
-            style={[styles.listItem, { backgroundColor: colors.card, borderColor: colors.border }]}
-            onPress={() => router.push(`/lists/${item.id}`)}
-        >
-            <View style={styles.listIconContainer}>
-                <Ionicons name={activeTab === 'my' ? "list" : "people"} size={24} color="#FACC15" />
-            </View>
-            <View style={styles.listContent}>
-                <Text style={[styles.listTitle, { color: colors.text }]}>{item.title}</Text>
-                <Text style={[styles.listDescription, { color: colors.subtext }]} numberOfLines={1}>
-                    {item.description || 'No description'}
-                </Text>
-                <View style={styles.listMeta}>
-                    <Text style={[styles.metaText, { color: colors.subtext }]}>
-                        {item.is_public ? 'Public' : 'Private'}
-                    </Text>
-                    <Text style={[styles.metaText, { color: colors.subtext }]}>
-                        • {new Date(item.created_at).toLocaleDateString()}
-                    </Text>
+    const renderItem = ({ item }: { item: ListWithCovers }) => {
+        const covers = (item.covers || []).map(c => c.anime_image).filter((u): u is string => !!u);
+        const count = item.list_items?.[0]?.count ?? 0;
+        const isShared = activeTab === 'shared';
+
+        return (
+            <TouchableOpacity
+                activeOpacity={0.85}
+                style={[styles.listCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+                onPress={() => router.push(`/lists/${item.id}`)}
+            >
+                {/* Cover mosaic */}
+                <View style={styles.banner}>
+                    {covers.length > 0 ? (
+                        <View style={styles.mosaic}>
+                            {covers.map((uri, i) => (
+                                <Image
+                                    key={`${uri}-${i}`}
+                                    source={{ uri }}
+                                    style={[styles.mosaicImage, i > 0 && styles.mosaicDivider]}
+                                    contentFit="cover"
+                                    transition={200}
+                                />
+                            ))}
+                        </View>
+                    ) : (
+                        <LinearGradient
+                            colors={isDark ? ['#FACC15', '#F97316', '#7C2D12'] : ['#FDE68A', '#FACC15', '#F97316']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.emptyBanner}
+                        >
+                            <Ionicons name="sparkles" size={64} color="rgba(0,0,0,0.12)" style={styles.emptyBannerIcon} />
+                            <Text style={styles.emptyBannerText}>{t('lists.emptyList')}</Text>
+                        </LinearGradient>
+                    )}
+
+                    <LinearGradient
+                        colors={['transparent', 'rgba(0,0,0,0.85)']}
+                        style={styles.bannerShade}
+                        pointerEvents="none"
+                    />
+
+                    {/* Badges */}
+                    <View style={styles.badgeRow}>
+                        <View style={styles.badge}>
+                            <Ionicons name={item.is_public ? 'globe-outline' : 'lock-closed'} size={11} color="#FFF" />
+                            <Text style={styles.badgeText}>{item.is_public ? t('lists.public') : t('lists.private')}</Text>
+                        </View>
+                        {isShared && (
+                            <View style={[styles.badge, styles.badgeAccent]}>
+                                <Ionicons name="people" size={11} color="#000" />
+                            </View>
+                        )}
+                    </View>
+
+                    {/* Title over the covers */}
+                    <View style={styles.bannerFooter}>
+                        <Text style={styles.listTitle} numberOfLines={1}>{item.title}</Text>
+                        <View style={styles.countPill}>
+                            <Ionicons name="film" size={12} color="#000" />
+                            <Text style={styles.countText}>{count}</Text>
+                        </View>
+                    </View>
                 </View>
-            </View>
-            {activeTab === 'shared' ? (
-                <TouchableOpacity
-                    style={styles.leaveButton}
-                    onPress={(e) => {
-                        e.stopPropagation();
-                        leaveSharedList(item.id, item.title);
-                    }}
-                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                >
-                    <Ionicons name="exit-outline" size={20} color="#EF4444" />
-                </TouchableOpacity>
-            ) : (
-                <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
-            )}
-        </TouchableOpacity>
-    );
+
+                {/* Details */}
+                <View style={styles.cardBody}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.listDescription, { color: item.description ? colors.text : colors.subtext }]} numberOfLines={1}>
+                            {item.description || t('lists.noDescription')}
+                        </Text>
+                        <Text style={[styles.metaText, { color: colors.subtext }]}>
+                            {count} {t('lists.items')} • {new Date(item.created_at).toLocaleDateString()}
+                        </Text>
+                    </View>
+                    {isShared ? (
+                        <TouchableOpacity
+                            style={styles.leaveButton}
+                            onPress={(e) => {
+                                e.stopPropagation();
+                                leaveSharedList(item.id, item.title);
+                            }}
+                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        >
+                            <Ionicons name="exit-outline" size={18} color="#EF4444" />
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={[styles.goButton, { backgroundColor: isDark ? 'rgba(250, 204, 21, 0.12)' : 'rgba(250, 204, 21, 0.2)' }]}>
+                            <Ionicons name="arrow-forward" size={16} color={isDark ? '#FACC15' : '#A16207'} />
+                        </View>
+                    )}
+                </View>
+            </TouchableOpacity>
+        );
+    };
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -197,14 +249,13 @@ export default function MyListsScreen() {
                     style={[styles.addButton, { backgroundColor: '#FACC15' }]}
                     onPress={() => router.push('/lists/create')}
                     {...({ collapsable: false } as any)}
-                    onLayout={() => measureRef(addListButtonRef, 0)}
                 >
                     <Ionicons name="add" size={24} color="#000" />
                 </TouchableOpacity>
             </View>
 
             {/* Tabs / Filters */}
-            <View ref={tabFilterRef as any} collapsable={false} style={styles.tabContainer} onLayout={() => measureRef(tabFilterRef, 1)}>
+            <View ref={tabFilterRef as any} collapsable={false} style={styles.tabContainer}>
                 <TouchableOpacity
                     style={[
                         styles.filterPill,
@@ -258,15 +309,20 @@ export default function MyListsScreen() {
                 />
             ) : (
                 <View style={styles.emptyContainer}>
-                    <View style={[styles.emptyIconContainer, { backgroundColor: colors.card }]}>
-                        <Ionicons name={activeTab === 'my' ? "list-outline" : "people-outline"} size={48} color={colors.subtext} />
-                    </View>
+                    <LinearGradient
+                        colors={['#FACC15', '#F97316']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.emptyIconContainer}
+                    >
+                        <Ionicons name={activeTab === 'my' ? 'albums' : 'people'} size={40} color="#000" />
+                    </LinearGradient>
                     <Text style={[styles.emptyTitle, { color: colors.text }]}>
-                        {activeTab === 'my' ? 'No Lists Yet' : t('collaborators.noSharedLists')}
+                        {activeTab === 'my' ? t('lists.emptyTitle') : t('collaborators.noSharedLists')}
                     </Text>
                     <Text style={[styles.emptyText, { color: colors.subtext }]}>
                         {activeTab === 'my'
-                            ? 'Create your first custom anime list to share with others.'
+                            ? t('lists.emptyDesc')
                             : t('collaborators.sharedListsDesc')}
                     </Text>
                     {activeTab === 'my' && (
@@ -274,7 +330,8 @@ export default function MyListsScreen() {
                             style={[styles.createButton, { backgroundColor: '#FACC15' }]}
                             onPress={() => router.push('/lists/create')}
                         >
-                            <Text style={styles.createButtonText}>Create New List</Text>
+                            <Ionicons name="add" size={20} color="#000" />
+                            <Text style={styles.createButtonText}>{t('lists.createNew')}</Text>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -317,43 +374,132 @@ const styles = StyleSheet.create({
     listContainer: {
         padding: 20,
     },
-    listItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-        borderRadius: 16,
-        marginBottom: 12,
+    listCard: {
+        borderRadius: 20,
+        marginBottom: 16,
         borderWidth: 1,
+        overflow: 'hidden',
     },
-    listIconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
-        backgroundColor: 'rgba(250, 204, 21, 0.1)',
+    banner: {
+        height: 130,
+        position: 'relative',
+    },
+    mosaic: {
+        flex: 1,
+        flexDirection: 'row',
+    },
+    mosaicImage: {
+        flex: 1,
+        height: '100%',
+    },
+    mosaicDivider: {
+        borderLeftWidth: 2,
+        borderLeftColor: '#000',
+    },
+    emptyBanner: {
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 16,
     },
-    listContent: {
-        flex: 1,
+    emptyBannerIcon: {
+        position: 'absolute',
+        right: 16,
+        top: 8,
+        transform: [{ rotate: '-12deg' }],
+    },
+    emptyBannerText: {
+        fontSize: 12,
+        fontFamily: 'Poppins_600SemiBold',
+        color: 'rgba(0,0,0,0.45)',
+        textTransform: 'uppercase',
+        letterSpacing: 1.5,
+        marginBottom: 24,
+    },
+    bannerShade: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 80,
+    },
+    badgeRow: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        flexDirection: 'row',
+        gap: 6,
+    },
+    badge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 10,
+        backgroundColor: 'rgba(0,0,0,0.55)',
+    },
+    badgeAccent: {
+        backgroundColor: '#FACC15',
+    },
+    badgeText: {
+        fontSize: 11,
+        fontFamily: 'Poppins_600SemiBold',
+        color: '#FFF',
+    },
+    bannerFooter: {
+        position: 'absolute',
+        left: 14,
+        right: 14,
+        bottom: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
     },
     listTitle: {
-        fontSize: 16,
-        fontFamily: 'Poppins_600SemiBold',
-        marginBottom: 2,
+        flex: 1,
+        fontSize: 18,
+        fontFamily: 'Poppins_700Bold',
+        color: '#FFF',
+        textShadowColor: 'rgba(0,0,0,0.5)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 4,
+    },
+    countPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 12,
+        backgroundColor: '#FACC15',
+    },
+    countText: {
+        fontSize: 12,
+        fontFamily: 'Poppins_700Bold',
+        color: '#000',
+    },
+    cardBody: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 14,
+        paddingVertical: 12,
+        gap: 12,
     },
     listDescription: {
         fontSize: 13,
-        fontFamily: 'Poppins_400Regular',
-        marginBottom: 4,
-    },
-    listMeta: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        fontFamily: 'Poppins_500Medium',
+        marginBottom: 2,
     },
     metaText: {
         fontSize: 12,
-        fontFamily: 'Poppins_500Medium',
+        fontFamily: 'Poppins_400Regular',
+    },
+    goButton: {
+        width: 34,
+        height: 34,
+        borderRadius: 17,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     emptyContainer: {
         flex: 1,
@@ -362,9 +508,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
     },
     emptyIconContainer: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
+        width: 88,
+        height: 88,
+        borderRadius: 28,
+        transform: [{ rotate: '-6deg' }],
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 20,
@@ -382,6 +529,9 @@ const styles = StyleSheet.create({
         lineHeight: 20,
     },
     createButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
         paddingHorizontal: 24,
         paddingVertical: 12,
         borderRadius: 12,

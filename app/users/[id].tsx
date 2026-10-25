@@ -16,7 +16,15 @@ import { supabase } from '../../lib/supabase';
 import { Profile, UserAnimeStats } from '../../types';
 import { List } from '../../types/lists';
 import { useTheme } from '../../context/ThemeContext';
-import { getRank, getLevelProgress } from '../../lib/levelSystem';
+import { getRank } from '../../lib/levelSystem';
+import { LevelProgress, RankBadge, RankLadderSheet } from '../../components/Level/LevelComponents';
+import { useAppConfig } from '../../context/AppConfigProvider';
+import { loadUserStats, parseStatsCard, UserStats } from '../../services/statsService';
+import { ProfileStatsCard } from '../../components/Stats/ProfileStatsCard';
+import { useCosmetics } from '../../context/CosmeticsProvider';
+import { parseSelection, parseTop10, profileIsPremium, resolveDecor } from '../../lib/cosmetics';
+import { AvatarCutout, AvatarFrame, CUTOUT_WIDTH, DecoratedName, hasBanner, ProfileBanner } from '../../components/Profile/ProfileDecorations';
+import { Top10Showcase } from '../../components/Profile/Top10Showcase';
 
 export default function PublicProfileScreen() {
     const { id } = useLocalSearchParams();
@@ -32,6 +40,10 @@ export default function PublicProfileScreen() {
         days_watched: 0
     });
     const [publicLists, setPublicLists] = useState<List[]>([]);
+    const { config } = useAppConfig();
+    const [cardStats, setCardStats] = useState<UserStats | null>(null);
+    const [rankLadderVisible, setRankLadderVisible] = useState(false);
+    const cosmetics = useCosmetics();
 
     useEffect(() => {
         if (id) {
@@ -52,6 +64,14 @@ export default function PublicProfileScreen() {
 
             if (profileError) throw profileError;
             setProfile(profileData);
+
+            // Stats card: only for owners whose premium the server confirms, and only if they turned it on
+            const ownerIsPremium = profileIsPremium(profileData);
+            if (config.premium_stats && ownerIsPremium && parseStatsCard(profileData.stats_card).enabled) {
+                loadUserStats(String(id)).then(setCardStats).catch(() => setCardStats(null));
+            } else {
+                setCardStats(null);
+            }
 
             // 2. Fetch Stats
             console.log('Fetching stats for user:', id);
@@ -143,7 +163,10 @@ export default function PublicProfileScreen() {
     }
 
     const rank = getRank(profile.level || 1);
-    const progress = getLevelProgress(profile.xp || 0, profile.level || 1);
+    // Personalization shows only while the owner's premium is confirmed by the server
+    const ownerPremium = cosmetics.enabled && profileIsPremium(profile);
+    const decor = resolveDecor(parseSelection(profile.cosmetics), cosmetics.byId, ownerPremium);
+    const top10 = ownerPremium ? parseTop10(profile.top10) : [];
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -157,29 +180,45 @@ export default function PublicProfileScreen() {
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Profile Header */}
+                <ProfileBanner
+                    decor={decor}
+                    // Half the avatar block (+ the info container's top padding) rides up onto the banner
+                    overlap={(100 + (decor.frameColors ? 16 : 0) + (hasBanner(decor) ? CUTOUT_WIDTH * 2 : 0)) / 2 + 24}
+                />
                 <View style={styles.profileInfoContainer}>
-                    <View style={[
-                        styles.avatarContainer,
-                        {
-                            backgroundColor: colors.card,
-                            borderColor: rank.colorHex,
-                            borderWidth: rank.borderWidth,
-                        }
-                    ]}>
-                        <Image
-                            source={{ uri: profile.avatar_url || 'https://via.placeholder.com/150' }}
-                            style={styles.avatar}
+                    <AvatarCutout active={hasBanner(decor)} color={colors.background}>
+                    <AvatarFrame colors={decor.frameColors} size={8} animation={decor.frameAnimation} animate>
+                        <View style={[
+                            styles.avatarContainer,
+                            {
+                                backgroundColor: colors.card,
+                                borderColor: rank.colorHex,
+                                borderWidth: rank.borderWidth,
+                            },
+                            // A premium frame replaces the level ring and the inner gap
+                            decor.frameColors && styles.avatarInFrame,
+                        ]}>
+                            <Image
+                                source={{ uri: profile.avatar_url || 'https://via.placeholder.com/150' }}
+                                style={styles.avatar}
+                            />
+                        </View>
+                    </AvatarFrame>
+                    </AvatarCutout>
+
+                    <View style={{ marginTop: 12 }}>
+                        <DecoratedName
+                            name={profile.username || 'User'}
+                            decor={decor}
+                            defaultColor={colors.text}
+                            style={styles.decoratedName}
+                            badgeSize="md"
                         />
                     </View>
 
-                    <View style={{ marginTop: 12, alignItems: 'center' }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                            <Ionicons name="trophy" size={20} color={rank.colorHex} />
-                            <Text style={[styles.rankText, { color: rank.colorHex }]}>{rank.name}</Text>
-                        </View>
-                        <Text style={[styles.levelText, { color: colors.subtext }]}>
-                            Level {profile.level || 1} • {progress.current}/{progress.total} XP
-                        </Text>
+                    <View style={{ marginTop: 10, alignItems: 'center', width: '100%', paddingHorizontal: 40 }}>
+                        <RankBadge level={profile.level || 1} showLevel onPress={() => setRankLadderVisible(true)} />
+                        <LevelProgress xp={profile.xp || 0} level={profile.level || 1} showNextRankHint={false} />
                     </View>
                 </View>
 
@@ -201,6 +240,12 @@ export default function PublicProfileScreen() {
                     </View>
                 </View>
 
+                {cardStats && profile && (
+                    <ProfileStatsCard stats={cardStats} items={parseStatsCard(profile.stats_card).items} />
+                )}
+
+                <Top10Showcase entries={top10} />
+
                 {/* Public Lists Section */}
                 <View style={styles.sectionHeader}>
                     <Text style={[styles.sectionTitle, { color: colors.text }]}>Public Lists</Text>
@@ -221,11 +266,21 @@ export default function PublicProfileScreen() {
                     </View>
                 )}
             </ScrollView>
+            <RankLadderSheet
+                visible={rankLadderVisible}
+                onClose={() => setRankLadderVisible(false)}
+                xp={profile.xp || 0}
+                level={profile.level || 1}
+            />
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
+    decoratedName: {
+        fontSize: 20,
+        fontFamily: 'Poppins_700Bold',
+    },
     container: {
         flex: 1,
     },
@@ -272,14 +327,9 @@ const styles = StyleSheet.create({
         height: '100%',
         borderRadius: 50,
     },
-    rankText: {
-        fontSize: 16,
-        fontFamily: 'Poppins_700Bold',
-    },
-    levelText: {
-        fontSize: 13,
-        fontFamily: 'Poppins_500Medium',
-        marginTop: 4,
+    avatarInFrame: {
+        padding: 0,
+        borderWidth: 0,
     },
     statsContainer: {
         flexDirection: 'row',

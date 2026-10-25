@@ -11,7 +11,6 @@ interface ForYouHeroCardProps {
   onDicePress: () => void;
   discoverRef?: React.RefObject<View | null>;
   rollDiceRef?: React.RefObject<View | null>;
-  measureRef?: (ref: React.RefObject<View | null>, stepIndex: number) => void;
 }
 
 export const ForYouHeroCard: React.FC<ForYouHeroCardProps> = ({
@@ -21,7 +20,6 @@ export const ForYouHeroCard: React.FC<ForYouHeroCardProps> = ({
   onDicePress,
   discoverRef,
   rollDiceRef,
-  measureRef,
 }) => {
   const { colors, isDark } = useTheme();
   const { t } = useLanguage();
@@ -55,7 +53,6 @@ export const ForYouHeroCard: React.FC<ForYouHeroCardProps> = ({
           ref={discoverRef as any}
           {...({ collapsable: false } as any)}
           onPress={onPress}
-          onLayout={() => measureRef && measureRef(discoverRef as any, 2)}
           style={({ pressed }) => [
             styles.splitCard,
             { 
@@ -93,7 +90,6 @@ export const ForYouHeroCard: React.FC<ForYouHeroCardProps> = ({
           ref={rollDiceRef as any}
           {...({ collapsable: false } as any)}
           onPress={onDicePress}
-          onLayout={() => measureRef && measureRef(rollDiceRef as any, 3)}
           style={({ pressed }) => [
             styles.splitCard,
             { 

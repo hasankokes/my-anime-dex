@@ -1,24 +1,43 @@
-
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Image, TextInput, Keyboard } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import {
+    View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Image, TextInput, Keyboard,
+    RefreshControl, AppState, Alert, Linking,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 import { HeaderAvatar } from '../../components/HeaderAvatar';
 import { useLanguage } from '../../context/LanguageContext';
-import { Ionicons } from '@expo/vector-icons';
-import { getAiringSchedule } from '../../services/anilistApi';
+import { getAiringSchedule, AiringScheduleAnime } from '../../services/anilistApi';
 import { DayTabs } from '../../components/Calendar/DayTabs';
 import { CalendarAnimeCard } from '../../components/Calendar/CalendarAnimeCard';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthProvider';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
-import { useRouter, useFocusEffect } from 'expo-router';
-import { getNextBroadcastDate, getBroadcastDateObj } from '../../lib/dateUtils';
-import { useWalkthrough } from '../../context/WalkthroughContext';
+import { toLocalDateKey, getLocalDayBounds } from '../../lib/dateUtils';
+import { useWalkthroughTargets, useWalkthroughAutoStart } from '../../context/WalkthroughContext';
 import { analytics, queryShape } from '../../lib/analytics';
+import {
+    remindersSupported, getRemindersEnabled, enableEpisodeReminders, disableEpisodeReminders,
+} from '../../lib/episodeReminders';
+import { useFeature } from '../../hooks/usePremium';
+import { useAddToCalendar } from '../../hooks/useAddToCalendar';
+import { PremiumGate } from '../../components/Premium/PremiumGate';
+import { MyWeekView } from '../../components/Calendar/MyWeekView';
+import { ReminderSettingsSheet } from '../../components/Calendar/ReminderSettingsSheet';
 
-// Days mapping for Jikan API
-const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+const DAYS_SHOWN = 7;
+const WEEKDAY_KEYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+// Below this AniList popularity a show is folded behind "show more" unless it is in the user's list
+const MIN_POPULARITY = 500;
+
+type ListState = 'favorite' | 'listed';
+
+const buildDays = (todayKey: string) => {
+    const [y, m, d] = todayKey.split('-').map(Number);
+    return Array.from({ length: DAYS_SHOWN }, (_, i) => new Date(y, m - 1, d + i));
+};
 
 export default function CalendarScreen() {
     const { colors, isDark, toggleTheme } = useTheme();
@@ -29,164 +48,209 @@ export default function CalendarScreen() {
     const router = useRouter();
     const flatListRef = useRef<FlatList>(null);
     const searchInputRef = useRef<TextInput>(null);
+    const userId = session?.user?.id;
+
+    // Premium (Module 4): "My week" view, reminder settings, add to phone calendar
+    const notifications = useFeature('premium_notifications');
+    const calendarExport = useAddToCalendar('calendar_day');
+    const [viewMode, setViewMode] = useState<'day' | 'mine'>('day');
+    const [reminderSheetOpen, setReminderSheetOpen] = useState(false);
+    const changeViewMode = (mode: 'day' | 'mine') => {
+        if (mode === 'mine' && !userId) {
+            requireAuth('calendar', () => setViewMode('mine'));
+            return;
+        }
+        setViewMode(mode);
+        analytics.track('calendar_view_changed', { view: mode, locked: notifications.locked });
+    };
 
     // Walkthrough refs
+    const remindersRef = useRef<View>(null);
+    const favoritesToggleRef = useRef<View>(null);
+    const viewToggleRef = useRef<View>(null);
     const dayTabsRef = useRef<View>(null);
     const firstCardRef = useRef<View>(null);
-    const favoritesToggleRef = useRef<View>(null);
-    const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, activeWalkthroughId, currentStep: walkthroughStep, resetKey } = useWalkthrough();
+    useWalkthroughTargets('calendar', {
+        reminders: remindersRef,
+        favoritesToggle: favoritesToggleRef,
+        viewToggle: viewToggleRef,
+        dayTabs: dayTabsRef,
+        broadcastTime: firstCardRef,
+    });
 
-    // Measure walkthrough refs when Calendar walkthrough is active
+    // --- Days: today + the next 6, re-derived when the local date changes ---
+    const [todayKey, setTodayKey] = useState(() => toLocalDateKey(new Date()));
+    const days = useMemo(() => buildDays(todayKey), [todayKey]);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const selectedDate = days[selectedIndex];
+    const selectedKey = toLocalDateKey(selectedDate);
+
+    const todayKeyRef = useRef(todayKey);
+    const refreshToday = useCallback(() => {
+        const key = toLocalDateKey(new Date());
+        if (key === todayKeyRef.current) return;
+        todayKeyRef.current = key;
+        setTodayKey(key);
+        setSelectedIndex(0);
+        setShowAll(false);
+    }, []);
+
     useEffect(() => {
-        if (walkthroughActive && activeWalkthroughId === 'calendar') {
-            const timer = setTimeout(() => {
-                if (firstCardRef.current) {
-                    firstCardRef.current.measureInWindow((x, y, width, height) => {
-                        if (width > 0 && height > 0) registerStepLayout(0, { x, y, width, height });
-                    });
-                }
-                if (dayTabsRef.current) {
-                    dayTabsRef.current.measureInWindow((x, y, width, height) => {
-                        if (width > 0 && height > 0) registerStepLayout(1, { x, y, width, height });
-                    });
-                }
-                if (favoritesToggleRef.current) {
-                    favoritesToggleRef.current.measureInWindow((x, y, width, height) => {
-                        if (width > 0 && height > 0) registerStepLayout(2, { x, y, width, height });
-                    });
-                }
-            }, 400);
-            return () => clearTimeout(timer);
-        }
-    }, [walkthroughActive, activeWalkthroughId, walkthroughStep]);
+        const sub = AppState.addEventListener('change', state => {
+            if (state === 'active') refreshToday();
+        });
+        return () => sub.remove();
+    }, [refreshToday]);
 
-    // Auto-trigger Calendar walkthrough on first visit
-    useEffect(() => {
-        const timer = setTimeout(async () => {
-            const isFirst = await checkFirstLaunch('calendar');
-            if (isFirst && !walkthroughActive) {
-                if (firstCardRef.current) {
-                    firstCardRef.current.measureInWindow((x, y, width, height) => {
-                        if (width > 0 && height > 0) registerStepLayout(0, { x, y, width, height });
-                    });
-                }
-                if (dayTabsRef.current) {
-                    dayTabsRef.current.measureInWindow((x, y, width, height) => {
-                        if (width > 0 && height > 0) registerStepLayout(1, { x, y, width, height });
-                    });
-                }
-                if (favoritesToggleRef.current) {
-                    favoritesToggleRef.current.measureInWindow((x, y, width, height) => {
-                        if (width > 0 && height > 0) registerStepLayout(2, { x, y, width, height });
-                    });
-                }
-                setTimeout(() => startWalkthrough('calendar'), 300);
-            }
-        }, 1500);
-        return () => clearTimeout(timer);
-    }, [resetKey]);
-
-    // Determine today's day
-    const getToday = () => {
-        const dayIndex = new Date().getDay(); // 0 is Sunday
-        const map = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        return map[dayIndex];
+    const selectDay = (index: number) => {
+        if (index === selectedIndex) return;
+        setSelectedIndex(index);
+        setShowAll(false);
+        flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+        analytics.track('calendar_day_changed', { day: WEEKDAY_KEYS[days[index].getDay()], day_offset: index });
     };
 
-    const [selectedDay, setSelectedDay] = useState(getToday());
-
-    const initialDayRef = useRef(selectedDay);
-    useEffect(() => {
-        if (selectedDay === initialDayRef.current) return;
-        initialDayRef.current = '';
-        analytics.track('calendar_day_changed', { day: selectedDay });
-    }, [selectedDay]);
-    const [schedule, setSchedule] = useState<any[]>([]);
-    const [allSchedules, setAllSchedules] = useState<Record<string, any[]>>({}); // Cache for loaded days
+    // --- Schedule loading (cached per local date) ---
+    const cacheRef = useRef<Record<string, AiringScheduleAnime[]>>({});
+    const latestKeyRef = useRef(selectedKey);
+    const [schedule, setSchedule] = useState<AiringScheduleAnime[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [favoritesOnly, setFavoritesOnly] = useState(false);
-    const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set());
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState(false);
 
-    // Search State
-    const [isSearchVisible, setIsSearchVisible] = useState(false);
-    const [inputText, setInputText] = useState(''); // What the user types
-    const [searchQuery, setSearchQuery] = useState(''); // What filters the list
+    const loadDay = useCallback(async (date: Date, force = false) => {
+        const key = toLocalDateKey(date);
+        latestKeyRef.current = key;
+        const cached = cacheRef.current[key];
 
-    const getTimestampsForLocalDay = (localDayStr: string) => {
-        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        const localIndex = days.indexOf(localDayStr);
-        
-        const now = new Date();
-        // Week runs Monday → Sunday to match the day tabs
-        const toMondayIndex = (d: number) => (d + 6) % 7;
-        const diff = toMondayIndex(localIndex) - toMondayIndex(now.getDay());
-        
-        const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff);
-        const startOfLocalDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 0, 0, 0);
-        const endOfLocalDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59, 999);
-        
-        return {
-            start: Math.floor(startOfLocalDay.getTime() / 1000),
-            end: Math.floor(endOfLocalDay.getTime() / 1000)
-        };
-    };
-
-    const latestDayRef = useRef(selectedDay);
-
-    const fetchSchedule = useCallback(async () => {
-        const day = selectedDay;
-        latestDayRef.current = day;
-        setLoading(true);
-        setError(null);
-        try {
-            if (allSchedules[day]) {
-                setSchedule(allSchedules[day]);
-            } else {
-                const { start, end } = getTimestampsForLocalDay(day);
-                const data = await getAiringSchedule(start, end);
-                setAllSchedules(prev => ({ ...prev, [day]: data }));
-                // Ignore responses for a day the user has already switched away from
-                if (latestDayRef.current !== day) return;
-                setSchedule(data);
-            }
-        } catch (error) {
-            if (latestDayRef.current !== day) return;
-            setError(error instanceof Error ? error.message : JSON.stringify(error));
-        } finally {
-            if (latestDayRef.current === day) setLoading(false);
+        if (cached && !force) {
+            setSchedule(cached);
+            setError(false);
+            setLoading(false);
+            return;
         }
-    }, [selectedDay, allSchedules]);
+        if (!cached) {
+            setSchedule([]);
+            setLoading(true);
+        }
+        setError(false);
 
-    const fetchFavorites = useCallback(async () => {
-        if (!session?.user?.id) {
-            setFavoriteIds(new Set());
+        try {
+            const { start, end } = getLocalDayBounds(date);
+            const data = await getAiringSchedule(start, end, force);
+            cacheRef.current[key] = data;
+            // Ignore responses for a day the user has already switched away from
+            if (latestKeyRef.current !== key) return;
+            setSchedule(data);
+        } catch (e) {
+            console.warn('Calendar schedule failed to load:', e);
+            if (latestKeyRef.current !== key) return;
+            // On a failed refresh keep showing what we already have
+            if (!cacheRef.current[key]) setError(true);
+        } finally {
+            if (latestKeyRef.current === key) {
+                setLoading(false);
+                setRefreshing(false);
+            }
+        }
+    }, []);
+
+    // Drop days that are no longer in the 7-day window when the date rolls over
+    useEffect(() => {
+        const validKeys = new Set(days.map(toLocalDateKey));
+        Object.keys(cacheRef.current).forEach(key => {
+            if (!validKeys.has(key)) delete cacheRef.current[key];
+        });
+    }, [days]);
+
+    useEffect(() => {
+        loadDay(selectedDate);
+    }, [selectedKey]);
+
+    // --- The user's list (favorite / listed badges and the favorites filter) ---
+    const [listStates, setListStates] = useState<Map<number, ListState>>(new Map());
+    const [favoritesOnly, setFavoritesOnly] = useState(false);
+
+    const fetchListStates = useCallback(async () => {
+        if (!userId) {
+            setListStates(new Map());
             return;
         }
         try {
             const { data, error } = await supabase
                 .from('user_anime_list')
-                .select('anime_id')
-                .eq('user_id', session.user.id)
-                .eq('is_favorite', true);
-
-            if (data) {
-                const ids = new Set(data.map(item => Number(item.anime_id)));
-                setFavoriteIds(ids);
-            }
+                .select('anime_id, is_favorite')
+                .eq('user_id', userId);
+            if (error) throw error;
+            setListStates(new Map((data || []).map(row => [
+                Number(row.anime_id),
+                row.is_favorite ? 'favorite' : 'listed',
+            ] as [number, ListState])));
         } catch (e) {
-            console.error('Error fetching favorites:', e);
+            console.error('Error fetching list states:', e);
         }
-    }, [session]);
+    }, [userId]);
 
     useEffect(() => {
-        fetchSchedule();
-    }, [fetchSchedule]);
+        if (!userId) setFavoritesOnly(false);
+    }, [userId]);
 
-    // Refetch favorites when tab gains focus to ensure sync
+    const toggleFavoritesOnly = () => {
+        if (favoritesOnly) {
+            setFavoritesOnly(false);
+            return;
+        }
+        requireAuth('calendar', () => setFavoritesOnly(true));
+    };
+
+    // --- Episode reminders ---
+    const [remindersOn, setRemindersOn] = useState(false);
+    const [remindersBusy, setRemindersBusy] = useState(false);
+
+    const toggleReminders = () => {
+        if (remindersBusy) return;
+        requireAuth('calendar', async () => {
+            setRemindersBusy(true);
+            try {
+                if (await getRemindersEnabled()) {
+                    await disableEpisodeReminders();
+                    setRemindersOn(false);
+                    analytics.track('calendar_reminders_toggled', { enabled: false, result: 'disabled' });
+                    Alert.alert(t('calendar.remindersOffTitle'), t('calendar.remindersOffBody'));
+                    return;
+                }
+                // After a resumed sign-in `userId` from this render is still empty
+                const { data } = await supabase.auth.getSession();
+                const uid = data.session?.user?.id;
+                if (!uid) return;
+                const result = await enableEpisodeReminders(uid, notifications.enabled && !notifications.locked);
+                analytics.track('calendar_reminders_toggled', { enabled: result === 'enabled', result });
+                if (result === 'enabled') {
+                    setRemindersOn(true);
+                    Alert.alert(t('calendar.remindersOnTitle'), t('calendar.remindersOnBody'));
+                } else {
+                    Alert.alert(t('calendar.remindersDeniedTitle'), t('calendar.remindersDeniedBody'), [
+                        { text: t('common.cancel'), style: 'cancel' },
+                        { text: t('calendar.openSettings'), onPress: () => Linking.openSettings() },
+                    ]);
+                }
+            } finally {
+                setRemindersBusy(false);
+            }
+        });
+    };
+
+    // --- Search ---
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const [inputText, setInputText] = useState(''); // What the user types
+    const [searchQuery, setSearchQuery] = useState(''); // What filters the list
+    const [showAll, setShowAll] = useState(false);
+
     useFocusEffect(
         useCallback(() => {
-            fetchFavorites();
+            refreshToday();
+            fetchListStates();
+            if (remindersSupported) getRemindersEnabled().then(setRemindersOn);
 
             return () => {
                 setIsSearchVisible(false);
@@ -194,49 +258,38 @@ export default function CalendarScreen() {
                 setSearchQuery('');
                 Keyboard.dismiss();
             };
-        }, [fetchFavorites])
+        }, [refreshToday, fetchListStates])
     );
 
-    // Filter Logic
-    const filteredSchedule = schedule.filter(anime => {
-        let matchesDay = false;
-        const localDate = anime.airingAt ? new Date(anime.airingAt * 1000) : getBroadcastDateObj(anime);
-        
-        if (localDate) {
-            const dayMap = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-            matchesDay = dayMap[localDate.getDay()] === selectedDay;
-        } else if (anime.broadcast && anime.broadcast.day) {
-            // Fallback: use Jikan's string directly if time parsing fails
-            const apiDay = anime.broadcast.day.toLowerCase();
-            matchesDay = apiDay.includes(selectedDay.toLowerCase());
-        }
-        
-        if (!matchesDay) return false;
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchListStates();
+        loadDay(selectedDate, true);
+    };
 
-        // 2. Favorites Check
-        const matchesFav = favoritesOnly ? favoriteIds.has(anime.mal_id) : true;
+    // --- Filtering ---
+    const { visible, lessPopularCount } = useMemo(() => {
+        const query = searchQuery.toLowerCase();
+        const matches = schedule
+            .filter(anime => {
+                if (favoritesOnly && listStates.get(anime.mal_id) !== 'favorite') return false;
+                if (!query) return true;
+                return [anime.title_english, anime.title, anime.title_japanese]
+                    .some(title => title?.toLowerCase().includes(query));
+            })
+            .sort((a, b) => a.airingAt - b.airingAt);
 
-        // 3. Search Check
-        const title = anime.title_english || anime.title || '';
-        const matchesSearch = searchQuery
-            ? title.toLowerCase().includes(searchQuery.toLowerCase())
-            : true;
+        // Filters the user chose override the popularity fold
+        if (favoritesOnly || query) return { visible: matches, lessPopularCount: 0 };
 
-        return matchesDay && matchesFav && matchesSearch;
-    }).filter((anime, index, self) =>
-        index === self.findIndex((t) => (
-            t.mal_id === anime.mal_id
-        ))
-    ).sort((a, b) => {
-        const dateA = getNextBroadcastDate(a);
-        const dateB = getNextBroadcastDate(b);
-
-        if (dateA && !dateB) return -1;
-        if (!dateA && dateB) return 1;
-        if (!dateA && !dateB) return 0;
-
-        return dateA!.getTime() - dateB!.getTime();
-    });
+        const isNotable = (anime: AiringScheduleAnime) =>
+            listStates.has(anime.mal_id) || (anime.popularity >= MIN_POPULARITY && anime.format !== 'MUSIC');
+        const notable = matches.filter(isNotable);
+        return {
+            visible: showAll ? matches : notable,
+            lessPopularCount: matches.length - notable.length,
+        };
+    }, [schedule, favoritesOnly, searchQuery, listStates, showAll]);
 
     const scrollToTop = () => {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
@@ -260,21 +313,67 @@ export default function CalendarScreen() {
         Keyboard.dismiss();
     };
 
-    // --- Fixed Header Component moved outside to prevent re-renders on state change ---
-    // But since it depends on many local variables, we can memoize it or use props.
-    // Memoizing inside component:
+    const renderEmpty = () => {
+        if (loading) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', marginTop: 100 }}>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                </View>
+            );
+        }
+        if (error) {
+            return (
+                <View style={styles.emptyContainer}>
+                    <Ionicons name="alert-circle-outline" size={48} color={colors.primary} />
+                    <Text style={[styles.emptyText, { color: colors.text, textAlign: 'center', marginBottom: 8 }]}>
+                        {t('calendar.timeoutError')}
+                    </Text>
+                    <TouchableOpacity
+                        onPress={() => loadDay(selectedDate, true)}
+                        style={[styles.retryButton, { backgroundColor: colors.card }]}
+                    >
+                        <Text style={[styles.retryText, { color: colors.primary }]}>{t('calendar.tryAgain')}</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        }
+        return (
+            <View style={styles.emptyContainer}>
+                <Ionicons name="calendar-clear-outline" size={48} color={colors.subtext} />
+                <Text style={[styles.emptyText, { color: colors.subtext, textAlign: 'center' }]}>
+                    {searchQuery
+                        ? t('calendar.noMatches')
+                        : favoritesOnly
+                            ? t('calendar.noFavorites')
+                            : t('calendar.noSchedule')}
+                </Text>
+            </View>
+        );
+    };
 
-    // We will use the existing FixedHeader implementation but since it is defined inside the render function scope (essentially), 
-    // it gets recreated.
-    // Let's refactor to return the JSX directly or use useMemo, but the cleanest is to keep it inline in return 
-    // or properly extract it. 
-    // Given the props usage, I'll extract it and pass props.
+    const renderFooter = () => {
+        if (loading || error || lessPopularCount === 0) return null;
+        return (
+            <TouchableOpacity
+                onPress={() => setShowAll(prev => !prev)}
+                style={[styles.showMoreButton, { borderColor: colors.border }]}
+            >
+                <Text style={[styles.showMoreText, { color: colors.subtext }]}>
+                    {showAll ? t('calendar.showLess') : t('calendar.showMore', { count: lessPopularCount })}
+                </Text>
+                <Ionicons name={showAll ? 'chevron-up' : 'chevron-down'} size={16} color={colors.subtext} />
+            </TouchableOpacity>
+        );
+    };
+
+    useWalkthroughAutoStart('calendar', !loading);
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <CalendarHeader
                 insets={insets}
                 colors={colors}
+                t={t}
                 isSearchVisible={isSearchVisible}
                 inputText={inputText}
                 setInputText={setInputText}
@@ -284,76 +383,178 @@ export default function CalendarScreen() {
                 isDark={isDark}
                 toggleTheme={toggleTheme}
                 avatarUrl={avatarUrl}
-                requireAuth={requireAuth}
-                router={router}
+                onProfilePress={() => requireAuth('profile', () => router.push('/(tabs)/profile'))}
                 searchInputRef={searchInputRef}
             />
 
             <View style={{ paddingHorizontal: 20 }}>
-                <CalendarListHeader
-                    colors={colors}
-                    t={t}
-                    favoritesOnly={favoritesOnly}
-                    setFavoritesOnly={setFavoritesOnly}
-                    selectedDay={selectedDay}
-                    setSelectedDay={setSelectedDay}
-                    dayTabsRef={dayTabsRef}
-                    favoritesToggleRef={favoritesToggleRef}
-                />
+                <View style={styles.pageHeader}>
+                    <View style={styles.titleContainer}>
+                        <Text style={[styles.headerTitle, { color: colors.text }]}>{t('calendar.title')}</Text>
+                        <Ionicons name="calendar-outline" size={20} color={colors.primary} style={{ marginLeft: 8 }} />
+                    </View>
+
+                    <View style={styles.pageActions}>
+                        {remindersSupported && notifications.enabled ? (
+                            <TouchableOpacity
+                                onPress={() => requireAuth('calendar', () => setReminderSheetOpen(true))}
+                                accessibilityLabel={t('calendarExport.reminderSettings')}
+                                style={[styles.bellButton, { backgroundColor: colors.card, borderColor: colors.border }]}
+                            >
+                                <Ionicons name="options-outline" size={16} color={colors.text} />
+                            </TouchableOpacity>
+                        ) : null}
+                        {remindersSupported ? (
+                            <TouchableOpacity
+                                ref={remindersRef as any}
+                                {...({ collapsable: false } as any)}
+                                onPress={toggleReminders}
+                                disabled={remindersBusy}
+                                accessibilityLabel={t('calendar.remindersLabel')}
+                                accessibilityState={{ checked: remindersOn }}
+                                style={[
+                                    styles.bellButton,
+                                    {
+                                        backgroundColor: remindersOn ? colors.primary : colors.card,
+                                        borderColor: remindersOn ? colors.primary : colors.border,
+                                    },
+                                ]}
+                            >
+                                <Ionicons
+                                    name={remindersOn ? 'notifications' : 'notifications-outline'}
+                                    size={16}
+                                    color={remindersOn ? '#000' : colors.text}
+                                />
+                            </TouchableOpacity>
+                        ) : null}
+
+                        <View ref={favoritesToggleRef} collapsable={false}>
+                            <TouchableOpacity
+                                style={[
+                                    styles.favButton,
+                                    {
+                                        backgroundColor: favoritesOnly ? colors.primary : colors.card,
+                                        borderColor: favoritesOnly ? colors.primary : colors.border,
+                                    },
+                                ]}
+                                onPress={toggleFavoritesOnly}
+                            >
+                                <Ionicons
+                                    name={favoritesOnly ? 'heart' : 'heart-outline'}
+                                    size={16}
+                                    color={favoritesOnly ? '#000' : colors.text}
+                                />
+                                <Text style={[styles.favButtonText, { color: favoritesOnly ? '#000' : colors.text }]}>
+                                    {t('calendar.favoritesOnly')}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+
+                {notifications.enabled && (
+                    <View ref={viewToggleRef} collapsable={false} style={[styles.viewToggle, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                        {(['day', 'mine'] as const).map(mode => {
+                            const active = viewMode === mode;
+                            return (
+                                <TouchableOpacity
+                                    key={mode}
+                                    onPress={() => changeViewMode(mode)}
+                                    style={[styles.viewToggleItem, active && { backgroundColor: colors.primary }]}
+                                    accessibilityRole="tab"
+                                    accessibilityState={{ selected: active }}
+                                >
+                                    {mode === 'mine' && notifications.locked && (
+                                        <Ionicons name="lock-closed" size={11} color={active ? '#111827' : colors.subtext} />
+                                    )}
+                                    <Text style={[styles.viewToggleText, { color: active ? '#111827' : colors.text }]}>
+                                        {t(mode === 'day' ? 'calendarExport.viewDay' : 'calendarExport.viewMine')}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+                )}
+
+                {viewMode === 'day' && (
+                    <View ref={dayTabsRef} collapsable={false}>
+                        <DayTabs days={days} selectedIndex={selectedIndex} onSelect={selectDay} />
+                    </View>
+                )}
             </View>
 
+            <ReminderSettingsSheet visible={reminderSheetOpen} onClose={() => setReminderSheetOpen(false)} />
+
+            {viewMode === 'mine' && userId ? (
+                notifications.locked ? (
+                    <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
+                        <PremiumGate feature="premium_notifications" source="calendar_my_week" description={t('calendarExport.locked')}>
+                            {(visible.length ? visible.slice(0, 4) : []).map(item => (
+                                <CalendarAnimeCard key={`${item.mal_id}-${item.airing_episode}`} anime={item} listState={listStates.get(item.mal_id)} />
+                            ))}
+                            {visible.length === 0 && <View style={{ height: 360 }} />}
+                        </PremiumGate>
+                    </View>
+                ) : (
+                    <MyWeekView userId={userId} bottomInset={insets.bottom} />
+                )
+            ) : (
             <FlatList
                 ref={flatListRef}
-                data={loading ? [] : filteredSchedule}
-                keyExtractor={(item) => item.mal_id.toString()}
+                data={loading || error ? [] : visible}
+                keyExtractor={(item) => `${item.mal_id}-${item.airing_episode}`}
                 renderItem={({ item, index }) => (
                     <View ref={index === 0 ? firstCardRef : undefined} collapsable={false}>
-                        <CalendarAnimeCard anime={item} />
+                        <CalendarAnimeCard
+                            anime={item}
+                            listState={listStates.get(item.mal_id)}
+                            onAddToCalendar={calendarExport.available ? () => calendarExport.add({
+                                title: item.title_english || item.title,
+                                episode: item.airing_episode,
+                                airingAt: item.airingAt,
+                                totalEpisodes: item.episodes,
+                            }) : undefined}
+                        />
                     </View>
                 )}
                 contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }]}
-                ListEmptyComponent={
-                    loading ? (
-                        <View style={{ flex: 1, justifyContent: 'center', marginTop: 100 }}>
-                            <ActivityIndicator size="large" color={colors.primary} />
-                        </View>
-                    ) : error ? (
-                        <View style={styles.emptyContainer}>
-                            <Ionicons name="alert-circle-outline" size={48} color={colors.primary} />
-                            <Text style={[styles.emptyText, { color: colors.text, textAlign: 'center', marginBottom: 8 }]}>
-                                {error.includes('504') || error.toLowerCase().includes('timeout') || error.toLowerCase().includes('fail')
-                                    ? t('calendar.timeoutError')
-                                    : error}
-                            </Text>
-                            <TouchableOpacity
-                                onPress={() => fetchSchedule()}
-                                style={{ padding: 10, backgroundColor: colors.card, borderRadius: 8, marginTop: 8 }}
-                            >
-                                <Text style={{ color: colors.primary, fontFamily: 'Poppins_600SemiBold' }}>Try Again</Text>
-                            </TouchableOpacity>
-                        </View>
-                    ) : (
-                        <View style={styles.emptyContainer}>
-                            <Ionicons name="calendar-clear-outline" size={48} color={colors.subtext} />
-                            <Text style={[styles.emptyText, { color: colors.subtext }]}>
-                                {searchQuery
-                                    ? "No matches found."
-                                    : favoritesOnly
-                                        ? "No favorites airing on this day."
-                                        : "No anime scheduled for this day."}
-                            </Text>
-                        </View>
-                    )
+                ListEmptyComponent={renderEmpty}
+                ListFooterComponent={renderFooter}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.primary}
+                        colors={[colors.primary]}
+                    />
                 }
             />
+            )}
         </View>
     );
 }
 
-// Extracted Header Component
+interface CalendarHeaderProps {
+    insets: { top: number };
+    colors: ReturnType<typeof useTheme>['colors'];
+    t: (key: string, options?: any) => string;
+    isSearchVisible: boolean;
+    inputText: string;
+    setInputText: (text: string) => void;
+    handleSearchSubmit: () => void;
+    toggleSearch: () => void;
+    scrollToTop: () => void;
+    isDark: boolean;
+    toggleTheme: () => void;
+    avatarUrl: string | null | undefined;
+    onProfilePress: () => void;
+    searchInputRef: React.RefObject<TextInput | null>;
+}
+
 const CalendarHeader = ({
     insets,
     colors,
+    t,
     isSearchVisible,
     inputText,
     setInputText,
@@ -363,10 +564,9 @@ const CalendarHeader = ({
     isDark,
     toggleTheme,
     avatarUrl,
-    requireAuth,
-    router,
-    searchInputRef
-}: any) => (
+    onProfilePress,
+    searchInputRef,
+}: CalendarHeaderProps) => (
     <View style={[styles.fixedHeader, { paddingTop: insets.top + 2, backgroundColor: colors.background, paddingBottom: 0 }]}>
         {isSearchVisible ? (
             <View style={styles.searchHeaderContainer}>
@@ -375,7 +575,7 @@ const CalendarHeader = ({
                     <TextInput
                         ref={searchInputRef}
                         style={[styles.searchInput, { color: colors.text }]}
-                        placeholder="Search daily schedule..."
+                        placeholder={t('calendar.searchPlaceholder')}
                         placeholderTextColor={colors.subtext}
                         value={inputText}
                         onChangeText={setInputText}
@@ -409,7 +609,7 @@ const CalendarHeader = ({
                     <TouchableOpacity style={styles.iconButton} onPress={toggleTheme}>
                         <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={colors.text} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.profileButton} onPress={() => requireAuth('profile', () => router.push('/(tabs)/profile'))}>
+                    <TouchableOpacity style={styles.profileButton} onPress={onProfilePress}>
                         <HeaderAvatar uri={avatarUrl} />
                     </TouchableOpacity>
                 </View>
@@ -418,60 +618,27 @@ const CalendarHeader = ({
     </View>
 );
 
-// Extracted List Header Component
-const CalendarListHeader = ({
-    colors,
-    t,
-    favoritesOnly,
-    setFavoritesOnly,
-    selectedDay,
-    setSelectedDay,
-    dayTabsRef,
-    favoritesToggleRef
-}: any) => (
-    <View>
-        {/* Original Header Content: Title + Actions */}
-        <View style={styles.pageHeader}>
-            <View style={styles.titleContainer}>
-                <Text style={[styles.headerTitle, { color: colors.text }]}>{t('calendar.title')}</Text>
-                <Ionicons name="calendar-outline" size={20} color={colors.primary} style={{ marginLeft: 8 }} />
-            </View>
-
-            <View ref={favoritesToggleRef} collapsable={false}>
-                <TouchableOpacity
-                    style={[
-                        styles.favButton,
-                        {
-                            backgroundColor: favoritesOnly ? colors.primary : colors.card,
-                            borderColor: colors.border,
-                            borderWidth: 1
-                        }
-                    ]}
-                    onPress={() => setFavoritesOnly(!favoritesOnly)}
-                >
-                    <Ionicons
-                        name={favoritesOnly ? "heart" : "heart-outline"}
-                        size={16}
-                        color={favoritesOnly ? '#fff' : colors.text}
-                    />
-                    <Text style={[
-                        styles.favButtonText,
-                        { color: favoritesOnly ? '#fff' : colors.text }
-                    ]}>
-                        {t('calendar.favoritesOnly')}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-
-        {/* Day Tabs */}
-        <View ref={dayTabsRef} collapsable={false}>
-            <DayTabs selectedDay={selectedDay} onSelectDay={setSelectedDay} />
-        </View>
-    </View>
-);
-
 const styles = StyleSheet.create({
+    viewToggle: {
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderRadius: 14,
+        padding: 3,
+        marginBottom: 12,
+    },
+    viewToggleItem: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 4,
+        borderRadius: 11,
+        paddingVertical: 7,
+    },
+    viewToggleText: {
+        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 13,
+    },
     container: {
         flex: 1,
     },
@@ -517,10 +684,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#E5E7EB',
     },
-    headerProfileImage: {
-        width: '100%',
-        height: '100%',
-    },
     searchHeaderContainer: {
         flex: 1,
         flexDirection: 'row',
@@ -551,17 +714,30 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 0,
         paddingBottom: 15,
         paddingTop: 10,
     },
     titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        flexShrink: 1,
     },
     headerTitle: {
         fontSize: 18,
         fontFamily: 'Poppins_700Bold',
+    },
+    pageActions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    bellButton: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        borderWidth: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     favButton: {
         flexDirection: 'row',
@@ -569,6 +745,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 20,
+        borderWidth: 1,
         gap: 6,
     },
     favButtonText: {
@@ -579,17 +756,38 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingBottom: 20,
     },
-    centerContainer: {
-        flex: 1,
-    },
     emptyContainer: {
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 50,
+        paddingHorizontal: 20,
     },
     emptyText: {
         fontFamily: 'Poppins_500Medium',
         marginTop: 10,
         fontSize: 14,
-    }
+    },
+    retryButton: {
+        padding: 10,
+        borderRadius: 8,
+        marginTop: 8,
+    },
+    retryText: {
+        fontFamily: 'Poppins_600SemiBold',
+    },
+    showMoreButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 6,
+        paddingVertical: 12,
+        marginTop: 4,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderStyle: 'dashed',
+    },
+    showMoreText: {
+        fontFamily: 'Poppins_500Medium',
+        fontSize: 13,
+    },
 });

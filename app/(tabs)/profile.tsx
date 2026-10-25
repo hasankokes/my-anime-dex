@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Switch,
   Alert,
   Modal,
   TextInput,
@@ -22,16 +21,40 @@ import { Profile, UserAnimeStats } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getRank, getLevelProgress } from '../../lib/levelSystem';
+import { getRank } from '../../lib/levelSystem';
+import { LevelProgress, LevelUpModal, RankBadge, RankLadderSheet } from '../../components/Level/LevelComponents';
+import { useLevelUp } from '../../hooks/useLevelUp';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthProvider';
+import { useFeature, usePremium } from '../../hooks/usePremium';
+import { loadUserStats, parseStatsCard, UserStats } from '../../services/statsService';
+import { ProfileStatsCard } from '../../components/Stats/ProfileStatsCard';
+import { useCosmetics } from '../../context/CosmeticsProvider';
+import { useAppConfig } from '../../context/AppConfigProvider';
+import { AvatarCutout, AvatarFrame, CUTOUT_WIDTH, DecoratedName, hasBanner, ProfileBanner } from '../../components/Profile/ProfileDecorations';
+import { Top10Showcase } from '../../components/Profile/Top10Showcase';
+import { ContentCardSlot } from '../../components/ContentCard/ContentCardSlot';
 import { analytics } from '../../lib/analytics';
+import { openStoreReviewPage } from '../../lib/reviewPrompt';
 
+import { ThemedSwitch } from '../../components/ThemedSwitch';
 export default function ProfileScreen() {
   const router = useRouter();
   const { colors, isDark, toggleTheme } = useTheme();
   const { t, language } = useLanguage();
   const { signOut, refreshProfile, status } = useAuth();
+  const { isPremium, openPaywall } = usePremium();
+  const statsFeature = useFeature('premium_stats');
+  const cosmetics = useCosmetics();
+  const { config: appConfig } = useAppConfig();
+  const decor = cosmetics.myDecor;
+  // Premium avatar ring only when a frame is picked (the old purple ring is the "Amethyst" frame now)
+  const frameColors = isPremium ? decor.frameColors : null;
+  const FRAME_WIDTH = 8;
+  const bannerOn = hasBanner(decor);
+  // Avatar block height; the banner overlaps half of it (+ the info container's top margin)
+  const avatarBlock = 100 + (frameColors ? FRAME_WIDTH * 2 : 0) + (bannerOn ? CUTOUT_WIDTH * 2 : 0);
+  const [cardStats, setCardStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [stats, setStats] = useState<UserAnimeStats>({
@@ -48,6 +71,8 @@ export default function ProfileScreen() {
   const [uploading, setUploading] = useState(false);
   const [randomAvatars, setRandomAvatars] = useState<string[]>([]);
   const [loadingAvatars, setLoadingAvatars] = useState(false);
+  const [rankLadderVisible, setRankLadderVisible] = useState(false);
+  const levelUp = useLevelUp();
 
   useFocusEffect(
     useCallback(() => {
@@ -115,6 +140,12 @@ export default function ProfileScreen() {
 
       if (profileData) {
         setProfile(profileData);
+        levelUp.check(session.user.id, profileData.level || 1);
+        if (parseStatsCard(profileData.stats_card).enabled) {
+          loadUserStats(session.user.id).then(setCardStats).catch(() => setCardStats(null));
+        } else {
+          setCardStats(null);
+        }
         setStats({
           watched_count: watchedCount || 0,
           watching_count: watchingCount || 0,
@@ -505,10 +536,18 @@ export default function ProfileScreen() {
     }
   };
 
+  const level = profile?.level || 1;
+  const xp = profile?.xp || 0;
+  const rank = getRank(level);
+  const openRankLadder = () => {
+    setRankLadderVisible(true);
+    analytics.track('rank_ladder_viewed', { level, rank: rank.id });
+  };
+
   if (loading) {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color="#FACC15" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -527,50 +566,24 @@ export default function ProfileScreen() {
         </View>
 
         {/* Profile Info */}
-        {/* Profile Info */}
+        <ProfileBanner decor={decor} overlap={avatarBlock / 2 + 10} />
         <View style={styles.profileInfoContainer}>
           <TouchableOpacity onPress={openAvatarModal} disabled={uploading} style={styles.avatarWrapper}>
-            {profile?.is_pro ? (
-              <LinearGradient
-                colors={['#c084fc', '#a855f7', '#7e22ce']} // Purple gradient
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                  borderRadius: 60,
-                  padding: 4, // Thickness of the gradient border
-                }}
-              >
-                <View style={[
-                  styles.avatarContainer,
-                  {
-                    backgroundColor: colors.card,
-                    borderColor: getRank(profile?.level || 1).colorHex,
-                    borderWidth: getRank(profile?.level || 1).borderWidth,
-                    width: 100,
-                    height: 100,
-                  }
-                ]}>
-                  {uploading ? (
-                    <ActivityIndicator size="small" color="#FACC15" style={{ flex: 1 }} />
-                  ) : (
-                    <Image
-                      source={{ uri: profile?.avatar_url || 'https://via.placeholder.com/150' }}
-                      style={styles.avatar}
-                    />
-                  )}
-                </View>
-              </LinearGradient>
-            ) : (
+            <AvatarCutout active={bannerOn} color={colors.background}>
+            <AvatarFrame colors={frameColors} size={FRAME_WIDTH} animation={decor.frameAnimation} animate>
               <View style={[
                 styles.avatarContainer,
                 {
                   backgroundColor: colors.card,
-                  borderColor: getRank(profile?.level || 1).colorHex,
-                  borderWidth: getRank(profile?.level || 1).borderWidth,
-                }
+                  borderColor: rank.colorHex,
+                  borderWidth: rank.borderWidth,
+                  shadowColor: colors.primary,
+                },
+                // A premium frame replaces the level ring and the inner gap (the rank badge below still shows the level)
+                frameColors && styles.avatarInFrame,
               ]}>
                 {uploading ? (
-                  <ActivityIndicator size="small" color="#FACC15" style={{ flex: 1 }} />
+                  <ActivityIndicator size="small" color={colors.primary} style={{ flex: 1 }} />
                 ) : (
                   <Image
                     source={{ uri: profile?.avatar_url || 'https://via.placeholder.com/150' }}
@@ -578,55 +591,55 @@ export default function ProfileScreen() {
                   />
                 )}
               </View>
-            )}
+            </AvatarFrame>
+            </AvatarCutout>
             <View style={[styles.editBadge, { backgroundColor: colors.border, borderColor: colors.card }]}>
               <MaterialIcons name="camera-alt" size={14} color="#FFFFFF" />
             </View>
           </TouchableOpacity>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Text style={[styles.username, { color: colors.text }]}>{profile?.username || 'User'}</Text>
+            <DecoratedName
+              name={profile?.username || 'User'}
+              decor={decor}
+              defaultColor={colors.text}
+              style={styles.username}
+              badgeSize="md"
+            />
             <TouchableOpacity onPress={startEditing}>
               <MaterialIcons name="edit" size={18} color={colors.subtext} />
             </TouchableOpacity>
           </View>
 
-          <View style={{ alignItems: 'center', width: '100%', paddingHorizontal: 40, marginTop: 8 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 4 }}>
-              <Text style={[
-                styles.rankTitle,
-                { color: getRank(profile?.level || 1).colorHex, marginRight: 8 }
-              ]}>
-                {t(`profile.ranks.${getRank(profile?.level || 1).name.toLowerCase()}` as any)}
-              </Text>
-              <TouchableOpacity onPress={() => router.push('/leaderboard')}>
-                <Ionicons name="trophy" size={20} color={getRank(profile?.level || 1).colorHex} />
+          <View style={{ alignItems: 'center', width: '100%', paddingHorizontal: 40, marginTop: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+              <RankBadge level={level} showLevel onPress={openRankLadder} />
+              <TouchableOpacity
+                onPress={() => router.push('/leaderboard')}
+                style={[styles.leaderboardButton, { backgroundColor: colors.card, borderColor: colors.border }]}
+                accessibilityRole="button"
+                accessibilityLabel={t('leaderboard.title')}
+              >
+                <Ionicons name="podium" size={16} color={rank.colorHex} />
               </TouchableOpacity>
             </View>
-
-            <Text style={[styles.memberInfo, { marginBottom: 8, color: getRank(profile?.level || 1).colorHex }]}>
-              {t('profile.level')} {profile?.level || 1} • {getLevelProgress(profile?.xp || 0, profile?.level || 1).current}/{getLevelProgress(profile?.xp || 0, profile?.level || 1).total} {t('profile.xp')}
-            </Text>
-
-            <View style={{
-              width: '100%',
-              height: 12,
-              backgroundColor: colors.border,
-              borderRadius: 6,
-              overflow: 'hidden'
-            }}>
-              <View style={{
-                width: `${getLevelProgress(profile?.xp || 0, profile?.level || 1).percent * 100}%`,
-                height: '100%',
-                backgroundColor: getRank(profile?.level || 1).colorHex,
-                borderRadius: 6
-              }} />
-            </View>
+            <LevelProgress xp={xp} level={level} />
           </View>
         </View>
 
-        {/* Stats Row */}
-        <View style={styles.statsContainer}>
+        {/* Stats card (opens My Stats when that module is on) */}
+        <TouchableOpacity
+          style={[
+            styles.statsContainer,
+            statsFeature.enabled && [styles.statsCard, { backgroundColor: colors.card, borderColor: colors.border }],
+          ]}
+          onPress={() => router.push('/stats')}
+          disabled={!statsFeature.enabled}
+          activeOpacity={0.7}
+          accessibilityRole={statsFeature.enabled ? 'button' : undefined}
+          accessibilityLabel={statsFeature.enabled ? t('stats.openCta') : undefined}
+        >
+          <View style={styles.statsRow}>
           <View style={styles.statItem}>
             <Text style={[styles.statValue, { color: colors.text }]}>{stats.watching_count}</Text>
             <Text style={[styles.statLabel, { color: colors.subtext }]}>{t('profile.stats_watching')}</Text>
@@ -641,13 +654,33 @@ export default function ProfileScreen() {
             <Text style={[styles.statValue, { color: colors.text }]}>{stats.favorites_count}</Text>
             <Text style={[styles.statLabel, { color: colors.subtext }]}>{t('profile.stats_favs')}</Text>
           </View>
+          </View>
+          {statsFeature.enabled && (
+            <View style={[styles.statsCta, { borderTopColor: colors.border }]}>
+              <View style={styles.statsCtaIcon}>
+                <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.primary, opacity: 0.15, borderRadius: 15 }]} />
+                <Ionicons name="stats-chart" size={16} color={colors.primary} />
+              </View>
+              <Text style={[styles.statsCtaText, { color: colors.primary }]}>{t('stats.openCta')}</Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.primary} />
+            </View>
+          )}
+        </TouchableOpacity>
 
-        </View>
+        {statsFeature.enabled && isPremium && cardStats && profile && (
+          <ProfileStatsCard stats={cardStats} items={parseStatsCard(profile.stats_card).items} />
+        )}
+
+        <ContentCardSlot placement="profile" style={{ marginHorizontal: 20, marginBottom: 24 }} />
+
+        {cosmetics.enabled && isPremium && (
+          <Top10Showcase entries={cosmetics.top10} onEdit={() => router.push('/profile/top10')} />
+        )}
 
 
 
         {/* Subscription Card */}
-        {!profile?.is_pro && (
+        {!isPremium && (
           <View style={[styles.subscriptionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.subHeader}>
               <Ionicons name="star" size={20} color="#FACC15" style={{ marginRight: 8 }} />
@@ -660,7 +693,7 @@ export default function ProfileScreen() {
 
             <TouchableOpacity
               style={styles.upgradeButton}
-              onPress={() => router.push({ pathname: '/subscription', params: { source: 'profile' } })}
+              onPress={() => openPaywall('profile')}
             >
               <Ionicons name="diamond-outline" size={18} color="#111827" style={{ marginRight: 8 }} />
               <Text style={styles.upgradeButtonText}>{t('profile.upgradeButton')}</Text>
@@ -681,7 +714,7 @@ export default function ProfileScreen() {
           >
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
-                <Ionicons name="list" size={20} color={colors.text} />
+                <Ionicons name="albums-outline" size={20} color={colors.text} />
               </View>
               <Text style={[styles.settingLabel, { color: colors.text }]}>{t('profile.myLists')}</Text>
             </View>
@@ -715,15 +748,50 @@ export default function ProfileScreen() {
               </View>
               <Text style={[styles.settingLabel, { color: colors.text }]}>{t('settings.theme')}</Text>
             </View>
-            <Switch
+            <ThemedSwitch
               value={isDark}
               onValueChange={toggleTheme}
-              trackColor={{ false: '#374151', true: '#FACC15' }}
-              thumbColor={'#FFFFFF'}
             />
           </View>
 
           <View style={[styles.settingDivider, { backgroundColor: colors.border }]} />
+
+          {(appConfig.import || appConfig.premium_backup) && (
+            <>
+              <TouchableOpacity
+                style={styles.settingItem}
+                onPress={() => router.push('/settings/data')}
+              >
+                <View style={styles.settingLeft}>
+                  <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
+                    <Ionicons name="swap-vertical" size={20} color={colors.text} />
+                  </View>
+                  <Text style={[styles.settingLabel, { color: colors.text }]}>{t('dataTools.title')}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+              </TouchableOpacity>
+              <View style={[styles.settingDivider, { backgroundColor: colors.border }]} />
+            </>
+          )}
+
+          {cosmetics.enabled && (
+            <>
+              <TouchableOpacity
+                style={styles.settingItem}
+                onPress={() => router.push('/settings/appearance')}
+              >
+                <View style={styles.settingLeft}>
+                  <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
+                    <Ionicons name="color-palette" size={20} color={colors.text} />
+                  </View>
+                  <Text style={[styles.settingLabel, { color: colors.text }]}>{t('cosmetics.title')}</Text>
+                </View>
+                {!isPremium && <Ionicons name="lock-closed" size={16} color={colors.subtext} style={{ marginRight: 6 }} />}
+                <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+              </TouchableOpacity>
+              <View style={[styles.settingDivider, { backgroundColor: colors.border }]} />
+            </>
+          )}
 
           <TouchableOpacity
             style={styles.settingItem}
@@ -747,7 +815,12 @@ export default function ProfileScreen() {
                       'pt': 'Português',
                       'id': 'Bahasa Indonesia',
                       'hi': 'हिन्दी',
-                      'ar': 'العربية'
+                      'ar': 'العربية',
+                      'fr': 'Français',
+                      'it': 'Italiano',
+                      'pl': 'Polski',
+                      'vi': 'Tiếng Việt',
+                      'th': 'ไทย'
                     }[language] || 'English (US)'
                   }
                 </Text>
@@ -774,6 +847,25 @@ export default function ProfileScreen() {
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
           </TouchableOpacity>
+
+          {Platform.OS !== 'web' && (
+            <>
+              <View style={[styles.settingDivider, { backgroundColor: colors.border }]} />
+
+              <TouchableOpacity
+                style={styles.settingItem}
+                onPress={openStoreReviewPage}
+              >
+                <View style={styles.settingLeft}>
+                  <View style={[styles.settingIconContainer, { backgroundColor: colors.border }]}>
+                    <Ionicons name="star-outline" size={20} color={colors.text} />
+                  </View>
+                  <Text style={[styles.settingLabel, { color: colors.text }]}>{t('settings.rateApp')}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
+              </TouchableOpacity>
+            </>
+          )}
 
           <View style={[styles.settingDivider, { backgroundColor: colors.border }]} />
 
@@ -943,7 +1035,7 @@ export default function ProfileScreen() {
 
               {loadingAvatars ? (
                 <View style={{ height: 200, justifyContent: 'center', alignItems: 'center' }}>
-                  <ActivityIndicator size="large" color="#FACC15" />
+                  <ActivityIndicator size="large" color={colors.primary} />
                 </View>
               ) : (
                 <View style={styles.avatarGrid}>
@@ -962,6 +1054,9 @@ export default function ProfileScreen() {
           </View>
         </View>
       </Modal>
+
+      <RankLadderSheet visible={rankLadderVisible} onClose={() => setRankLadderVisible(false)} xp={xp} level={level} />
+      <LevelUpModal level={levelUp.celebration?.level ?? null} rankUp={!!levelUp.celebration?.rankUp} onClose={levelUp.dismiss} />
     </SafeAreaView>
   );
 }
@@ -1019,6 +1114,10 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 50,
   },
+  avatarInFrame: {
+    padding: 0,
+    borderWidth: 0,
+  },
   editBadge: {
     position: 'absolute',
     bottom: 0,
@@ -1035,22 +1134,50 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_700Bold',
     marginBottom: 4,
   },
-  rankTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins_700Bold',
-    letterSpacing: 1,
-  },
-  memberInfo: {
-    fontSize: 14,
-    fontFamily: 'Poppins_500Medium',
-    color: '#FACC15',
+  leaderboardButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   statsContainer: {
+    marginBottom: 24,
+    paddingHorizontal: 40,
+  },
+  statsCard: {
+    marginHorizontal: 20,
+    paddingHorizontal: 12,
+    paddingTop: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  statsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
-    paddingHorizontal: 40,
+  },
+  statsCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    borderTopWidth: 1,
+  },
+  statsCtaIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statsCtaText: {
+    flex: 1,
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 14,
   },
   statItem: {
     alignItems: 'center',

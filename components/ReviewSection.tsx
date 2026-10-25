@@ -22,6 +22,16 @@ import { useLanguage } from '../context/LanguageContext';
 import { formatDistanceToNow } from 'date-fns';
 import { useRequireAuth } from '../hooks/useRequireAuth';
 import { analytics } from '../lib/analytics';
+import { useDecorFor } from '../context/CosmeticsProvider';
+import { DecoratedName } from './Profile/ProfileDecorations';
+
+type ReviewProfile = {
+    username: string;
+    avatar_url: string;
+    is_pro?: boolean | null;
+    pro_expires_at?: string | null;
+    cosmetics?: unknown;
+};
 
 type Review = {
     id: string;
@@ -29,13 +39,7 @@ type Review = {
     rating: number;
     comment: string;
     created_at: string;
-    profiles: {
-        username: string;
-        avatar_url: string;
-    } | {
-        username: string;
-        avatar_url: string;
-    }[];
+    profiles: ReviewProfile | ReviewProfile[];
 };
 
 type ReviewSectionProps = {
@@ -44,6 +48,7 @@ type ReviewSectionProps = {
 
 export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
     const { colors, isDark } = useTheme();
+    const decorFor = useDecorFor();
     const { t } = useLanguage();
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
@@ -72,7 +77,10 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
           *,
           profiles (
             username,
-            avatar_url
+            avatar_url,
+            is_pro,
+            pro_expires_at,
+            cosmetics
           )
         `)
                 .eq('anime_id', animeId)
@@ -80,10 +88,12 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
 
             if (error) throw error;
 
-            setReviews(data || []);
-
             // Check if current user has a review
             const { data: { session } } = await supabase.auth.getSession();
+
+            // Ratings imported from MAL / AniList have no written review (comment NULL):
+            // they count for the user but aren't shown as reviews to others
+            setReviews((data || []).filter(r => r.comment !== null || r.user_id === session?.user.id));
             if (session) {
                 setCurrentUserId(session.user.id);
             }
@@ -93,7 +103,7 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                 if (userReview) {
                     setMyReview(userReview);
                     setRating(userReview.rating);
-                    setComment(userReview.comment);
+                    setComment(userReview.comment ?? '');
                 }
             }
         } catch (error) {
@@ -133,7 +143,10 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
           *,
           profiles (
             username,
-            avatar_url
+            avatar_url,
+            is_pro,
+            pro_expires_at,
+            cosmetics
           )
         `)
                 .single();
@@ -189,9 +202,13 @@ export const ReviewSection = ({ animeId }: ReviewSectionProps) => {
                             contentFit="cover"
                         />
                         <View style={{ flex: 1, marginLeft: 10 }}>
-                            <Text style={[styles.username, { color: colors.text }]}>
-                                {username}
-                            </Text>
+                            <DecoratedName
+                                name={username}
+                                decor={decorFor(profile)}
+                                defaultColor={colors.text}
+                                style={styles.username}
+                                numberOfLines={1}
+                            />
                             <Text style={[styles.date, { color: colors.subtext }]}>
                                 {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
                             </Text>

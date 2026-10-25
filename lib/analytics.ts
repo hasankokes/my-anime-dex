@@ -61,7 +61,22 @@ export type AnalyticsEvent =
     | 'search_result_clicked'
     | 'home_section_clicked'
     | 'dice_rolled'
+    | 'discover_loaded'
+    | 'discover_item_clicked'
+    | 'discover_item_saved'
+    | 'discover_item_hidden'
+    | 'discover_filter_changed'
+    | 'discover_genres_saved'
+    | 'discover_tab_changed'
+    | 'smart_recs_loaded'
+    | 'smart_rec_rejected'
+    | 'season_picks_loaded'
     | 'calendar_day_changed'
+    | 'calendar_reminders_toggled'
+    | 'calendar_reminder_opened'
+    | 'calendar_view_changed'
+    | 'calendar_event_added'
+    | 'reminder_settings_saved'
     // Lists
     | 'list_created'
     | 'list_deleted'
@@ -69,6 +84,14 @@ export type AnalyticsEvent =
     | 'list_item_removed'
     | 'list_shared'
     | 'list_collaborator_added'
+    | 'list_tags_updated'
+    | 'list_note_updated'
+    | 'list_filters_applied'
+    | 'list_imported'
+    | 'list_import_failed'
+    | 'list_exported'
+    | 'backup_created'
+    | 'backup_restored'
     // Arena
     | 'arena_setup_started'
     | 'arena_game_started'
@@ -77,14 +100,25 @@ export type AnalyticsEvent =
     | 'arena_result_shared'
     // Profile / account
     | 'profile_edited'
+    | 'stats_viewed'
+    | 'stats_card_updated'
     | 'progress_reset'
+    | 'rank_ladder_viewed'
+    | 'level_up_shown'
     | 'account_deleted'
     // Settings
     | 'language_changed'
     | 'theme_changed'
+    | 'appearance_viewed'
+    | 'cosmetic_selected'
+    | 'top10_saved'
     // Monetization
     | 'paywall_viewed'
     | 'paywall_dismissed'
+    | 'paywall_plan_selected'
+    | 'premium_gate_viewed'
+    | 'premium_gate_tapped'
+    | 'trial_reminder_scheduled'
     | 'purchase_started'
     | 'purchase_completed'
     | 'purchase_cancelled'
@@ -93,9 +127,14 @@ export type AnalyticsEvent =
     | 'restore_failed'
     | 'ad_shown'
     | 'ad_failed'
-    | 'rate_prompt_shown'
-    | 'rate_prompt_accepted'
-    | 'rate_prompt_later';
+    | 'review_requested'
+    | 'review_store_opened'
+    // Content cards
+    | 'content_card_viewed'
+    | 'content_card_dismissed'
+    | 'content_card_cta'
+    | 'poll_voted'
+    | 'beta_signed_up';
 
 type Props = Record<string, string | number | boolean | null | undefined | string[]>;
 
@@ -134,7 +173,7 @@ const clean = (props?: Props) => {
 // Events that are pure navigation/system noise do not count as "actions" in session_summary
 const PASSIVE_EVENTS = new Set<AnalyticsEvent>([
     'first_open', 'session_summary', 'walkthrough_step_viewed', 'login_viewed',
-    'paywall_viewed', 'ad_shown', 'ad_failed', 'rate_prompt_shown', 'anime_viewed', 'anime_load_failed',
+    'paywall_viewed', 'ad_shown', 'ad_failed', 'review_requested', 'anime_viewed', 'anime_load_failed',
 ]);
 
 export const analytics = {

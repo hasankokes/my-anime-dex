@@ -1,17 +1,11 @@
 import { Stack } from 'expo-router';
-import { useTheme } from '../../context/ThemeContext';
-import { useLanguage } from '../../context/LanguageContext';
 
 export default function ArenaLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="setup" />
-      <Stack.Screen name="game" />
-      <Stack.Screen name="result" />
+      <Stack.Screen name="game" options={{ gestureEnabled: false }} />
+      <Stack.Screen name="result" options={{ gestureEnabled: false }} />
     </Stack>
   );
 }

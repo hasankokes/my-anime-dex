@@ -1,17 +1,21 @@
 import { Tabs, useRouter } from 'expo-router';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthProvider';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
+import { useEpisodeReminders } from '../../hooks/useEpisodeReminders';
 
 export default function TabLayout() {
   const { colors, isDark } = useTheme();
   const { t } = useLanguage();
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { session } = useAuth();
   const requireAuth = useRequireAuth();
+  useEpisodeReminders();
 
   const rippleConfig = {
     color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
@@ -31,7 +35,9 @@ export default function TabLayout() {
             borderTopWidth: 0,
             shadowColor: "#000", // Ensure shadow is visible
             shadowOpacity: 0.3,
-          }
+          },
+          // Android 16 (targetSdk 36) enforces edge-to-edge: keep the floating bar above the system nav bar
+          Platform.OS === 'android' && { bottom: styles.tabBar.bottom + insets.bottom },
         ],
         tabBarShowLabel: true,
         tabBarActiveTintColor: colors.primary,
@@ -56,7 +62,7 @@ export default function TabLayout() {
               <Ionicons
                 name={focused ? "home" : "home-outline"}
                 size={24}
-                color={focused ? '#FACC15' : color}
+                color={focused ? colors.primary : color}
               />
             </View>
           ),
@@ -72,7 +78,7 @@ export default function TabLayout() {
               <Ionicons
                 name={focused ? "calendar" : "calendar-outline"}
                 size={24}
-                color={focused ? '#FACC15' : color}
+                color={focused ? colors.primary : color}
               />
             </View>
           ),
@@ -88,7 +94,7 @@ export default function TabLayout() {
               <Ionicons
                 name={focused ? "heart" : "heart-outline"}
                 size={24}
-                color={focused ? '#FACC15' : color}
+                color={focused ? colors.primary : color}
               />
             </View>
           ),
@@ -104,7 +110,7 @@ export default function TabLayout() {
               <Ionicons
                 name={focused ? "play-circle" : "play-circle-outline"}
                 size={24}
-                color={focused ? '#FACC15' : color}
+                color={focused ? colors.primary : color}
               />
             </View>
           ),
@@ -135,7 +141,7 @@ export default function TabLayout() {
               <Ionicons
                 name={focused ? "person" : "person-outline"}
                 size={24}
-                color={focused ? '#FACC15' : color}
+                color={focused ? colors.primary : color}
               />
             </View>
           ),

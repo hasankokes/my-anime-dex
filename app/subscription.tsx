@@ -8,14 +8,19 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRevenueCat } from '../context/RevenueCatProvider';
+import Purchases, { PurchasesPackage } from 'react-native-purchases';
+import { hasPremiumEntitlement, useRevenueCat } from '../context/RevenueCatProvider';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
+import { useAppConfig } from '../context/AppConfigProvider';
+import type { FeatureFlag } from '../lib/featureFlags';
 import { analytics } from '../lib/analytics';
 
 
@@ -33,19 +38,57 @@ const COLLAGE_IMAGES = [
   'https://cdn.myanimelist.net/images/anime/1806/126216l.jpg',  // Chainsaw Man
 ];
 
+type PlanKey = 'monthly' | 'annual';
+
+type Benefit = { key: string; icon: React.ReactNode; flag?: FeatureFlag };
+
+const ICON_COLOR = '#854D0E';
+
+// Only benefits whose module is switched on are advertised, so the paywall never promises
+// something the build doesn't deliver. Ad-free is always part of premium.
+const BENEFITS: Benefit[] = [
+  { key: 'AdFree', icon: <Ionicons name="ban" size={20} color={ICON_COLOR} /> },
+  { key: 'Stats', icon: <Ionicons name="stats-chart" size={20} color={ICON_COLOR} />, flag: 'premium_stats' },
+  { key: 'SmartRecs', icon: <MaterialCommunityIcons name="creation" size={20} color={ICON_COLOR} />, flag: 'premium_smart_recs' },
+  { key: 'Notifications', icon: <Ionicons name="notifications" size={20} color={ICON_COLOR} />, flag: 'premium_notifications' },
+  { key: 'ListTools', icon: <Ionicons name="pricetags" size={20} color={ICON_COLOR} />, flag: 'premium_list_tools' },
+  { key: 'Cosmetics', icon: <Ionicons name="color-palette" size={20} color={ICON_COLOR} />, flag: 'premium_cosmetics' },
+  { key: 'Backup', icon: <Ionicons name="cloud-upload" size={20} color={ICON_COLOR} />, flag: 'premium_backup' },
+  { key: 'Polls', icon: <Ionicons name="bar-chart" size={20} color={ICON_COLOR} />, flag: 'content_cards' },
+];
+
+/** Free-trial length in days from a product's intro offer, or 0 when it has no free trial. */
+const freeTrialDays = (pkg: PurchasesPackage | null): number => {
+  const intro = pkg?.product.introPrice;
+  if (!intro || intro.price !== 0) return 0;
+  const perUnit = intro.periodUnit === 'WEEK' ? 7 : intro.periodUnit === 'MONTH' ? 30 : intro.periodUnit === 'YEAR' ? 365 : 1;
+  return intro.periodNumberOfUnits * perUnit;
+};
+
 export default function SubscriptionScreen() {
   const router = useRouter();
-  const { currentOffering, purchasePackage, restorePermissions, isPro } = useRevenueCat();
+  const { packages, purchasePackage, restorePermissions, reloadOfferings, isPro, isReady } = useRevenueCat();
   const { t } = useLanguage();
+  const { colors, isDark } = useTheme();
+  const { config } = useAppConfig();
   const [isPurchasing, setIsPurchasing] = React.useState(false);
-  const { source } = useLocalSearchParams<{ source?: string }>();
+  const [isLoadingPlans, setIsLoadingPlans] = React.useState(false);
+  const [selectedPlan, setSelectedPlan] = React.useState<PlanKey>('annual');
+  // Product ids that are NOT eligible for their intro offer (iOS only; Play only returns eligible offers)
+  const [introIneligible, setIntroIneligible] = React.useState<Set<string>>(new Set());
+  const { source, feature } = useLocalSearchParams<{ source?: string; feature?: FeatureFlag }>();
   const isProRef = React.useRef(isPro);
   isProRef.current = isPro;
+
+  const isWeb = Platform.OS === 'web';
+  const hasPlans = !!(packages.monthly || packages.annual);
+  // Fall back to whichever plan exists if the preferred one isn't offered
+  const selectedPackage = (selectedPlan === 'annual' ? packages.annual ?? packages.monthly : packages.monthly ?? packages.annual) ?? null;
 
   // Paywall funnel: viewed -> purchase_* (from RevenueCatProvider) or dismissed
   React.useEffect(() => {
     const openedAt = Date.now();
-    analytics.track('paywall_viewed', { source: source ?? 'unknown' });
+    analytics.track('paywall_viewed', { source: source ?? 'unknown', feature: feature ?? null });
     return () => {
       if (!isProRef.current) {
         analytics.track('paywall_dismissed', { source: source ?? 'unknown', seconds_open: Math.round((Date.now() - openedAt) / 1000) });
@@ -61,11 +104,60 @@ export default function SubscriptionScreen() {
     }
   }, [isPro]);
 
+  const loadPlans = async () => {
+    setIsLoadingPlans(true);
+    try {
+      await reloadOfferings();
+    } finally {
+      setIsLoadingPlans(false);
+    }
+  };
+
+  // The initial fetch may have failed (offline at launch) — try once more when the paywall opens
+  React.useEffect(() => {
+    if (isReady && !hasPlans && !isWeb) loadPlans();
+  }, [isReady]);
+
+  React.useEffect(() => {
+    if (Platform.OS !== 'ios' || !hasPlans) return;
+    const ids = [packages.monthly, packages.annual].filter(Boolean).map(p => p!.product.identifier);
+    Purchases.checkTrialOrIntroductoryPriceEligibility(ids)
+      .then(result => {
+        setIntroIneligible(new Set(
+          Object.entries(result)
+            .filter(([, e]) => e.status === Purchases.INTRO_ELIGIBILITY_STATUS.INTRO_ELIGIBILITY_STATUS_INELIGIBLE)
+            .map(([id]) => id)
+        ));
+      })
+      .catch(() => { });
+  }, [packages]);
+
+  // Never show a made-up price: until the store returns a real product we show a loading or retry state
+  const plansLoading = !hasPlans && !isWeb && (!isReady || isLoadingPlans);
+  const plansUnavailable = !hasPlans && !plansLoading;
+
+  const trialDaysFor = (pkg: PurchasesPackage | null) =>
+    pkg && !introIneligible.has(pkg.product.identifier) ? freeTrialDays(pkg) : 0;
+  const trialDays = trialDaysFor(selectedPackage);
+
+  // Annual discount vs. paying monthly for a year (≈ 2 months free)
+  const annualSavingPercent = packages.monthly && packages.annual && packages.monthly.product.price > 0
+    ? Math.round((1 - packages.annual.product.price / (packages.monthly.product.price * 12)) * 100)
+    : 0;
+
+  const selectPlan = (plan: PlanKey) => {
+    setSelectedPlan(plan);
+    analytics.track('paywall_plan_selected', { plan });
+  };
+
   const handlePurchase = async () => {
-    if (!currentOffering) return;
+    if (!selectedPackage) {
+      if (plansUnavailable && !isWeb) loadPlans();
+      return;
+    }
     setIsPurchasing(true);
     try {
-      await purchasePackage(currentOffering);
+      await purchasePackage(selectedPackage);
       // Success is handled by the useEffect above
     } catch (e) {
       // Error handled in provider (except user cancellation)
@@ -77,9 +169,13 @@ export default function SubscriptionScreen() {
   const handleRestore = async () => {
     setIsPurchasing(true);
     try {
-      await restorePermissions();
-      // Success handled by useEffect if entitlement found
-      Alert.alert(t('common.success'), t('subscription.restoreSuccess'));
+      const info = await restorePermissions();
+      if (hasPremiumEntitlement(info)) {
+        // The isPro effect above closes the paywall
+        Alert.alert(t('common.success'), t('subscription.restoreSuccess'));
+      } else {
+        Alert.alert(t('subscription.restoreNothingTitle'), t('subscription.restoreNothing'));
+      }
     } catch (e) {
       Alert.alert(t('common.error'), t('subscription.restoreError'));
     } finally {
@@ -88,17 +184,73 @@ export default function SubscriptionScreen() {
 
   };
 
-  const priceString = currentOffering?.product?.priceString || '$19.99';
-  const introPrice = currentOffering?.product?.introPrice;
+  const ctaLabel = isPurchasing
+    ? t('subscription.ctaProcessing')
+    : plansLoading
+      ? t('subscription.loadingPlans')
+      : plansUnavailable
+        ? t('subscription.retryPlans')
+        : trialDays > 0
+          ? t('subscription.ctaTrial', { days: trialDays })
+          : t('subscription.ctaSubscribe');
 
-  const displayPrice = introPrice ? introPrice.priceString : priceString;
-  const originalPrice = introPrice ? priceString : null;
+  // The module the user tapped "Unlock" on is listed first
+  const benefits = BENEFITS
+    .filter(b => !b.flag || config[b.flag])
+    .sort((a, b) => Number(b.flag === feature) - Number(a.flag === feature));
 
-  // const pricePerMonth = currentOffering?.product?.price ? (currentOffering.product.price / 12).toFixed(2) : '1.66';
-  const currencySymbol = currentOffering?.product?.priceString?.charAt(0) || '$';
+  const renderPlan = (plan: PlanKey, pkg: PurchasesPackage | null) => {
+    if (!pkg) return null;
+    const selected = selectedPackage?.identifier === pkg.identifier;
+    const days = trialDaysFor(pkg);
+    const isAnnual = plan === 'annual';
+    return (
+      <TouchableOpacity
+        key={plan}
+        style={[
+          styles.planCard,
+          { backgroundColor: colors.card, borderColor: selected ? colors.primary : colors.border },
+          selected && styles.planCardSelected,
+        ]}
+        onPress={() => selectPlan(plan)}
+        activeOpacity={0.85}
+        accessibilityRole="radio"
+        accessibilityState={{ selected }}
+      >
+        {isAnnual && annualSavingPercent > 0 && (
+          <View style={[styles.saveBadge, { backgroundColor: colors.primary }]}>
+            <Text style={styles.saveBadgeText}>{t('subscription.savePercent', { percent: annualSavingPercent })}</Text>
+          </View>
+        )}
+        <View style={styles.planRow}>
+          <Ionicons
+            name={selected ? 'radio-button-on' : 'radio-button-off'}
+            size={22}
+            color={selected ? colors.primary : colors.subtext}
+          />
+          <View style={styles.planInfo}>
+            <Text style={[styles.planName, { color: colors.text }]}>
+              {t(isAnnual ? 'subscription.annualPlan' : 'subscription.monthlyPlan')}
+            </Text>
+            {days > 0 && (
+              <Text style={[styles.planTrial, { color: colors.primary }]}>{t('subscription.trialBadge', { days })}</Text>
+            )}
+          </View>
+          <View style={styles.planPriceCol}>
+            <Text style={[styles.planPrice, { color: colors.text }]}>{pkg.product.priceString}</Text>
+            <Text style={[styles.planPeriod, { color: colors.subtext }]}>
+              {isAnnual && pkg.product.pricePerMonthString
+                ? t('subscription.annualPerMonth', { price: pkg.product.pricePerMonthString })
+                : `/ ${t(isAnnual ? 'subscription.year' : 'subscription.month')}`}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       {/* Background Collage */}
       <View style={styles.collageContainer}>
@@ -108,7 +260,7 @@ export default function SubscriptionScreen() {
           ))}
         </View>
         <LinearGradient
-          colors={['rgba(255,255,255,0)', '#F9FAFB']}
+          colors={[isDark ? 'rgba(15,15,15,0)' : 'rgba(249,250,251,0)', colors.background]}
           style={styles.collageGradient}
         />
       </View>
@@ -119,6 +271,8 @@ export default function SubscriptionScreen() {
           style={styles.closeButton}
           onPress={() => router.back()}
           activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={t('common.close')}
         >
           <Ionicons name="close" size={24} color="#FFFFFF" />
         </TouchableOpacity>
@@ -130,87 +284,72 @@ export default function SubscriptionScreen() {
       >
         <View style={styles.contentContainer}>
           {/* Premium Badge */}
-          <View style={styles.premiumBadge}>
+          <View style={[styles.premiumBadge, { backgroundColor: colors.primary }]}>
             <Text style={styles.premiumText}>{t('subscription.premium')}</Text>
           </View>
 
 
           {/* Headlines */}
-          <Text style={styles.headline}>
+          <Text style={[styles.headline, { color: colors.text }]}>
             {t('subscription.headline')}
           </Text>
-          <Text style={styles.subheadline}>
+          <Text style={[styles.subheadline, { color: colors.subtext }]}>
             {t('subscription.subheadline')}
           </Text>
 
 
-          {/* Pricing Card */}
-          <View style={styles.pricingCard}>
-            <View style={styles.bestValueBadge}>
-              <Text style={styles.bestValueText}>{t('subscription.bestValue')}</Text>
+          {/* Plans */}
+          {hasPlans ? (
+            <View style={styles.plans}>
+              {renderPlan('annual', packages.annual)}
+              {renderPlan('monthly', packages.monthly)}
+              <Text style={[styles.priceSubtext, { color: colors.subtext }]}>
+                {trialDays > 0 && selectedPackage
+                  ? t('subscription.trialThen', {
+                    days: trialDays,
+                    price: selectedPackage.product.priceString,
+                    period: t(selectedPackage === packages.annual ? 'subscription.year' : 'subscription.month'),
+                  })
+                  : t('subscription.cancelAnytime')}
+              </Text>
             </View>
-
-            <Text style={styles.planName}>{t('subscription.monthlyPlan')}</Text>
-
-            <View style={styles.priceRow}>
-              {originalPrice && (
-                <Text style={[styles.priceAmount, { textDecorationLine: 'line-through', fontSize: 24, color: '#9CA3AF', marginRight: 8 }]}>
-                  {originalPrice}
+          ) : (
+            <View style={[styles.statusCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              {plansLoading ? (
+                <ActivityIndicator size="large" color={colors.primary} />
+              ) : (
+                <Text style={[styles.statusText, { color: colors.subtext }]}>
+                  {t(isWeb ? 'subscription.webUnavailable' : 'subscription.plansUnavailable')}
                 </Text>
               )}
-              <Text style={styles.priceAmount}>{displayPrice}</Text>
-              <Text style={styles.pricePeriod}> / {t('subscription.month')}</Text>
             </View>
-            <Text style={styles.priceSubtext}>{t('subscription.cancelAnytime')}</Text>
-          </View>
+          )}
 
 
           {/* Benefits Section */}
-          <Text style={styles.benefitsTitle}>{t('subscription.benefitsTitle')}</Text>
+          <Text style={[styles.benefitsTitle, { color: colors.subtext }]}>{t('subscription.benefitsTitle')}</Text>
 
+          {benefits.map(b => (
+            <View
+              key={b.key}
+              style={[
+                styles.benefitItem,
+                { backgroundColor: colors.card, borderColor: b.flag && b.flag === feature ? colors.primary : colors.border },
+              ]}
+            >
+              <View style={styles.iconContainer}>{b.icon}</View>
+              <View style={styles.benefitTextContainer}>
+                <Text style={[styles.benefitTitle, { color: colors.text }]}>{t(`subscription.benefit${b.key}Title`)}</Text>
+                <Text style={[styles.benefitDesc, { color: colors.subtext }]}>{t(`subscription.benefit${b.key}Desc`)}</Text>
+              </View>
+            </View>
+          ))}
 
-          <View style={styles.benefitItem}>
-            <View style={styles.iconContainer}>
-              <Ionicons name="ban" size={20} color="#854D0E" />
-            </View>
-            <View style={styles.benefitTextContainer}>
-              <Text style={styles.benefitTitle}>{t('subscription.benefitAdFreeTitle')}</Text>
-              <Text style={styles.benefitDesc}>{t('subscription.benefitAdFreeDesc')}</Text>
-            </View>
-          </View>
-
-
-          <View style={styles.benefitItem}>
-            <View style={styles.iconContainer}>
-              <MaterialCommunityIcons name="infinity" size={20} color="#854D0E" />
-            </View>
-            <View style={styles.benefitTextContainer}>
-              <Text style={styles.benefitTitle}>{t('subscription.benefitUnlimitedTitle')}</Text>
-              <Text style={styles.benefitDesc}>{t('subscription.benefitUnlimitedDesc')}</Text>
-            </View>
-          </View>
-
-
-          <View style={styles.benefitItem}>
-            <View style={styles.iconContainer}>
-              <MaterialCommunityIcons name="check-decagram" size={20} color="#854D0E" />
-            </View>
-            <View style={styles.benefitTextContainer}>
-              <Text style={styles.benefitTitle}>{t('subscription.benefitExclusiveTitle')}</Text>
-              <Text style={styles.benefitDesc}>{t('subscription.benefitExclusiveDesc')}</Text>
-            </View>
-          </View>
-
-
-          <View style={styles.benefitItem}>
-            <View style={styles.iconContainer}>
-              <Ionicons name="rocket" size={20} color="#854D0E" />
-            </View>
-            <View style={styles.benefitTextContainer}>
-              <Text style={styles.benefitTitle}>{t('subscription.benefitEarlyAccessTitle')}</Text>
-              <Text style={styles.benefitDesc}>{t('subscription.benefitEarlyAccessDesc')}</Text>
-            </View>
-          </View>
+          {hasPlans && (
+            <Text style={[styles.legal, { color: colors.subtext }]}>
+              {t(Platform.OS === 'ios' ? 'subscription.legalIos' : 'subscription.legalAndroid')}
+            </Text>
+          )}
 
 
           <View style={{ height: 180 }} />
@@ -218,29 +357,37 @@ export default function SubscriptionScreen() {
       </ScrollView>
 
       {/* Footer */}
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.ctaButton, { opacity: isPurchasing ? 0.7 : 1 }]}
-          activeOpacity={0.9}
-          onPress={handlePurchase}
-          disabled={isPurchasing}
-        >
-          <Text style={styles.ctaButtonText}>{isPurchasing ? t('subscription.ctaProcessing') : t('subscription.ctaButton')}</Text>
-          {!isPurchasing && <Ionicons name="arrow-forward" size={20} color="#111827" />}
-        </TouchableOpacity>
+      <View style={[styles.footer, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
+        {!isWeb && (
+          <TouchableOpacity
+            style={[styles.ctaButton, { backgroundColor: colors.primary, shadowColor: colors.primary, opacity: isPurchasing || plansLoading ? 0.7 : 1 }]}
+            activeOpacity={0.9}
+            onPress={handlePurchase}
+            disabled={isPurchasing || plansLoading}
+          >
+            <Text style={styles.ctaButtonText}>{ctaLabel}</Text>
+            {!isPurchasing && !plansLoading && (
+              <Ionicons name={plansUnavailable ? 'refresh' : 'arrow-forward'} size={20} color="#111827" />
+            )}
+          </TouchableOpacity>
+        )}
 
 
         <View style={styles.footerLinks}>
-          <TouchableOpacity onPress={handleRestore} disabled={isPurchasing}>
-            <Text style={styles.footerLinkText}>{t('subscription.restorePurchase')}</Text>
-          </TouchableOpacity>
-          <Text style={styles.footerLinkText}> • </Text>
+          {!isWeb && (
+            <>
+              <TouchableOpacity onPress={handleRestore} disabled={isPurchasing}>
+                <Text style={[styles.footerLinkText, { color: colors.subtext }]}>{t('subscription.restorePurchase')}</Text>
+              </TouchableOpacity>
+              <Text style={[styles.footerLinkText, { color: colors.subtext }]}> • </Text>
+            </>
+          )}
           <TouchableOpacity onPress={() => router.push('/settings/terms')}>
-            <Text style={styles.footerLinkText}>{t('subscription.terms')}</Text>
+            <Text style={[styles.footerLinkText, { color: colors.subtext }]}>{t('subscription.terms')}</Text>
           </TouchableOpacity>
-          <Text style={styles.footerLinkText}> • </Text>
+          <Text style={[styles.footerLinkText, { color: colors.subtext }]}> • </Text>
           <TouchableOpacity onPress={() => router.push('/settings/privacy')}>
-            <Text style={styles.footerLinkText}>{t('subscription.privacyPolicy')}</Text>
+            <Text style={[styles.footerLinkText, { color: colors.subtext }]}>{t('subscription.privacyPolicy')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -252,7 +399,6 @@ export default function SubscriptionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
   },
   collageContainer: {
     height: 340,
@@ -308,7 +454,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   premiumBadge: {
-    backgroundColor: '#FACC15',
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
@@ -323,7 +468,6 @@ const styles = StyleSheet.create({
   headline: {
     fontSize: 28,
     fontFamily: 'Poppins_700Bold',
-    color: '#111827',
     textAlign: 'center',
     marginBottom: 12,
     lineHeight: 34,
@@ -331,99 +475,104 @@ const styles = StyleSheet.create({
   subheadline: {
     fontSize: 15,
     fontFamily: 'Poppins_500Medium',
-    color: '#4B5563',
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: 28,
     lineHeight: 22,
     paddingHorizontal: 10,
   },
-  pricingCard: {
+  plans: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 24,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    gap: 12,
+    marginBottom: 28,
+  },
+  planCard: {
+    width: '100%',
+    borderRadius: 20,
+    borderWidth: 2,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  planCardSelected: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.08,
     shadowRadius: 12,
     elevation: 3,
-    position: 'relative',
-    marginBottom: 32,
   },
-  bestValueBadge: {
+  planRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  planInfo: {
+    flex: 1,
+  },
+  planName: {
+    fontSize: 16,
+    fontFamily: 'Poppins_600SemiBold',
+  },
+  planTrial: {
+    fontSize: 12,
+    fontFamily: 'Poppins_600SemiBold',
+    marginTop: 2,
+  },
+  planPriceCol: {
+    alignItems: 'flex-end',
+  },
+  planPrice: {
+    fontSize: 18,
+    fontFamily: 'Poppins_700Bold',
+  },
+  planPeriod: {
+    fontSize: 12,
+    fontFamily: 'Poppins_500Medium',
+  },
+  saveBadge: {
     position: 'absolute',
-    top: -12,
-    right: -12,
-    backgroundColor: '#FACC15',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    borderBottomLeftRadius: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    top: -11,
+    right: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 10,
   },
-  bestValueText: {
+  saveBadgeText: {
     fontSize: 10,
     fontFamily: 'Poppins_700Bold',
     color: '#111827',
   },
-  planName: {
-    fontSize: 14,
-    fontFamily: 'Poppins_500Medium',
-    color: '#4B5563',
-    marginBottom: 8,
-  },
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 8,
-  },
-  priceSymbol: {
-    fontSize: 24,
-    fontFamily: 'Poppins_700Bold',
-    color: '#111827',
-    marginRight: 2,
-  },
-  priceAmount: {
-    fontSize: 42,
-    fontFamily: 'Poppins_700Bold',
-    color: '#111827',
-    letterSpacing: -1,
-  },
-  pricePeriod: {
-    fontSize: 16,
-    fontFamily: 'Poppins_500Medium',
-    color: '#6B7280',
-  },
   priceSubtext: {
     fontSize: 13,
-    fontFamily: 'Poppins_600SemiBold',
-    color: '#FACC15', // Yellow text
+    fontFamily: 'Poppins_500Medium',
+    textAlign: 'center',
+  },
+  statusCard: {
+    width: '100%',
+    borderRadius: 24,
+    borderWidth: 1,
+    padding: 24,
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  statusText: {
+    fontSize: 14,
+    fontFamily: 'Poppins_500Medium',
+    textAlign: 'center',
   },
   benefitsTitle: {
     alignSelf: 'flex-start',
     fontSize: 12,
     fontFamily: 'Poppins_700Bold',
-    color: '#6B7280',
     letterSpacing: 1,
     marginBottom: 16,
   },
   benefitItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
     padding: 16,
     borderRadius: 20,
     marginBottom: 12,
     width: '100%',
     borderWidth: 1,
-    borderColor: '#F3F4F6',
   },
   iconContainer: {
     width: 40,
@@ -440,35 +589,36 @@ const styles = StyleSheet.create({
   benefitTitle: {
     fontSize: 15,
     fontFamily: 'Poppins_600SemiBold',
-    color: '#111827',
     marginBottom: 2,
   },
   benefitDesc: {
     fontSize: 13,
     fontFamily: 'Poppins_500Medium',
-    color: '#6B7280',
+  },
+  legal: {
+    fontSize: 11,
+    fontFamily: 'Poppins_500Medium',
+    textAlign: 'center',
+    lineHeight: 16,
+    marginTop: 12,
   },
   footer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#F9FAFB',
     paddingHorizontal: 24,
     paddingTop: 20,
     paddingBottom: Platform.OS === 'ios' ? 40 : 24,
     borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
   },
   ctaButton: {
-    backgroundColor: '#FACC15',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 16,
     borderRadius: 16,
     marginBottom: 16,
-    shadowColor: '#FACC15',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -488,6 +638,5 @@ const styles = StyleSheet.create({
   footerLinkText: {
     fontSize: 12,
     fontFamily: 'Poppins_500Medium',
-    color: '#6B7280',
   },
 });

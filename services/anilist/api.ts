@@ -35,15 +35,22 @@ function genreIdsToNames(genreIdStr: string): string[] {
     .filter(Boolean);
 }
 
-/** Determine the current anime season and year */
-function getCurrentSeason(): { season: string; year: number } {
+/**
+ * Determine the current anime season and year (AniList convention):
+ * Dec–Feb WINTER, Mar–May SPRING, Jun–Aug SUMMER, Sep–Nov FALL.
+ * December belongs to the next year's WINTER season.
+ */
+export function getCurrentSeason(): { season: string; year: number } {
   const now = new Date();
   const month = now.getMonth() + 1; // 1-12
-  const year = now.getFullYear();
+  let year = now.getFullYear();
   let season: string;
-  if (month <= 3) season = 'WINTER';
-  else if (month <= 6) season = 'SPRING';
-  else if (month <= 9) season = 'SUMMER';
+  if (month === 12) {
+    season = 'WINTER';
+    year += 1;
+  } else if (month <= 2) season = 'WINTER';
+  else if (month <= 5) season = 'SPRING';
+  else if (month <= 8) season = 'SUMMER';
   else season = 'FALL';
   return { season, year };
 }
@@ -86,8 +93,13 @@ export const anilistApi = {
         { idMal: numericId },
         { cacheKey: `detail_mal_${numericId}`, cacheDuration: 1000 * 60 * 15 }
       );
-    } catch (err) {
-      console.log(`[AniList] MAL ID ${numericId} lookup failed/not found, trying AniList ID fallback…`);
+    } catch (err: any) {
+      // Only a genuine 404 means "not a MAL ID". Timeouts, rate limits and network errors
+      // must surface as-is — otherwise the AniList-ID fallback 404s and the screen shows
+      // a misleading "Anime not found".
+      const isNotFound = err?.gqlErrors?.some((e: any) => e.status === 404);
+      if (!isNotFound) throw err;
+      console.log(`[AniList] MAL ID ${numericId} not found, trying AniList ID fallback…`);
     }
 
     // 2. Fallback: try by AniList ID if MAL ID lookup failed or returned no Media
