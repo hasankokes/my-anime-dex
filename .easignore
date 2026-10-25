@@ -3,3 +3,20 @@
 /ios/
 /web/
 /.expo/
+
+# Not needed for the app build
+/teaser/
+/dist/
+/docs/
+/scripts/
+*.log
+build_log.txt
+pixel.png
+
+# Signing material stays local (EAS uses its own stored credentials).
+# .easignore replaces .gitignore for EAS uploads, so these must be listed here.
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
