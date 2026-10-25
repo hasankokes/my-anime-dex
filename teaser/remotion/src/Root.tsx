@@ -1,4 +1,6 @@
-import { Composition } from "remotion";
+import { Composition, Still } from "remotion";
+import { Cover } from "./cover/Cover";
+import { PlayMockDesktop, PlayMockMobile } from "./cover/PlayMock";
 import { Animatic } from "./Animatic";
 import { Smoke } from "./Smoke";
 import { KitTest } from "./kit/KitTest";
@@ -34,6 +36,11 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="PromoP" component={Promo} durationInFrames={PROMO_LEN} fps={30} width={1080} height={1920} />
     <Composition id="WebLoop" component={Promo} durationInFrames={PROMO_LEN} fps={30} width={1280} height={720} defaultProps={{ muted: true }} />
     <Composition id="Store" component={StoreCut} durationInFrames={STORE_LEN} fps={30} width={886} height={1920} />
+    <Still id="CoverYT" component={Cover} width={1280} height={720} defaultProps={{ screen: "home" as const, wordmark: false }} />
+    <Still id="CoverYTWordmark" component={Cover} width={1280} height={720} defaultProps={{ screen: "home" as const, wordmark: true }} />
+    <Still id="FeatureGraphic" component={Cover} width={1024} height={500} defaultProps={{ screen: "home" as const, wordmark: false }} />
+    <Still id="PlayMockDesktop" component={PlayMockDesktop} width={2560} height={1080} defaultProps={{ img: "cover/youtube_thumbnail_1280x720.png" }} />
+    <Still id="PlayMockMobile" component={PlayMockMobile} width={390} height={400} defaultProps={{ img: "cover/youtube_thumbnail_1280x720.png" }} />
     <Composition id="KitTest" component={KitTest} durationInFrames={60} fps={30} width={1920} height={1080} />
     <Composition id="S01-L" component={shotTest(S01)} durationInFrames={60} fps={30} width={1920} height={1080} />
     <Composition id="S01-P" component={shotTest(S01)} durationInFrames={60} fps={30} width={1080} height={1920} />

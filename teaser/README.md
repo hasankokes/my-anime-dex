@@ -70,6 +70,31 @@ ffmpeg -y -stream_loop 1 -i web_loop.mp4 -c copy loop_check.mp4
 
 Per-shot test renders are available: `npx remotion still S04-L ../out/review/x.png --frame=40` (`-L` 1920×1080, `-P` 1080×1920).
 
+## Cover stills (YouTube thumbnail / Play feature graphic)
+
+| File | Size | Use |
+|------|------|-----|
+| `out/cover/youtube_thumbnail_1280x720.png` | 1280×720, ~1.2 MB | YouTube custom thumbnail. Google Play's listing hero uses it as background, so it has no text |
+| `out/cover/youtube_thumbnail_wordmark_1280x720.png` | 1280×720, ~1.2 MB | Same with logo + ANIME**DEX** wordmark, for YouTube itself (no title overlay there) |
+| `out/cover/feature_graphic_1024x500.png` | 1024×500, ~0.7 MB | Play Console → Store listing → Feature graphic |
+
+Composition (`remotion/src/cover/Cover.tsx`): Play puts a dark gradient, the title and buttons over
+the left ~55%, so the left is empty bg + grain + a faint glow. The weight is on the right: the real
+Home capture in the 3D phone, the die leaving the "Roll Dice" button, a Watching card and the
+Platinum level card. Everything important sits inside the y 0.15–0.85 band, because Play's 2560px
+desktop hero crops a 16:9 image ~12.5% top and bottom.
+
+```bash
+teaser/cover_render.sh               # renders the 3 stills + review mocks into out/cover/review/
+```
+Mocks (`remotion/src/cover/PlayMock.tsx`, review only, approximate Play chrome): 2560px desktop hero and
+390px mobile video header, for each image.
+
+Upload: YouTube Studio → video → Details → Thumbnail → Upload file (≤ 2 MB, 1280×720).
+Play Console → Grow → Store presence → Main store listing → Graphics → Feature graphic.
+The YouTube thumbnail is served at 1280×720 max, so the Play desktop hero upscales it ~2×; the cover
+avoids small text for that reason.
+
 ## How it's built
 
 - `docs/feature_inventory.md`: every feature, the ranking, and why the hero features were picked.

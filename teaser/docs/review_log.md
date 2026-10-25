@@ -144,3 +144,21 @@ The user said: "And so much more" goes too fast to follow, it may run a bit long
 4. **Landscape tag vs dock row touching.** The dock row moved down (0.68H → 0.725H); there's now a ~50px gap. Feature chips moved in from the
    right edge (x 0.9 → 0.865).
 Audio: `compose.py promo|store` parametrized by montage length; ticks on every montage cut (every 30f).
+
+
+## Cover stills — 2026-10-20
+
+Scored on: hook, readability at 360px, composition (left 55% calm), depth, polish, looks like the app,
+artwork not focal. Previews under a Play desktop (2560) and mobile (390) mock.
+
+| Round | Scores (hook/read/comp/depth/polish/app/art) | 3 biggest problems → fix |
+|-------|----------------------------------------------|---------------------------|
+| r1 | 7/6/7/7/6/6/8 | Dice screen almost black, phone reads empty → Home capture (die "leaves" Roll Dice); level card off the right edge; die too big, covers the header |
+| r2 | 8/7/8/8/7/8/7 | Motion trail invisible; wordmark crowds the die; countdown chip had no context → removed |
+| r3 | 8/7/6/8/7/8/7 | **Play desktop crops 25% vertically**: level card gone, die and Watching card cut; 2× upscale softens small text; mobile fine |
+| r4 | 8/8/8/8/7/8/8 | Everything in the y 0.15–0.85 band, phone bleeds off the bottom; level card covers My Lists/header icons → moved; trail still faint |
+| r5 | 9/8/8/9/8/9/8 | Level card cut at the right edge on 1024×500 → clamped; Play button nicks the die on mobile FG → die up |
+| r6/final | 9/8/9/9/8/9/8 | Bottom poster grid was the 2nd brightest area → frame-level bottom fade (no change to the capture) |
+
+Open: on the Play desktop hero the image is upscaled ~2× (YouTube max 1280×720); level-card fine print
+("Level 8 • 12/30 XP") is texture there, not meant to be read.
