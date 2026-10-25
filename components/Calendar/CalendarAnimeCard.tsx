@@ -1,163 +1,127 @@
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { format } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { useRouter } from 'expo-router';
-// Import type locally since we didn't export it from service yet or create a types file.
-// Ideally, we should move types to a shared file, but for now I'll redefine or import if I can.
-// Actually, I didn't export the interface in jikanApi.ts? Let me check.
-// I defined interfaces but didn't export them individually, only used in return type. 
-// I should probably move types to a `types/jikan.ts` or just simple 'any' for now to avoid refactor overhead in this step, 
-// BUT better practice is to export them. I will assume I can modify jikanApi.ts later or just use 'any' for speed and refine if needed.
-// Wait, I can just copy the interface here or update the service file to export them.
-// Let's use `any` for the prop to avoid build errors if I forgot to export, but I should check.
-// Checking jikanApi.ts content again in my mind... I used `export const getAnimeSchedule...`. Pass.
-// I'll define a subset interface here for what I need.
+import { getUtcOffsetString } from '../../lib/dateUtils';
+import type { AiringScheduleAnime } from '../../services/anilistApi';
 
-import { format } from 'date-fns';
-import { getNextBroadcastDate, getCurrentJSTDate, getBroadcastDateObj, getUtcOffsetString } from '../../lib/dateUtils';
+/** How long after airingAt an episode still counts as "airing now" */
+const AIRING_WINDOW_MS = 30 * 60 * 1000;
 
 interface CalendarAnimeCardProps {
-    anime: any; // Using any to avoid tight coupling with full API response for now
+    anime: AiringScheduleAnime;
+    /** The anime is in the user's list; `favorite` additionally marks it as a favorite */
+    listState?: 'favorite' | 'listed';
+    /** Premium: shows an "add to phone calendar" button */
+    onAddToCalendar?: () => void;
 }
 
-export const CalendarAnimeCard: React.FC<CalendarAnimeCardProps> = ({ anime }) => {
-    const { colors, isDark } = useTheme();
+export const CalendarAnimeCard = React.memo(function CalendarAnimeCard({ anime, listState, onAddToCalendar }: CalendarAnimeCardProps) {
+    const { colors } = useTheme();
     const { t } = useLanguage();
     const router = useRouter();
-
-    const [timeLeft, setTimeLeft] = useState<string>('');
-
-    const targetDate = getNextBroadcastDate(anime);
+    const [now, setNow] = useState(Date.now());
 
     useEffect(() => {
-        if (!targetDate) {
-            setTimeLeft('');
-            return;
-        }
-
-        const calculateTimeLeft = () => {
-            // We need current JST time to compare with targetJST
-            // effectively we just compare timestamps because both are constructed to represent specific moments
-            // But wait, targetJST is a "Face Value" date object. jstNow is Face Value.
-            // Subtraction works fine for delta.
-
-            const jstNow = getCurrentJSTDate();
-
-            const diffMs = targetDate.getTime() - jstNow.getTime();
-
-            if (diffMs <= 0) {
-                setTimeLeft('Airing now / Just aired');
-                return;
-            }
-
-            const h = Math.floor((diffMs / (1000 * 60 * 60)));
-            const m = Math.floor((diffMs / (1000 * 60)) % 60);
-
-            if (h > 24) {
-                const d = Math.floor(h / 24);
-                setTimeLeft(`${d}d ${h % 24}h`);
-            } else {
-                setTimeLeft(`${h}h ${m}m`);
-            }
-        };
-
-        calculateTimeLeft();
-        const timer = setInterval(calculateTimeLeft, 60000);
+        const timer = setInterval(() => setNow(Date.now()), 30000);
         return () => clearInterval(timer);
-    }, [anime, targetDate]); // Added targetDate dependency
+    }, []);
 
-    const handlePress = () => {
-        router.push(`/anime/${anime.mal_id}`);
-    };
+    const airingMs = anime.airingAt * 1000;
+    const airingDate = new Date(airingMs);
+    const diffMs = airingMs - now;
 
-    const getEpisodeDisplay = () => {
-        if (anime.airing_episode !== undefined) {
-            return `EP: ${anime.airing_episode}`;
-        }
+    let status: string;
+    let isPast = false;
+    if (diffMs > 0) {
+        const totalMinutes = Math.ceil(diffMs / 60000);
+        const d = Math.floor(totalMinutes / 1440);
+        const h = Math.floor((totalMinutes % 1440) / 60);
+        const m = totalMinutes % 60;
+        status = d > 0
+            ? t('calendar.countdownDays', { d, h })
+            : h > 0
+                ? t('calendar.countdownHours', { h, m })
+                : t('calendar.countdownMinutes', { m });
+    } else if (-diffMs < AIRING_WINDOW_MS) {
+        status = t('calendar.airingNow');
+    } else {
+        status = t('calendar.aired');
+        isPast = true;
+    }
 
-        if (!anime.aired || !anime.aired.from || !targetDate) {
-            return anime.episodes ? `EP: ${anime.episodes}` : '';
-        }
-
-        const startDate = new Date(anime.aired.from);
-
-        // If start date is in future
-        if (startDate > new Date()) {
-            return 'EP: 1';
-        }
-
-        // Calculate weeks between Start Date and Next Broadcast Date
-        // We use targetDate (Next Broadcast JST Face Value) and startDate (UTC Face Value?) 
-        // aired.from is usually UTC ISO string. "2023-10-01T00:00:00+00:00".
-        // new Date(aired.from) gives local time.
-
-        // This mixing of JST Face Value vs Local Time might cause slight jitter (9 hours).
-        // A week is 168 hours. 9 hours error is < 6% of a week.
-        // Rounding should be safe.
-
-        const diffTime = targetDate.getTime() - startDate.getTime();
-        // We used NEXT broadcast. 
-        // If Ep 1 is next, diff is 0 (approx). 
-        // If Ep 2 is next, diff is 1 week.
-
-        if (diffTime < 0) return 'EP: 1'; // Should not happen if start date is past
-
-        const diffWeeks = Math.round(diffTime / (1000 * 60 * 60 * 24 * 7));
-        const currentEp = diffWeeks + 1;
-
-        if (anime.episodes && currentEp > anime.episodes) {
-            return `EP: ${anime.episodes}`;
-        }
-
-        return `EP: ${currentEp}`;
-    };
+    const badgeColor = isPast ? colors.subtext : colors.primary;
 
     return (
         <TouchableOpacity
             style={[styles.container, { backgroundColor: colors.card }]}
-            onPress={handlePress}
+            onPress={() => router.push(`/anime/${anime.mal_id}`)}
         >
             <Image
                 source={{ uri: anime.images.webp.large_image_url || anime.images.jpg.large_image_url }}
-                style={styles.image}
+                style={[styles.image, isPast && { opacity: 0.6 }]}
+                contentFit="cover"
+                cachePolicy="memory-disk"
+                transition={150}
             />
             <View style={styles.content}>
-                <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>
-                    {anime.title_english || anime.title}
-                </Text>
+                <View style={styles.titleRow}>
+                    <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>
+                        {anime.title_english || anime.title}
+                    </Text>
+                    {listState ? (
+                        <Ionicons
+                            name={listState === 'favorite' ? 'heart' : 'bookmark'}
+                            size={16}
+                            color={colors.primary}
+                            style={styles.listIcon}
+                            accessibilityLabel={t('calendar.inYourList')}
+                        />
+                    ) : null}
+                </View>
 
                 <View style={styles.bottomInfoContainer}>
                     <View style={styles.timeLeftContainer}>
-                        <Text style={[styles.timeText, { color: colors.primary }]}>
-                            {(() => {
-                                const localDate = getBroadcastDateObj(anime);
-                                if (localDate) {
-                                    return `${format(localDate, 'HH:mm')} ${getUtcOffsetString(localDate)}`;
-                                }
-                                return (anime.broadcast?.time || '??:??') + ' JST';
-                            })()}
+                        <Text style={[styles.timeText, { color: isPast ? colors.subtext : colors.primary }]}>
+                            {`${format(airingDate, 'HH:mm')} ${getUtcOffsetString(airingDate)}`}
                         </Text>
-                        {timeLeft ? (
-                            <View style={[styles.countdownBadge, { backgroundColor: colors.primary + '20' }]}>
-                                <Text style={[styles.countdownText, { color: colors.primary }]} numberOfLines={1} ellipsizeMode="tail">
-                                    {timeLeft}
-                                </Text>
-                            </View>
-                        ) : null}
+                        <View style={[styles.countdownBadge, { backgroundColor: badgeColor + '20' }]}>
+                            <Text style={[styles.countdownText, { color: badgeColor }]} numberOfLines={1} ellipsizeMode="tail">
+                                {status}
+                            </Text>
+                        </View>
                     </View>
 
-                    <Text style={[styles.epText, { color: colors.subtext }]}>
-                        {getEpisodeDisplay()}
-                    </Text>
+                    <View style={styles.epRow}>
+                        <Text style={[styles.epText, { color: colors.subtext }]}>
+                            {`${t('calendar.ep')} ${anime.airing_episode}`}
+                        </Text>
+                        {onAddToCalendar && !isPast && (
+                            <TouchableOpacity
+                                onPress={onAddToCalendar}
+                                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                                accessibilityLabel={t('calendarExport.addToCalendar')}
+                            >
+                                <Ionicons name="calendar-outline" size={16} color={colors.subtext} />
+                            </TouchableOpacity>
+                        )}
+                    </View>
                 </View>
             </View>
         </TouchableOpacity>
     );
-};
+});
 
 const styles = StyleSheet.create({
+    epRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+    },
     container: {
         flexDirection: 'row',
         marginBottom: 12,
@@ -173,26 +137,34 @@ const styles = StyleSheet.create({
     image: {
         width: 65,
         height: 84,
-        resizeMode: 'cover',
         borderRadius: 16,
     },
     content: {
         flex: 1,
         paddingHorizontal: 12,
-        paddingVertical: 2, // Small padding to account for font line-height vs image edge
+        paddingVertical: 2,
         justifyContent: 'space-between',
     },
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+    },
     title: {
+        flex: 1,
         fontFamily: 'Poppins_600SemiBold',
         fontSize: 14,
         lineHeight: 20,
-        marginTop: 4, // Pushed down slightly
+        marginTop: 4,
+    },
+    listIcon: {
+        marginLeft: 6,
+        marginTop: 6,
     },
     bottomInfoContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingBottom: 2, // Align with image bottom visually
+        paddingBottom: 2,
     },
     timeLeftContainer: {
         flexDirection: 'row',
@@ -202,21 +174,21 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     timeText: {
-        fontFamily: 'Poppins_600SemiBold', // Creating more visual weight
-        fontSize: 13, // Increased from 12
+        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 13,
     },
     epText: {
         fontFamily: 'Poppins_500Medium',
         fontSize: 12,
     },
     countdownBadge: {
-        paddingHorizontal: 8, // Slightly more padding
+        paddingHorizontal: 8,
         paddingVertical: 3,
         borderRadius: 6,
         flexShrink: 1,
     },
     countdownText: {
-        fontFamily: 'Poppins_700Bold', // Bold for emphasis
-        fontSize: 12, // Increased from 11
+        fontFamily: 'Poppins_700Bold',
+        fontSize: 12,
     },
 });

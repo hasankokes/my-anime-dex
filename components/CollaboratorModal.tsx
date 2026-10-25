@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
+import { analytics } from '../lib/analytics';
 
 interface User {
     id: string;
@@ -90,6 +91,7 @@ export default function CollaboratorModal({ visible, onClose, listId }: Collabor
 
             if (error) throw error;
 
+            analytics.track('list_collaborator_added', { list_id: String(listId), collaborator_count: collaborators.length + 1 });
             setCollaborators([...collaborators, user]);
             setSearchResults(prev => prev.filter(u => u.id !== user.id));
             Alert.alert(t('common.success'), `${user.username} ${t('collaborators.addedSuccess')}`);

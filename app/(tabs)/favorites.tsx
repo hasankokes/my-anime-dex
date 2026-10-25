@@ -25,10 +25,15 @@ import { HeaderAvatar } from '../../components/HeaderAvatar';
 import { useAuth } from '../../context/AuthProvider'; // Added useAuth import
 import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { useLanguage } from '../../context/LanguageContext';
-import { useWalkthrough } from '../../context/WalkthroughContext';
+import { useWalkthroughTargets, useWalkthroughAutoStart } from '../../context/WalkthroughContext';
 import { AnimeCard } from '../../components/AnimeCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNetwork } from '../../context/NetworkContext';
+import { useFeature } from '../../hooks/usePremium';
+import { AdvancedFilterSheet } from '../../components/ListTools/AdvancedFilterSheet';
+import { AdvancedFilters, applyAdvancedFilters, countActiveFilters, distinctValues, EMPTY_FILTERS } from '../../lib/listFilters';
+import { backfillListMetadata } from '../../lib/animeMetadata';
+import { analytics } from '../../lib/analytics';
 
 // Move SORT_OPTIONS inside the component for localization support
 
@@ -58,6 +63,12 @@ export default function FavoritesScreen() {
   const [sortBy, setSortBy] = useState('updated_at');
   const [sortAscending, setSortAscending] = useState(false);
 
+  // Premium combined filters
+  const listTools = useFeature('premium_list_tools');
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>(EMPTY_FILTERS);
+  const [filterSheetVisible, setFilterSheetVisible] = useState(false);
+  const activeAdvancedCount = countActiveFilters(advancedFilters);
+
   const sortOptions = React.useMemo(() => [
     { label: t('favorites.sort.newest'), value: 'updated_at', ascending: false },
     { label: t('favorites.sort.oldest'), value: 'updated_at', ascending: true },
@@ -69,44 +80,15 @@ export default function FavoritesScreen() {
   const flatListRef = React.useRef<FlatList>(null);
 
   // Walkthrough
+  const sortButtonRef = React.useRef<View>(null);
+  const advancedFilterRef = React.useRef<View>(null);
   const filterTabsRef = React.useRef<View>(null);
-  const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, activeWalkthroughId, resetKey } = useWalkthrough();
-
-  // Measure Walkthrough Ref
-  React.useEffect(() => {
-    if (walkthroughActive && activeWalkthroughId === 'favorites') {
-      const timer = setTimeout(() => {
-        if (filterTabsRef.current) {
-          filterTabsRef.current.measureInWindow((x, y, width, height) => {
-            if (width > 0 && height > 0) registerStepLayout(0, { x, y, width, height });
-          });
-        }
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [walkthroughActive, activeWalkthroughId]);
-
-  // Auto-trigger
-  React.useEffect(() => {
-    if (loading) return;
-    const timer = setTimeout(async () => {
-      const isFirst = await checkFirstLaunch('favorites');
-      if (isFirst && !walkthroughActive) {
-        if (filterTabsRef.current) {
-          filterTabsRef.current.measureInWindow((x, y, width, height) => {
-            if (width > 0 && height > 0) {
-              registerStepLayout(0, { x, y, width, height });
-              // Start walkthrough ONLY after successful measurement
-              setTimeout(() => {
-                startWalkthrough('favorites');
-              }, 100);
-            }
-          });
-        }
-      }
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [resetKey, loading]);
+  useWalkthroughTargets('favorites', {
+    sortButton: sortButtonRef,
+    advancedFilter: advancedFilterRef,
+    filterTabs: filterTabsRef,
+  });
+  useWalkthroughAutoStart('favorites', !loading);
 
   const fetchFavorites = async () => {
     try {
@@ -201,7 +183,12 @@ export default function FavoritesScreen() {
       result = result.filter(item => item.anime_title.toLowerCase().includes(q));
     }
 
-    // 3. Sorting
+    // 3. Combined filters (premium)
+    if (listTools.enabled && !listTools.locked) {
+      result = applyAdvancedFilters(result, advancedFilters);
+    }
+
+    // 4. Sorting
     result.sort((a: any, b: any) => {
       let valA = a[sortBy];
       let valB = b[sortBy];
@@ -219,7 +206,26 @@ export default function FavoritesScreen() {
     });
 
     return result;
-  }, [favorites, activeFilter, searchQuery, sortBy, sortAscending]);
+  }, [favorites, activeFilter, searchQuery, sortBy, sortAscending, advancedFilters, listTools.enabled, listTools.locked]);
+
+  const genreOptions = React.useMemo(() => distinctValues(favorites.map(f => f.genres)), [favorites]);
+  const tagOptions = React.useMemo(() => distinctValues(favorites.map(f => f.tags)), [favorites]);
+
+  const openFilterSheet = () => {
+    setFilterSheetVisible(true);
+    // Year / genre filters need the cached metadata: fill older entries first (one AniList request per 50)
+    const userId = authSession?.user?.id;
+    if (userId && !listTools.locked && favorites.some(f => f.genres == null)) {
+      backfillListMetadata(userId)
+        .then(count => { if (count > 0) fetchFavorites(); })
+        .catch(e => console.warn('Metadata backfill failed:', e));
+    }
+  };
+
+  const applyFilters = (next: AdvancedFilters) => {
+    setAdvancedFilters(next);
+    analytics.track('list_filters_applied', { active: countActiveFilters(next) });
+  };
 
   const handleCardPress = (id: string) => {
     router.push(`/anime/${id}`);
@@ -354,8 +360,10 @@ export default function FavoritesScreen() {
       <View style={{ paddingTop: 10 }}>
         {/* Sort Row */}
         <View style={styles.sortRowContainer}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('favorites.lists')}</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text, flex: 1 }]}>{t('favorites.lists')}</Text>
           <TouchableOpacity
+            ref={sortButtonRef as any}
+            {...({ collapsable: false } as any)}
             style={[styles.sortButton, { borderColor: colors.border, backgroundColor: colors.card }]}
             onPress={() => setModalVisible(true)}
           >
@@ -363,6 +371,25 @@ export default function FavoritesScreen() {
             <Text style={[styles.sortButtonText, { color: colors.subtext }]}>{getSortLabel()}</Text>
             <Feather name="chevron-down" size={14} color={colors.subtext} />
           </TouchableOpacity>
+          {listTools.enabled && !!authSession && (
+            <TouchableOpacity
+              ref={advancedFilterRef as any}
+              {...({ collapsable: false } as any)}
+              style={[
+                styles.advancedFilterButton,
+                { borderColor: activeAdvancedCount ? colors.primary : colors.border, backgroundColor: colors.card },
+              ]}
+              onPress={openFilterSheet}
+              accessibilityLabel={t('listTools.filtersTitle')}
+            >
+              <Ionicons name="options-outline" size={18} color={activeAdvancedCount ? colors.primary : colors.subtext} />
+              {activeAdvancedCount > 0 && (
+                <View style={[styles.filterBadge, { backgroundColor: colors.primary }]}>
+                  <Text style={styles.filterBadgeText}>{activeAdvancedCount}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Filter Tabs */}
@@ -423,6 +450,15 @@ export default function FavoritesScreen() {
           }
         />
       )}
+
+      <AdvancedFilterSheet
+        visible={filterSheetVisible}
+        value={advancedFilters}
+        genreOptions={genreOptions}
+        tagOptions={tagOptions}
+        onApply={applyFilters}
+        onClose={() => setFilterSheetVisible(false)}
+      />
 
       {/* Sorting Modal */}
       <Modal
@@ -576,6 +612,31 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     gap: 6,
+  },
+  advancedFilterButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+  },
+  filterBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  filterBadgeText: {
+    fontSize: 10,
+    fontFamily: 'Poppins_700Bold',
+    color: '#111827',
   },
   sortButtonText: {
     fontSize: 12,

@@ -7,6 +7,22 @@ import { supabase } from '../lib/supabase';
 import { authIntent } from '../lib/authIntent';
 import { pendingArenaResult } from '../lib/pendingArenaResult';
 import { recommendationService } from '../services/recommendationService';
+import { analytics } from '../lib/analytics';
+
+// A sign-in within this window of account creation counts as the sign-up (covers email confirmation delays)
+const NEW_ACCOUNT_WINDOW_MS = 30 * 60 * 1000;
+const trackedSignIns = new Set<string>();
+
+const trackSignIn = (user: User) => {
+    if (trackedSignIns.has(user.id)) return;
+    trackedSignIns.add(user.id);
+    analytics.identify(user);
+    const isNew = Date.now() - new Date(user.created_at).getTime() < NEW_ACCOUNT_WINDOW_MS;
+    analytics.track(isNew ? 'signup_completed' : 'login_completed', {
+        method: user.app_metadata?.provider ?? 'email',
+        trigger_reason: analytics.takePendingAuthReason() ?? 'direct',
+    });
+};
 
 export type AuthStatus = 'loading' | 'guest' | 'authenticated';
 
@@ -33,6 +49,8 @@ type AuthContextType = {
     signOut: () => Promise<void>;
     signUp: (email: string) => Promise<void>;
     avatarUrl: string | null;
+    /** profiles.is_pro — written only by the RevenueCat webhook; the premium source on web */
+    serverIsPro: boolean;
     refreshProfile: () => Promise<void>;
 };
 
@@ -45,6 +63,7 @@ const AuthContext = createContext<AuthContextType>({
     signOut: async () => { },
     signUp: async () => { },
     avatarUrl: null,
+    serverIsPro: false,
     refreshProfile: async () => { },
 });
 
@@ -54,6 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null); // State for avatarUrl
+    const [serverIsPro, setServerIsPro] = useState(false);
 
     const signIn = async (email: string) => {
         const { error } = await supabase.auth.signInWithOtp({ email });
@@ -61,8 +81,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const signOut = async () => {
+        analytics.track('logout');
         setSession(null);
         setAvatarUrl(null);
+        setServerIsPro(false);
         await supabase.auth.signOut();
     };
 
@@ -74,9 +96,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchProfile = async (userId: string, metadataAvatar?: string) => {
         const { data } = await supabase
             .from('profiles')
-            .select('avatar_url')
+            .select('avatar_url, is_pro')
             .eq('id', userId)
             .single();
+
+        setServerIsPro(!!data?.is_pro);
 
         if (data?.avatar_url) {
             setAvatarUrl(data.avatar_url);
@@ -115,13 +139,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         // Listen for changes to auth state
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session?.user) trackSignIn(session.user);
             setSession(session);
             if (session?.user) {
                 // Always fetch from DB first, passing metadata as fallback
                 fetchProfile(session.user.id, session.user.user_metadata?.avatar_url);
             } else {
                 setAvatarUrl(null);
+                setServerIsPro(false);
             }
             setLoading(false);
         });
@@ -187,8 +213,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         signOut,
         signUp,
         avatarUrl,
+        serverIsPro,
         refreshProfile
-    }), [session, status, loading, avatarUrl]);
+    }), [session, status, loading, avatarUrl, serverIsPro]);
 
     return (
         <AuthContext.Provider value={contextValue}>

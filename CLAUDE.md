@@ -41,7 +41,7 @@ Claude performs GitHub and Supabase operations directly in this repo.
 - Always install current Expo-compatible package versions (`npx expo install <pkg>`).
 - **Ask before changing anything in Supabase** (schema, RLS, functions, data).
 - Respect theme colors: new components must use `useTheme().colors` / `isDark` from `context/ThemeContext.tsx` so they work in light and dark mode (primary is `#FACC15`, default theme is dark).
-- Every new module/feature must add strings for **all** app languages in `lib/i18n.ts`: `en, tr, ja, ru, de, ar, es, pt, id, hi`.
+- Every new module/feature must add strings for **all** app languages in `lib/i18n.ts`: `en, tr, ja, ru, de, ar, es, pt, id, hi, fr, it, pl, vi, th`.
 
 ## Architecture
 
@@ -52,6 +52,8 @@ Claude performs GitHub and Supabase operations directly in this repo.
 **Supabase** (`lib/supabase.ts`, AsyncStorage-persisted auth). Main tables: `profiles`, `user_anime_list` (watching/favorites/status), `lists` + `list_items` + `list_collaborators` (shared lists), `reviews`, `watch_activity` (feeds Home "Anime Pulse"), `arena_pools` / `arena_results` (Arena saves only the final quiz winner; per-match stats were intentionally dropped — the legacy `arena_stats` table is unused), `anime_translations` (cached synopsis translations used by `lib/translation.ts`). Migrations are in `supabase/migrations/` plus loose `supabase/*_migration.sql` files. Auth: email, Google, Apple (`lib/appleAuth.native.ts`).
 
 **Platform-split modules.** Native-only features use `.native.ts` / `.web.ts` / base `.ts` variants (e.g. `hooks/useInterstitialAd.*`, `lib/tracking.*`, `lib/appleAuth.*`). Ads (`react-native-google-mobile-ads`) are `require`d lazily inside the native hook; the ATT prompt is deferred until the first ad. Premium status comes from `RevenueCatProvider` and suppresses ads.
+
+**Analytics (PostHog).** `lib/analytics.ts` holds the client, the typed `AnalyticsEvent` catalog and helpers; `context/AnalyticsProvider.tsx` (inside RevenueCat in `_layout.tsx`) tracks screen views by route pattern, foreground `session_summary`, identity (guest anon id → `identify(user.id)` on sign-in, `reset()` on sign-out) and global properties. Add new events to the `AnalyticsEvent` union and call `analytics.track(...)`; never send emails, names or free text. Key: `EXPO_PUBLIC_POSTHOG_KEY` (empty = off; dev only logs unless `EXPO_PUBLIC_POSTHOG_DEV=1`). Event catalog and dashboard recipes: `docs/analytics.md`.
 
 **i18n.** `lib/i18n.ts` (i18n-js) is one large translations object; `LanguageContext` exposes the current locale and `t`. Root-level `update_*_i18n.js` and `scripts/update_*i18n*.js` are one-off codemods that regex-inject keys into `lib/i18n.ts` — prefer editing the file directly.
 

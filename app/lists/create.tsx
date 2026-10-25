@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Switch, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
+import { analytics } from '../../lib/analytics';
 
+import { ThemedSwitch } from '../../components/ThemedSwitch';
 export default function CreateListScreen() {
     const router = useRouter();
     const { colors, isDark } = useTheme();
@@ -43,8 +45,10 @@ export default function CreateListScreen() {
 
             if (error) throw error;
 
+            analytics.track('list_created', { source: 'lists', is_public: isPublic, has_description: !!description.trim() });
+            // Ad before the alert: iOS cannot present an ad while an alert is on screen
+            await showAdIfNeeded('create_list');
             Alert.alert('Success', 'List created!');
-            showAdIfNeeded('create_list');
             router.back();
         } catch (error) {
             console.error('Error creating list:', error);
@@ -109,11 +113,9 @@ export default function CreateListScreen() {
                             Anyone can see this list when visiting your profile
                         </Text>
                     </View>
-                    <Switch
+                    <ThemedSwitch
                         value={isPublic}
                         onValueChange={setIsPublic}
-                        trackColor={{ false: '#374151', true: '#FACC15' }}
-                        thumbColor={'#FFFFFF'}
                     />
                 </View>
             </View>

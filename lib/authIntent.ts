@@ -10,7 +10,8 @@ export type AuthReason =
     | 'arena'
     | 'profile'
     | 'lists'
-    | 'recommendations';
+    | 'recommendations'
+    | 'calendar';
 
 export type ResumableAction = (ctx: { resumed: boolean }) => void | Promise<void>;
 

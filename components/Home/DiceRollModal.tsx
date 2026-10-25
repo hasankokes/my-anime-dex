@@ -11,7 +11,7 @@ import {
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Image } from 'expo-image';
+import { PosterImage } from '../PosterImage';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -28,6 +28,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { supabase } from '../../lib/supabase';
 import { Anime, jikanApi } from '../../lib/jikan';
 import { translateText } from '../../lib/translation';
+import { analytics } from '../../lib/analytics';
 
 const { width, height } = Dimensions.get('window');
 
@@ -93,6 +94,7 @@ export const DiceRollModal = ({ visible, onClose }: Props) => {
 
   const rollDice = async () => {
     console.log('[DiceRoll] Starting dice roll...');
+    analytics.track('dice_rolled');
     setIsRolling(true);
     setIsLoading(true);
     setResult(null);
@@ -267,10 +269,9 @@ export const DiceRollModal = ({ visible, onClose }: Props) => {
               onPress={handleCardPress}
               style={[styles.resultCard, { backgroundColor: colors.card, borderColor: colors.border }]}
             >
-              <Image
-                source={{ uri: result.images?.jpg?.large_image_url || result.images?.jpg?.image_url || 'https://via.placeholder.com/300x450' }}
+              <PosterImage
+                uri={result.images?.jpg?.large_image_url || result.images?.jpg?.image_url}
                 style={styles.cardImage}
-                contentFit="cover"
               />
               <View style={styles.cardContent}>
                 <View style={styles.cardHeaderRow}>
@@ -393,7 +394,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: '100%',
-    height: 200,
+    height: Math.min(300, height * 0.36),
   },
   cardContent: {
     padding: 16,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Image } from 'expo-image';
-import { ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList, Switch, KeyboardAvoidingView, View, Text, StyleSheet } from 'react-native';
+import { PosterImage } from '../../components/PosterImage';
+import { ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList, KeyboardAvoidingView, View, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
@@ -8,19 +8,24 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { supabase } from '../../lib/supabase';
+import { metadataFromAnime } from '../../lib/animeMetadata';
+import { useFeature } from '../../hooks/usePremium';
+import { PremiumGate } from '../../components/Premium/PremiumGate';
+import { TagNoteEditor } from '../../components/ListTools/TagNoteEditor';
 import { useTheme } from '../../context/ThemeContext';
 import { ReviewSection } from '../../components/ReviewSection';
-import { useRateUs } from '../../hooks/useRateUs';
-import { RateAppSheet } from '../../components/RateAppSheet';
+import { maybeRequestReview } from '../../lib/reviewPrompt';
 
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthProvider';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { translateText } from '../../lib/translation';
+import { analytics } from '../../lib/analytics';
 import { WebView } from 'react-native-webview';
 import YoutubePlayer from "react-native-youtube-iframe";
 
+import { ThemedSwitch } from '../../components/ThemedSwitch';
 const { width, height } = Dimensions.get('window');
 
 // Status options for the modal
@@ -28,6 +33,8 @@ const STATUS_OPTIONS = [
   { label: 'Watching', value: 'watching', icon: 'play-circle-outline' },
   { label: 'Completed', value: 'completed', icon: 'checkmark-circle-outline' },
   { label: 'Plan to Watch', value: 'plan_to_watch', icon: 'calendar-outline' },
+  { label: 'On Hold', value: 'paused', icon: 'pause-circle-outline' },
+  { label: 'Dropped', value: 'dropped', icon: 'close-circle-outline' },
   { label: 'Remove from List', value: 'remove', icon: 'trash-outline', color: '#EF4444' },
 ];
 
@@ -76,12 +83,12 @@ const AnimeDetailsScreen = () => {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [userEntry, setUserEntry] = useState<any>(null); // Status from DB
+  const listTools = useFeature('premium_list_tools');
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [episodeInput, setEpisodeInput] = useState('0'); // Local state for modal input
   const [showListModal, setShowListModal] = useState(false);
-  const { trackAddAnime, showRateSheet, handleRate, handleLater } = useRateUs();
   const { showAdIfNeeded } = useInterstitialAd();
   const { language, t } = useLanguage();
   const [translatedSynopsis, setTranslatedSynopsis] = useState<string>('');
@@ -123,6 +130,14 @@ const AnimeDetailsScreen = () => {
       // 1. Fetch Anime Details from Jikan / AniList
       const { data: animeData } = await jikanApi.getAnimeDetails(id as string);
       setAnime(animeData);
+      analytics.track('anime_viewed', {
+        anime_id: String(id),
+        anime_title: animeData.title_english || animeData.title,
+        genres: animeData.genres?.map((g: { name: string }) => g.name).slice(0, 5),
+        anime_score: animeData.score,
+        airing: animeData.airing,
+        from_screen: analytics.previousScreen(),
+      });
 
       // 2. Fetch User Entry from Supabase
       const { data: { session } } = await supabase.auth.getSession();
@@ -142,7 +157,8 @@ const AnimeDetailsScreen = () => {
           const needsUpdate =
             (animeData.episodes && entry.total_episodes !== animeData.episodes) ||
             (animeData.score && entry.score !== animeData.score) ||
-            (animeData.images?.jpg?.large_image_url && entry.anime_image !== animeData.images.jpg.large_image_url);
+            (animeData.images?.jpg?.large_image_url && entry.anime_image !== animeData.images.jpg.large_image_url) ||
+            entry.genres == null;
 
           if (needsUpdate) {
             supabase
@@ -152,6 +168,7 @@ const AnimeDetailsScreen = () => {
                 score: animeData.score || entry.score,
                 anime_image: animeData.images?.jpg?.large_image_url || entry.anime_image,
                 anime_title: animeData.title_english || animeData.title || entry.anime_title,
+                ...metadataFromAnime(animeData),
                 updated_at: new Date().toISOString(),
               })
               .eq('id', entry.id)
@@ -165,6 +182,7 @@ const AnimeDetailsScreen = () => {
       }
     } catch (error: any) {
       console.error('Error fetching data:', error);
+      analytics.track('anime_load_failed', { anime_id: String(id), error: error?.message });
       setFetchError(error?.message || 'Failed to load anime details.');
     } finally {
       setLoading(false);
@@ -225,6 +243,7 @@ const AnimeDetailsScreen = () => {
         anime_image: anime.images.jpg.large_image_url,
         is_favorite: newIsFavorite,
         score: anime.score,
+        ...metadataFromAnime(anime),
         updated_at: new Date().toISOString(),
       };
 
@@ -238,6 +257,7 @@ const AnimeDetailsScreen = () => {
         .single();
 
       if (error) throw error;
+      analytics.track(newIsFavorite ? 'anime_favorited' : 'anime_unfavorited', { anime_id: anime.mal_id.toString() });
 
     } catch (error) {
       console.error('Error toggling favorite:', error);
@@ -291,6 +311,7 @@ const AnimeDetailsScreen = () => {
         total_episodes: anime.episodes || 0,
         current_episode: validatedEp,
         score: anime.score,
+        ...metadataFromAnime(anime),
         updated_at: new Date().toISOString(),
       };
 
@@ -306,6 +327,13 @@ const AnimeDetailsScreen = () => {
       if (error) throw error;
       setUserEntry(newEntry);
       logPulseActivity(newStatus, userEntry?.status, session, anime);
+      analytics.track('anime_episode_progress', {
+        anime_id: anime.mal_id.toString(),
+        episode: validatedEp,
+        total_episodes: totalepisodes,
+        status: newStatus,
+      });
+      if (newStatus === 'completed' && userEntry?.status !== 'completed') maybeRequestReview('completed');
 
     } catch (error) {
       console.error('Error updating episode:', error);
@@ -334,6 +362,7 @@ const AnimeDetailsScreen = () => {
         is_favorite: userEntry?.is_favorite || (!userEntry?.status && status !== 'remove'),
         total_episodes: anime.episodes || 0,
         score: anime.score,
+        ...metadataFromAnime(anime),
         updated_at: new Date().toISOString(),
       };
 
@@ -346,6 +375,7 @@ const AnimeDetailsScreen = () => {
         if (error) throw error;
         setUserEntry(null);
         setEpisodeInput('0');
+        analytics.track('anime_list_status_changed', { anime_id: anime.mal_id.toString(), from: userEntry?.status ?? null, to: 'remove' });
       } else {
         const { data: newEntry, error } = await supabase
           .from('user_anime_list')
@@ -362,11 +392,14 @@ const AnimeDetailsScreen = () => {
         setUserEntry(newEntry);
         setEpisodeInput(newEntry.current_episode?.toString() || '0');
         logPulseActivity(status, userEntry?.status, session, anime);
+        analytics.track('anime_list_status_changed', { anime_id: anime.mal_id.toString(), from: userEntry?.status ?? null, to: status });
 
-        // Track for Rate Us prompt (only for new adds or positive updates, avoiding remove)
         if (status !== 'remove') {
-          trackAddAnime();
-          showAdIfNeeded(); // <--- Trigger Ad
+          // Never stack the review dialog on top of an interstitial; dropping is not a positive moment
+          const isPositive = status !== 'dropped' && status !== userEntry?.status;
+          showAdIfNeeded().then(adShown => {
+            if (!adShown && isPositive) maybeRequestReview(status === 'completed' ? 'completed' : 'list_add');
+          });
         }
       }
     } catch (error) {
@@ -417,6 +450,8 @@ const AnimeDetailsScreen = () => {
       case 'watching': return t('favorites.filters.watching');
       case 'completed': return t('favorites.filters.completed');
       case 'plan_to_watch': return t('favorites.filters.planToWatch');
+      case 'paused': return t('stats.paused');
+      case 'dropped': return t('stats.dropped');
       case 'remove': return t('animeDetail.removeFromList');
       default: return t('animeDetail.addToList');
     }
@@ -431,15 +466,17 @@ const AnimeDetailsScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Hero Image Section */}
         <View style={styles.heroContainer}>
-          <Image
-            source={{ uri: anime.images.jpg.large_image_url }}
+          <PosterImage
+            uri={anime.images.jpg.large_image_url}
             style={styles.heroImage}
-            contentFit="cover"
+            posterInset={{ top: insets.top, bottom: 36 }}
             transition={500}
           />
           <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.4)', colors.background]}
+            colors={['transparent', 'transparent', 'rgba(0,0,0,0.4)', colors.background]}
+            locations={[0, 0.55, 0.85, 1]}
             style={styles.heroGradient}
+            pointerEvents="none"
           />
 
           {/* Back Button */}
@@ -551,9 +588,11 @@ const AnimeDetailsScreen = () => {
                   { backgroundColor: colors.card, borderColor: colors.border },
                   !anime.trailer?.embed_url && { opacity: 0.7 }
                 ]}
-                onPress={() => {
+                onPress={async () => {
                   if (anime.trailer?.embed_url) {
-                    showAdIfNeeded('trailer');
+                    analytics.track('anime_trailer_played', { anime_id: anime.mal_id.toString() });
+                    // Ad first; the trailer modal opens after it closes (both cannot be presented at once)
+                    await showAdIfNeeded('trailer');
                     setShowTrailerModal(true);
                   }
                 }}
@@ -593,11 +632,11 @@ const AnimeDetailsScreen = () => {
           <View style={[styles.infoGrid, { backgroundColor: colors.card }]}>
             <View style={styles.infoItem}>
               <Text style={[styles.infoLabel, { color: colors.subtext }]}>{t('animeDetail.rank')}</Text>
-              <Text style={[styles.infoValue, { color: colors.text }]}>#{anime.rank}</Text>
+              <Text style={[styles.infoValue, { color: colors.text }]}>{anime.rank ? `#${anime.rank}` : '—'}</Text>
             </View>
             <View style={styles.infoItem}>
               <Text style={[styles.infoLabel, { color: colors.subtext }]}>{t('animeDetail.popularity')}</Text>
-              <Text style={[styles.infoValue, { color: colors.text }]}>#{anime.popularity}</Text>
+              <Text style={[styles.infoValue, { color: colors.text }]}>{anime.popularity ? `#${anime.popularity}` : '—'}</Text>
             </View>
             <View style={styles.infoItem}>
               <Text style={[styles.infoLabel, { color: colors.subtext }]}>{t('animeDetail.members')}</Text>
@@ -644,6 +683,18 @@ const AnimeDetailsScreen = () => {
             <Text style={[styles.actionButtonText, { color: colors.text }]}>{t('animeDetail.saveToCustomList')}</Text>
           </TouchableOpacity>
 
+          {/* Tags & note (premium) — only for anime that are in the user's list */}
+          {listTools.enabled && userEntry?.id && (
+            <PremiumGate
+              feature="premium_list_tools"
+              source="anime_tags"
+              description={t('listTools.locked')}
+              style={{ marginTop: 16 }}
+            >
+              <TagNoteEditor entry={userEntry} onSaved={setUserEntry} />
+            </PremiumGate>
+          )}
+
           <View style={{ height: 24 }} />
 
           {/* Reviews Section */}
@@ -686,7 +737,8 @@ const AnimeDetailsScreen = () => {
                       option.value === 'completed' ? t('favorites.filters.completed') :
                         option.value === 'plan_to_watch' ? t('favorites.filters.planToWatch') :
                           option.value === 'remove' ? t('animeDetail.removeFromList') :
-                            option.label
+                            option.value === 'paused' || option.value === 'dropped' ? getStatusLabel(option.value) :
+                              option.label
                   }</Text>
 
                 {currentStatus === option.value && (
@@ -705,12 +757,6 @@ const AnimeDetailsScreen = () => {
         onClose={() => setShowListModal(false)}
         anime={anime}
         showAdIfNeeded={showAdIfNeeded}
-      />
-
-      <RateAppSheet
-        visible={showRateSheet}
-        onRate={handleRate}
-        onClose={handleLater}
       />
 
       {/* Trailer Modal */}
@@ -755,7 +801,7 @@ const AnimeDetailsScreen = () => {
 export default AnimeDetailsScreen;
 
 // --- Custom List Modal Component ---
-function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible: boolean, onClose: () => void, anime: Anime, showAdIfNeeded: () => void }) {
+function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible: boolean, onClose: () => void, anime: Anime, showAdIfNeeded: () => Promise<boolean> }) {
   const { colors } = useTheme();
   const router = useRouter();
   const { t } = useLanguage();
@@ -840,6 +886,7 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
 
       if (error) throw error;
 
+      analytics.track('list_created', { source: 'anime_detail', is_public: isPublic });
       // Add the new list to local state immediately
       setLists([data, ...lists]);
       setNewListName('');
@@ -877,12 +924,13 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
           throw error;
         }
       } else {
+        analytics.track('list_item_added', { list_id: listId, anime_id: anime.mal_id.toString(), source: 'anime_detail' });
         onClose();
-        showAdIfNeeded(); // <--- Trigger Ad
-        // Slight delay to ensure modal animation doesn't interfere with Alert
+        // The ad waits for the modal to dismiss; the success alert follows the ad (or a short delay)
+        const shown = await showAdIfNeeded();
         setTimeout(() => {
           Alert.alert(t('common.success'), t('animeDetail.addedToList'));
-        }, 300);
+        }, shown ? 0 : 300);
       }
     } catch (error) {
       Alert.alert(t('common.error'), t('animeDetail.failedToAdd'));
@@ -967,11 +1015,9 @@ function CustomListModal({ visible, onClose, anime, showAdIfNeeded }: { visible:
                     <Text style={{ color: colors.text, fontFamily: 'Poppins_600SemiBold', fontSize: 14 }}>{t('animeDetail.publicList')}</Text>
                     <Text style={{ color: colors.subtext, fontSize: 10 }}>{t('animeDetail.publicListDesc')}</Text>
                   </View>
-                  <Switch
+                  <ThemedSwitch
                     value={isPublic}
                     onValueChange={setIsPublic}
-                    trackColor={{ false: '#374151', true: colors.primary }}
-                    thumbColor={'#FFFFFF'}
                   />
                 </View>
 

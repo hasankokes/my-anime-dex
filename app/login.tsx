@@ -13,6 +13,7 @@ import { signInWithAppleNative } from '../lib/appleAuth';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthProvider';
 import { authIntent } from '../lib/authIntent';
+import { analytics } from '../lib/analytics';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -49,9 +50,14 @@ export default function LoginScreen() {
   // Login is a modal: track that it is open, and drop the pending action if it closes without a sign-in
   useEffect(() => {
     authIntent.setLoginOpen(true);
+    analytics.track('login_viewed', { reason: reason || 'default' });
+    if (reason) analytics.setPendingAuthReason(reason);
     return () => {
       authIntent.setLoginOpen(false);
-      if (!completedRef.current) authIntent.clear();
+      if (!completedRef.current) {
+        authIntent.clear();
+        analytics.track('login_dismissed', { reason: reason || 'default' });
+      }
     };
   }, []);
 
@@ -123,6 +129,7 @@ export default function LoginScreen() {
       return;
     }
 
+    analytics.track('login_method_selected', { method: 'email', mode: isSignUp ? 'signup' : 'login' });
     try {
       setLoading(true);
       if (isSignUp) {
@@ -146,6 +153,7 @@ export default function LoginScreen() {
           await supabase.from('profiles').update({ avatar_url: randomAvatar }).eq('id', data.user.id);
         }
 
+        analytics.track('signup_submitted', { method: 'email' });
         Alert.alert(t('common.success'), t('login.accountCreated'));
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -155,6 +163,7 @@ export default function LoginScreen() {
         if (error) throw error;
       }
     } catch (error) {
+      analytics.track('login_failed', { method: 'email', mode: isSignUp ? 'signup' : 'login', error: (error as any)?.code ?? (error as any)?.name });
       if (error instanceof Error) {
         Alert.alert(t('login.authError'), error.message);
       }
@@ -182,6 +191,7 @@ export default function LoginScreen() {
 
       if (error) throw error;
 
+      analytics.track('password_reset_requested');
       setAuthMessage({
         type: 'success',
         text: t('login.resetEmailSent')
@@ -196,6 +206,7 @@ export default function LoginScreen() {
   };
 
   const performOAuth = async (provider: 'google' | 'apple') => {
+    analytics.track('login_method_selected', { method: provider });
     try {
       setLoading(true);
 
@@ -228,6 +239,10 @@ export default function LoginScreen() {
             data.url,
             redirectTo
           );
+
+          if (result.type !== 'success') {
+            analytics.track('login_failed', { method: provider, error: result.type });
+          }
 
           if (result.type === 'success' && result.url) {
 
@@ -269,7 +284,7 @@ export default function LoginScreen() {
         }
       }
     } catch (error) {
-
+      analytics.track('login_failed', { method: provider, error: (error as any)?.code ?? (error as any)?.name });
       if (error instanceof Error) {
         Alert.alert(t('login.loginError'), `${error.message}\nType: ${error.name}`);
       }
@@ -288,6 +303,7 @@ export default function LoginScreen() {
         return;
       }
 
+      analytics.track('login_method_selected', { method: 'apple' });
       const credential = await signInWithAppleNative();
 
       if (credential.identityToken) {
@@ -328,6 +344,7 @@ export default function LoginScreen() {
         throw new Error('No identity token received from Apple');
       }
     } catch (e: any) {
+      analytics.track('login_failed', { method: 'apple', error: e.code === 'ERR_REQUEST_CANCELED' ? 'cancel' : (e.code ?? e.name) });
       if (e.code === 'ERR_REQUEST_CANCELED') {
         // User canceled, do nothing
       } else {

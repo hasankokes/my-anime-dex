@@ -186,3 +186,221 @@ query ($page: Int, $perPage: Int) {
   }
 }
 `;
+
+// ---------------------------------------------------------------------------
+// Discover (recommendations) — taste seeds + candidate buckets
+// ---------------------------------------------------------------------------
+
+/** Fields used to score and display a discovery candidate */
+export const DISCOVER_MEDIA_FIELDS = `
+  id
+  idMal
+  title {
+    romaji
+    english
+    userPreferred
+  }
+  coverImage {
+    extraLarge
+    large
+  }
+  format
+  status
+  episodes
+  seasonYear
+  averageScore
+  popularity
+  genres
+  isAdult
+  tags {
+    name
+    rank
+    category
+    isMediaSpoiler
+    isAdult
+  }
+  relations {
+    edges {
+      relationType
+      node {
+        id
+        type
+        format
+        seasonYear
+      }
+    }
+  }
+`;
+
+/** Fields of a seed's related entries (for "continue the story") */
+const DISCOVER_RELATION_NODE_FIELDS = `
+  id
+  idMal
+  type
+  title {
+    romaji
+    english
+    userPreferred
+  }
+  coverImage {
+    extraLarge
+    large
+  }
+  format
+  status
+  episodes
+  seasonYear
+  averageScore
+  popularity
+  genres
+  isAdult
+`;
+
+const DISCOVER_SEED_FIELDS = `
+  id
+  idMal
+  title {
+    romaji
+    english
+    userPreferred
+  }
+  genres
+  tags {
+    name
+    rank
+    category
+    isMediaSpoiler
+    isAdult
+  }
+  relations {
+    edges {
+      relationType
+      node {
+        ${DISCOVER_RELATION_NODE_FIELDS}
+      }
+    }
+  }
+  recommendations(perPage: 8, sort: [RATING_DESC]) {
+    nodes {
+      rating
+      mediaRecommendation {
+        ${DISCOVER_MEDIA_FIELDS}
+      }
+    }
+  }
+`;
+
+/** The user's list entries (taste seeds) by MAL ID, with community recommendations */
+export const DISCOVER_SEEDS_BY_MAL_QUERY = `
+query ($ids: [Int]) {
+  Page(perPage: 50) {
+    media(idMal_in: $ids, type: ANIME) {
+      ${DISCOVER_SEED_FIELDS}
+    }
+  }
+}
+`;
+
+/** Same as above, for list entries stored with an AniList ID (no MAL ID) */
+export const DISCOVER_SEEDS_BY_ID_QUERY = `
+query ($ids: [Int]) {
+  Page(perPage: 50) {
+    media(id_in: $ids, type: ANIME) {
+      ${DISCOVER_SEED_FIELDS}
+    }
+  }
+}
+`;
+
+/** Stats/filter metadata for a batch of list entries, looked up by MAL id */
+export const LIST_METADATA_BY_MAL_QUERY = `
+  query ($ids: [Int]) {
+    Page(perPage: 50) {
+      media(idMal_in: $ids, type: ANIME) {
+        id
+        idMal
+        genres
+        seasonYear
+        format
+        studios(isMain: true) { nodes { name } }
+      }
+    }
+  }
+`;
+
+/** Same as LIST_METADATA_BY_MAL_QUERY for entries stored under their AniList id */
+export const LIST_METADATA_BY_ID_QUERY = `
+  query ($ids: [Int]) {
+    Page(perPage: 50) {
+      media(id_in: $ids, type: ANIME) {
+        id
+        idMal
+        genres
+        seasonYear
+        format
+        studios(isMain: true) { nodes { name } }
+      }
+    }
+  }
+`;
+
+/** Premium season picks: this season's anime with the fields Discover scores on, plus studios */
+export const SEASON_PICKS_QUERY = `
+  query ($season: MediaSeason, $seasonYear: Int) {
+    Page(perPage: 50) {
+      media(season: $season, seasonYear: $seasonYear, type: ANIME, isAdult: false, format_in: [TV, TV_SHORT, ONA, MOVIE], sort: [POPULARITY_DESC]) {
+        ${DISCOVER_MEDIA_FIELDS}
+        studios(isMain: true) { nodes { name } }
+      }
+    }
+  }
+`;
+
+/** MAL import: list entries resolved by MAL id (title, cover and the cached list metadata) */
+export const IMPORT_MEDIA_BY_MAL_QUERY = `
+  query ($ids: [Int]) {
+    Page(perPage: 50) {
+      media(idMal_in: $ids, type: ANIME) {
+        id
+        idMal
+        title { romaji english userPreferred }
+        coverImage { extraLarge large }
+        episodes
+        averageScore
+        genres
+        seasonYear
+        format
+        studios(isMain: true) { nodes { name } }
+      }
+    }
+  }
+`;
+
+/** AniList import: a user's whole anime list by username (public lists only) */
+export const IMPORT_ANILIST_USER_QUERY = `
+  query ($userName: String) {
+    MediaListCollection(userName: $userName, type: ANIME) {
+      lists {
+        entries {
+          status
+          score(format: POINT_10)
+          progress
+          startedAt { year month day }
+          completedAt { year month day }
+          media {
+            id
+            idMal
+            title { romaji english userPreferred }
+            coverImage { extraLarge large }
+            episodes
+            averageScore
+            genres
+            seasonYear
+            format
+            studios(isMain: true) { nodes { name } }
+          }
+        }
+      }
+    }
+  }
+`;

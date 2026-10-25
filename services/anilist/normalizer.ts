@@ -16,7 +16,7 @@
 // Enum mappings
 // ---------------------------------------------------------------------------
 
-const FORMAT_MAP: Record<string, string> = {
+export const FORMAT_MAP: Record<string, string> = {
   TV: 'TV',
   TV_SHORT: 'TV Short',
   MOVIE: 'Movie',
@@ -169,11 +169,17 @@ export function normalizeMedia(media: any): any {
 
   // --- Ranking ---
   let rank: number | null = null;
+  // Jikan's `popularity` is a rank too (not a member count)
+  let popularityRank = 0;
   if (media.rankings) {
     const rated = media.rankings.find(
       (r: any) => r.type === 'RATED' && r.allTime
     );
     if (rated) rank = rated.rank;
+    const popular = media.rankings.find(
+      (r: any) => r.type === 'POPULAR' && r.allTime
+    );
+    if (popular) popularityRank = popular.rank;
   }
 
   // --- Aired dates ---
@@ -242,7 +248,7 @@ export function normalizeMedia(media: any): any {
       : null,
     scored_by: media.popularity || null,
     rank,
-    popularity: media.popularity || 0,
+    popularity: popularityRank,
     members: media.popularity || 0,
     favorites: media.favourites || 0,
 

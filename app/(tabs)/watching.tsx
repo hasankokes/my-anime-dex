@@ -20,7 +20,7 @@ import { AnimeListItem } from '../../types';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 import { HeaderAvatar } from '../../components/HeaderAvatar';
-import { useWalkthrough } from '../../context/WalkthroughContext';
+import { useWalkthroughTargets, useWalkthroughAutoStart } from '../../context/WalkthroughContext';
 import { useAuth } from '../../context/AuthProvider';
 import { useLanguage } from '../../context/LanguageContext';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
@@ -110,45 +110,10 @@ export default function WatchingScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = React.useRef<TextInput>(null);
 
-  // Walkthrough
+  // Walkthrough (only once there is a card to point at)
   const episodeControlsRef = useRef<View>(null);
-  const { registerStepLayout, startWalkthrough, checkFirstLaunch, isActive: walkthroughActive, activeWalkthroughId, resetKey } = useWalkthrough();
-
-  // Measure walkthrough ref when Watching walkthrough is active
-  useEffect(() => {
-    if (walkthroughActive && activeWalkthroughId === 'watching') {
-      const timer = setTimeout(() => {
-        if (episodeControlsRef.current) {
-          episodeControlsRef.current.measureInWindow((x, y, width, height) => {
-            if (width > 0 && height > 0) registerStepLayout(0, { x, y, width, height });
-          });
-        }
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [walkthroughActive, activeWalkthroughId]);
-
-  // Auto-trigger Watching walkthrough on first visit
-  useEffect(() => {
-    if (loading) return;
-
-    const timer = setTimeout(async () => {
-      // Don't start walkthrough if there are no items to highlight
-      if (watchingList.length === 0) return;
-
-      const isFirst = await checkFirstLaunch('watching');
-      if (isFirst && !walkthroughActive) {
-        if (episodeControlsRef.current) {
-          episodeControlsRef.current.measureInWindow((x, y, width, height) => {
-            if (width > 0 && height > 0) registerStepLayout(0, { x, y, width, height });
-          });
-        }
-        setTimeout(() => startWalkthrough('watching'), 300);
-      }
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, [resetKey, loading, watchingList.length]);
+  useWalkthroughTargets('watching', { episodeControls: episodeControlsRef });
+  useWalkthroughAutoStart('watching', !loading && watchingList.length > 0);
 
   // Filtered List
   const filteredList = watchingList.filter(item =>

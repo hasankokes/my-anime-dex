@@ -11,11 +11,12 @@ export default function HelpScreen() {
     const router = useRouter();
     const { colors } = useTheme();
     const { t } = useLanguage();
-    const { startWalkthrough } = useWalkthrough();
+    const { resetWalkthroughs } = useWalkthrough();
 
-    const handleStartWalkthrough = () => {
+    // Replays every tour: home starts right away, the others on their next visit
+    const handleStartWalkthrough = async () => {
+        await resetWalkthroughs();
         router.replace('/(tabs)');
-        setTimeout(() => startWalkthrough('home'), 500);
     };
 
 

@@ -1,119 +1,42 @@
-// Helper to get current date as JST "Face Value" date object (safe for iOS)
-export const getCurrentJSTDate = () => {
-    const now = new Date();
-    const utcMs = now.getTime(); // UTC Timestamp
-    const jstOffsetMs = 9 * 60 * 60 * 1000;
-    const jstTimeVirtual = new Date(utcMs + jstOffsetMs);
+import type { Locale } from 'date-fns';
+// Per-locale imports so Metro doesn't bundle every date-fns locale
+import { enUS } from 'date-fns/locale/en-US';
+import { tr } from 'date-fns/locale/tr';
+import { ja } from 'date-fns/locale/ja';
+import { ru } from 'date-fns/locale/ru';
+import { de } from 'date-fns/locale/de';
+import { ar } from 'date-fns/locale/ar';
+import { es } from 'date-fns/locale/es';
+import { pt } from 'date-fns/locale/pt';
+import { id } from 'date-fns/locale/id';
+import { hi } from 'date-fns/locale/hi';
+import { fr } from 'date-fns/locale/fr';
+import { it } from 'date-fns/locale/it';
+import { pl } from 'date-fns/locale/pl';
+import { vi } from 'date-fns/locale/vi';
+import { th } from 'date-fns/locale/th';
 
-    // Construct "Face Value" date in Local System Time
-    // safe for comparison with other "Face Value" dates
-    return new Date(
-        jstTimeVirtual.getUTCFullYear(),
-        jstTimeVirtual.getUTCMonth(),
-        jstTimeVirtual.getUTCDate(),
-        jstTimeVirtual.getUTCHours(),
-        jstTimeVirtual.getUTCMinutes(),
-        jstTimeVirtual.getUTCSeconds()
-    );
+const DATE_FNS_LOCALES: Record<string, Locale> = { en: enUS, tr, ja, ru, de, ar, es, pt, id, hi, fr, it, pl, vi, th };
+
+/** date-fns locale for an app language code (falls back to English). */
+export const getDateFnsLocale = (language: string): Locale => DATE_FNS_LOCALES[language] || enUS;
+
+/** Local calendar date as `YYYY-MM-DD` — a stable key that changes at local midnight. */
+export const toLocalDateKey = (date: Date): string => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
 };
 
-// Helper to calculate next broadcast date
-export const getNextBroadcastDate = (anime: any) => {
-    if (anime.airingAt) {
-        const jstOffsetMs = 9 * 60 * 60 * 1000;
-        const jstTimeVirtual = new Date(anime.airingAt * 1000 + jstOffsetMs);
-        return new Date(
-            jstTimeVirtual.getUTCFullYear(),
-            jstTimeVirtual.getUTCMonth(),
-            jstTimeVirtual.getUTCDate(),
-            jstTimeVirtual.getUTCHours(),
-            jstTimeVirtual.getUTCMinutes(),
-            jstTimeVirtual.getUTCSeconds()
-        );
-    }
-
-    if (!anime.broadcast || !anime.broadcast.time || !anime.broadcast.day) return null;
-
-
-    const [hours, minutes] = anime.broadcast.time.split(':').map(Number);
-
-    const dayMap: { [key: string]: number } = {
-        'Sundays': 0, 'Mondays': 1, 'Tuesdays': 2, 'Wednesdays': 3,
-        'Thursdays': 4, 'Fridays': 5, 'Saturdays': 6,
-        'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3,
-        'Thursday': 4, 'Friday': 5, 'Saturday': 6
+/** Unix-second bounds (inclusive) of the local day that contains `date`. */
+export const getLocalDayBounds = (date: Date) => {
+    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+    const end = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
+    return {
+        start: Math.floor(start.getTime() / 1000),
+        end: Math.floor(end.getTime() / 1000),
     };
-
-    const broadcastDayStr = anime.broadcast.day ? anime.broadcast.day.trim() : '';
-
-    // Normalize string to match keys (e.g. "mondays" -> "Mondays")
-    // Simple approach: Capitalize first letter, rest lowercase? 
-    // Keys are Title Case. 
-    // Jikan usually returns "Mondays". 
-    // Let's try exact match first, then case-insensitive scan.
-
-    let broadcastDay = dayMap[broadcastDayStr];
-
-    if (broadcastDay === undefined) {
-        // Case-insensitive fallback
-        const lowerDay = broadcastDayStr.toLowerCase();
-        const foundKey = Object.keys(dayMap).find(k => k.toLowerCase() === lowerDay);
-        if (foundKey) {
-            broadcastDay = dayMap[foundKey];
-        } else {
-            // Check for singular/plural mismatch manually if needed, 
-            // but dayMap already has "Sunday" and "Sundays".
-            // If still undefined, return null.
-            return null;
-        }
-    }
-
-    // Logic from CalendarAnimeCard.tsx:
-    const jstNow = getCurrentJSTDate();
-
-    // We need jstHours/Minutes for the "has it aired today?" check
-    const jstHours = jstNow.getHours();
-    const jstMinutes = jstNow.getMinutes();
-
-    const currentDayJST = jstNow.getDay();
-
-    let dayDiff = broadcastDay - currentDayJST;
-    if (dayDiff < 0) dayDiff += 7;
-
-    // If today is the day, check if time has passed
-    if (dayDiff === 0) {
-        if (jstHours > hours || (jstHours === hours && jstMinutes >= minutes)) {
-            dayDiff = 7; // Next week
-        }
-    }
-
-    // Construct the target date (JST Face Value)
-    const targetJST = new Date(jstNow);
-    targetJST.setDate(jstNow.getDate() + dayDiff);
-    targetJST.setHours(hours, minutes, 0, 0);
-
-    return targetJST;
-};
-
-/**
- * Converts the anime broadcast time (JST) to the user's local Date object.
- * Adjusts for the JST (UTC+9) offset.
- */
-export const getBroadcastDateObj = (anime: any): Date | null => {
-    const targetJST = getNextBroadcastDate(anime);
-    if (!targetJST) return null;
-
-    // Formula: RealUTC = TimestampOfFaceValue + LocalOffset - JSTOffset
-    // targetJST.getTime() is UTC timestamp of the Face Value date (interpreted in Local Time)
-    // LocalOffset converts FaceValue-as-Local to True-UTC
-    // JSTOffset shifts the True-UTC (which was actually JST-FaceValue) back to the actual Event-UTC.
-
-    const jstOffsetMs = 9 * 60 * 60 * 1000;
-    const localOffsetMs = -targetJST.getTimezoneOffset() * 60 * 1000;
-
-    const realUtcTime = targetJST.getTime() + localOffsetMs - jstOffsetMs;
-
-    return new Date(realUtcTime);
 };
 
 export const getUtcOffsetString = (date: Date = new Date()): string => {
@@ -128,5 +51,5 @@ export const getUtcOffsetString = (date: Date = new Date()): string => {
     if (minutes === 0) {
         return `UTC${sign}${hours}`;
     }
-    return `UTC${sign}${hours}:${minutes}`;
+    return `UTC${sign}${hours}:${String(minutes).padStart(2, '0')}`;
 };

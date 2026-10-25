@@ -6,6 +6,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { analytics } from '../../lib/analytics';
 import { BlurView } from 'expo-blur';
 
 interface PulseEvent {
@@ -115,7 +116,10 @@ export const AnimePulse = () => {
                         >
                             <TouchableOpacity 
                                 activeOpacity={0.8}
-                                onPress={() => router.push(`/anime/${ev.anime_id}`)}
+                                onPress={() => {
+                                    analytics.track('home_section_clicked', { section: 'pulse', anime_id: String(ev.anime_id) });
+                                    router.push(`/anime/${ev.anime_id}`);
+                                }}
                             >
                                 <BlurView 
                                     intensity={isDark ? 30 : 60} 

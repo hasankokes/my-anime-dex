@@ -6,6 +6,20 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8765", "--directory", "web"],
       "port": 8765
+    },
+    {
+      "name": "expo-web",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--web", "--port", "8091"],
+      "env": { "EXPO_NO_TELEMETRY": "1", "EXPO_OFFLINE": "1" },
+      "port": 8091
+    },
+    {
+      "name": "metro",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--port", "8081"],
+      "env": { "EXPO_NO_TELEMETRY": "1" },
+      "port": 8081
     }
   ]
 }

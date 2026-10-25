@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../context/AuthProvider';
 import { authIntent, AuthReason, ResumableAction } from '../lib/authIntent';
+import { analytics } from '../lib/analytics';
 
 /**
  * Returns requireAuth(reason, action):
@@ -22,6 +23,8 @@ export function useRequireAuth() {
         // Ignore repeated taps while the login modal is already opening/open
         if (authIntent.isLoginOpen()) return false;
 
+        analytics.track('auth_wall_hit', { reason });
+        analytics.setPendingAuthReason(reason);
         authIntent.begin(action);
         router.push({ pathname: '/login', params: { reason } });
         return false;
