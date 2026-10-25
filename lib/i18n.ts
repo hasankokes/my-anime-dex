@@ -451,27 +451,51 @@ export const translations = {
             }
         },
         privacy: {
-            title: 'Privacy Policy',
-            lastUpdated: 'Last Updated: December 22, 2025',
-            intro: 'This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service.',
+            title: "Privacy Policy",
+            lastUpdated: "Last updated: October 25, 2026",
+            intro: "MyAnimeDex (\"we\", \"us\") is an app for tracking anime. This policy explains what data we collect when you use the MyAnimeDex app and website, why we collect it, who we share it with and the choices you have.",
             sections: {
                 collection: {
-                    title: '1. Collecting and Using Your Personal Data',
-                    content: 'While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You.'
+                    title: "1. Data we collect",
+                    content: "• Account data: your email address, your username and, if you add one, your profile photo. If you sign in with Google or Apple, we receive the email address they share with us (Apple may give us a private relay address).\n• Your content: your anime list, statuses, episode progress, favorites, ratings, reviews, custom lists, tags and notes, Arena results, poll votes and the recommendation feedback you give. If you are a Premium member, copies of your list are kept as backups.\n• Usage data: which screens and features you use, the app version, device model, operating system and language. This is linked to a random identifier and, after you sign in, to your account ID. It never includes your email address or the text you write.\n• Advertising data: when ads are shown, Google AdMob collects your device's advertising identifier, your IP address (used for approximate location) and how you interact with ads.\n• Purchase data: if you subscribe to Premium, we receive your subscription status and purchase history from the App Store or Google Play through RevenueCat. We never see your payment card details.\nYou can browse the app without an account. Guests are only covered by the usage and advertising data above.",
                 },
                 usage: {
-                    title: '2. Use of Your Personal Data',
-                    content: 'The Company may use Personal Data for the following purposes: to provide and maintain our Service, to manage Your Account, and to contact You.'
+                    title: "2. How we use your data",
+                    content: "We use your data to create and run your account, save your list and sync it across your devices, show your profile and reviews to other users, send the episode reminders you turn on, provide Premium features and backups, understand how the app is used so we can fix problems and improve it, and show ads in the free version. We do not sell your personal data.",
                 },
-                security: {
-                    title: '3. Security of Your Personal Data',
-                    content: 'The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure.'
+                thirdParty: {
+                    title: "3. Services we work with",
+                    content: "• Supabase: database, sign-in and file storage.\n• AniList: anime information. If you import your list from AniList, your public AniList username is sent to AniList.\n• Google AdMob: ads.\n• RevenueCat: Premium subscriptions.\n• PostHog (servers in the EU): product analytics.\n• Google Sign-In and Sign in with Apple: signing in.\n• Google Translate: translating anime synopses. Only the synopsis text is sent.\nEach of these services handles data under its own privacy policy.",
                 },
-                deletion: {
-                    title: '5. Account Deletion',
-                    content: 'You have the right to request the deletion of your account and associated data. You can delete your account directly within the app via Profile > Danger Zone. This action is permanent.'
-                }
-            }
+                ads: {
+                    title: "4. Ads and tracking",
+                    content: "The free version shows ads from Google AdMob. On iPhone and iPad we ask for your permission before your advertising identifier is used; if you decline, only non-personalized ads are shown. On Android you can reset or delete your advertising ID in your device settings. Premium members do not see ads.",
+                },
+                device: {
+                    title: "5. Permissions on your device",
+                    content: "• Notifications: episode and trial reminders are scheduled on your device and are only sent if you allow notifications.\n• Calendar: only when you tap \"Add to calendar\" do we add airing times to your phone's calendar. We do not read or upload your calendar events.\n• Camera and photos: only used to take or choose a profile photo.\nYou can turn these permissions off at any time in your device settings.",
+                },
+                public: {
+                    title: "6. What other users can see",
+                    content: "Your username, profile photo, level, profile showcase (such as your Top 10 and stats card, if you turn it on), reviews, the lists you share and your watch activity in Community Pulse are visible to other users. Your email address, notes, tags and backups are private.",
+                },
+                retention: {
+                    title: "7. Security, retention and deletion",
+                    content: "Your data is sent over encrypted connections and is protected by access rules so that only you can change it. We keep your data for as long as your account exists, and only the last 7 backups are kept. You can delete your account at any time in the app (Profile > Danger Zone > Delete Account) or as explained at myanimedex.com/delete-account. This permanently deletes your account, list, reviews, backups and other content from our database. To also remove your profile photo file or your analytics data, email us and we will delete them.",
+                },
+                children: {
+                    title: "8. Children",
+                    content: "MyAnimeDex is not directed at children under 13, and we do not knowingly collect their personal data. If you believe a child has given us personal data, contact us and we will delete it.",
+                },
+                rights: {
+                    title: "9. Your rights",
+                    content: "Depending on where you live (for example under the GDPR or KVKK), you can ask us to access, correct, export or delete your data, or object to how we process it. Our service providers may process data outside your country, including in the EU and the United States.",
+                },
+                contact: {
+                    title: "10. Contact and changes",
+                    content: "For questions or requests, email support@myanimedex.com. When we change this policy, we update the date at the top of this page.",
+                },
+            },
         },
         help: {
             title: 'Help & Support',
@@ -1001,27 +1025,51 @@ export const translations = {
             }
         },
         privacy: {
-            title: 'Gizlilik Politikası',
-            lastUpdated: 'Son Güncelleme: 22 Aralık 2025',
-            intro: 'Bu Gizlilik Politikası, Hizmeti kullandığınızda bilgilerinizin toplanması, kullanılması ve ifşa edilmesine ilişkin politikalarımızı ve prosedürlerimizi açıklar.',
+            title: "Gizlilik Politikası",
+            lastUpdated: "Son güncelleme: 25 Ekim 2026",
+            intro: "MyAnimeDex (\"biz\") anime takibi için bir uygulamadır. Bu politika, MyAnimeDex uygulamasını ve web sitesini kullandığında hangi verileri topladığımızı, bunları neden topladığımızı, kimlerle paylaştığımızı ve sahip olduğun seçenekleri açıklar.",
             sections: {
                 collection: {
-                    title: '1. Kişisel Verilerinizin Toplanması ve Kullanılması',
-                    content: 'Hizmetimizi kullanırken, Sizinle iletişim kurmak veya Sizi tanımlamak için kullanılabilecek belirli kişisel olarak tanımlanabilir bilgileri Bize sağlamanızı isteyebiliriz.'
+                    title: "1. Topladığımız veriler",
+                    content: "• Hesap verileri: e-posta adresin, kullanıcı adın ve eklersen profil fotoğrafın. Google veya Apple ile giriş yaparsan, bizimle paylaştıkları e-posta adresini alırız (Apple bize gizli bir yönlendirme adresi verebilir).\n• İçeriklerin: anime listen, durumlar, bölüm ilerlemesi, favoriler, puanlar, yorumlar, özel listeler, etiketler ve notlar, Arena sonuçları, anket oyları ve önerilere verdiğin geri bildirimler. Premium üyeysen listenin kopyaları yedek olarak saklanır.\n• Kullanım verileri: hangi ekranları ve özellikleri kullandığın, uygulama sürümü, cihaz modeli, işletim sistemi ve dil. Bu veriler rastgele bir tanımlayıcıya ve giriş yaptıktan sonra hesap kimliğine bağlanır. E-posta adresini veya yazdığın metinleri asla içermez.\n• Reklam verileri: reklam gösterildiğinde Google AdMob, cihazının reklam kimliğini, IP adresini (yaklaşık konum için kullanılır) ve reklamlarla nasıl etkileşime girdiğini toplar.\n• Satın alma verileri: Premium'a abone olursan, abonelik durumunu ve satın alma geçmişini App Store veya Google Play'den RevenueCat aracılığıyla alırız. Ödeme kartı bilgilerini asla görmeyiz.\nUygulamaya hesap olmadan da göz atabilirsin. Misafirler için yalnızca yukarıdaki kullanım ve reklam verileri geçerlidir.",
                 },
                 usage: {
-                    title: '2. Kişisel Verilerinizin Kullanımı',
-                    content: 'Şirket, Kişisel Verileri şu amaçlarla kullanabilir: Hizmetimizi sağlamak ve sürdürmek, Hesabınızı yönetmek ve Sizinle iletişim kurmak.'
+                    title: "2. Verilerini nasıl kullanıyoruz",
+                    content: "Verilerini; hesabını oluşturmak ve yürütmek, listeni kaydetmek ve cihazların arasında senkronize etmek, profilini ve yorumlarını diğer kullanıcılara göstermek, açtığın bölüm hatırlatmalarını göndermek, Premium özellikleri ve yedekleri sağlamak, sorunları düzeltip uygulamayı geliştirebilmek için uygulamanın nasıl kullanıldığını anlamak ve ücretsiz sürümde reklam göstermek için kullanırız. Kişisel verilerini satmayız.",
                 },
-                security: {
-                    title: '3. Kişisel Verilerinizin Güvenliği',
-                    content: 'Kişisel Verilerinizin güvenliği Bizim için önemlidir, ancak İnternet üzerinden hiçbir iletim yönteminin veya elektronik depolama yönteminin %100 güvenli olmadığını unutmayın.'
+                thirdParty: {
+                    title: "3. Birlikte çalıştığımız hizmetler",
+                    content: "• Supabase: veritabanı, giriş ve dosya depolama.\n• AniList: anime bilgileri. Listeni AniList'ten içe aktarırsan, herkese açık AniList kullanıcı adın AniList'e gönderilir.\n• Google AdMob: reklamlar.\n• RevenueCat: Premium abonelikler.\n• PostHog (sunucuları AB'de): ürün analitiği.\n• Google Sign-In ve Sign in with Apple: giriş.\n• Google Translate: anime özetlerinin çevirisi. Yalnızca özet metni gönderilir.\nBu hizmetlerin her biri verileri kendi gizlilik politikasına göre işler.",
                 },
-                deletion: {
-                    title: '5. Hesap Silme',
-                    content: 'Hesabınızın ve ilişkili verilerin silinmesini talep etme hakkına sahipsiniz. Hesabınızı Profil > Tehlike Bölgesi üzerinden doğrudan uygulama içinden silebilirsiniz. Bu işlem kalıcıdır.'
-                }
-            }
+                ads: {
+                    title: "4. Reklamlar ve izleme",
+                    content: "Ücretsiz sürümde Google AdMob reklamları gösterilir. iPhone ve iPad'de reklam kimliğin kullanılmadan önce iznini isteriz; reddedersen yalnızca kişiselleştirilmemiş reklamlar gösterilir. Android'de reklam kimliğini cihaz ayarlarından sıfırlayabilir veya silebilirsin. Premium üyeler reklam görmez.",
+                },
+                device: {
+                    title: "5. Cihazındaki izinler",
+                    content: "• Bildirimler: bölüm ve deneme süresi hatırlatmaları cihazında planlanır ve yalnızca bildirimlere izin verirsen gönderilir.\n• Takvim: yayın saatlerini telefonunun takvimine yalnızca \"Takvime ekle\"ye dokunduğunda ekleriz. Takvim etkinliklerini okumayız veya yüklemeyiz.\n• Kamera ve fotoğraflar: yalnızca profil fotoğrafı çekmek veya seçmek için kullanılır.\nBu izinleri istediğin zaman cihaz ayarlarından kapatabilirsin.",
+                },
+                public: {
+                    title: "6. Diğer kullanıcıların görebildikleri",
+                    content: "Kullanıcı adın, profil fotoğrafın, seviyen, profil vitrinin (açtıysan Favori 10'um listen ve istatistik kartın gibi), yorumların, paylaştığın listeler ve Topluluk Nabzı'ndaki izleme etkinliğin diğer kullanıcılar tarafından görülebilir. E-posta adresin, notların, etiketlerin ve yedeklerin gizlidir.",
+                },
+                retention: {
+                    title: "7. Güvenlik, saklama ve silme",
+                    content: "Verilerin şifreli bağlantılar üzerinden gönderilir ve yalnızca senin değiştirebilmen için erişim kurallarıyla korunur. Verilerini hesabın var olduğu sürece saklarız ve yalnızca son 7 yedek tutulur. Hesabını istediğin zaman uygulamadan (Profil > Tehlike Bölgesi > Hesabı Sil) veya myanimedex.com/delete-account adresinde açıklandığı şekilde silebilirsin. Bu işlem hesabını, listeni, yorumlarını, yedeklerini ve diğer içeriklerini veritabanımızdan kalıcı olarak siler. Profil fotoğrafı dosyanın veya analitik verilerinin de silinmesini istersen bize e-posta gönder, bunları sileriz.",
+                },
+                children: {
+                    title: "8. Çocuklar",
+                    content: "MyAnimeDex 13 yaşından küçük çocuklara yönelik değildir ve onların kişisel verilerini bilerek toplamayız. Bir çocuğun bize kişisel veri verdiğini düşünüyorsan bizimle iletişime geç, bu verileri sileriz.",
+                },
+                rights: {
+                    title: "9. Hakların",
+                    content: "Yaşadığın yere bağlı olarak (örneğin GDPR veya KVKK kapsamında) verilerine erişmeyi, verilerinin düzeltilmesini, dışa aktarılmasını veya silinmesini talep edebilir ya da verilerinin işlenme şekline itiraz edebilirsin. Hizmet sağlayıcılarımız verileri AB ve Amerika Birleşik Devletleri dahil olmak üzere ülken dışında işleyebilir.",
+                },
+                contact: {
+                    title: "10. İletişim ve değişiklikler",
+                    content: "Soruların veya taleplerin için support@myanimedex.com adresine e-posta gönder. Bu politikayı değiştirdiğimizde bu sayfanın üstündeki tarihi güncelleriz.",
+                },
+            },
         },
         help: {
             title: 'Yardım ve Destek',
@@ -1551,27 +1599,51 @@ export const translations = {
             }
         },
         privacy: {
-            title: 'プライバシーポリシー',
-            lastUpdated: '最終更新日：2025年12月22日',
-            intro: 'このプライバシーポリシーは、サービスを使用する際のお客様の情報の収集、使用、開示に関する当社の方針と手順を説明しています。',
+            title: "プライバシーポリシー",
+            lastUpdated: "最終更新日：2026年10月25日",
+            intro: "MyAnimeDex（以下「当社」）は、アニメを記録するためのアプリです。本ポリシーでは、MyAnimeDexのアプリおよびウェブサイトをご利用いただく際に当社が収集するデータ、その収集目的、共有先、およびあなたが選択できる事項について説明します。",
             sections: {
                 collection: {
-                    title: '1. 個人データの収集と使用',
-                    content: '当社のサービスを使用する際、連絡または特定に使用できる特定の個人情報の提供をお願いする場合があります。'
+                    title: "1. 収集するデータ",
+                    content: "• アカウントデータ：メールアドレス、ユーザー名、および登録した場合はプロフィール写真。GoogleまたはAppleでログインした場合は、それらのサービスから共有されるメールアドレスを受け取ります（Appleからはプライベートリレーアドレスが提供されることがあります）。\n• あなたのコンテンツ：アニメリスト、ステータス、エピソードの進捗、お気に入り、評価、レビュー、カスタムリスト、タグとメモ、アリーナの結果、投票、およびおすすめに対してあなたが送ったフィードバック。プレミアム会員の場合は、リストのコピーがバックアップとして保存されます。\n• 利用データ：使用した画面や機能、アプリのバージョン、端末のモデル、OS、言語。これらのデータはランダムな識別子に紐づけられ、ログイン後はアカウントIDにも紐づけられます。メールアドレスやあなたが書いたテキストが含まれることはありません。\n• 広告データ：広告が表示される際、Google AdMobが端末の広告識別子、IPアドレス（おおよその位置の推定に使用）、および広告に対する操作の情報を収集します。\n• 購入データ：プレミアムに登録した場合、App StoreまたはGoogle PlayからRevenueCatを通じて、サブスクリプションの状態と購入履歴を受け取ります。当社が支払いカードの情報を目にすることはありません。\nアプリはアカウントなしでも閲覧できます。ゲストの場合、対象となるのは上記の利用データと広告データのみです。",
                 },
                 usage: {
-                    title: '2. 個人データの使用',
-                    content: '当社は、サービスの提供と維持、アカウントの管理、お客様への連絡のために個人データを使用する場合があります。'
+                    title: "2. データの利用目的",
+                    content: "当社はデータを次の目的で利用します：アカウントの作成と運営、リストの保存と端末間での同期、プロフィールとレビューの他のユーザーへの表示、あなたがオンにしたエピソード通知の送信、プレミアム機能とバックアップの提供、問題の修正とアプリの改善のための利用状況の把握、無料版での広告表示。当社があなたの個人データを販売することはありません。",
                 },
-                security: {
-                    title: '3. 個人データのセキュリティ',
-                    content: '個人データのセキュリティは当社にとって重要ですが、インターネット上の送信方法や電子保存方法は100％安全ではないことを忘れないでください。'
+                thirdParty: {
+                    title: "3. 連携しているサービス",
+                    content: "• Supabase：データベース、ログイン、ファイルストレージ。\n• AniList：アニメ情報。AniListからリストをインポートした場合、公開されているAniListのユーザー名がAniListに送信されます。\n• Google AdMob：広告。\n• RevenueCat：プレミアムのサブスクリプション。\n• PostHog（EU内のサーバー）：プロダクト分析。\n• Google Sign-In、Sign in with Apple：ログイン。\n• Google Translate：アニメのあらすじの翻訳。送信されるのはあらすじのテキストのみです。\nこれらの各サービスは、それぞれのプライバシーポリシーに従ってデータを取り扱います。",
                 },
-                deletion: {
-                    title: "5. アカウントの削除",
-                    content: "お客様は、アカウントおよび関連データの削除を請求する権利があります。アプリ内の「プロフィール > 危険地帯」から直接アカウントを削除できます。この操作は取り消せません。"
-                }
-            }
+                ads: {
+                    title: "4. 広告とトラッキング",
+                    content: "無料版ではGoogle AdMobの広告が表示されます。iPhoneとiPadでは、広告識別子を使用する前にあなたの許可を求めます。許可しない場合は、パーソナライズされていない広告のみが表示されます。Androidでは、端末の設定から広告IDをリセットまたは削除できます。プレミアム会員には広告は表示されません。",
+                },
+                device: {
+                    title: "5. 端末の権限",
+                    content: "• 通知：エピソードとトライアルのリマインダーは端末上で予約され、通知を許可している場合にのみ届きます。\n• カレンダー：「カレンダーに追加」をタップしたときにのみ、放送時間をスマホのカレンダーに追加します。カレンダーの予定を読み取ったりアップロードしたりすることはありません。\n• カメラと写真：プロフィール写真の撮影または選択にのみ使用します。\nこれらの権限は、端末の設定からいつでもオフにできます。",
+                },
+                public: {
+                    title: "6. 他のユーザーに表示される情報",
+                    content: "ユーザー名、プロフィール写真、レベル、プロフィールのショーケース（オンにしている場合のマイトップ10や統計カードなど）、レビュー、共有したリスト、および「みんなの動き」での視聴アクティビティは、他のユーザーに表示されます。メールアドレス、メモ、タグ、バックアップは非公開です。",
+                },
+                retention: {
+                    title: "7. セキュリティ、保存期間、削除",
+                    content: "データは暗号化された通信で送信され、あなただけが変更できるようアクセスルールで保護されています。データはアカウントが存在する間保存し、バックアップは直近の7件のみ保持します。アカウントは、アプリ内（プロフィール > 危険地帯 > アカウントを削除）から、またはmyanimedex.com/delete-accountに記載の方法で、いつでも削除できます。削除すると、アカウント、リスト、レビュー、バックアップ、その他のコンテンツが当社のデータベースから完全に削除されます。プロフィール写真のファイルや分析データも削除したい場合は、メールでご連絡いただければ削除します。",
+                },
+                children: {
+                    title: "8. 子どもについて",
+                    content: "MyAnimeDexは13歳未満の子どもを対象としておらず、当社が子どもの個人データを故意に収集することはありません。子どもが当社に個人データを提供したと思われる場合はご連絡ください。そのデータを削除します。",
+                },
+                rights: {
+                    title: "9. あなたの権利",
+                    content: "お住まいの地域によっては（例：GDPRやKVKKに基づき）、データへのアクセス、訂正、エクスポート、削除を当社に求めたり、データの処理方法に異議を申し立てたりできます。当社のサービス提供者は、EUや米国を含め、あなたの国以外でデータを処理する場合があります。",
+                },
+                contact: {
+                    title: "10. お問い合わせと変更",
+                    content: "ご質問やご依頼は、support@myanimedex.com までメールでご連絡ください。本ポリシーを変更した場合は、このページ上部の日付を更新します。",
+                },
+            },
         },
         help: {
             title: 'ヘルプとサポート',
@@ -2101,27 +2173,51 @@ export const translations = {
             }
         },
         privacy: {
-            title: 'Политика конфиденциальности',
-            lastUpdated: 'Последнее обновление: 22 декабря 2025 г.',
-            intro: 'Эта Политика конфиденциальности описывает наши правила и процедуры сбора, использования и раскрытия вашей информации при использовании вами Сервиса.',
+            title: "Политика конфиденциальности",
+            lastUpdated: "Последнее обновление: 25 октября 2026 г.",
+            intro: "MyAnimeDex («мы») — приложение для отслеживания аниме. В этой политике объясняется, какие данные мы собираем, когда вы пользуетесь приложением и сайтом MyAnimeDex, зачем мы их собираем, кому передаём и какой выбор есть у вас.",
             sections: {
                 collection: {
-                    title: '1. Сбор и использование ваших личных данных',
-                    content: 'При использовании нашего Сервиса мы можем попросить вас предоставить нам определенную личную информацию, которая может быть использована для связи с вами или вашей идентификации.'
+                    title: "1. Какие данные мы собираем",
+                    content: "• Данные аккаунта: ваш адрес электронной почты, имя пользователя и фото профиля, если вы его добавите. Если вы входите через Google или Apple, мы получаем адрес электронной почты, который они нам передают (Apple может предоставить нам скрытый адрес для пересылки).\n• Ваш контент: ваш список аниме, статусы, прогресс по эпизодам, избранное, оценки, отзывы, пользовательские списки, теги и заметки, результаты Арены, голоса в опросах и ваша обратная связь по рекомендациям. Если вы Premium-пользователь, копии вашего списка хранятся как резервные копии.\n• Данные об использовании: какие экраны и функции вы используете, версия приложения, модель устройства, операционная система и язык. Эти данные связаны со случайным идентификатором, а после входа — с ID вашего аккаунта. Они никогда не включают ваш адрес электронной почты или написанный вами текст.\n• Рекламные данные: при показе рекламы Google AdMob собирает рекламный идентификатор вашего устройства, ваш IP-адрес (используется для определения примерного местоположения) и сведения о том, как вы взаимодействуете с рекламой.\n• Данные о покупках: если вы оформляете подписку Premium, мы получаем статус подписки и историю покупок из App Store или Google Play через RevenueCat. Мы никогда не видим данные вашей платёжной карты.\nПриложением можно пользоваться без аккаунта. Для гостей актуальны только указанные выше данные об использовании и рекламные данные.",
                 },
                 usage: {
-                    title: '2. Использование ваших личных данных',
-                    content: 'Компания может использовать Персональные данные для следующих целей: предоставление и поддержка нашего Сервиса, управление вашей Учетной записью и связь с вами.'
+                    title: "2. Как мы используем ваши данные",
+                    content: "Мы используем ваши данные, чтобы создавать и поддерживать ваш аккаунт, сохранять ваш список и синхронизировать его между вашими устройствами, показывать ваш профиль и отзывы другим пользователям, отправлять включённые вами напоминания об эпизодах, предоставлять функции Premium и резервные копии, понимать, как используется приложение, чтобы исправлять проблемы и улучшать его, а также показывать рекламу в бесплатной версии. Мы не продаём ваши персональные данные.",
                 },
-                security: {
-                    title: '3. Безопасность ваших личных данных',
-                    content: 'Безопасность ваших Персональных данных важна для нас, но помните, что ни один метод передачи через Интернет или метод электронного хранения не является безопасным на 100%.'
+                thirdParty: {
+                    title: "3. Сервисы, с которыми мы работаем",
+                    content: "• Supabase: база данных, вход и хранение файлов.\n• AniList: информация об аниме. Если вы импортируете свой список из AniList, ваше публичное имя пользователя AniList передаётся в AniList.\n• Google AdMob: реклама.\n• RevenueCat: подписки Premium.\n• PostHog (серверы в ЕС): продуктовая аналитика.\n• Google Sign-In и Sign in with Apple: вход.\n• Google Translate: перевод описаний аниме. Передаётся только текст описания.\nКаждый из этих сервисов обрабатывает данные в соответствии со своей политикой конфиденциальности.",
                 },
-                deletion: {
-                    title: "5. Удаление аккаунта",
-                    content: "Вы имеете право потребовать удаления своего аккаунта и связанных с ним данных. Удалить аккаунт можно прямо в приложении: Профиль > Опасная зона. Это действие необратимо."
-                }
-            }
+                ads: {
+                    title: "4. Реклама и отслеживание",
+                    content: "В бесплатной версии показывается реклама Google AdMob. На iPhone и iPad мы запрашиваем ваше разрешение, прежде чем использовать ваш рекламный идентификатор; если вы откажетесь, будет показываться только неперсонализированная реклама. На Android вы можете сбросить или удалить рекламный идентификатор в настройках устройства. Premium-пользователи не видят рекламу.",
+                },
+                device: {
+                    title: "5. Разрешения на вашем устройстве",
+                    content: "• Уведомления: напоминания об эпизодах и о пробном периоде планируются на вашем устройстве и отправляются, только если вы разрешили уведомления.\n• Календарь: мы добавляем время выхода в календарь вашего телефона, только когда вы нажимаете «Добавить в календарь». Мы не читаем и не загружаем события вашего календаря.\n• Камера и фото: используются только для того, чтобы сделать или выбрать фото профиля.\nВы можете отключить эти разрешения в любое время в настройках устройства.",
+                },
+                public: {
+                    title: "6. Что видят другие пользователи",
+                    content: "Ваше имя пользователя, фото профиля, уровень, витрина профиля (например, «Мой топ-10» и карточка статистики, если вы их включили), отзывы, списки, которыми вы делитесь, и ваша активность просмотра в «Пульсе фанатов» видны другим пользователям. Ваш адрес электронной почты, заметки, теги и резервные копии остаются закрытыми.",
+                },
+                retention: {
+                    title: "7. Безопасность, хранение и удаление",
+                    content: "Ваши данные передаются по зашифрованным соединениям и защищены правилами доступа, так что изменить их можете только вы. Мы храним ваши данные, пока существует ваш аккаунт, при этом сохраняются только последние 7 резервных копий. Вы можете удалить аккаунт в любое время в приложении (Профиль > Опасная зона > Удалить аккаунт) или способом, описанным на myanimedex.com/delete-account. При этом ваш аккаунт, список, отзывы, резервные копии и другой контент безвозвратно удаляются из нашей базы данных. Чтобы также удалить файл фото профиля или ваши аналитические данные, напишите нам по электронной почте, и мы их удалим.",
+                },
+                children: {
+                    title: "8. Дети",
+                    content: "MyAnimeDex не предназначен для детей младше 13 лет, и мы сознательно не собираем их персональные данные. Если вы считаете, что ребёнок передал нам персональные данные, свяжитесь с нами, и мы их удалим.",
+                },
+                rights: {
+                    title: "9. Ваши права",
+                    content: "В зависимости от того, где вы живёте (например, согласно GDPR или KVKK), вы можете попросить нас предоставить доступ к вашим данным, исправить, экспортировать или удалить их, а также возразить против того, как мы их обрабатываем. Наши поставщики услуг могут обрабатывать данные за пределами вашей страны, в том числе в ЕС и США.",
+                },
+                contact: {
+                    title: "10. Контакты и изменения",
+                    content: "С вопросами и запросами пишите на support@myanimedex.com. При изменении этой политики мы обновляем дату в начале этой страницы.",
+                },
+            },
         },
         help: {
             title: 'Помощь и поддержка',
@@ -2616,27 +2712,51 @@ export const translations = {
             }
         },
         privacy: {
-            title: 'Datenschutzrichtlinie',
-            lastUpdated: 'Letzte Aktualisierung: 22. Dezember 2025',
-            intro: 'Diese Datenschutzrichtlinie beschreibt unsere Richtlinien und Verfahren zur Erhebung, Nutzung und Offenlegung Ihrer Informationen bei der Nutzung des Dienstes.',
+            title: "Datenschutzerklärung",
+            lastUpdated: "Zuletzt aktualisiert: 25. Oktober 2026",
+            intro: "MyAnimeDex („wir“, „uns“) ist eine App zum Verfolgen von Anime. Diese Erklärung beschreibt, welche Daten wir erheben, wenn du die MyAnimeDex-App und -Website nutzt, warum wir sie erheben, an wen wir sie weitergeben und welche Wahlmöglichkeiten du hast.",
             sections: {
                 collection: {
-                    title: '1. Erhebung und Nutzung Ihrer personenbezogenen Daten',
-                    content: 'Während der Nutzung unseres Dienstes bitten wir Sie möglicherweise, uns bestimmte personenbezogene Daten zur Verfügung zu stellen, die verwendet werden können, um Sie zu kontaktieren oder zu identifizieren.'
+                    title: "1. Welche Daten wir erheben",
+                    content: "• Kontodaten: deine E-Mail-Adresse, dein Benutzername und, falls du eines hinzufügst, dein Profilfoto. Wenn du dich mit Google oder Apple anmeldest, erhalten wir die E-Mail-Adresse, die uns der jeweilige Dienst mitteilt (Apple kann uns eine private Weiterleitungsadresse geben).\n• Deine Inhalte: deine Anime-Liste, Status, Folgenfortschritt, Favoriten, Wertungen, Bewertungen, eigene Listen, Tags und Notizen, Arena-Ergebnisse, Umfragestimmen und dein Feedback zu Empfehlungen. Wenn du Premium-Mitglied bist, werden Kopien deiner Liste als Backups gespeichert.\n• Nutzungsdaten: welche Bildschirme und Funktionen du nutzt, App-Version, Gerätemodell, Betriebssystem und Sprache. Diese Daten sind mit einer zufälligen Kennung und, nachdem du dich angemeldet hast, mit deiner Konto-ID verknüpft. Sie enthalten niemals deine E-Mail-Adresse oder Texte, die du schreibst.\n• Werbedaten: Wenn Werbung angezeigt wird, erhebt Google AdMob die Werbe-ID deines Geräts, deine IP-Adresse (wird für den ungefähren Standort verwendet) und wie du mit Anzeigen interagierst.\n• Kaufdaten: Wenn du Premium abonnierst, erhalten wir über RevenueCat deinen Abostatus und deine Kaufhistorie aus dem App Store oder Google Play. Deine Zahlungskartendaten sehen wir nie.\nDu kannst die App auch ohne Konto nutzen. Für Gäste gelten nur die oben genannten Nutzungs- und Werbedaten.",
                 },
                 usage: {
-                    title: '2. Nutzung Ihrer personenbezogenen Daten',
-                    content: 'Das Unternehmen kann personenbezogene Daten für folgende Zwecke verwenden: Bereitstellung und Aufrechterhaltung unseres Dienstes, Verwaltung Ihres Kontos und Kontaktaufnahme mit Ihnen.'
+                    title: "2. Wie wir deine Daten verwenden",
+                    content: "Wir verwenden deine Daten, um dein Konto zu erstellen und zu betreiben, deine Liste zu speichern und zwischen deinen Geräten zu synchronisieren, dein Profil und deine Bewertungen anderen Nutzern anzuzeigen, die von dir aktivierten Folgen-Erinnerungen zu senden, Premium-Funktionen und Backups bereitzustellen, zu verstehen, wie die App genutzt wird, damit wir Probleme beheben und sie verbessern können, und in der kostenlosen Version Werbung anzuzeigen. Wir verkaufen deine personenbezogenen Daten nicht.",
                 },
-                security: {
-                    title: '3. Sicherheit Ihrer personenbezogenen Daten',
-                    content: 'Die Sicherheit Ihrer personenbezogenen Daten ist uns wichtig, aber denken Sie daran, dass keine Übertragungsmethode über das Internet oder elektronische Speichermethode zu 100% sicher ist.'
+                thirdParty: {
+                    title: "3. Dienste, mit denen wir arbeiten",
+                    content: "• Supabase: Datenbank, Anmeldung und Dateispeicher.\n• AniList: Anime-Informationen. Wenn du deine Liste von AniList importierst, wird dein öffentlicher AniList-Benutzername an AniList gesendet.\n• Google AdMob: Werbung.\n• RevenueCat: Premium-Abos.\n• PostHog (Server in der EU): Produktanalyse.\n• Google Sign-In und Sign in with Apple: Anmeldung.\n• Google Translate: Übersetzung von Anime-Beschreibungen. Es wird nur der Text der Beschreibung gesendet.\nJeder dieser Dienste verarbeitet Daten gemäß seiner eigenen Datenschutzerklärung.",
                 },
-                deletion: {
-                    title: "5. Kontolöschung",
-                    content: "Du hast das Recht, die Löschung deines Kontos und der zugehörigen Daten zu verlangen. Du kannst dein Konto direkt in der App unter Profil > Gefahrenzone löschen. Diese Aktion ist endgültig."
-                }
-            }
+                ads: {
+                    title: "4. Werbung und Tracking",
+                    content: "Die kostenlose Version zeigt Werbung von Google AdMob. Auf iPhone und iPad bitten wir dich um Erlaubnis, bevor deine Werbe-ID verwendet wird; wenn du ablehnst, wird nur nicht personalisierte Werbung angezeigt. Unter Android kannst du deine Werbe-ID in den Geräteeinstellungen zurücksetzen oder löschen. Premium-Mitglieder sehen keine Werbung.",
+                },
+                device: {
+                    title: "5. Berechtigungen auf deinem Gerät",
+                    content: "• Benachrichtigungen: Erinnerungen an Folgen und an die Testphase werden auf deinem Gerät geplant und nur gesendet, wenn du Benachrichtigungen erlaubst.\n• Kalender: Nur wenn du auf „Zum Kalender hinzufügen“ tippst, fügen wir Sendezeiten zum Kalender deines Handys hinzu. Wir lesen deine Kalendertermine nicht und laden sie nicht hoch.\n• Kamera und Fotos: werden nur verwendet, um ein Profilfoto aufzunehmen oder auszuwählen.\nDu kannst diese Berechtigungen jederzeit in deinen Geräteeinstellungen deaktivieren.",
+                },
+                public: {
+                    title: "6. Was andere Nutzer sehen können",
+                    content: "Dein Benutzername, dein Profilfoto, dein Level, dein Profil-Showcase (zum Beispiel deine „Meine Top 10“ und deine Statistikkarte, falls du sie aktivierst), deine Bewertungen, die Listen, die du teilst, und deine Aktivität beim Schauen im Community-Puls sind für andere Nutzer sichtbar. Deine E-Mail-Adresse, Notizen, Tags und Backups sind privat.",
+                },
+                retention: {
+                    title: "7. Sicherheit, Speicherdauer und Löschung",
+                    content: "Deine Daten werden über verschlüsselte Verbindungen übertragen und durch Zugriffsregeln geschützt, sodass nur du sie ändern kannst. Wir speichern deine Daten, solange dein Konto besteht, und es werden nur die letzten 7 Backups aufbewahrt. Du kannst dein Konto jederzeit in der App löschen (Profil > Gefahrenzone > Konto löschen) oder wie unter myanimedex.com/delete-account beschrieben. Dadurch werden dein Konto, deine Liste, deine Bewertungen, deine Backups und deine sonstigen Inhalte dauerhaft aus unserer Datenbank gelöscht. Wenn auch deine Profilfoto-Datei oder deine Analysedaten entfernt werden sollen, schreib uns eine E-Mail, und wir löschen sie.",
+                },
+                children: {
+                    title: "8. Kinder",
+                    content: "MyAnimeDex richtet sich nicht an Kinder unter 13 Jahren, und wir erheben nicht wissentlich personenbezogene Daten von ihnen. Wenn du glaubst, dass ein Kind uns personenbezogene Daten übermittelt hat, kontaktiere uns, und wir löschen sie.",
+                },
+                rights: {
+                    title: "9. Deine Rechte",
+                    content: "Je nachdem, wo du lebst (zum Beispiel nach der GDPR oder dem KVKK), kannst du von uns Zugang zu deinen Daten sowie deren Berichtigung, Export oder Löschung verlangen oder der Art, wie wir sie verarbeiten, widersprechen. Unsere Dienstleister können Daten außerhalb deines Landes verarbeiten, auch in der EU und in den USA.",
+                },
+                contact: {
+                    title: "10. Kontakt und Änderungen",
+                    content: "Bei Fragen oder Anliegen schreib eine E-Mail an support@myanimedex.com. Wenn wir diese Erklärung ändern, aktualisieren wir das Datum oben auf dieser Seite.",
+                },
+            },
         },
         help: {
             title: 'Hilfe & Support',
@@ -3166,27 +3286,51 @@ export const translations = {
             }
         },
         privacy: {
-            title: 'سياسة الخصوصية',
-            lastUpdated: 'آخر تحديث: 22 ديسمبر 2025',
-            intro: 'تصف سياسة الخصوصية هذه سياساتنا وإجراءاتنا المتعلقة بجمع واستخدام والإفصاح عن معلوماتك عند استخدام الخدمة.',
+            title: "سياسة الخصوصية",
+            lastUpdated: "آخر تحديث: 25 أكتوبر 2026",
+            intro: "MyAnimeDex («نحن») تطبيق لتتبّع الأنمي. توضّح هذه السياسة البيانات التي نجمعها عند استخدامك تطبيق MyAnimeDex وموقعه الإلكتروني، وسبب جمعها، والجهات التي نشاركها معها، والخيارات المتاحة لك.",
             sections: {
                 collection: {
-                    title: '1. جمع واستخدام بياناتك الشخصية',
-                    content: 'أثناء استخدام خدمتنا، قد نطلب منك تزويدنا ببعض المعلومات الشخصية التي يمكن استخدامها للاتصال بك أو تحديد هويتك.'
+                    title: "1. البيانات التي نجمعها",
+                    content: "• بيانات الحساب: بريدك الإلكتروني واسم المستخدم الخاص بك، وصورة ملفك الشخصي إذا أضفتها. إذا سجّلت الدخول باستخدام Google أو Apple، نتلقى عنوان البريد الإلكتروني الذي تشاركه معنا هذه الخدمة (قد تمنحنا Apple عنوان ترحيل خاصًا).\n• محتواك: قائمة الأنمي الخاصة بك، والحالات، وتقدّم الحلقات، والمفضلة، والتقييمات، والمراجعات، والقوائم المخصّصة، والوسوم والملاحظات، ونتائج الحلبة، وأصوات الاستطلاعات، وآراؤك حول التوصيات. إذا كنت عضو بريميوم، تُحفظ نسخ من قائمتك كنسخ احتياطية.\n• بيانات الاستخدام: الشاشات والميزات التي تستخدمها، وإصدار التطبيق، وطراز الجهاز، ونظام التشغيل، واللغة. ترتبط هذه البيانات بمعرّف عشوائي، وبعد تسجيل دخولك بمعرّف حسابك. ولا تتضمن أبدًا بريدك الإلكتروني أو النصوص التي تكتبها.\n• بيانات الإعلانات: عند عرض الإعلانات، يجمع Google AdMob معرّف الإعلانات الخاص بجهازك، وعنوان IP الخاص بك (يُستخدم لتحديد الموقع التقريبي)، وكيفية تفاعلك مع الإعلانات.\n• بيانات الشراء: إذا اشتركت في بريميوم، نتلقى حالة اشتراكك وسجل مشترياتك من App Store أو Google Play عبر RevenueCat. ولا نطّلع أبدًا على بيانات بطاقة الدفع الخاصة بك.\nيمكنك تصفّح التطبيق دون حساب. وبالنسبة إلى الضيوف، لا تنطبق إلا بيانات الاستخدام والإعلانات المذكورة أعلاه.",
                 },
                 usage: {
-                    title: '2. استخدام بياناتك الشخصية',
-                    content: 'قد تستخدم الشركة البيانات الشخصية للأغراض التالية: توفير وصيانة خدمتنا، وإدارة حسابك، والاتصال بك.'
+                    title: "2. كيف نستخدم بياناتك",
+                    content: "نستخدم بياناتك لإنشاء حسابك وتشغيله، وحفظ قائمتك ومزامنتها بين أجهزتك، وعرض ملفك الشخصي ومراجعاتك للمستخدمين الآخرين، وإرسال تذكيرات الحلقات التي تفعّلها، وتوفير ميزات بريميوم والنسخ الاحتياطية، وفهم كيفية استخدام التطبيق حتى نتمكن من إصلاح المشكلات وتحسينه، وعرض الإعلانات في النسخة المجانية. نحن لا نبيع بياناتك الشخصية.",
                 },
-                security: {
-                    title: '3. أمن بياناتك الشخصية',
-                    content: 'أمن بياناتك الشخصية مهم بالنسبة لنا، ولكن تذكر أنه لا توجد طريقة نقل عبر الإنترنت أو طريقة تخزين إلكتروني آمنة بنسبة 100%.'
+                thirdParty: {
+                    title: "3. الخدمات التي نعمل معها",
+                    content: "• Supabase: قاعدة البيانات وتسجيل الدخول وتخزين الملفات.\n• AniList: معلومات الأنمي. إذا استوردت قائمتك من AniList، يُرسَل اسم المستخدم العام الخاص بك على AniList إلى AniList.\n• Google AdMob: الإعلانات.\n• RevenueCat: اشتراكات بريميوم.\n• PostHog (خوادم في الاتحاد الأوروبي): تحليلات المنتج.\n• Google Sign-In وSign in with Apple: تسجيل الدخول.\n• Google Translate: ترجمة ملخصات الأنمي. ويُرسَل نص الملخص فقط.\nتتعامل كل خدمة من هذه الخدمات مع البيانات وفق سياسة الخصوصية الخاصة بها.",
                 },
-                deletion: {
-                    title: "5. حذف الحساب",
-                    content: "يحق لك طلب حذف حسابك والبيانات المرتبطة به. يمكنك حذف حسابك مباشرة داخل التطبيق من الملف الشخصي > منطقة الخطر. هذا الإجراء نهائي."
-                }
-            }
+                ads: {
+                    title: "4. الإعلانات والتتبّع",
+                    content: "تعرض النسخة المجانية إعلانات من Google AdMob. على iPhone وiPad نطلب إذنك قبل استخدام معرّف الإعلانات الخاص بك؛ وإذا رفضت، تُعرض الإعلانات غير المخصّصة فقط. على Android يمكنك إعادة تعيين معرّف الإعلانات أو حذفه من إعدادات جهازك. لا يرى أعضاء بريميوم أي إعلانات.",
+                },
+                device: {
+                    title: "5. الأذونات على جهازك",
+                    content: "• الإشعارات: تُجدوَل تذكيرات الحلقات والفترة التجريبية على جهازك، ولا تُرسَل إلا إذا سمحت بالإشعارات.\n• التقويم: لا نضيف مواعيد العرض إلى تقويم هاتفك إلا عندما تنقر على «أضف إلى التقويم». ولا نقرأ أحداث تقويمك ولا نرفعها.\n• الكاميرا والصور: تُستخدم فقط لالتقاط صورة الملف الشخصي أو اختيارها.\nيمكنك إيقاف هذه الأذونات في أي وقت من إعدادات جهازك.",
+                },
+                public: {
+                    title: "6. ما يمكن للمستخدمين الآخرين رؤيته",
+                    content: "اسم المستخدم الخاص بك، وصورة ملفك الشخصي، ومستواك، وواجهة عرض ملفك الشخصي (مثل «أفضل 10 لديّ» وبطاقة الإحصائيات، إذا فعّلتها)، ومراجعاتك، والقوائم التي تشاركها، ونشاط مشاهدتك في «نبض المجتمع»، كلها مرئية للمستخدمين الآخرين. أما بريدك الإلكتروني وملاحظاتك ووسومك ونسخك الاحتياطية فهي خاصة.",
+                },
+                retention: {
+                    title: "7. الأمان والاحتفاظ بالبيانات وحذفها",
+                    content: "تُرسَل بياناتك عبر اتصالات مشفّرة، وهي محمية بقواعد وصول بحيث لا يستطيع أحد غيرك تعديلها. نحتفظ ببياناتك ما دام حسابك موجودًا، ولا يُحتفظ إلا بآخر 7 نسخ احتياطية. يمكنك حذف حسابك في أي وقت من داخل التطبيق (حسابي > منطقة الخطر > حذف الحساب) أو بالطريقة الموضّحة في myanimedex.com/delete-account. يؤدي ذلك إلى حذف حسابك وقائمتك ومراجعاتك ونسخك الاحتياطية وسائر محتواك من قاعدة بياناتنا نهائيًا. ولإزالة ملف صورة ملفك الشخصي أو بيانات التحليلات الخاصة بك أيضًا، راسلنا عبر البريد الإلكتروني وسنحذفها.",
+                },
+                children: {
+                    title: "8. الأطفال",
+                    content: "MyAnimeDex غير موجّه للأطفال دون سن 13 عامًا، ولا نجمع بياناتهم الشخصية عن علم. إذا كنت تعتقد أن طفلًا قدّم لنا بيانات شخصية، فتواصل معنا وسنحذفها.",
+                },
+                rights: {
+                    title: "9. حقوقك",
+                    content: "بحسب مكان إقامتك (على سبيل المثال بموجب GDPR أو KVKK)، يمكنك أن تطلب منا الوصول إلى بياناتك أو تصحيحها أو تصديرها أو حذفها، أو الاعتراض على طريقة معالجتنا لها. قد يعالج مزوّدو الخدمات لدينا البيانات خارج بلدك، بما في ذلك في الاتحاد الأوروبي والولايات المتحدة.",
+                },
+                contact: {
+                    title: "10. التواصل والتغييرات",
+                    content: "للأسئلة أو الطلبات، راسلنا على support@myanimedex.com. عند تغيير هذه السياسة، نحدّث التاريخ في أعلى هذه الصفحة.",
+                },
+            },
         },
         help: {
             title: 'المساعدة والدعم',
@@ -3716,27 +3860,51 @@ export const translations = {
             }
         },
         privacy: {
-            title: 'Política de Privacidad',
-            lastUpdated: "Última actualización: 22 de diciembre de 2025",
-            intro: "Esta Política de Privacidad describe nuestras políticas y procedimientos sobre la recopilación, el uso y la divulgación de tu información cuando usas el Servicio.",
+            title: "Política de privacidad",
+            lastUpdated: "Última actualización: 25 de octubre de 2026",
+            intro: "MyAnimeDex (\"nosotros\") es una app para hacer seguimiento de anime. Esta política explica qué datos recopilamos cuando usas la app y el sitio web de MyAnimeDex, por qué los recopilamos, con quién los compartimos y qué opciones tienes.",
             sections: {
                 collection: {
-                    title: "1. Recopilación y uso de tus datos personales",
-                    content: "Al usar nuestro Servicio, podemos pedirte que nos proporciones cierta información de identificación personal que puede usarse para contactarte o identificarte."
+                    title: "1. Datos que recopilamos",
+                    content: "• Datos de la cuenta: tu dirección de correo electrónico, tu nombre de usuario y, si la añades, tu foto de perfil. Si inicias sesión con Google o Apple, recibimos la dirección de correo electrónico que nos comparten (Apple puede darnos una dirección de reenvío privada).\n• Tu contenido: tu lista de anime, estados, progreso de episodios, favoritos, puntuaciones, reseñas, listas personalizadas, etiquetas y notas, resultados de la Arena, votos en encuestas y las valoraciones que das sobre las recomendaciones. Si eres miembro Premium, se guardan copias de tu lista como copias de seguridad.\n• Datos de uso: qué pantallas y funciones usas, la versión de la app, el modelo del dispositivo, el sistema operativo y el idioma. Estos datos se vinculan a un identificador aleatorio y, después de que inicias sesión, al ID de tu cuenta. Nunca incluyen tu dirección de correo electrónico ni los textos que escribes.\n• Datos publicitarios: cuando se muestran anuncios, Google AdMob recopila el identificador publicitario de tu dispositivo, tu dirección IP (usada para determinar una ubicación aproximada) y cómo interactúas con los anuncios.\n• Datos de compra: si te suscribes a Premium, recibimos el estado de tu suscripción y tu historial de compras del App Store o Google Play a través de RevenueCat. Nunca vemos los datos de tu tarjeta de pago.\nPuedes explorar la app sin una cuenta. En el caso de los invitados, solo se aplican los datos de uso y publicitarios descritos arriba.",
                 },
                 usage: {
-                    title: "2. Uso de tus datos personales",
-                    content: "La Compañía puede usar los Datos Personales para los siguientes fines: proporcionar y mantener nuestro Servicio, gestionar tu Cuenta y contactarte."
+                    title: "2. Cómo usamos tus datos",
+                    content: "Usamos tus datos para crear y gestionar tu cuenta, guardar tu lista y sincronizarla entre tus dispositivos, mostrar tu perfil y tus reseñas a otros usuarios, enviarte los recordatorios de episodios que actives, ofrecer las funciones Premium y las copias de seguridad, entender cómo se usa la app para poder corregir problemas y mejorarla, y mostrar anuncios en la versión gratuita. No vendemos tus datos personales.",
                 },
-                security: {
-                    title: "3. Seguridad de tus datos personales",
-                    content: "La seguridad de tus Datos Personales es importante para nosotros, pero recuerda que ningún método de transmisión por Internet ni de almacenamiento electrónico es 100% seguro."
+                thirdParty: {
+                    title: "3. Servicios con los que trabajamos",
+                    content: "• Supabase: base de datos, inicio de sesión y almacenamiento de archivos.\n• AniList: información de anime. Si importas tu lista desde AniList, tu nombre de usuario público de AniList se envía a AniList.\n• Google AdMob: anuncios.\n• RevenueCat: suscripciones Premium.\n• PostHog (servidores en la UE): analítica de producto.\n• Google Sign-In y Sign in with Apple: inicio de sesión.\n• Google Translate: traducción de sinopsis de anime. Solo se envía el texto de la sinopsis.\nCada uno de estos servicios trata los datos según su propia política de privacidad.",
                 },
-                deletion: {
-                    title: "5. Eliminación de la cuenta",
-                    content: "Tienes derecho a solicitar la eliminación de tu cuenta y de los datos asociados. Puedes eliminar tu cuenta directamente en la app desde Perfil > Zona de peligro. Esta acción es permanente."
-                }
-            }
+                ads: {
+                    title: "4. Anuncios y seguimiento",
+                    content: "La versión gratuita muestra anuncios de Google AdMob. En iPhone y iPad te pedimos permiso antes de usar tu identificador publicitario; si lo rechazas, solo se muestran anuncios no personalizados. En Android puedes restablecer o eliminar tu ID de publicidad en los ajustes de tu dispositivo. Los miembros Premium no ven anuncios.",
+                },
+                device: {
+                    title: "5. Permisos en tu dispositivo",
+                    content: "• Notificaciones: los recordatorios de episodios y de la prueba gratis se programan en tu dispositivo y solo se envían si permites las notificaciones.\n• Calendario: solo cuando tocas \"Añadir al calendario\" añadimos los horarios de emisión al calendario de tu teléfono. No leemos ni subimos los eventos de tu calendario.\n• Cámara y fotos: solo se usan para hacer o elegir una foto de perfil.\nPuedes desactivar estos permisos en cualquier momento en los ajustes de tu dispositivo.",
+                },
+                public: {
+                    title: "6. Qué pueden ver otros usuarios",
+                    content: "Tu nombre de usuario, tu foto de perfil, tu nivel, la vitrina de tu perfil (como tu Top 10 y tu tarjeta de estadísticas, si la activas), tus reseñas, las listas que compartes y tu actividad de visionado en la sección Comunidad son visibles para otros usuarios. Tu dirección de correo electrónico, tus notas, tus etiquetas y tus copias de seguridad son privados.",
+                },
+                retention: {
+                    title: "7. Seguridad, conservación y eliminación",
+                    content: "Tus datos se envían mediante conexiones cifradas y están protegidos por reglas de acceso para que solo tú puedas modificarlos. Conservamos tus datos mientras exista tu cuenta, y solo se guardan las últimas 7 copias de seguridad. Puedes eliminar tu cuenta en cualquier momento desde la app (Perfil > Zona de Peligro > Eliminar Cuenta) o como se explica en myanimedex.com/delete-account. Esto elimina de forma permanente de nuestra base de datos tu cuenta, tu lista, tus reseñas, tus copias de seguridad y el resto de tu contenido. Para eliminar también el archivo de tu foto de perfil o tus datos de analítica, escríbenos un correo electrónico y los eliminaremos.",
+                },
+                children: {
+                    title: "8. Menores",
+                    content: "MyAnimeDex no está dirigida a menores de 13 años y no recopilamos sus datos personales a sabiendas. Si crees que un menor nos ha proporcionado datos personales, contáctanos y los eliminaremos.",
+                },
+                rights: {
+                    title: "9. Tus derechos",
+                    content: "Según dónde vivas (por ejemplo, en virtud del GDPR o la KVKK), puedes pedirnos acceder a tus datos, corregirlos, exportarlos o eliminarlos, u oponerte a la forma en que los tratamos. Nuestros proveedores de servicios pueden tratar datos fuera de tu país, incluso en la UE y en Estados Unidos.",
+                },
+                contact: {
+                    title: "10. Contacto y cambios",
+                    content: "Si tienes preguntas o solicitudes, escribe a support@myanimedex.com. Cuando cambiemos esta política, actualizaremos la fecha que aparece al principio de esta página.",
+                },
+            },
         },
         help: {
             title: 'Ayuda y Soporte',
@@ -4266,27 +4434,51 @@ export const translations = {
             }
         },
         privacy: {
-            title: 'Política de Privacidade',
-            lastUpdated: "Última atualização: 22 de dezembro de 2025",
-            intro: "Esta Política de Privacidade descreve nossas políticas e procedimentos sobre a coleta, o uso e a divulgação das suas informações quando você usa o Serviço.",
+            title: "Política de Privacidade",
+            lastUpdated: "Última atualização: 25 de outubro de 2026",
+            intro: "O MyAnimeDex (\"nós\") é um app para acompanhar animes. Esta política explica quais dados coletamos quando você usa o app e o site do MyAnimeDex, por que os coletamos, com quem os compartilhamos e quais escolhas você tem.",
             sections: {
                 collection: {
-                    title: "1. Coleta e uso dos seus dados pessoais",
-                    content: "Ao usar nosso Serviço, podemos pedir que você nos forneça certas informações de identificação pessoal que podem ser usadas para contatar ou identificar você."
+                    title: "1. Dados que coletamos",
+                    content: "• Dados da conta: seu endereço de e-mail, seu nome de usuário e, se você adicionar, sua foto de perfil. Se você entrar com o Google ou a Apple, recebemos o endereço de e-mail que eles compartilham conosco (a Apple pode nos fornecer um endereço de retransmissão privado).\n• Seu conteúdo: sua lista de animes, status, progresso de episódios, favoritos, pontuações, avaliações, listas personalizadas, tags e notas, resultados da Arena, votos em enquetes e o feedback que você dá sobre as recomendações. Se você for membro Premium, cópias da sua lista são mantidas como backups.\n• Dados de uso: quais telas e recursos você usa, a versão do app, o modelo do dispositivo, o sistema operacional e o idioma. Esses dados são vinculados a um identificador aleatório e, depois que você entra, ao ID da sua conta. Eles nunca incluem seu endereço de e-mail nem os textos que você escreve.\n• Dados de publicidade: quando anúncios são exibidos, o Google AdMob coleta o identificador de publicidade do seu dispositivo, seu endereço IP (usado para estimar sua localização aproximada) e como você interage com os anúncios.\n• Dados de compra: se você assinar o Premium, recebemos o status da sua assinatura e seu histórico de compras da App Store ou do Google Play por meio do RevenueCat. Nunca vemos os dados do seu cartão de pagamento.\nVocê pode navegar pelo app sem uma conta. Para visitantes, valem apenas os dados de uso e de publicidade descritos acima.",
                 },
                 usage: {
-                    title: "2. Uso dos seus dados pessoais",
-                    content: "A Empresa pode usar os Dados Pessoais para os seguintes fins: fornecer e manter nosso Serviço, gerenciar sua Conta e entrar em contato com você."
+                    title: "2. Como usamos seus dados",
+                    content: "Usamos seus dados para criar e manter sua conta, salvar sua lista e sincronizá-la entre seus dispositivos, mostrar seu perfil e suas avaliações a outros usuários, enviar os lembretes de episódios que você ativar, oferecer os recursos Premium e os backups, entender como o app é usado para podermos corrigir problemas e melhorá-lo e exibir anúncios na versão gratuita. Não vendemos seus dados pessoais.",
                 },
-                security: {
-                    title: "3. Segurança dos seus dados pessoais",
-                    content: "A segurança dos seus Dados Pessoais é importante para nós, mas lembre-se de que nenhum método de transmissão pela Internet ou de armazenamento eletrônico é 100% seguro."
+                thirdParty: {
+                    title: "3. Serviços com os quais trabalhamos",
+                    content: "• Supabase: banco de dados, login e armazenamento de arquivos.\n• AniList: informações sobre animes. Se você importar sua lista do AniList, seu nome de usuário público do AniList é enviado ao AniList.\n• Google AdMob: anúncios.\n• RevenueCat: assinaturas Premium.\n• PostHog (servidores na UE): análise de produto.\n• Google Sign-In e Sign in with Apple: login.\n• Google Translate: tradução de sinopses de animes. Apenas o texto da sinopse é enviado.\nCada um desses serviços trata os dados de acordo com sua própria política de privacidade.",
                 },
-                deletion: {
-                    title: "5. Exclusão da conta",
-                    content: "Você tem o direito de solicitar a exclusão da sua conta e dos dados associados. Você pode excluir sua conta diretamente no app em Perfil > Zona de perigo. Esta ação é permanente."
-                }
-            }
+                ads: {
+                    title: "4. Anúncios e rastreamento",
+                    content: "A versão gratuita exibe anúncios do Google AdMob. No iPhone e no iPad, pedimos sua permissão antes de usar seu identificador de publicidade; se você recusar, apenas anúncios não personalizados são exibidos. No Android, você pode redefinir ou excluir seu ID de publicidade nas configurações do dispositivo. Membros Premium não veem anúncios.",
+                },
+                device: {
+                    title: "5. Permissões no seu dispositivo",
+                    content: "• Notificações: os lembretes de episódios e do teste grátis são agendados no seu dispositivo e só são enviados se você permitir notificações.\n• Calendário: só adicionamos os horários de exibição ao calendário do seu celular quando você toca em \"Adicionar ao calendário\". Não lemos nem enviamos os eventos do seu calendário.\n• Câmera e fotos: usadas apenas para tirar ou escolher uma foto de perfil.\nVocê pode desativar essas permissões a qualquer momento nas configurações do seu dispositivo.",
+                },
+                public: {
+                    title: "6. O que outros usuários podem ver",
+                    content: "Seu nome de usuário, sua foto de perfil, seu nível, a vitrine do seu perfil (como seu Top 10 e seu cartão de estatísticas, se você ativar), suas avaliações, as listas que você compartilha e sua atividade de exibição na seção Comunidade ficam visíveis para outros usuários. Seu endereço de e-mail, suas notas, suas tags e seus backups são privados.",
+                },
+                retention: {
+                    title: "7. Segurança, retenção e exclusão",
+                    content: "Seus dados são enviados por conexões criptografadas e protegidos por regras de acesso para que só você possa alterá-los. Mantemos seus dados enquanto sua conta existir, e apenas os 7 backups mais recentes são guardados. Você pode excluir sua conta a qualquer momento no app (Perfil > Zona de Perigo > Excluir Conta) ou conforme explicado em myanimedex.com/delete-account. Isso exclui permanentemente do nosso banco de dados sua conta, sua lista, suas avaliações, seus backups e seus outros conteúdos. Para remover também o arquivo da sua foto de perfil ou seus dados de análise, envie um e-mail para nós e nós os excluiremos.",
+                },
+                children: {
+                    title: "8. Crianças",
+                    content: "O MyAnimeDex não é direcionado a crianças menores de 13 anos, e não coletamos intencionalmente dados pessoais delas. Se você acredita que uma criança nos forneceu dados pessoais, entre em contato conosco e nós os excluiremos.",
+                },
+                rights: {
+                    title: "9. Seus direitos",
+                    content: "Dependendo de onde você mora (por exemplo, nos termos do GDPR ou da KVKK), você pode nos pedir para acessar, corrigir, exportar ou excluir seus dados, ou se opor à forma como os tratamos. Nossos prestadores de serviços podem tratar dados fora do seu país, inclusive na UE e nos Estados Unidos.",
+                },
+                contact: {
+                    title: "10. Contato e alterações",
+                    content: "Para dúvidas ou solicitações, envie um e-mail para support@myanimedex.com. Quando alterarmos esta política, atualizaremos a data no topo desta página.",
+                },
+            },
         },
         help: {
             title: 'Ajuda e Suporte',
@@ -4816,27 +5008,51 @@ export const translations = {
             }
         },
         privacy: {
-            title: 'Kebijakan Privasi',
-            lastUpdated: "Terakhir Diperbarui: 22 Desember 2025",
-            intro: "Kebijakan Privasi ini menjelaskan kebijakan dan prosedur kami terkait pengumpulan, penggunaan, dan pengungkapan informasi Anda saat Anda menggunakan Layanan.",
+            title: "Kebijakan Privasi",
+            lastUpdated: "Terakhir diperbarui: 25 Oktober 2026",
+            intro: "MyAnimeDex (\"kami\") adalah aplikasi untuk melacak anime. Kebijakan ini menjelaskan data apa yang kami kumpulkan saat Anda menggunakan aplikasi dan situs web MyAnimeDex, mengapa kami mengumpulkannya, dengan siapa kami membagikannya, dan pilihan apa saja yang Anda miliki.",
             sections: {
                 collection: {
-                    title: "1. Pengumpulan dan Penggunaan Data Pribadi Anda",
-                    content: "Saat menggunakan Layanan kami, kami dapat meminta Anda memberikan informasi identitas pribadi tertentu yang dapat digunakan untuk menghubungi atau mengidentifikasi Anda."
+                    title: "1. Data yang kami kumpulkan",
+                    content: "• Data akun: alamat email Anda, nama pengguna Anda, dan foto profil Anda jika Anda menambahkannya. Jika Anda masuk dengan Google atau Apple, kami menerima alamat email yang mereka bagikan kepada kami (Apple dapat memberi kami alamat relay pribadi).\n• Konten Anda: daftar anime, status, progres episode, favorit, rating, ulasan, daftar khusus, tag dan catatan, hasil Arena, suara polling, serta masukan yang Anda berikan tentang rekomendasi. Jika Anda anggota Premium, salinan daftar Anda disimpan sebagai cadangan.\n• Data penggunaan: layar dan fitur yang Anda gunakan, versi aplikasi, model perangkat, sistem operasi, dan bahasa. Data ini dikaitkan dengan pengenal acak dan, setelah Anda masuk, dengan ID akun Anda. Data ini tidak pernah mencakup alamat email Anda atau teks yang Anda tulis.\n• Data iklan: saat iklan ditampilkan, Google AdMob mengumpulkan pengenal iklan perangkat Anda, alamat IP Anda (digunakan untuk memperkirakan lokasi), dan cara Anda berinteraksi dengan iklan.\n• Data pembelian: jika Anda berlangganan Premium, kami menerima status langganan dan riwayat pembelian Anda dari App Store atau Google Play melalui RevenueCat. Kami tidak pernah melihat detail kartu pembayaran Anda.\nAnda dapat menjelajahi aplikasi tanpa akun. Untuk tamu, hanya data penggunaan dan data iklan di atas yang berlaku.",
                 },
                 usage: {
-                    title: "2. Penggunaan Data Pribadi Anda",
-                    content: "Perusahaan dapat menggunakan Data Pribadi untuk tujuan berikut: menyediakan dan memelihara Layanan kami, mengelola Akun Anda, dan menghubungi Anda."
+                    title: "2. Cara kami menggunakan data Anda",
+                    content: "Kami menggunakan data Anda untuk membuat dan mengelola akun Anda, menyimpan daftar Anda dan menyinkronkannya di semua perangkat Anda, menampilkan profil dan ulasan Anda kepada pengguna lain, mengirim pengingat episode yang Anda aktifkan, menyediakan fitur Premium dan cadangan, memahami cara aplikasi digunakan agar kami dapat memperbaiki masalah dan meningkatkannya, serta menampilkan iklan di versi gratis. Kami tidak menjual data pribadi Anda.",
                 },
-                security: {
-                    title: "3. Keamanan Data Pribadi Anda",
-                    content: "Keamanan Data Pribadi Anda penting bagi kami, tetapi ingatlah bahwa tidak ada metode transmisi melalui Internet atau metode penyimpanan elektronik yang 100% aman."
+                thirdParty: {
+                    title: "3. Layanan yang bekerja sama dengan kami",
+                    content: "• Supabase: database, proses masuk, dan penyimpanan file.\n• AniList: informasi anime. Jika Anda mengimpor daftar dari AniList, nama pengguna AniList publik Anda dikirim ke AniList.\n• Google AdMob: iklan.\n• RevenueCat: langganan Premium.\n• PostHog (server di UE): analitik produk.\n• Google Sign-In dan Sign in with Apple: masuk ke akun.\n• Google Translate: menerjemahkan sinopsis anime. Hanya teks sinopsis yang dikirim.\nMasing-masing layanan ini menangani data sesuai dengan kebijakan privasinya sendiri.",
                 },
-                deletion: {
-                    title: "5. Penghapusan Akun",
-                    content: "Anda berhak meminta penghapusan akun dan data terkait. Anda dapat menghapus akun langsung di dalam aplikasi melalui Profil > Zona Bahaya. Tindakan ini bersifat permanen."
-                }
-            }
+                ads: {
+                    title: "4. Iklan dan pelacakan",
+                    content: "Versi gratis menampilkan iklan dari Google AdMob. Di iPhone dan iPad, kami meminta izin Anda sebelum pengenal iklan Anda digunakan; jika Anda menolak, hanya iklan yang tidak dipersonalisasi yang ditampilkan. Di Android, Anda dapat mengatur ulang atau menghapus ID iklan Anda di pengaturan perangkat. Anggota Premium tidak melihat iklan.",
+                },
+                device: {
+                    title: "5. Izin di perangkat Anda",
+                    content: "• Notifikasi: pengingat episode dan uji coba gratis dijadwalkan di perangkat Anda dan hanya dikirim jika Anda mengizinkan notifikasi.\n• Kalender: kami hanya menambahkan jadwal tayang ke kalender ponsel Anda saat Anda mengetuk \"Tambah ke kalender\". Kami tidak membaca atau mengunggah acara kalender Anda.\n• Kamera dan foto: hanya digunakan untuk mengambil atau memilih foto profil.\nAnda dapat menonaktifkan izin ini kapan saja di pengaturan perangkat Anda.",
+                },
+                public: {
+                    title: "6. Yang dapat dilihat pengguna lain",
+                    content: "Nama pengguna, foto profil, level, etalase profil Anda (seperti Top 10 dan kartu statistik Anda, jika Anda mengaktifkannya), ulasan, daftar yang Anda bagikan, dan aktivitas menonton Anda di bagian Komunitas dapat dilihat oleh pengguna lain. Alamat email, catatan, tag, dan cadangan Anda bersifat pribadi.",
+                },
+                retention: {
+                    title: "7. Keamanan, penyimpanan, dan penghapusan",
+                    content: "Data Anda dikirim melalui koneksi terenkripsi dan dilindungi oleh aturan akses sehingga hanya Anda yang dapat mengubahnya. Kami menyimpan data Anda selama akun Anda masih ada, dan hanya 7 cadangan terakhir yang disimpan. Anda dapat menghapus akun kapan saja di aplikasi (Profil > Zona Bahaya > Hapus Akun) atau sesuai penjelasan di myanimedex.com/delete-account. Tindakan ini menghapus secara permanen akun, daftar, ulasan, cadangan, dan konten Anda lainnya dari database kami. Untuk juga menghapus file foto profil atau data analitik Anda, kirimkan email kepada kami dan kami akan menghapusnya.",
+                },
+                children: {
+                    title: "8. Anak-anak",
+                    content: "MyAnimeDex tidak ditujukan untuk anak-anak di bawah 13 tahun, dan kami tidak dengan sengaja mengumpulkan data pribadi mereka. Jika Anda yakin seorang anak telah memberikan data pribadi kepada kami, hubungi kami dan kami akan menghapusnya.",
+                },
+                rights: {
+                    title: "9. Hak Anda",
+                    content: "Tergantung tempat tinggal Anda (misalnya berdasarkan GDPR atau KVKK), Anda dapat meminta kami untuk mengakses, memperbaiki, mengekspor, atau menghapus data Anda, atau menolak cara kami memprosesnya. Penyedia layanan kami dapat memproses data di luar negara Anda, termasuk di UE dan Amerika Serikat.",
+                },
+                contact: {
+                    title: "10. Kontak dan perubahan",
+                    content: "Untuk pertanyaan atau permintaan, kirim email ke support@myanimedex.com. Jika kami mengubah kebijakan ini, kami akan memperbarui tanggal di bagian atas halaman ini.",
+                },
+            },
         },
         help: {
             title: 'Bantuan & Dukungan',
@@ -5401,27 +5617,51 @@ export const translations = {
             }
         },
         privacy: {
-            title: 'गोपनीयता नीति',
-            lastUpdated: 'अंतिम अपडेट: 22 दिसंबर, 2025',
-            intro: 'यह गोपनीयता नीति सेवा का उपयोग करते समय आपकी जानकारी के संग्रह और उपयोग के संबंध में हमारी नीतियों का वर्णन करती है।',
+            title: "गोपनीयता नीति",
+            lastUpdated: "अंतिम अपडेट: 25 अक्टूबर 2026",
+            intro: "MyAnimeDex (\"हम\") एनीमे ट्रैक करने का एक ऐप है। यह नीति बताती है कि जब आप MyAnimeDex ऐप और वेबसाइट का इस्तेमाल करते हैं, तो हम कौन-सा डेटा इकट्ठा करते हैं, उसे क्यों इकट्ठा करते हैं, उसे किसके साथ साझा करते हैं और आपके पास कौन-से विकल्प हैं।",
             sections: {
                 collection: {
-                    title: '1. आपके व्यक्तिगत डेटा का संग्रह',
-                    content: 'हमारी सेवा का उपयोग करते समय, हम आपसे कुछ व्यक्तिगत पहचान योग्य जानकारी प्रदान करने के लिए कह सकते हैं।'
+                    title: "1. हम कौन-सा डेटा इकट्ठा करते हैं",
+                    content: "• अकाउंट डेटा: आपका ईमेल पता, आपका यूज़रनेम और, अगर आप जोड़ते हैं तो, आपकी प्रोफ़ाइल फ़ोटो। अगर आप Google या Apple से साइन इन करते हैं, तो वे हमारे साथ जो ईमेल पता साझा करते हैं, वह हमें मिलता है (Apple हमें एक निजी रिले पता दे सकता है)।\n• आपका कंटेंट: आपकी एनीमे सूची, स्टेटस, एपिसोड प्रोग्रेस, पसंदीदा, रेटिंग, समीक्षाएं, कस्टम सूचियाँ, टैग और नोट्स, एरिना के नतीजे, पोल में दिए गए वोट और सुझावों पर आपका फ़ीडबैक। अगर आप प्रीमियम सदस्य हैं, तो आपकी सूची की कॉपियाँ बैकअप के रूप में रखी जाती हैं।\n• इस्तेमाल का डेटा: आप कौन-सी स्क्रीन और फ़ीचर इस्तेमाल करते हैं, ऐप का वर्ज़न, डिवाइस मॉडल, ऑपरेटिंग सिस्टम और भाषा। यह डेटा एक रैंडम पहचानकर्ता से और साइन इन करने के बाद आपकी अकाउंट ID से जुड़ा होता है। इसमें आपका ईमेल पता या आपका लिखा हुआ टेक्स्ट कभी शामिल नहीं होता।\n• विज्ञापन डेटा: जब विज्ञापन दिखाए जाते हैं, तो Google AdMob आपके डिवाइस का विज्ञापन पहचानकर्ता, आपका IP पता (अनुमानित लोकेशन के लिए इस्तेमाल होता है) और यह जानकारी इकट्ठा करता है कि आप विज्ञापनों के साथ कैसे इंटरैक्ट करते हैं।\n• खरीदारी डेटा: अगर आप प्रीमियम की सदस्यता लेते हैं, तो हमें RevenueCat के ज़रिए App Store या Google Play से आपकी सदस्यता की स्थिति और खरीदारी का इतिहास मिलता है। हम आपके पेमेंट कार्ड की जानकारी कभी नहीं देखते।\nआप बिना अकाउंट के भी ऐप ब्राउज़ कर सकते हैं। गेस्ट उपयोगकर्ताओं पर केवल ऊपर बताया गया इस्तेमाल का डेटा और विज्ञापन डेटा लागू होता है।",
                 },
                 usage: {
-                    title: '2. आपके व्यक्तिगत डेटा का उपयोग',
-                    content: 'कंपनी व्यक्तिगत डेटा का उपयोग सेवा को बनाए रखने, आपके अकाउंट को प्रबंधित करने और आपसे संपर्क करने के लिए कर सकती है।'
+                    title: "2. हम आपके डेटा का इस्तेमाल कैसे करते हैं",
+                    content: "हम आपके डेटा का इस्तेमाल आपका अकाउंट बनाने और चलाने, आपकी सूची सेव करने और उसे आपके सभी डिवाइस पर सिंक करने, आपकी प्रोफ़ाइल और समीक्षाएं दूसरे उपयोगकर्ताओं को दिखाने, आपके चालू किए गए एपिसोड रिमाइंडर भेजने, प्रीमियम फ़ीचर और बैकअप देने, ऐप के इस्तेमाल को समझने ताकि हम समस्याएँ ठीक कर सकें और ऐप को बेहतर बना सकें, और मुफ़्त वर्ज़न में विज्ञापन दिखाने के लिए करते हैं। हम आपका व्यक्तिगत डेटा नहीं बेचते।",
                 },
-                security: {
-                    title: '3. डेटा की सुरक्षा',
-                    content: 'आपके डेटा की सुरक्षा हमारे लिए महत्वपूर्ण है, लेकिन याद रखें कि इंटरनेट पर प्रसारण का कोई भी तरीका 100% सुरक्षित नहीं है।'
+                thirdParty: {
+                    title: "3. जिन सेवाओं के साथ हम काम करते हैं",
+                    content: "• Supabase: डेटाबेस, साइन इन और फ़ाइल स्टोरेज।\n• AniList: एनीमे की जानकारी। अगर आप अपनी सूची AniList से इम्पोर्ट करते हैं, तो आपका सार्वजनिक AniList यूज़रनेम AniList को भेजा जाता है।\n• Google AdMob: विज्ञापन।\n• RevenueCat: प्रीमियम सदस्यताएँ।\n• PostHog (सर्वर यूरोपीय संघ में): प्रोडक्ट एनालिटिक्स।\n• Google Sign-In और Sign in with Apple: साइन इन।\n• Google Translate: एनीमे के सारांशों का अनुवाद। केवल सारांश का टेक्स्ट भेजा जाता है।\nइनमें से हर सेवा अपनी गोपनीयता नीति के अनुसार डेटा संभालती है।",
                 },
-                deletion: {
-                    title: '5. अकाउंट हटाना',
-                    content: 'आपको अपने अकाउंट और संबंधित डेटा को हटाने का अनुरोध करने का अधिकार है। आप इसे प्रोफ़ाइल > डेंजर ज़ोन के माध्यम से हटा सकते हैं।'
-                }
-            }
+                ads: {
+                    title: "4. विज्ञापन और ट्रैकिंग",
+                    content: "मुफ़्त वर्ज़न में Google AdMob के विज्ञापन दिखाए जाते हैं। iPhone और iPad पर आपके विज्ञापन पहचानकर्ता का इस्तेमाल करने से पहले हम आपसे अनुमति माँगते हैं; अगर आप मना करते हैं, तो केवल गैर-व्यक्तिगत विज्ञापन दिखाए जाते हैं। Android पर आप अपने डिवाइस की सेटिंग में अपनी विज्ञापन ID रीसेट कर सकते हैं या हटा सकते हैं। प्रीमियम सदस्यों को विज्ञापन नहीं दिखते।",
+                },
+                device: {
+                    title: "5. आपके डिवाइस पर अनुमतियाँ",
+                    content: "• नोटिफ़िकेशन: एपिसोड और ट्रायल रिमाइंडर आपके डिवाइस पर शेड्यूल किए जाते हैं और केवल तभी भेजे जाते हैं जब आप नोटिफ़िकेशन की अनुमति देते हैं।\n• कैलेंडर: केवल जब आप \"कैलेंडर में जोड़ें\" पर टैप करते हैं, तभी हम प्रसारण का समय आपके फ़ोन के कैलेंडर में जोड़ते हैं। हम आपके कैलेंडर इवेंट न तो पढ़ते हैं और न ही अपलोड करते हैं।\n• कैमरा और फ़ोटो: केवल प्रोफ़ाइल फ़ोटो लेने या चुनने के लिए इस्तेमाल होते हैं।\nआप कभी भी अपने डिवाइस की सेटिंग में ये अनुमतियाँ बंद कर सकते हैं।",
+                },
+                public: {
+                    title: "6. दूसरे उपयोगकर्ता क्या देख सकते हैं",
+                    content: "आपका यूज़रनेम, प्रोफ़ाइल फ़ोटो, लेवल, प्रोफ़ाइल शोकेस (जैसे आपका टॉप 10 और आँकड़ों का कार्ड, अगर आप इसे चालू करते हैं), समीक्षाएं, आपकी साझा की गई सूचियाँ और कम्युनिटी पल्स में आपकी देखने की गतिविधि दूसरे उपयोगकर्ताओं को दिखाई देती हैं। आपका ईमेल पता, नोट्स, टैग और बैकअप निजी रहते हैं।",
+                },
+                retention: {
+                    title: "7. सुरक्षा, डेटा रखने की अवधि और हटाना",
+                    content: "आपका डेटा एन्क्रिप्टेड कनेक्शन पर भेजा जाता है और ऐक्सेस नियमों से सुरक्षित रहता है, ताकि केवल आप ही उसे बदल सकें। जब तक आपका अकाउंट मौजूद है, तब तक हम आपका डेटा रखते हैं, और केवल आखिरी 7 बैकअप रखे जाते हैं। आप कभी भी ऐप में (प्रोफ़ाइल > डेंजर ज़ोन > अकाउंट हटाएँ) या myanimedex.com/delete-account पर बताए गए तरीके से अपना अकाउंट हटा सकते हैं। इससे आपका अकाउंट, सूची, समीक्षाएं, बैकअप और अन्य कंटेंट हमारे डेटाबेस से स्थायी रूप से हट जाते हैं। अपनी प्रोफ़ाइल फ़ोटो की फ़ाइल या अपना एनालिटिक्स डेटा भी हटवाने के लिए हमें ईमेल करें, हम उन्हें हटा देंगे।",
+                },
+                children: {
+                    title: "8. बच्चे",
+                    content: "MyAnimeDex 13 साल से कम उम्र के बच्चों के लिए नहीं है, और हम जानबूझकर उनका व्यक्तिगत डेटा इकट्ठा नहीं करते। अगर आपको लगता है कि किसी बच्चे ने हमें व्यक्तिगत डेटा दिया है, तो हमसे संपर्क करें, हम उसे हटा देंगे।",
+                },
+                rights: {
+                    title: "9. आपके अधिकार",
+                    content: "आप कहाँ रहते हैं, इसके आधार पर (उदाहरण के लिए GDPR या KVKK के तहत), आप हमसे अपने डेटा को ऐक्सेस करने, सुधारने, एक्सपोर्ट करने या हटाने के लिए कह सकते हैं, या हम जिस तरह उसे प्रोसेस करते हैं, उस पर आपत्ति कर सकते हैं। हमारे सेवा प्रदाता आपके देश के बाहर भी डेटा प्रोसेस कर सकते हैं, जिसमें यूरोपीय संघ और संयुक्त राज्य अमेरिका शामिल हैं।",
+                },
+                contact: {
+                    title: "10. संपर्क और बदलाव",
+                    content: "सवालों या अनुरोधों के लिए support@myanimedex.com पर ईमेल करें। जब हम इस नीति में बदलाव करते हैं, तो इस पेज के ऊपर दी गई तारीख अपडेट कर देते हैं।",
+                },
+            },
         },
         help: {
             title: 'सहायता और समर्थन',
@@ -6287,28 +6527,52 @@ export const translations = {
                 }
             }
         },
-        "privacy": {
-            "title": "Confidentialité",
-            "lastUpdated": "Dernière mise à jour : 22 décembre 2025",
-            "intro": "La présente Politique de confidentialité décrit nos politiques et procédures relatives à la collecte, à l'utilisation et à la divulgation de tes informations lorsque tu utilises le Service.",
-            "sections": {
-                "collection": {
-                    "title": "1. Collecte et utilisation de tes données personnelles",
-                    "content": "Lors de l'utilisation de notre Service, nous pouvons te demander de nous fournir certaines informations personnellement identifiables pouvant être utilisées pour te contacter ou t'identifier."
+        privacy: {
+            title: "Politique de confidentialité",
+            lastUpdated: "Dernière mise à jour : 25 octobre 2026",
+            intro: "MyAnimeDex (« nous ») est une app de suivi d'anime. Cette politique explique quelles données nous collectons lorsque tu utilises l'app et le site web MyAnimeDex, pourquoi nous les collectons, avec qui nous les partageons et quels choix tu as.",
+            sections: {
+                collection: {
+                    title: "1. Données que nous collectons",
+                    content: "• Données de compte : ton adresse e-mail, ton nom d'utilisateur et, si tu en ajoutes une, ta photo de profil. Si tu te connectes avec Google ou Apple, nous recevons l'adresse e-mail qu'ils nous transmettent (Apple peut nous fournir une adresse de relais privée).\n• Ton contenu : ta liste d'anime, tes statuts, ta progression dans les épisodes, tes favoris, tes évaluations, tes avis, tes listes perso, tes tags et notes, tes résultats dans l'Arena, tes votes aux sondages et les retours que tu donnes sur les recommandations. Si tu es membre Premium, des copies de ta liste sont conservées comme sauvegardes.\n• Données d'utilisation : les écrans et fonctionnalités que tu utilises, la version de l'app, le modèle de l'appareil, le système d'exploitation et la langue. Ces données sont associées à un identifiant aléatoire et, après ta connexion, à l'identifiant de ton compte. Elles n'incluent jamais ton adresse e-mail ni les textes que tu écris.\n• Données publicitaires : lorsque des publicités sont affichées, Google AdMob collecte l'identifiant publicitaire de ton appareil, ton adresse IP (utilisée pour une localisation approximative) et la façon dont tu interagis avec les publicités.\n• Données d'achat : si tu t'abonnes à Premium, nous recevons le statut de ton abonnement et ton historique d'achats depuis l'App Store ou Google Play via RevenueCat. Nous ne voyons jamais les informations de ta carte de paiement.\nTu peux parcourir l'app sans compte. Pour les invités, seules les données d'utilisation et publicitaires ci-dessus sont concernées.",
                 },
-                "usage": {
-                    "title": "2. Utilisation de tes données personnelles",
-                    "content": "La Société peut utiliser les Données personnelles aux fins suivantes : fournir et maintenir notre Service, gérer ton Compte et te contacter."
+                usage: {
+                    title: "2. Comment nous utilisons tes données",
+                    content: "Nous utilisons tes données pour créer et gérer ton compte, enregistrer ta liste et la synchroniser entre tes appareils, montrer ton profil et tes avis aux autres utilisateurs, t'envoyer les rappels d'épisodes que tu actives, fournir les fonctionnalités Premium et les sauvegardes, comprendre comment l'app est utilisée afin de corriger les problèmes et de l'améliorer, et afficher des publicités dans la version gratuite. Nous ne vendons pas tes données personnelles.",
                 },
-                "security": {
-                    "title": "3. Sécurité de tes données personnelles",
-                    "content": "La sécurité de tes Données personnelles est importante pour nous, mais n'oublie pas qu'aucune méthode de transmission sur Internet ni aucune méthode de stockage électronique n'est sûre à 100 %."
+                thirdParty: {
+                    title: "3. Services avec lesquels nous travaillons",
+                    content: "• Supabase : base de données, connexion et stockage de fichiers.\n• AniList : informations sur les anime. Si tu importes ta liste depuis AniList, ton nom d'utilisateur AniList public est envoyé à AniList.\n• Google AdMob : publicités.\n• RevenueCat : abonnements Premium.\n• PostHog (serveurs dans l'UE) : analyse produit.\n• Google Sign-In et Sign in with Apple : connexion.\n• Google Translate : traduction des synopsis d'anime. Seul le texte du synopsis est envoyé.\nChacun de ces services traite les données conformément à sa propre politique de confidentialité.",
                 },
-                "deletion": {
-                    "title": "5. Suppression du compte",
-                    "content": "Tu as le droit de demander la suppression de ton compte et des données associées. Tu peux supprimer ton compte directement dans l'app via Profil > Zone de danger. Cette action est définitive."
-                }
-            }
+                ads: {
+                    title: "4. Publicités et suivi",
+                    content: "La version gratuite affiche des publicités de Google AdMob. Sur iPhone et iPad, nous te demandons ton autorisation avant d'utiliser ton identifiant publicitaire ; si tu refuses, seules des publicités non personnalisées sont affichées. Sur Android, tu peux réinitialiser ou supprimer ton identifiant publicitaire dans les réglages de ton appareil. Les membres Premium ne voient pas de publicités.",
+                },
+                device: {
+                    title: "5. Autorisations sur ton appareil",
+                    content: "• Notifications : les rappels d'épisodes et d'essai gratuit sont programmés sur ton appareil et ne sont envoyés que si tu autorises les notifications.\n• Calendrier : nous ajoutons les horaires de diffusion au calendrier de ton téléphone uniquement lorsque tu appuies sur « Ajouter au calendrier ». Nous ne lisons ni ne téléversons tes événements de calendrier.\n• Appareil photo et photos : utilisés uniquement pour prendre ou choisir une photo de profil.\nTu peux désactiver ces autorisations à tout moment dans les réglages de ton appareil.",
+                },
+                public: {
+                    title: "6. Ce que les autres utilisateurs peuvent voir",
+                    content: "Ton nom d'utilisateur, ta photo de profil, ton niveau, la vitrine de ton profil (comme ton Top 10 et ta carte de stats, si tu l'actives), tes avis, les listes que tu partages et ton activité de visionnage dans le Fil de la commu sont visibles par les autres utilisateurs. Ton adresse e-mail, tes notes, tes tags et tes sauvegardes restent privés.",
+                },
+                retention: {
+                    title: "7. Sécurité, conservation et suppression",
+                    content: "Tes données sont transmises via des connexions chiffrées et protégées par des règles d'accès, pour que personne d'autre que toi ne puisse les modifier. Nous conservons tes données tant que ton compte existe, et seules les 7 dernières sauvegardes sont conservées. Tu peux supprimer ton compte à tout moment dans l'app (Profil > Zone de danger > Supprimer le compte) ou comme expliqué sur myanimedex.com/delete-account. Cela supprime définitivement de notre base de données ton compte, ta liste, tes avis, tes sauvegardes et tes autres contenus. Pour supprimer aussi le fichier de ta photo de profil ou tes données d'analyse, envoie-nous un e-mail et nous les supprimerons.",
+                },
+                children: {
+                    title: "8. Enfants",
+                    content: "MyAnimeDex ne s'adresse pas aux enfants de moins de 13 ans, et nous ne collectons pas sciemment leurs données personnelles. Si tu penses qu'un enfant nous a fourni des données personnelles, contacte-nous et nous les supprimerons.",
+                },
+                rights: {
+                    title: "9. Tes droits",
+                    content: "Selon l'endroit où tu vis (par exemple en vertu du GDPR ou de la KVKK), tu peux nous demander d'accéder à tes données, de les corriger, de les exporter ou de les supprimer, ou t'opposer à la manière dont nous les traitons. Nos prestataires de services peuvent traiter des données en dehors de ton pays, y compris dans l'UE et aux États-Unis.",
+                },
+                contact: {
+                    title: "10. Contact et modifications",
+                    content: "Pour toute question ou demande, écris à support@myanimedex.com. Lorsque nous modifions cette politique, nous mettons à jour la date en haut de cette page.",
+                },
+            },
         },
         "help": {
             "title": "Aide & support",
@@ -7210,28 +7474,52 @@ export const translations = {
                 }
             }
         },
-        "privacy": {
-            "title": "Informativa sulla privacy",
-            "lastUpdated": "Ultimo aggiornamento: 22 dicembre 2025",
-            "intro": "La presente Informativa sulla privacy descrive le nostre politiche e procedure relative alla raccolta, all'uso e alla divulgazione delle tue informazioni quando utilizzi il Servizio.",
-            "sections": {
-                "collection": {
-                    "title": "1. Raccolta e uso dei tuoi dati personali",
-                    "content": "Durante l'utilizzo del nostro Servizio, potremmo chiederti di fornirci alcune informazioni di identificazione personale che possono essere usate per contattarti o identificarti."
+        privacy: {
+            title: "Informativa sulla privacy",
+            lastUpdated: "Ultimo aggiornamento: 25 ottobre 2026",
+            intro: "MyAnimeDex (\"noi\") è un'app per tenere traccia degli anime. Questa informativa spiega quali dati raccogliamo quando usi l'app e il sito web di MyAnimeDex, perché li raccogliamo, con chi li condividiamo e quali scelte hai a disposizione.",
+            sections: {
+                collection: {
+                    title: "1. Dati che raccogliamo",
+                    content: "• Dati dell'account: il tuo indirizzo email, il tuo nome utente e, se ne aggiungi una, la tua foto profilo. Se accedi con Google o Apple, riceviamo l'indirizzo email che ci condividono (Apple potrebbe fornirci un indirizzo di inoltro privato).\n• I tuoi contenuti: la tua lista anime, gli stati, l'avanzamento degli episodi, i preferiti, le valutazioni, le recensioni, le liste personalizzate, i tag e le note, i risultati dell'Arena, i voti nei sondaggi e il feedback che dai sui consigli. Se sei un membro Premium, conserviamo copie della tua lista come backup.\n• Dati di utilizzo: quali schermate e funzioni usi, la versione dell'app, il modello del dispositivo, il sistema operativo e la lingua. Questi dati sono collegati a un identificatore casuale e, dopo l'accesso, all'ID del tuo account. Non includono mai il tuo indirizzo email né i testi che scrivi.\n• Dati pubblicitari: quando vengono mostrati annunci, Google AdMob raccoglie l'identificatore pubblicitario del tuo dispositivo, il tuo indirizzo IP (usato per la posizione approssimativa) e il modo in cui interagisci con gli annunci.\n• Dati di acquisto: se ti abboni a Premium, riceviamo lo stato del tuo abbonamento e la cronologia degli acquisti dall'App Store o da Google Play tramite RevenueCat. Non vediamo mai i dati della tua carta di pagamento.\nPuoi usare l'app senza un account. Per gli ospiti raccogliamo solo i dati di utilizzo e i dati pubblicitari indicati sopra.",
                 },
-                "usage": {
-                    "title": "2. Uso dei tuoi dati personali",
-                    "content": "La Società può utilizzare i Dati personali per le seguenti finalità: fornire e mantenere il nostro Servizio, gestire il tuo Account e contattarti."
+                usage: {
+                    title: "2. Come usiamo i tuoi dati",
+                    content: "Usiamo i tuoi dati per creare e gestire il tuo account, salvare la tua lista e sincronizzarla tra i tuoi dispositivi, mostrare il tuo profilo e le tue recensioni agli altri utenti, inviarti i promemoria degli episodi che attivi, fornire le funzioni Premium e i backup, capire come viene usata l'app per risolvere i problemi e migliorarla, e mostrare annunci nella versione gratuita. Non vendiamo i tuoi dati personali.",
                 },
-                "security": {
-                    "title": "3. Sicurezza dei tuoi dati personali",
-                    "content": "La sicurezza dei tuoi Dati personali è importante per noi, ma ricorda che nessun metodo di trasmissione su Internet o di archiviazione elettronica è sicuro al 100%."
+                thirdParty: {
+                    title: "3. Servizi con cui collaboriamo",
+                    content: "• Supabase: database, accesso e archiviazione dei file.\n• AniList: informazioni sugli anime. Se importi la tua lista da AniList, il tuo nome utente pubblico di AniList viene inviato ad AniList.\n• Google AdMob: annunci.\n• RevenueCat: abbonamenti Premium.\n• PostHog (server nell'UE): analisi del prodotto.\n• Google Sign-In e Sign in with Apple: accesso.\n• Google Translate: traduzione delle trame degli anime. Viene inviato solo il testo della trama.\nOgnuno di questi servizi tratta i dati secondo la propria informativa sulla privacy.",
                 },
-                "deletion": {
-                    "title": "5. Eliminazione dell'account",
-                    "content": "Hai il diritto di richiedere l'eliminazione del tuo account e dei dati associati. Puoi eliminare il tuo account direttamente nell'app da Profilo > Zona pericolosa. Questa azione è definitiva."
-                }
-            }
+                ads: {
+                    title: "4. Pubblicità e tracciamento",
+                    content: "La versione gratuita mostra annunci di Google AdMob. Su iPhone e iPad ti chiediamo il permesso prima di usare il tuo identificatore pubblicitario; se rifiuti, vengono mostrati solo annunci non personalizzati. Su Android puoi reimpostare o eliminare il tuo ID pubblicità nelle impostazioni del dispositivo. I membri Premium non vedono annunci.",
+                },
+                device: {
+                    title: "5. Autorizzazioni sul tuo dispositivo",
+                    content: "• Notifiche: i promemoria degli episodi e della prova vengono programmati sul tuo dispositivo e inviati solo se consenti le notifiche.\n• Calendario: aggiungiamo gli orari di messa in onda al calendario del telefono solo quando tocchi \"Aggiungi al calendario\". Non leggiamo né carichiamo i tuoi eventi del calendario.\n• Fotocamera e foto: usate solo per scattare o scegliere una foto profilo.\nPuoi disattivare queste autorizzazioni in qualsiasi momento nelle impostazioni del dispositivo.",
+                },
+                public: {
+                    title: "6. Cosa possono vedere gli altri utenti",
+                    content: "Il tuo nome utente, la foto profilo, il livello, la vetrina del profilo (come la tua Top 10 e la scheda delle statistiche, se la attivi), le recensioni, le liste che condividi e la tua attività di visione in Community Pulse sono visibili agli altri utenti. Il tuo indirizzo email, le note, i tag e i backup sono privati.",
+                },
+                retention: {
+                    title: "7. Sicurezza, conservazione ed eliminazione",
+                    content: "I tuoi dati vengono trasmessi tramite connessioni crittografate e sono protetti da regole di accesso, in modo che solo tu possa modificarli. Conserviamo i tuoi dati finché esiste il tuo account e manteniamo solo gli ultimi 7 backup. Puoi eliminare il tuo account in qualsiasi momento nell'app (Profilo > Zona pericolosa > Elimina account) o come spiegato su myanimedex.com/delete-account. In questo modo il tuo account, la tua lista, le recensioni, i backup e gli altri contenuti vengono eliminati definitivamente dal nostro database. Per rimuovere anche il file della tua foto profilo o i tuoi dati di analisi, scrivici via email e li elimineremo.",
+                },
+                children: {
+                    title: "8. Minori",
+                    content: "MyAnimeDex non è rivolta ai minori di 13 anni e non raccogliamo consapevolmente i loro dati personali. Se ritieni che un minore ci abbia fornito dati personali, contattaci e li elimineremo.",
+                },
+                rights: {
+                    title: "9. I tuoi diritti",
+                    content: "A seconda di dove vivi (ad esempio ai sensi del GDPR o della KVKK), puoi chiederci di accedere ai tuoi dati, correggerli, esportarli o eliminarli, oppure opporti al modo in cui li trattiamo. I nostri fornitori di servizi possono trattare i dati al di fuori del tuo Paese, anche nell'UE e negli Stati Uniti.",
+                },
+                contact: {
+                    title: "10. Contatti e modifiche",
+                    content: "Per domande o richieste, scrivi a support@myanimedex.com. Quando modifichiamo questa informativa, aggiorniamo la data in cima a questa pagina.",
+                },
+            },
         },
         "help": {
             "title": "Aiuto e supporto",
@@ -8133,28 +8421,52 @@ export const translations = {
                 }
             }
         },
-        "privacy": {
-            "title": "Polityka prywatności",
-            "lastUpdated": "Ostatnia aktualizacja: 22 grudnia 2025",
-            "intro": "Niniejsza Polityka prywatności opisuje Nasze zasady i procedury dotyczące gromadzenia, wykorzystywania i ujawniania Twoich informacji podczas korzystania z Usługi.",
-            "sections": {
-                "collection": {
-                    "title": "1. Gromadzenie i wykorzystywanie Twoich danych osobowych",
-                    "content": "Podczas korzystania z Naszej Usługi możemy poprosić Cię o podanie określonych danych umożliwiających identyfikację, które mogą służyć do kontaktu z Tobą lub do Twojej identyfikacji."
+        privacy: {
+            title: "Polityka prywatności",
+            lastUpdated: "Ostatnia aktualizacja: 25 października 2026 r.",
+            intro: "MyAnimeDex („my”, „nas”) to aplikacja do śledzenia anime. Niniejsza polityka wyjaśnia, jakie dane zbieramy, gdy korzystasz z aplikacji i strony internetowej MyAnimeDex, dlaczego je zbieramy, komu je udostępniamy oraz jakie masz możliwości wyboru.",
+            sections: {
+                collection: {
+                    title: "1. Dane, które zbieramy",
+                    content: "• Dane konta: Twój adres e-mail, nazwa użytkownika oraz, jeśli je dodasz, zdjęcie profilowe. Jeśli logujesz się przez Google lub Apple, otrzymujemy adres e-mail, który nam udostępniają (Apple może przekazać nam prywatny adres przekierowujący).\n• Twoje treści: Twoja lista anime, statusy, postęp odcinków, ulubione, oceny, recenzje, własne listy, tagi i notatki, wyniki w Arenie, głosy w ankietach oraz Twoje opinie o rekomendacjach. Jeśli jesteś członkiem Premium, kopie Twojej listy są przechowywane jako kopie zapasowe.\n• Dane o użytkowaniu: z jakich ekranów i funkcji korzystasz, wersja aplikacji, model urządzenia, system operacyjny i język. Dane te są powiązane z losowym identyfikatorem, a po zalogowaniu również z identyfikatorem Twojego konta. Nigdy nie obejmują Twojego adresu e-mail ani tekstów, które piszesz.\n• Dane reklamowe: gdy wyświetlane są reklamy, Google AdMob zbiera identyfikator reklamowy Twojego urządzenia, Twój adres IP (używany do określenia przybliżonej lokalizacji) oraz informacje o tym, jak wchodzisz w interakcje z reklamami.\n• Dane o zakupach: jeśli wykupisz subskrypcję Premium, otrzymujemy status Twojej subskrypcji i historię zakupów z App Store lub Google Play za pośrednictwem RevenueCat. Nigdy nie widzimy danych Twojej karty płatniczej.\nMożesz przeglądać aplikację bez konta. W przypadku gości zbieramy wyłącznie opisane powyżej dane o użytkowaniu i dane reklamowe.",
                 },
-                "usage": {
-                    "title": "2. Wykorzystanie Twoich danych osobowych",
-                    "content": "Firma może wykorzystywać Dane osobowe w następujących celach: w celu świadczenia i utrzymania naszej Usługi, zarządzania Twoim Kontem oraz kontaktowania się z Tobą."
+                usage: {
+                    title: "2. Jak wykorzystujemy Twoje dane",
+                    content: "Wykorzystujemy Twoje dane, aby utworzyć i prowadzić Twoje konto, zapisywać Twoją listę i synchronizować ją między Twoimi urządzeniami, pokazywać Twój profil i recenzje innym użytkownikom, wysyłać włączone przez Ciebie przypomnienia o odcinkach, zapewniać funkcje Premium i kopie zapasowe, rozumieć, jak używana jest aplikacja, aby naprawiać problemy i ją ulepszać, a także wyświetlać reklamy w darmowej wersji. Nie sprzedajemy Twoich danych osobowych.",
                 },
-                "security": {
-                    "title": "3. Bezpieczeństwo Twoich danych osobowych",
-                    "content": "Bezpieczeństwo Twoich Danych osobowych jest dla Nas ważne, pamiętaj jednak, że żadna metoda przesyłania danych przez internet ani metoda elektronicznego przechowywania nie jest w 100% bezpieczna."
+                thirdParty: {
+                    title: "3. Usługi, z którymi współpracujemy",
+                    content: "• Supabase: baza danych, logowanie i przechowywanie plików.\n• AniList: informacje o anime. Jeśli importujesz swoją listę z AniList, Twoja publiczna nazwa użytkownika AniList jest przesyłana do AniList.\n• Google AdMob: reklamy.\n• RevenueCat: subskrypcje Premium.\n• PostHog (serwery w UE): analityka produktowa.\n• Google Sign-In i Sign in with Apple: logowanie.\n• Google Translate: tłumaczenie opisów fabuły anime. Przesyłany jest wyłącznie tekst opisu.\nKażda z tych usług przetwarza dane zgodnie z własną polityką prywatności.",
                 },
-                "deletion": {
-                    "title": "5. Usunięcie konta",
-                    "content": "Masz prawo zażądać usunięcia swojego konta i powiązanych z nim danych. Możesz usunąć konto bezpośrednio w aplikacji w sekcji Profil > Strefa zagrożenia. Ta czynność jest nieodwracalna."
-                }
-            }
+                ads: {
+                    title: "4. Reklamy i śledzenie",
+                    content: "Darmowa wersja wyświetla reklamy Google AdMob. Na iPhonie i iPadzie prosimy o Twoją zgodę, zanim Twój identyfikator reklamowy zostanie użyty; jeśli odmówisz, wyświetlane są tylko reklamy niespersonalizowane. Na Androidzie możesz zresetować lub usunąć swój identyfikator reklamowy w ustawieniach urządzenia. Członkowie Premium nie widzą reklam.",
+                },
+                device: {
+                    title: "5. Uprawnienia na Twoim urządzeniu",
+                    content: "• Powiadomienia: przypomnienia o odcinkach i o okresie próbnym są planowane na Twoim urządzeniu i wysyłane tylko wtedy, gdy zezwolisz na powiadomienia.\n• Kalendarz: godziny emisji dodajemy do kalendarza w Twoim telefonie wyłącznie wtedy, gdy stukniesz „Dodaj do kalendarza”. Nie odczytujemy ani nie przesyłamy wydarzeń z Twojego kalendarza.\n• Aparat i zdjęcia: używane wyłącznie do zrobienia lub wybrania zdjęcia profilowego.\nW każdej chwili możesz wyłączyć te uprawnienia w ustawieniach urządzenia.",
+                },
+                public: {
+                    title: "6. Co widzą inni użytkownicy",
+                    content: "Twoja nazwa użytkownika, zdjęcie profilowe, poziom, gablota na profilu (np. Twoje Top 10 i karta statystyk, jeśli ją włączysz), recenzje, udostępniane przez Ciebie listy oraz Twoja aktywność oglądania w sekcji Puls fanów są widoczne dla innych użytkowników. Twój adres e-mail, notatki, tagi i kopie zapasowe są prywatne.",
+                },
+                retention: {
+                    title: "7. Bezpieczeństwo, przechowywanie i usuwanie",
+                    content: "Twoje dane są przesyłane szyfrowanymi połączeniami i chronione regułami dostępu, dzięki którym tylko Ty możesz je zmieniać. Przechowujemy Twoje dane tak długo, jak istnieje Twoje konto, i zachowujemy tylko 7 ostatnich kopii zapasowych. Możesz w każdej chwili usunąć konto w aplikacji (Profil > Strefa zagrożenia > Usuń konto) lub w sposób opisany na stronie myanimedex.com/delete-account. Spowoduje to trwałe usunięcie z naszej bazy danych Twojego konta, listy, recenzji, kopii zapasowych i innych treści. Aby usunąć również plik zdjęcia profilowego lub Twoje dane analityczne, napisz do nas e-mail, a my je usuniemy.",
+                },
+                children: {
+                    title: "8. Dzieci",
+                    content: "MyAnimeDex nie jest skierowana do dzieci poniżej 13. roku życia i nie zbieramy świadomie ich danych osobowych. Jeśli uważasz, że dziecko przekazało nam dane osobowe, skontaktuj się z nami, a je usuniemy.",
+                },
+                rights: {
+                    title: "9. Twoje prawa",
+                    content: "W zależności od miejsca zamieszkania (na przykład na podstawie GDPR lub KVKK) możesz poprosić nas o dostęp do swoich danych, ich sprostowanie, eksport lub usunięcie albo wnieść sprzeciw wobec sposobu, w jaki je przetwarzamy. Nasi dostawcy usług mogą przetwarzać dane poza Twoim krajem, w tym w UE i w Stanach Zjednoczonych.",
+                },
+                contact: {
+                    title: "10. Kontakt i zmiany",
+                    content: "W razie pytań lub próśb napisz na adres support@myanimedex.com. Gdy zmieniamy tę politykę, aktualizujemy datę na górze tej strony.",
+                },
+            },
         },
         "help": {
             "title": "Pomoc i wsparcie",
@@ -9056,28 +9368,52 @@ export const translations = {
                 }
             }
         },
-        "privacy": {
-            "title": "Chính sách quyền riêng tư",
-            "lastUpdated": "Cập nhật lần cuối: ngày 22 tháng 12 năm 2025",
-            "intro": "Chính sách quyền riêng tư này mô tả các chính sách và quy trình của Chúng tôi về việc thu thập, sử dụng và tiết lộ thông tin của Bạn khi Bạn sử dụng Dịch vụ.",
-            "sections": {
-                "collection": {
-                    "title": "1. Thu thập và sử dụng dữ liệu cá nhân của bạn",
-                    "content": "Trong khi sử dụng Dịch vụ của Chúng tôi, Chúng tôi có thể yêu cầu Bạn cung cấp một số thông tin nhận dạng cá nhân có thể được dùng để liên hệ hoặc xác định danh tính của Bạn."
+        privacy: {
+            title: "Chính sách quyền riêng tư",
+            lastUpdated: "Cập nhật lần cuối: ngày 25 tháng 10 năm 2026",
+            intro: "MyAnimeDex (\"chúng tôi\") là ứng dụng theo dõi anime. Chính sách này giải thích những dữ liệu chúng tôi thu thập khi bạn sử dụng ứng dụng và trang web MyAnimeDex, lý do chúng tôi thu thập, chúng tôi chia sẻ dữ liệu với ai và những lựa chọn mà bạn có.",
+            sections: {
+                collection: {
+                    title: "1. Dữ liệu chúng tôi thu thập",
+                    content: "• Dữ liệu tài khoản: địa chỉ email, tên người dùng của bạn và ảnh hồ sơ nếu bạn thêm. Nếu bạn đăng nhập bằng Google hoặc Apple, chúng tôi nhận địa chỉ email mà họ chia sẻ với chúng tôi (Apple có thể cung cấp cho chúng tôi một địa chỉ chuyển tiếp riêng tư).\n• Nội dung của bạn: danh sách anime, trạng thái, tiến độ tập, mục yêu thích, điểm chấm, bài đánh giá, danh sách tùy chỉnh, thẻ và ghi chú, kết quả Arena, phiếu bình chọn và phản hồi bạn đưa ra về các gợi ý. Nếu bạn là thành viên Premium, các bản sao danh sách của bạn được lưu giữ làm bản sao lưu.\n• Dữ liệu sử dụng: các màn hình và tính năng bạn sử dụng, phiên bản ứng dụng, mẫu thiết bị, hệ điều hành và ngôn ngữ. Dữ liệu này được liên kết với một mã định danh ngẫu nhiên và, sau khi bạn đăng nhập, với ID tài khoản của bạn. Dữ liệu này không bao giờ bao gồm địa chỉ email của bạn hay nội dung bạn viết.\n• Dữ liệu quảng cáo: khi quảng cáo được hiển thị, Google AdMob thu thập mã định danh quảng cáo của thiết bị, địa chỉ IP của bạn (dùng để xác định vị trí gần đúng) và cách bạn tương tác với quảng cáo.\n• Dữ liệu mua hàng: nếu bạn đăng ký Premium, chúng tôi nhận trạng thái gói đăng ký và lịch sử mua hàng của bạn từ App Store hoặc Google Play thông qua RevenueCat. Chúng tôi không bao giờ thấy thông tin thẻ thanh toán của bạn.\nBạn có thể sử dụng ứng dụng mà không cần tài khoản. Đối với khách, chúng tôi chỉ thu thập dữ liệu sử dụng và dữ liệu quảng cáo nêu trên.",
                 },
-                "usage": {
-                    "title": "2. Sử dụng dữ liệu cá nhân của bạn",
-                    "content": "Công ty có thể sử dụng Dữ liệu cá nhân cho các mục đích sau: cung cấp và duy trì Dịch vụ, quản lý Tài khoản của Bạn và liên hệ với Bạn."
+                usage: {
+                    title: "2. Cách chúng tôi sử dụng dữ liệu của bạn",
+                    content: "Chúng tôi sử dụng dữ liệu của bạn để tạo và vận hành tài khoản của bạn, lưu danh sách và đồng bộ danh sách giữa các thiết bị của bạn, hiển thị hồ sơ và bài đánh giá của bạn cho người dùng khác, gửi các lời nhắc tập phim mà bạn bật, cung cấp các tính năng Premium và bản sao lưu, tìm hiểu cách ứng dụng được sử dụng để khắc phục sự cố và cải thiện ứng dụng, và hiển thị quảng cáo trong phiên bản miễn phí. Chúng tôi không bán dữ liệu cá nhân của bạn.",
                 },
-                "security": {
-                    "title": "3. Bảo mật dữ liệu cá nhân của bạn",
-                    "content": "Việc bảo mật Dữ liệu cá nhân của Bạn rất quan trọng với Chúng tôi, nhưng hãy nhớ rằng không có phương thức truyền tải qua Internet hay phương thức lưu trữ điện tử nào an toàn 100%."
+                thirdParty: {
+                    title: "3. Các dịch vụ chúng tôi sử dụng",
+                    content: "• Supabase: cơ sở dữ liệu, đăng nhập và lưu trữ tệp.\n• AniList: thông tin anime. Nếu bạn nhập danh sách từ AniList, tên người dùng AniList công khai của bạn sẽ được gửi đến AniList.\n• Google AdMob: quảng cáo.\n• RevenueCat: gói đăng ký Premium.\n• PostHog (máy chủ tại EU): phân tích sản phẩm.\n• Google Sign-In và Sign in with Apple: đăng nhập.\n• Google Translate: dịch phần tóm tắt nội dung anime. Chỉ văn bản tóm tắt được gửi đi.\nMỗi dịch vụ này xử lý dữ liệu theo chính sách quyền riêng tư của riêng mình.",
                 },
-                "deletion": {
-                    "title": "5. Xóa tài khoản",
-                    "content": "Bạn có quyền yêu cầu xóa tài khoản và dữ liệu liên quan. Bạn có thể xóa tài khoản trực tiếp trong ứng dụng qua Hồ sơ > Vùng nguy hiểm. Thao tác này là vĩnh viễn."
-                }
-            }
+                ads: {
+                    title: "4. Quảng cáo và theo dõi",
+                    content: "Phiên bản miễn phí hiển thị quảng cáo từ Google AdMob. Trên iPhone và iPad, chúng tôi xin phép bạn trước khi sử dụng mã định danh quảng cáo của bạn; nếu bạn từ chối, chỉ quảng cáo không được cá nhân hóa mới được hiển thị. Trên Android, bạn có thể đặt lại hoặc xóa ID quảng cáo trong phần cài đặt thiết bị. Thành viên Premium không thấy quảng cáo.",
+                },
+                device: {
+                    title: "5. Quyền truy cập trên thiết bị của bạn",
+                    content: "• Thông báo: lời nhắc tập phim và lời nhắc dùng thử được lên lịch trên thiết bị của bạn và chỉ được gửi nếu bạn cho phép thông báo.\n• Lịch: chúng tôi chỉ thêm giờ chiếu vào lịch trên điện thoại của bạn khi bạn nhấn \"Thêm vào lịch\". Chúng tôi không đọc hay tải lên các sự kiện trong lịch của bạn.\n• Máy ảnh và ảnh: chỉ được dùng để chụp hoặc chọn ảnh hồ sơ.\nBạn có thể tắt các quyền này bất cứ lúc nào trong phần cài đặt thiết bị.",
+                },
+                public: {
+                    title: "6. Những gì người dùng khác có thể thấy",
+                    content: "Tên người dùng, ảnh hồ sơ, cấp, khu trưng bày trên hồ sơ (chẳng hạn Top 10 của bạn và thẻ thống kê, nếu bạn bật), bài đánh giá, các danh sách bạn chia sẻ và hoạt động xem của bạn trong Nhịp cộng đồng đều hiển thị với người dùng khác. Địa chỉ email, ghi chú, thẻ và bản sao lưu của bạn là riêng tư.",
+                },
+                retention: {
+                    title: "7. Bảo mật, lưu giữ và xóa dữ liệu",
+                    content: "Dữ liệu của bạn được truyền qua kết nối được mã hóa và được bảo vệ bằng các quy tắc truy cập để chỉ bạn mới có thể thay đổi. Chúng tôi lưu giữ dữ liệu của bạn chừng nào tài khoản của bạn còn tồn tại, và chỉ giữ lại 7 bản sao lưu gần nhất. Bạn có thể xóa tài khoản bất cứ lúc nào trong ứng dụng (Hồ sơ > Vùng nguy hiểm > Xóa tài khoản) hoặc theo hướng dẫn tại myanimedex.com/delete-account. Thao tác này sẽ xóa vĩnh viễn tài khoản, danh sách, bài đánh giá, bản sao lưu và các nội dung khác của bạn khỏi cơ sở dữ liệu của chúng tôi. Để xóa cả tệp ảnh hồ sơ hoặc dữ liệu phân tích của bạn, hãy gửi email cho chúng tôi và chúng tôi sẽ xóa chúng.",
+                },
+                children: {
+                    title: "8. Trẻ em",
+                    content: "MyAnimeDex không hướng đến trẻ em dưới 13 tuổi và chúng tôi không cố ý thu thập dữ liệu cá nhân của trẻ em. Nếu bạn cho rằng một trẻ em đã cung cấp dữ liệu cá nhân cho chúng tôi, hãy liên hệ với chúng tôi và chúng tôi sẽ xóa dữ liệu đó.",
+                },
+                rights: {
+                    title: "9. Quyền của bạn",
+                    content: "Tùy theo nơi bạn sinh sống (ví dụ theo GDPR hoặc KVKK), bạn có thể yêu cầu chúng tôi cho bạn truy cập, chỉnh sửa, xuất hoặc xóa dữ liệu của bạn, hoặc phản đối cách chúng tôi xử lý dữ liệu đó. Các nhà cung cấp dịch vụ của chúng tôi có thể xử lý dữ liệu bên ngoài quốc gia của bạn, bao gồm cả tại EU và Hoa Kỳ.",
+                },
+                contact: {
+                    title: "10. Liên hệ và thay đổi",
+                    content: "Nếu có câu hỏi hoặc yêu cầu, hãy gửi email đến support@myanimedex.com. Khi thay đổi chính sách này, chúng tôi sẽ cập nhật ngày ở đầu trang này.",
+                },
+            },
         },
         "help": {
             "title": "Trợ giúp & Hỗ trợ",
@@ -9979,28 +10315,52 @@ export const translations = {
                 }
             }
         },
-        "privacy": {
-            "title": "นโยบายความเป็นส่วนตัว",
-            "lastUpdated": "อัปเดตล่าสุด: 22 ธันวาคม 2025",
-            "intro": "นโยบายความเป็นส่วนตัวนี้อธิบายนโยบายและขั้นตอนของเราเกี่ยวกับการเก็บรวบรวม การใช้ และการเปิดเผยข้อมูลของคุณเมื่อคุณใช้บริการ",
-            "sections": {
-                "collection": {
-                    "title": "1. การเก็บรวบรวมและการใช้ข้อมูลส่วนบุคคลของคุณ",
-                    "content": "ขณะใช้บริการของเรา เราอาจขอให้คุณให้ข้อมูลที่สามารถระบุตัวตนได้บางอย่าง ซึ่งอาจใช้เพื่อติดต่อหรือระบุตัวตนของคุณ"
+        privacy: {
+            title: "นโยบายความเป็นส่วนตัว",
+            lastUpdated: "อัปเดตล่าสุด: 25 ตุลาคม 2026",
+            intro: "MyAnimeDex (\"เรา\") เป็นแอปสำหรับติดตามอนิเมะ นโยบายนี้อธิบายว่าเราเก็บรวบรวมข้อมูลใดบ้างเมื่อคุณใช้แอปและเว็บไซต์ MyAnimeDex เหตุผลที่เราเก็บรวบรวม เราแบ่งปันข้อมูลกับใคร และทางเลือกที่คุณมี",
+            sections: {
+                collection: {
+                    title: "1. ข้อมูลที่เราเก็บรวบรวม",
+                    content: "• ข้อมูลบัญชี: อีเมล ชื่อผู้ใช้ และรูปโปรไฟล์ของคุณ (หากคุณเพิ่มไว้) หากคุณล็อกอินด้วย Google หรือ Apple เราจะได้รับอีเมลที่ผู้ให้บริการดังกล่าวแบ่งปันให้เรา (Apple อาจให้อีเมลส่งต่อแบบส่วนตัวแก่เรา)\n• เนื้อหาของคุณ: ลิสต์อนิเมะ สถานะ ความคืบหน้าของตอน รายการโปรด คะแนน รีวิว ลิสต์ที่คุณสร้างเอง แท็กและโน้ต ผล Arena การโหวตในโพล และความคิดเห็นที่คุณให้ต่อคำแนะนำ หากคุณเป็นสมาชิก Premium เราจะเก็บสำเนาลิสต์ของคุณไว้เป็นข้อมูลสำรอง\n• ข้อมูลการใช้งาน: หน้าจอและฟีเจอร์ที่คุณใช้ เวอร์ชันแอป รุ่นอุปกรณ์ ระบบปฏิบัติการ และภาษา ข้อมูลนี้เชื่อมโยงกับตัวระบุแบบสุ่ม และเมื่อคุณล็อกอินแล้วจะเชื่อมโยงกับ ID บัญชีของคุณด้วย ข้อมูลนี้ไม่รวมอีเมลของคุณหรือข้อความที่คุณเขียนในทุกกรณี\n• ข้อมูลโฆษณา: เมื่อมีการแสดงโฆษณา Google AdMob จะเก็บรวบรวมตัวระบุโฆษณาของอุปกรณ์คุณ ที่อยู่ IP ของคุณ (ใช้ระบุตำแหน่งโดยประมาณ) และวิธีที่คุณโต้ตอบกับโฆษณา\n• ข้อมูลการซื้อ: หากคุณสมัคร Premium เราจะได้รับสถานะการสมัครและประวัติการซื้อของคุณจาก App Store หรือ Google Play ผ่าน RevenueCat เราไม่เคยเห็นรายละเอียดบัตรชำระเงินของคุณ\nคุณสามารถใช้แอปได้โดยไม่ต้องมีบัญชี สำหรับผู้ใช้ที่ไม่ได้ล็อกอิน เราเก็บเฉพาะข้อมูลการใช้งานและข้อมูลโฆษณาข้างต้นเท่านั้น",
                 },
-                "usage": {
-                    "title": "2. การใช้ข้อมูลส่วนบุคคลของคุณ",
-                    "content": "บริษัทอาจใช้ข้อมูลส่วนบุคคลเพื่อวัตถุประสงค์ต่อไปนี้: เพื่อให้บริการและดูแลบริการของเรา เพื่อจัดการบัญชีของคุณ และเพื่อติดต่อคุณ"
+                usage: {
+                    title: "2. วิธีที่เราใช้ข้อมูลของคุณ",
+                    content: "เราใช้ข้อมูลของคุณเพื่อสร้างและดูแลบัญชีของคุณ บันทึกลิสต์ของคุณและซิงค์ข้ามอุปกรณ์ของคุณ แสดงโปรไฟล์และรีวิวของคุณต่อผู้ใช้อื่น ส่งการแจ้งเตือนตอนใหม่ที่คุณเปิดไว้ ให้บริการฟีเจอร์ Premium และการสำรองข้อมูล ทำความเข้าใจวิธีการใช้งานแอปเพื่อแก้ไขปัญหาและปรับปรุงแอป และแสดงโฆษณาในเวอร์ชันฟรี เราไม่ขายข้อมูลส่วนบุคคลของคุณ",
                 },
-                "security": {
-                    "title": "3. ความปลอดภัยของข้อมูลส่วนบุคคลของคุณ",
-                    "content": "ความปลอดภัยของข้อมูลส่วนบุคคลของคุณเป็นสิ่งสำคัญสำหรับเรา แต่โปรดทราบว่าไม่มีวิธีการส่งข้อมูลผ่านอินเทอร์เน็ตหรือวิธีการจัดเก็บข้อมูลอิเล็กทรอนิกส์ใดที่ปลอดภัย 100%"
+                thirdParty: {
+                    title: "3. บริการที่เราใช้",
+                    content: "• Supabase: ฐานข้อมูล การล็อกอิน และการจัดเก็บไฟล์\n• AniList: ข้อมูลอนิเมะ หากคุณนำเข้าลิสต์จาก AniList ชื่อผู้ใช้ AniList สาธารณะของคุณจะถูกส่งไปยัง AniList\n• Google AdMob: โฆษณา\n• RevenueCat: การสมัคร Premium\n• PostHog (เซิร์ฟเวอร์ในสหภาพยุโรป): การวิเคราะห์การใช้งานผลิตภัณฑ์\n• Google Sign-In และ Sign in with Apple: การล็อกอิน\n• Google Translate: การแปลเรื่องย่ออนิเมะ โดยจะส่งเฉพาะข้อความเรื่องย่อเท่านั้น\nบริการเหล่านี้แต่ละรายจัดการข้อมูลตามนโยบายความเป็นส่วนตัวของตนเอง",
                 },
-                "deletion": {
-                    "title": "5. การลบบัญชี",
-                    "content": "คุณมีสิทธิ์ขอให้ลบบัญชีและข้อมูลที่เกี่ยวข้องของคุณ คุณสามารถลบบัญชีได้โดยตรงภายในแอปผ่าน โปรไฟล์ > โซนอันตราย การดำเนินการนี้เป็นการถาวร"
-                }
-            }
+                ads: {
+                    title: "4. โฆษณาและการติดตาม",
+                    content: "เวอร์ชันฟรีแสดงโฆษณาจาก Google AdMob บน iPhone และ iPad เราจะขออนุญาตจากคุณก่อนใช้ตัวระบุโฆษณาของคุณ หากคุณปฏิเสธ จะแสดงเฉพาะโฆษณาที่ไม่ปรับตามบุคคลเท่านั้น บน Android คุณสามารถรีเซ็ตหรือลบรหัสโฆษณาได้ในการตั้งค่าเครื่อง สมาชิก Premium จะไม่เห็นโฆษณา",
+                },
+                device: {
+                    title: "5. สิทธิ์การเข้าถึงบนอุปกรณ์ของคุณ",
+                    content: "• การแจ้งเตือน: การแจ้งเตือนตอนใหม่และการแจ้งเตือนช่วงทดลองใช้จะตั้งเวลาไว้บนอุปกรณ์ของคุณ และจะส่งก็ต่อเมื่อคุณอนุญาตการแจ้งเตือนเท่านั้น\n• ปฏิทิน: เราจะเพิ่มเวลาฉายลงในปฏิทินของโทรศัพท์คุณเฉพาะเมื่อคุณแตะ \"เพิ่มลงปฏิทิน\" เท่านั้น เราไม่อ่านหรืออัปโหลดกิจกรรมในปฏิทินของคุณ\n• กล้องและรูปภาพ: ใช้เพื่อถ่ายหรือเลือกรูปโปรไฟล์เท่านั้น\nคุณสามารถปิดสิทธิ์เหล่านี้ได้ทุกเมื่อในการตั้งค่าเครื่อง",
+                },
+                public: {
+                    title: "6. สิ่งที่ผู้ใช้อื่นมองเห็นได้",
+                    content: "ชื่อผู้ใช้ รูปโปรไฟล์ เลเวล โชว์เคสบนโปรไฟล์ (เช่น Top 10 ของคุณและการ์ดสถิติ หากคุณเปิดไว้) รีวิว ลิสต์ที่คุณแชร์ และกิจกรรมการดูของคุณใน ชีพจรคอมมู จะมองเห็นได้โดยผู้ใช้อื่น ส่วนอีเมล โน้ต แท็ก และข้อมูลสำรองของคุณเป็นข้อมูลส่วนตัว",
+                },
+                retention: {
+                    title: "7. ความปลอดภัย การเก็บรักษา และการลบข้อมูล",
+                    content: "ข้อมูลของคุณถูกส่งผ่านการเชื่อมต่อที่เข้ารหัส และได้รับการปกป้องด้วยกฎการเข้าถึงเพื่อให้มีเพียงคุณเท่านั้นที่เปลี่ยนแปลงได้ เราเก็บข้อมูลของคุณไว้ตราบเท่าที่บัญชีของคุณยังคงอยู่ และเก็บข้อมูลสำรองไว้เพียง 7 ชุดล่าสุดเท่านั้น คุณสามารถลบบัญชีได้ทุกเมื่อในแอป (โปรไฟล์ > โซนอันตราย > ลบบัญชี) หรือตามที่อธิบายไว้ที่ myanimedex.com/delete-account การดำเนินการนี้จะลบบัญชี ลิสต์ รีวิว ข้อมูลสำรอง และเนื้อหาอื่นๆ ของคุณออกจากฐานข้อมูลของเราอย่างถาวร หากต้องการลบไฟล์รูปโปรไฟล์หรือข้อมูลการวิเคราะห์ของคุณด้วย โปรดส่งอีเมลถึงเรา แล้วเราจะลบให้",
+                },
+                children: {
+                    title: "8. เด็ก",
+                    content: "MyAnimeDex ไม่ได้มุ่งเป้าไปที่เด็กอายุต่ำกว่า 13 ปี และเราไม่ได้เก็บรวบรวมข้อมูลส่วนบุคคลของเด็กโดยรู้ตัว หากคุณเชื่อว่ามีเด็กให้ข้อมูลส่วนบุคคลแก่เรา โปรดติดต่อเรา แล้วเราจะลบข้อมูลนั้น",
+                },
+                rights: {
+                    title: "9. สิทธิของคุณ",
+                    content: "ขึ้นอยู่กับประเทศที่คุณอาศัยอยู่ (เช่น ภายใต้ GDPR หรือ KVKK) คุณสามารถขอให้เราให้คุณเข้าถึง แก้ไข ส่งออก หรือลบข้อมูลของคุณ หรือคัดค้านวิธีที่เราประมวลผลข้อมูลได้ ผู้ให้บริการของเราอาจประมวลผลข้อมูลนอกประเทศของคุณ รวมถึงในสหภาพยุโรปและสหรัฐอเมริกา",
+                },
+                contact: {
+                    title: "10. การติดต่อและการเปลี่ยนแปลง",
+                    content: "หากมีคำถามหรือคำขอ โปรดส่งอีเมลถึง support@myanimedex.com เมื่อเราเปลี่ยนแปลงนโยบายนี้ เราจะอัปเดตวันที่ที่ด้านบนของหน้านี้",
+                },
+            },
         },
         "help": {
             "title": "ช่วยเหลือและซัพพอร์ต",

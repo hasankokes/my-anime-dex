@@ -1,449 +1,937 @@
-# 📱 Store Release Notes / What's New (Google Play Store & Apple App Store)
+# MyAnimeDex 1.0.16 — Mağaza metinleri
 
-*Generated for version update covering recent features: Anime Arena, Community Pulse, My Reviews Management, Infinite Release Calendar, Auto Language Detection, and Stability Fixes.*
+Sürüm: **1.0.16** (iOS build 16, Android versionCode 19). Önceki mağaza sürümü 1.0.15 (20 Eylül 2026).
 
----
+| Alan | Nerede | Sınır |
+|---|---|---|
+| Sürüm notları | Play Console → Sürüm → "Bu sürümdeki yenilikler" | 500 karakter / dil |
+| What's New | App Store Connect → sürüm 1.0.16 → "What's New in This Version" | 4000 karakter |
+| Promotional Text (tanıtım metni) | App Store Connect → sürüm sayfası, en üst | 170 karakter, inceleme beklemeden her an değiştirilebilir |
 
-## 1. 🇹🇷 Türkçe (TR)
-
-### 🤖 Google Play Store (Max 500 Karakter)
-```text
-Yenilikler:
-⚔️ Anime Arena: En sevdiğin animeleri turnuva braketlerinde kapıştır ve şampiyonunu belirle!
-🌐 Topluluk Nabzı: Diğer anime severlerin anlık izleme aktivitelerini canlı takip et.
-✍️ İncelemelerim: Profil alanından yazdığın incelemeleri kolayca yönet ve sil.
-📅 Gelişmiş Takvim: Sınırsız gün gezinmesi ve yenilenmiş yayın takvimi.
-🌍 Otomatik Dil Algılama: Uygulama artık cihaz dilini otomatik tanıyor.
-⚡ Performans & Hata Düzeltmeleri: Daha hızlı ve akıcı deneyim!
-```
-
-### 🍎 Apple App Store
-```text
-Son Güncellemeler ve Yenilikler:
-
-⚔️ ANİME ARENA (TURNUVA MODU)
-- 13 farklı kategoride binlerce animeyi eleme usulü braketlerde kapıştırın!
-- Kendi şampiyonunuzu taçlandırın, topluluk favorilerini ve liderlik tablosunu inceleyin.
-
-🌐 TOPLULUK NABZI (ANİME PULSE)
-- Topuluktaki diğer anime severlerin ne izlediğini ve hangi serileri tamamladığını canlı akıştan takip edin.
-
-✍️ İNCELEMELERİM MODÜLÜ
-- Profiliniz üzerinden yazdığınız tüm anime yorumlarını tek bir yerden görüntüleyin, düzenleyin veya silin.
-
-📅 GELİŞMİŞ YAYIN TAKVİMİ
-- Sınırsız gün kaydırma özelliği ve yenilenen sıralama mantığı ile yeni bölümleri asla kaçırmayın.
-
-🌍 AKILLI DİL ALGILAMA & ONBOARDING
-- Cihaz dilinize göre otomatik dil seçimi ve yenilenen etkileşimli başlangıç rehberi.
-
-🚀 PERFORMANS VE ARAYÜZ İYİLEŞTİRMELERİ
-- Sunucu ve API bağlantılarında kararlılık artırıldı, sayfa yüklemeleri hızlandırıldı ve görsel hatalar giderildi.
-```
+Fransızca, İtalyanca, Lehçe, Vietnamca ve Tayca uygulamaya bu sürümde eklendi. Mağaza kaydında bu diller yoksa önce dil eklenmeli; Play'de kayıtta olmayan bir dilin etiketi hata verir, o blokları silerek yapıştır.
 
 ---
 
-## 2. 🇬🇧 English (EN)
+## Google Play — tüm diller tek blokta
 
-### 🤖 Google Play Store (Max 500 Chars)
+Play Console'da sürüm notları alanına olduğu gibi yapıştırılabilir.
+
 ```text
-What's New:
-⚔️ Anime Arena: Battle your favorite anime in bracket tournaments and crown your champion!
-🌐 Community Pulse: Track real-time anime activity & watch progress from the community.
-✍️ My Reviews: Manage and delete your anime reviews directly from your profile.
-📅 Enhanced Calendar: Infinite day navigation & improved episode release schedule.
-🌍 Auto Language Detection: Automatically matches your device language.
-⚡ Performance & UI Polish: Faster loads and bug fixes.
-```
-
-### 🍎 Apple App Store
-```text
-What's New in this Version:
-
-⚔️ ANIME ARENA (TOURNAMENT MODE)
-- Pit legendary anime against each other in 13 categories using tournament brackets!
-- Crown your ultimate champion, view bracket history, and explore community favorites.
-
-🌐 COMMUNITY PULSE
-- Stay connected with a live activity feed showing what other anime fans are watching and completing.
-
-✍️ MY REVIEWS MODULE
-- View, manage, and delete your published anime reviews anytime directly from your profile.
-
-📅 INFINITE RELEASE CALENDAR
-- Seamlessly scroll through past and upcoming episode air dates with improved timezone and layout logic.
-
-🌍 SMART LANGUAGE DETECTION
-- Automatic language configuration based on device settings alongside refined onboarding walkthroughs.
-
-🚀 PERFORMANCE & STABILITY
-- Major API stability enhancements, optimized card rendering, and UI bug fixes.
-```
-
----
-
-## 3. 🇯🇵 日本語 (JA)
-
-### 🤖 Google Play Store (Max 500文字)
-```text
-新機能・変更点:
-⚔️ アニメアリーナ: トーナメント方式で大好きなアニメを対決させ、最強のチャンピオンを決めよう！
-🌐 コミュニティパルス: 他のファンが今見ているアニメや完了した作品をリアルタイムでチェック。
-✍️ 私のレビュー: プロフィール画面から投稿したレビューを簡単管理・削除可能に。
-📅 カレンダー機能の強化: 無制限の日付ナビゲーションと配信スケジュールの向上。
-🌍 自動言語検出: 端末の言語設定に自動対応。
-⚡ パフォーマンス向上: より高速で快適な動作と不具合の修正。
-```
-
-### 🍎 Apple App Store
-```text
-最新バージョンの更新内容:
-
-⚔️ アニメアリーナ (トーナメントバトル)
-- 13のカテゴリーでアニメ同士をトーナメント形式で対決させよう！
-- あなたのチャンピオンを決定し、コミュニティで人気の作品やランキングをチェックできます。
-
-🌐 みんなのアクティビティ (コミュニティパルス)
-- 他のアニメファンがリアルタイムで観ている作品や視聴完了したアニメをアクティビティフィードで確認できます。
-
-✍️ 私のレビュー管理
-- プロフィール画面から過去に投稿したアニメレビューの一覧表示、管理、削除が可能になりました。
-
-📅 強化された配信カレンダー
-- 日付の無制限スクロール機能を追加し、最新エピソードの放送スケジュールをより見やすく整理しました。
-
-🌍 スマート言語検出 & ガイド
-- 端末の言語に合わせた自動設定と、初心者向けのインタラクティブな初回ガイドを最適化。
-
-🚀 パフォーマンス & UI改善
-- API接続の安定化、ページの読み込み速度向上、UI表示上の軽微な不具合を修正しました。
-```
-
----
-
-## 4. 🇷🇺 Русский (RU)
-
-### 🤖 Google Play Store (Max 500 Chars)
-```text
-Что нового:
-⚔️ Аниме Арена: Устраивайте турниры между аниме в 13 категориях и выбирайте чемпиона!
-🌐 Пульс сообщества: Следите в реальном времени, что смотрят другие пользователи.
-✍️ Мои отзывы: Управляйте и удаляйте свои отзывы прямо из профиля.
-📅 Обновленный календарь: Бесконечный скролл дней и точное расписание серий.
-🌍 Автоопределение языка: Приложение адаптируется под язык устройства.
-⚡ Оптимизация: Повышена скорость работы и исправлены ошибки.
-```
-
-### 🍎 Apple App Store
-```text
-Что нового в этой версии:
-
-⚔️ АНИМЕ АРЕНА (ТУРНИРНЫЙ РЕЖИМ)
-- Сражайте любимые аниме в турнирной сетке по 13 категориям!
-- Выбирайте своего чемпиона, смотрите статистику побед и фаворитов сообщества.
-
-🌐 ПУЛЬС СООБЩЕСТВА
-- Живая лента активности: узнайте, какие тайтлы смотрят и завершают другие анимешники прямо сейчас.
-
-✍️ МОДУЛЬ «МОИ ОТЗЫВЫ»
-- Просматривайте, редактируйте и удаляйте свои опубликованные рецензии в профиле.
-
-📅 БЕСКОНЕЧНЫЙ КАЛЕНДАРЬ РЕЛИЗОВ
-- Удобная навигация по дням без ограничений и улучшенное отображение дат выхода новых серий.
-
-🌍 АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ ЯЗЫКА
-- Приложение автоматически выбирает язык системы и предлагает обновленный интерактивный гид.
-
-🚀 ОПТИМИЗАЦИЯ И ИСПРАВЛЕНИЯ
-- Улучшена стабильность API, ускорена загрузка страниц и исправлены ошибки интерфейса.
-```
-
----
-
-## 5. 🇩🇪 Deutsch (DE)
-
-### 🤖 Google Play Store (Max 500 Chars)
-```text
-Was gibt's Neues:
-⚔️ Anime Arena: Lass deine Lieblings-Anime in Turnier-Kämpfen gegeneinander antreten!
-🌐 Community-Puls: Sieh in Echtzeit, was andere Anime-Fans schauen.
-✍️ Meine Bewertungen: Verwalte und lösche deine Bewertungen direkt im Profil.
-📅 Erweiterter Kalender: Unendliche Tages-Navigation & verbesserter Episoden-Zeitplan.
-🌍 Automatische Spracherkennung: Passt sich automatisch der Gerätesprache an.
-⚡ Leistung & Fehlerbehebungen: Schnellere Ladezeiten und Systemoptimierungen.
-```
-
-### 🍎 Apple App Store
-```text
-Was gibt's Neues in dieser Version:
-
-⚔️ ANIME ARENA (TURNIER-MODUS)
-- Trage K.-o.-Duelle in 13 Kategorien aus und bestimme deine persönlichen Anime-Champions!
-- Verfolge die Favoriten der Community und vergleiche Bestenlisten.
-
-🌐 COMMUNITY-PULS
-- Live-Aktivitäts-Feed: Sieh auf einen Blick, welche Serien andere Nutzer gerade schauen oder abgeschlossen haben.
-
-✍️ MEINE BEWERTUNGEN
-- Übersichtliche Verwaltung: Betrachte und lösche deine geschriebenen Bewertungen direkt in deinem Profil.
-
-📅 UNENDLICHER ERSCHEINUNGSKALENDER
-- Scrolle nahtlos durch Tage und verpasse keine neue Episoden-Veröffentlichung mehr.
-
-🌍 INTELLIGENTE SPRACHERKENNUNG
-- Automatische Erkennung der Gerätesprache sowie verbesserte interaktive Einführung für neue Nutzer.
-
-🚀 LEISTUNGS- UND UI-VERBESSERUNGEN
-- Erhöhte API-Stabilität, schnellere Ladezeiten und Behebung kleinerer Darstellungsfehler.
+<tr-TR>
+1.0.16'daki yenilikler
+👀 Misafir modu: Hesap açmadan animeleri keşfet, kaydetmek istediğinde giriş yap.
+🔔 Favori animelerinin yeni bölümleri için hatırlatıcılar.
+📥 Listeni MyAnimeList veya AniList'ten içe aktar.
+🏆 Artık incelemeler, Arena ve listelerden de XP kazan.
+🌍 Yeni diller: Fransızca, İtalyanca, Lehçe, Vietnamca, Tayca.
+⭐ Premium: İstatistiklerim, temalar ve çerçeveler, Senin İçin+, bulut yedekleme.
+⚡ Daha hızlı ve daha kararlı.
+</tr-TR>
+<en-US>
+What's new in 1.0.16
+👀 Guest mode: explore anime without an account and sign in only when you want to save.
+🔔 Reminders for new episodes of your favorite anime.
+📥 Import your list from MyAnimeList or AniList.
+🏆 Earn XP from reviews, Arena and lists too.
+🌍 New languages: French, Italian, Polish, Vietnamese, Thai.
+⭐ Premium: My Stats, themes & frames, For You+, cloud backup.
+⚡ Faster and more stable.
+</en-US>
+<ja-JP>
+1.0.16の新機能
+👀 ゲストモード：アカウントなしでアニメを探索。保存したい時だけログイン。
+🔔 お気に入りアニメの新エピソードをお知らせ。
+📥 MyAnimeListまたはAniListからリストをインポート。
+🏆 レビュー、アリーナ、リストでもXPを獲得。
+🌍 新言語：フランス語、イタリア語、ポーランド語、ベトナム語、タイ語。
+⭐ プレミアム：マイ統計、テーマとフレーム、あなた向け+、クラウドバックアップ。
+⚡ より速く、より安定。
+</ja-JP>
+<ru-RU>
+Что нового в 1.0.16
+👀 Гостевой режим: смотрите аниме без аккаунта и входите, только чтобы сохранить.
+🔔 Напоминания о новых сериях избранных аниме.
+📥 Импорт списка из MyAnimeList или AniList.
+🏆 XP теперь и за отзывы, Арену и списки.
+🌍 Новые языки: французский, итальянский, польский, вьетнамский, тайский.
+⭐ Premium: Моя статистика, темы и рамки, Для вас+, облачные копии.
+⚡ Быстрее и стабильнее.
+</ru-RU>
+<de-DE>
+Neu in 1.0.16
+👀 Gastmodus: Anime ohne Konto entdecken, nur zum Speichern anmelden.
+🔔 Erinnerungen an neue Folgen deiner Lieblingsanime.
+📥 Liste von MyAnimeList oder AniList importieren.
+🏆 XP jetzt auch für Rezensionen, Arena und Listen.
+🌍 Neue Sprachen: Französisch, Italienisch, Polnisch, Vietnamesisch, Thailändisch.
+⭐ Premium: Meine Statistiken, Themes & Rahmen, Für dich+, Cloud-Backup.
+⚡ Schneller und stabiler.
+</de-DE>
+<ar>
+الجديد في 1.0.16
+👀 وضع الضيف: استكشف الأنمي بدون حساب، وسجّل الدخول فقط عندما تريد الحفظ.
+🔔 تذكيرات بالحلقات الجديدة لأنمياتك المفضلة.
+📥 استيراد قائمتك من MyAnimeList أو AniList.
+🏆 اكسب XP من المراجعات والحلبة والقوائم أيضًا.
+🌍 لغات جديدة: الفرنسية والإيطالية والبولندية والفيتنامية والتايلاندية.
+⭐ بريميوم: إحصائياتي، السمات والإطارات، لك+، النسخ الاحتياطي السحابي.
+⚡ أسرع وأكثر استقرارًا.
+</ar>
+<es-ES>
+Novedades en 1.0.16
+👀 Modo invitado: explora anime sin cuenta e inicia sesión solo para guardar.
+🔔 Recordatorios de nuevos episodios de tus anime favoritos.
+📥 Importa tu lista desde MyAnimeList o AniList.
+🏆 Gana XP también con reseñas, Arena y listas.
+🌍 Nuevos idiomas: francés, italiano, polaco, vietnamita y tailandés.
+⭐ Premium: Mis estadísticas, temas y marcos, Para ti+, copia en la nube.
+⚡ Más rápido y estable.
+</es-ES>
+<pt-BR>
+Novidades na 1.0.16
+👀 Modo convidado: explore animes sem conta e entre só para salvar.
+🔔 Lembretes de novos episódios dos seus animes favoritos.
+📥 Importe sua lista do MyAnimeList ou AniList.
+🏆 Ganhe XP também com avaliações, Arena e listas.
+🌍 Novos idiomas: francês, italiano, polonês, vietnamita e tailandês.
+⭐ Premium: Minhas estatísticas, temas e molduras, Para você+, backup na nuvem.
+⚡ Mais rápido e estável.
+</pt-BR>
+<id>
+Yang baru di 1.0.16
+👀 Mode tamu: jelajahi anime tanpa akun, masuk hanya saat ingin menyimpan.
+🔔 Pengingat episode baru dari anime favoritmu.
+📥 Impor daftarmu dari MyAnimeList atau AniList.
+🏆 Dapatkan XP juga dari ulasan, Arena, dan daftar.
+🌍 Bahasa baru: Prancis, Italia, Polandia, Vietnam, Thailand.
+⭐ Premium: Statistik Saya, tema & bingkai, Untukmu+, cadangan cloud.
+⚡ Lebih cepat dan stabil.
+</id>
+<hi-IN>
+1.0.16 में नया
+👀 गेस्ट मोड: बिना अकाउंट के एनीमे देखें, सेव करना हो तभी साइन इन करें।
+🔔 पसंदीदा एनीमे के नए एपिसोड के रिमाइंडर।
+📥 MyAnimeList या AniList से अपनी लिस्ट इम्पोर्ट करें।
+🏆 अब रिव्यू, एरिना और लिस्ट से भी XP कमाएँ।
+🌍 नई भाषाएँ: फ़्रेंच, इतालवी, पोलिश, वियतनामी, थाई।
+⭐ प्रीमियम: मेरे आँकड़े, थीम और फ़्रेम, आपके लिए+, क्लाउड बैकअप।
+⚡ ज़्यादा तेज़ और स्थिर।
+</hi-IN>
+<fr-FR>
+Nouveautés de la 1.0.16
+👀 Mode invité : explore les anime sans compte, connecte-toi seulement pour sauvegarder.
+🔔 Rappels des nouveaux épisodes de tes anime favoris.
+📥 Importe ta liste depuis MyAnimeList ou AniList.
+🏆 Gagne aussi de l'XP avec tes avis, l'Arena et tes listes.
+🌍 MyAnimeDex parle désormais français, italien, polonais, vietnamien et thaï !
+⭐ Premium : Mes stats, thèmes et cadres, Pour toi+, sauvegarde cloud.
+⚡ Plus rapide et plus stable.
+</fr-FR>
+<it-IT>
+Novità della 1.0.16
+👀 Modalità ospite: esplora gli anime senza account e accedi solo per salvare.
+🔔 Promemoria per i nuovi episodi dei tuoi anime preferiti.
+📥 Importa la tua lista da MyAnimeList o AniList.
+🏆 Guadagna XP anche con recensioni, Arena e liste.
+🌍 Nuove lingue: italiano, francese, polacco, vietnamita e thailandese.
+⭐ Premium: Statistiche, temi e cornici, Per te+, backup nel cloud.
+⚡ Più veloce e stabile.
+</it-IT>
+<pl-PL>
+Nowości w 1.0.16
+👀 Tryb gościa: przeglądaj anime bez konta i zaloguj się tylko, by zapisać.
+🔔 Przypomnienia o nowych odcinkach ulubionych anime.
+📥 Import listy z MyAnimeList lub AniList.
+🏆 XP także za recenzje, Arenę i listy.
+🌍 Nowe języki: polski, francuski, włoski, wietnamski i tajski.
+⭐ Premium: Moje statystyki, motywy i ramki, Dla ciebie+, kopia w chmurze.
+⚡ Szybciej i stabilniej.
+</pl-PL>
+<vi>
+Có gì mới trong 1.0.16
+👀 Chế độ khách: khám phá anime không cần tài khoản, chỉ đăng nhập khi muốn lưu.
+🔔 Nhắc tập mới của anime yêu thích.
+📥 Nhập danh sách từ MyAnimeList hoặc AniList.
+🏆 Nhận XP từ đánh giá, Arena và danh sách.
+🌍 Ngôn ngữ mới: tiếng Việt, Pháp, Ý, Ba Lan và Thái.
+⭐ Premium: Thống kê, chủ đề và khung, For You+, sao lưu đám mây.
+⚡ Nhanh và ổn định hơn.
+</vi>
+<th>
+มีอะไรใหม่ใน 1.0.16
+👀 โหมดผู้เยี่ยมชม: สำรวจอนิเมะได้โดยไม่ต้องมีบัญชี เข้าสู่ระบบเมื่ออยากบันทึกเท่านั้น
+🔔 แจ้งเตือนตอนใหม่ของอนิเมะเรื่องโปรด
+📥 นำเข้ารายการจาก MyAnimeList หรือ AniList
+🏆 รับ XP จากรีวิว อารีน่า และรายการ
+🌍 ภาษาใหม่: ไทย ฝรั่งเศส อิตาลี โปแลนด์ และเวียดนาม
+⭐ Premium: สถิติของฉัน ธีมและกรอบ For You+ สำรองข้อมูลบนคลาวด์
+⚡ เร็วขึ้นและเสถียรขึ้น
+</th>
 ```
 
 ---
 
-## 6. 🇸🇦 العربية (AR)
+## 🇹🇷 Türkçe (tr)
 
-### 🤖 Google Play Store (Max 500 Chars)
+### Google Play — sürüm notları (439/500)
 ```text
-ما الجديد:
-⚔️ حلبة الأنمي: واجه بين أنمياتك المفضلة في نظام التصفيات وتوّج بطلك!
-🌐 نبض المجتمع: تابع ما يشاهده الآخرون في الوقت الفعلي.
-✍️ مراجعاتي: إدارة وتصفية تعليقاتك وتقييماتك بسهولة من بروفايلك.
-📅 تقويم مبسط: تنقل غير محدود عبر الأيام لمتابعة الأنمي.
-🌍 كشف تلقائي للغة: يتعرف التطبيق تلقائيًا على لغة جهازك.
-⚡ تحسين الأداء وإصلاح المشاكل والخطوط.
+1.0.16'daki yenilikler
+👀 Misafir modu: Hesap açmadan animeleri keşfet, kaydetmek istediğinde giriş yap.
+🔔 Favori animelerinin yeni bölümleri için hatırlatıcılar.
+📥 Listeni MyAnimeList veya AniList'ten içe aktar.
+🏆 Artık incelemeler, Arena ve listelerden de XP kazan.
+🌍 Yeni diller: Fransızca, İtalyanca, Lehçe, Vietnamca, Tayca.
+⭐ Premium: İstatistiklerim, temalar ve çerçeveler, Senin İçin+, bulut yedekleme.
+⚡ Daha hızlı ve daha kararlı.
 ```
 
-### 🍎 Apple App Store
+### App Store — What's New (1026/4000)
 ```text
-ما الجديد في هذا الاصدار:
+MyAnimeDex 1.0.16'daki yenilikler
 
-⚔️ حلبة الأنمي (نظام البطولات)
-- خوضوا مواجهات حماسية بين أنمياتكم المفضلة في 13 فئة مختلفة نظام التصفيات!
-- توّج بطلك المفضل، واطلع على قائمة المتصدرين والأنميات الأكثر فوزاً لدى المجتمع.
+👀 MİSAFİR MODU
+- Hesap açmadan animeleri, yayın takvimini ve Arena'yı keşfet. Yalnızca bir şey kaydetmek istediğinde giriş yap.
 
-🌐 نبض المجتمع (COMMUNITY PULSE)
-- بث مباشر وتواصلي لمتابعة ما يشاهده الأصدقاء والآخرون من أنميات ومواسم جديدة لحظة بلحظة.
+🔔 BÖLÜM HATIRLATICILARI
+- Favori animelerinin yeni bölümleri yayınlandığında bildirim al.
 
-✍️ وحدة "مراجعاتي"
-- إمكانية عرض جميع مراجعاتك وتقييماتك المدونة على الأنميات وتعديلها أو حذفها بكل سهولة من صفحتك الشخصية.
+📥 LİSTENİ İÇE AKTAR
+- Listeni durumları, ilerlemen ve puanlarınla birlikte MyAnimeList veya AniList'ten taşı.
 
-📅 تقويم عرض الأنمي المطور
-- تصفح مرن وغير محدود لأيام الأسبوع لمتابعة المواعيد الدقيقة لتنسيق وعرض الحلقات الجديدة.
+🏆 YENİ XP SİSTEMİ
+- Tamamladığın animeler, incelemeler, Arena ve listelerinle XP kazan, rütbeleri tırman.
 
-🌍 التعرف الذكي على اللغة
-- ضبط تلقائي للغة التطبيق بناءً على إعدادات جهازك مع تجربة تعليمية مخصصة ومبسطة للبدء.
+🌍 5 YENİ DİL
+- Fransızca, İtalyanca, Lehçe, Vietnamca ve Tayca.
 
-🚀 تحسينات الأداء والأمان
-- رفع استقرار الاتصال بالخوادم، وتسريع تحميل الصفحات مع معالجة الأخطاء السابقة في واجهة المستخدم.
+⭐ PREMIUM'DA YENİ
+- İstatistiklerim: tür ve stüdyo dağılımın, favori stüdyon ve puanlarının toplulukla karşılaştırması.
+- Görünüm: temalar, avatar çerçeveleri, profil bannerları ve Favori 10'um vitrini.
+- Senin İçin+: tüm listene göre öneriler ve sezon seçkileri.
+- Liste kayıtlarına etiket ve not ekleme.
+- Hatırlatıcı ayarları, Haftam görünümü, telefon takvimine ekleme, bulut yedekleme ve dışa aktarma.
+
+⚡ İYİLEŞTİRMELER
+- Daha hızlı yükleme, daha güvenilir takvim ve birçok hata düzeltmesi.
 ```
 
----
-
-## 7. 🇪🇸 Español (ES)
-
-### 🤖 Google Play Store (Max 500 Chars)
+### App Store — Promotional Text (162/170)
 ```text
-Novedades:
-⚔️ Anime Arena: ¡Haz competir a tus animes favoritos en torneos y corona a tu campeón!
-🌐 Community Pulse: Sigue en tiempo real lo que la comunidad está viendo.
-✍️ Mis Reseñas: Gestiona y elimina tus reseñas de anime directamente desde tu perfil.
-📅 Calendario Mejorado: Navegación de días ilimitada y mejor programación de estrenos.
-🌍 Detección Automática de Idioma: Se adapta al idioma de tu dispositivo.
-⚡ Rendimiento y Correcciones: Mayor velocidad y fluidez.
-```
-
-### 🍎 Apple App Store
-```text
-Novedades de esta versión:
-
-⚔️ ANIME ARENA (MODO TORNEO)
-- ¡Enfrenta a animes legendarios en llaves de eliminación directa a través de 13 categorías!
-- Corona a tu campeón definitivo, consulta el historial de duelos y explora los favoritos de la comunidad.
-
-🌐 ACTIVIDAD DE LA COMUNIDAD (COMMUNITY PULSE)
-- Feed de actividad en vivo para descubrir en tiempo real qué animes está viendo y completando la comunidad.
-
-✍️ MÓDULO DE MIS RESEÑAS
-- Administra todas tus opiniones y calificaciones publicadas; edítalas o elimínalas fácilmente desde tu perfil.
-
-📅 CALENDARIO DE ESTRENOS SIN LÍMITES
-- Desplázate fluidamente por los días para seguir las fechas exactas de emisión de nuevos episodios.
-
-🌍 DETECCIÓN INTELIGENTE DE IDIOMA
-- Configuración automática según el idioma de tu sistema y guía interactiva de inicio mejorada.
-
-🚀 RENDIMIENTO Y ESTABILIDAD
-- Mayor estabilidad en conexiones API, optimización de velocidad de carga y corrección de errores visuales.
+Hesap açmadan animeleri keşfet, yeni bölüm hatırlatıcıları al, listeni MyAnimeList veya AniList'ten aktar. Premium'da yeni: istatistikler, temalar ve Senin İçin+!
 ```
 
 ---
 
-## 8. 🇧🇷 Português (PT)
+## 🇬🇧 English (en)
 
-### 🤖 Google Play Store (Max 500 Chars)
+### Google Play — sürüm notları (401/500)
 ```text
-Novidades:
-⚔️ Anime Arena: Enfrente seus animes favoritos em torneios e coroe seu campeão!
-🌐 Community Pulse: Acompanhe em tempo real o que a comunidade está assistindo.
-✍️ Minhas Avaliações: Gerencie e exclua suas avaliações direto do seu perfil.
-📅 Calendário Aprimorado: Navegação ilimitada de dias e melhor programação de episódios.
-🌍 Detecção Automática de Idioma: Ajusta-se ao idioma do dispositivo.
-⚡ Desempenho e Correções: Maior rapidez e estabilidade.
+What's new in 1.0.16
+👀 Guest mode: explore anime without an account and sign in only when you want to save.
+🔔 Reminders for new episodes of your favorite anime.
+📥 Import your list from MyAnimeList or AniList.
+🏆 Earn XP from reviews, Arena and lists too.
+🌍 New languages: French, Italian, Polish, Vietnamese, Thai.
+⭐ Premium: My Stats, themes & frames, For You+, cloud backup.
+⚡ Faster and more stable.
 ```
 
-### 🍎 Apple App Store
+### App Store — What's New (999/4000)
 ```text
-Novidades desta versão:
+What's new in MyAnimeDex 1.0.16
 
-⚔️ ANIME ARENA (MODO TORNEIO)
-- Coloque animes lendários frente a frente em chaves de eliminação em 13 categorias!
-- Coroe seu grande campeão, veja o histórico de batalhas e descubra os favoritos da comunidade.
+👀 GUEST MODE
+- Explore anime, the airing calendar and Arena without creating an account. Sign in only when you want to save something.
 
-🌐 ATIVIDADE DA COMUNIDADE (COMMUNITY PULSE)
-- Feed ao vivo para acompanhar em tempo real quais animes outros fãs estão assistindo ou concluindo.
+🔔 EPISODE REMINDERS
+- Get notified when new episodes of your favorite anime air.
 
-✍️ MÓDULO MINHAS AVALIAÇÕES
-- Visualize, gerencie e exclua suas avaliações e comentários de animes diretamente no seu perfil.
+📥 IMPORT YOUR LIST
+- Bring your list over from MyAnimeList or AniList with statuses, progress and scores.
 
-📅 CALENDÁRIO DE LANÇAMENTOS ILIMITADO
-- Navegação fluida entre os dias da semana para acompanhar o lançamento exato de cada episódio.
+🏆 NEW XP SYSTEM
+- Earn XP from completed anime, reviews, Arena and lists, and climb the ranks.
 
-🌍 DETECÇÃO INTELIGENTE DE IDIOMA
-- Idioma configurado automaticamente com base no seu dispositivo e guia inicial aprimorado.
+🌍 5 NEW LANGUAGES
+- French, Italian, Polish, Vietnamese and Thai.
 
-🚀 DESEMPENHO E CORREÇÃO DE ERROS
-- Maior estabilidade na conexão com APIs, carregamento mais rápido e melhorias na interface.
+⭐ NEW IN PREMIUM
+- My Stats: genre and studio breakdown, your favorite studio and how your ratings compare with the community.
+- Appearance: themes, avatar frames, profile banners and a Top 10 showcase.
+- For You+: recommendations built from your whole list, plus season picks.
+- Tags and notes on your list entries.
+- Reminder settings, My Week view, add to phone calendar, cloud backup and export.
+
+⚡ IMPROVEMENTS
+- Faster loading, a more reliable calendar and many bug fixes.
 ```
 
----
-
-## 9. 🇮🇩 Bahasa Indonesia (ID)
-
-### 🤖 Google Play Store (Max 500 Chars)
+### App Store — Promotional Text (148/170)
 ```text
-Yang Baru:
-⚔️ Arena Anime: Diadakan turnamen anime favoritmu dan pilih juaramu!
-🌐 Aktivitas Komunitas: Pantau secara langsung anime yang sedang ditonton pengguna lain.
-✍️ Ulasan Saya: Kelola dan hapus ulasan anime milikmu langsung dari profil.
-📅 Kalender yang Ditingkatkan: Navigasi hari tanpa batas & jadwal rilis episode baru.
-🌍 Deteksi Bahasa Otomatis: Disesuaikan otomatis dengan bahasa perangkatmu.
-⚡ Peningkatan Performa: Loading lebih cepat & perbaikan bug.
-```
-
-### 🍎 Apple App Store
-```text
-Yang Baru di Versi Ini:
-
-⚔️ ARENA ANIME (MODUS TURNAMEN)
-- Tarungkan anime kesayanganmu dalam sistem gugur di 13 kategori berbeda!
-- Tentukan juaramu, lihat riwayat turnamen, serta jelajahi anime terfavorit pilihan komunitas.
-
-🌐 AKTIVITAS KOMUNITAS (COMMUNITY PULSE)
-- Feed aktivitas langsung untuk melihat anime apa yang sedang ditonton dan diselesaikan oleh penggemar lain.
-
-✍️ MODUL ULASAN SAYA
-- Lihat, kelola, dan hapus ulasan anime yang telah kamu tulis langsung dari halaman profil.
-
-📅 KALENDER RILIS TANPA BATAS
-- Geser hari dengan mulus untuk mengetahui jadwal tayang episode terbaru secara akurat.
-
-🌍 DETEKSI BAHASA OTOMATIS
-- Pengaturan bahasa otomatis sesuai preferensi perangkat serta panduan awal interaktif yang diperbarui.
-
-🚀 PERFORMA & STABILITAS
-- Peningkatan stabilitas API, kecepatan pemuatan halaman lebih cepat, dan perbaikan tampilan UI.
+Explore anime without an account, get new-episode reminders and import your MyAnimeList or AniList list. New in Premium: stats, themes and For You+!
 ```
 
 ---
 
-## 10. 🇮🇳 हिन्दी (HI)
+## 🇯🇵 日本語 (ja)
 
-### 🤖 Google Play Store (Max 500 Chars)
+### Google Play — sürüm notları (222/500)
 ```text
-नया क्या है:
-⚔️ एनीमे एरिना: टूर्नामेंट में अपने पसंदीदा एनीमे का मुकाबला कराएं और चैंपियन चुनें!
-🌐 कम्युनिटी पल्स: अन्य एनीमे प्रशंसकों की गतिविधियों को लाइव देखें।
-✍️ मेरी समीक्षाएं: अपनी समीक्षाओं को प्रोफ़ाइल से आसानी से प्रबंधित और हटाएं।
-📅 उन्नत कैलेंडर: असीमित दिन नेविगेशन और एपिसोड रिलीज़ शेड्यूल।
-🌍 स्वचालित भाषा पहचान: आपके डिवाइस की भाषा के अनुसार स्वचालित रूप से सेट होता है।
-⚡ प्रदर्शन सुधार: तेज़ लोड टाइम और बग फ़िक्स।
+1.0.16の新機能
+👀 ゲストモード：アカウントなしでアニメを探索。保存したい時だけログイン。
+🔔 お気に入りアニメの新エピソードをお知らせ。
+📥 MyAnimeListまたはAniListからリストをインポート。
+🏆 レビュー、アリーナ、リストでもXPを獲得。
+🌍 新言語：フランス語、イタリア語、ポーランド語、ベトナム語、タイ語。
+⭐ プレミアム：マイ統計、テーマとフレーム、あなた向け+、クラウドバックアップ。
+⚡ より速く、より安定。
 ```
 
-### 🍎 Apple App Store
+### App Store — What's New (527/4000)
 ```text
-इस संस्करण में नया क्या है:
+MyAnimeDex 1.0.16の新機能
 
-⚔️ एनीमे एरिना (टूर्नामेंट मोड)
-- 13 श्रेणियों में नॉकआउट टूर्नामेंट के ज़रिए अपने पसंदीदा एनीमे का मुकाबला कराएं!
-- अपने चैंपियन को ताज पहनाएं, पिछले मुकाबलों का इतिहास और कम्युनिटी के पसंदीदा एनीमे देखें।
+👀 ゲストモード
+- アカウントを作らずに、アニメ、放送カレンダー、アリーナを楽しめます。保存したい時だけログインしてください。
 
-🌐 कम्युनिटी पल्स (COMMUNITY PULSE)
-- लाइव एक्टिविटी फ़ीड: देखें कि अन्य एनीमे प्रशंसक इस समय कौन से एनीमे देख रहे हैं या पूरे कर रहे हैं।
+🔔 エピソードリマインダー
+- お気に入りアニメの新エピソードが配信されたらお知らせします。
 
-✍️ मेरी समीक्षाएं (MY REVIEWS)
-- अपने प्रोफ़ाइल से अपने द्वारा लिखी गई सभी समीक्षाओं को देखें, प्रबंधित करें या हटाएं।
+📥 リストのインポート
+- MyAnimeListやAniListから、ステータス・進捗・スコアごとリストを移行できます。
 
-📅 अسيमित रिलीज़ कैलेंडर
-- नए एपिसोड के प्रसारण की सटीक तारीखें जानने के लिए दिनों के बीच आसानी से नेविगेट करें।
+🏆 新しいXPシステム
+- 視聴完了、レビュー、アリーナ、リストでXPを獲得してランクアップ。
 
-🌍 स्मार्ट भाषा पहचान
-- आपके डिवाइस की भाषा के आधार पर स्वचालित सेटिंग्स और नया इंटरैक्टिव गाइडेड टूर।
+🌍 5つの新言語
+- フランス語、イタリア語、ポーランド語、ベトナム語、タイ語。
 
-🚀 प्रदर्शन और स्थिरता सुधार
-- बेहतर API स्थिरता, तेज़ पेज लोडिंग और दृश्य बग फ़िक्स।
+⭐ プレミアムの新機能
+- マイ統計：ジャンルとスタジオの内訳、お気に入りスタジオ、コミュニティとの評価比較。
+- 外観：テーマ、アバターフレーム、プロフィールバナー、トップ10ショーケース。
+- あなた向け+：リスト全体から作るおすすめと今期のピックアップ。
+- リスト項目へのタグとメモ。
+- リマインダー設定、マイ週間ビュー、スマホのカレンダーへの追加、クラウドバックアップとエクスポート。
+
+⚡ 改善
+- 読み込みの高速化、より安定したカレンダー、多数のバグ修正。
+```
+
+### App Store — Promotional Text (82/170)
+```text
+アカウントなしでアニメを探索、新エピソードのお知らせ、MyAnimeList・AniListからのインポートに対応！プレミアムには統計、テーマ、あなた向け+が登場。
 ```
 
 ---
 
-# 📣 App Store Promotional Texts (Tanıtım Metinleri)
-*(App Store Connect "Promotional Text" alanı için - Maksimum 170 Karakter)*
+## 🇷🇺 Русский (ru)
 
-### 🇹🇷 Türkçe (TR)
+### Google Play — sürüm notları (395/500)
 ```text
-Anime Arena'da efsaneleri kapıştır, şampiyonunu taçlandır! Topluluk Akışı, canlı takvim ve binlerce anime keşfi MyAnimeDex'te seni bekliyor.
+Что нового в 1.0.16
+👀 Гостевой режим: смотрите аниме без аккаунта и входите, только чтобы сохранить.
+🔔 Напоминания о новых сериях избранных аниме.
+📥 Импорт списка из MyAnimeList или AniList.
+🏆 XP теперь и за отзывы, Арену и списки.
+🌍 Новые языки: французский, итальянский, польский, вьетнамский, тайский.
+⭐ Premium: Моя статистика, темы и рамки, Для вас+, облачные копии.
+⚡ Быстрее и стабильнее.
 ```
 
-### 🇬🇧 English (EN)
+### App Store — What's New (1005/4000)
 ```text
-Crown your anime champion in the new Anime Arena! Follow live community updates, release calendars, and explore thousands of titles on MyAnimeDex.
+Что нового в MyAnimeDex 1.0.16
+
+👀 ГОСТЕВОЙ РЕЖИМ
+- Изучайте аниме, календарь выхода серий и Арену без регистрации. Входите, только когда хотите что-то сохранить.
+
+🔔 НАПОМИНАНИЯ О СЕРИЯХ
+- Получайте уведомления о выходе новых серий избранных аниме.
+
+📥 ИМПОРТ СПИСКА
+- Перенесите свой список из MyAnimeList или AniList вместе со статусами, прогрессом и оценками.
+
+🏆 НОВАЯ СИСТЕМА XP
+- Получайте XP за просмотренные аниме, отзывы, Арену и списки и повышайте ранг.
+
+🌍 5 НОВЫХ ЯЗЫКОВ
+- Французский, итальянский, польский, вьетнамский и тайский.
+
+⭐ НОВОЕ В PREMIUM
+- Моя статистика: жанры и студии, любимая студия и сравнение ваших оценок с сообществом.
+- Оформление: темы, рамки аватара, баннеры профиля и витрина Топ-10.
+- Для вас+: рекомендации на основе всего списка и подборка сезона.
+- Теги и заметки к записям в списке.
+- Настройки напоминаний, вид «Моя неделя», добавление в календарь телефона, облачные копии и экспорт.
+
+⚡ УЛУЧШЕНИЯ
+- Более быстрая загрузка, надёжный календарь и множество исправлений.
 ```
 
-### 🇯🇵 日本語 (JA)
+### App Store — Promotional Text (161/170)
 ```text
-新登場のアニメアリーナで最強のチャンピオンを決めよう！ライブアクティビティ、配信カレンダー、何千もの作品がMyAnimeDexに集結。
+Смотрите аниме без аккаунта, получайте напоминания о новых сериях и импортируйте список из MyAnimeList или AniList. Новое в Premium: статистика, темы и Для вас+!
 ```
 
-### 🇷🇺 Русский (RU)
+---
+
+## 🇩🇪 Deutsch (de)
+
+### Google Play — sürüm notları (416/500)
 ```text
-Выбирайте своего чемпиона на Аниме Арене! Следите за пульсом сообщества, расписанием серий и тысячами тайтлов в MyAnimeDex.
+Neu in 1.0.16
+👀 Gastmodus: Anime ohne Konto entdecken, nur zum Speichern anmelden.
+🔔 Erinnerungen an neue Folgen deiner Lieblingsanime.
+📥 Liste von MyAnimeList oder AniList importieren.
+🏆 XP jetzt auch für Rezensionen, Arena und Listen.
+🌍 Neue Sprachen: Französisch, Italienisch, Polnisch, Vietnamesisch, Thailändisch.
+⭐ Premium: Meine Statistiken, Themes & Rahmen, Für dich+, Cloud-Backup.
+⚡ Schneller und stabiler.
 ```
 
-### 🇩🇪 Deutsch (DE)
+### App Store — What's New (1105/4000)
 ```text
-Kröne deinen Champion in der neuen Anime Arena! Verfolge den Community-Puls, Episoden-Kalender und entdecke tausende Serien auf MyAnimeDex.
+Neu in MyAnimeDex 1.0.16
+
+👀 GASTMODUS
+- Entdecke Anime, den Sendekalender und die Arena ohne Konto. Melde dich nur an, wenn du etwas speichern möchtest.
+
+🔔 FOLGEN-ERINNERUNGEN
+- Lass dich benachrichtigen, sobald neue Folgen deiner Lieblingsanime erscheinen.
+
+📥 LISTE IMPORTIEREN
+- Übernimm deine Liste von MyAnimeList oder AniList mit Status, Fortschritt und Bewertungen.
+
+🏆 NEUES XP-SYSTEM
+- Sammle XP für abgeschlossene Anime, Rezensionen, die Arena und Listen und steige im Rang auf.
+
+🌍 5 NEUE SPRACHEN
+- Französisch, Italienisch, Polnisch, Vietnamesisch und Thailändisch.
+
+⭐ NEU IN PREMIUM
+- Meine Statistiken: Genres und Studios, dein Lieblingsstudio und deine Bewertungen im Vergleich zur Community.
+- Darstellung: Themes, Avatar-Rahmen, Profilbanner und eine Top-10-Vitrine.
+- Für dich+: Empfehlungen aus deiner ganzen Liste und Highlights der Saison.
+- Tags und Notizen für deine Listeneinträge.
+- Erinnerungseinstellungen, Ansicht „Meine Woche“, Eintrag in den Handykalender, Cloud-Backup und Export.
+
+⚡ VERBESSERUNGEN
+- Schnelleres Laden, ein zuverlässigerer Kalender und viele Fehlerbehebungen.
 ```
 
-### 🇸🇦 العربية (AR)
+### App Store — Promotional Text (164/170)
 ```text
-توج بطلك المفضل في حلبة الأنمي الجديدة! تابع نبض المجتمع، تقويم عرض الحلقات، واكتشف آلاف الأنميات على MyAnimeDex.
+Entdecke Anime ohne Konto, erhalte Erinnerungen an neue Folgen und importiere deine MyAnimeList- oder AniList-Liste. Neu in Premium: Statistiken, Themes, Für dich+!
 ```
 
-### 🇪🇸 Español (ES)
+---
+
+## 🇸🇦 العربية (ar)
+
+### Google Play — sürüm notları (390/500)
 ```text
-¡Corona a tu campeón en la nueva Anime Arena! Sigue la actividad de la comunidad, el calendario de estrenos y explora miles de animes en MyAnimeDex.
+الجديد في 1.0.16
+👀 وضع الضيف: استكشف الأنمي بدون حساب، وسجّل الدخول فقط عندما تريد الحفظ.
+🔔 تذكيرات بالحلقات الجديدة لأنمياتك المفضلة.
+📥 استيراد قائمتك من MyAnimeList أو AniList.
+🏆 اكسب XP من المراجعات والحلبة والقوائم أيضًا.
+🌍 لغات جديدة: الفرنسية والإيطالية والبولندية والفيتنامية والتايلاندية.
+⭐ بريميوم: إحصائياتي، السمات والإطارات، لك+، النسخ الاحتياطي السحابي.
+⚡ أسرع وأكثر استقرارًا.
 ```
 
-### 🇧🇷 Português (PT)
+### App Store — What's New (905/4000)
 ```text
-Coroe seu campeão na nova Anime Arena! Acompanhe a atividade da comunidade, o calendário de lançamentos e explore milhares de animes no MyAnimeDex.
+الجديد في MyAnimeDex 1.0.16
+
+👀 وضع الضيف
+- استكشف الأنمي وتقويم العرض والحلبة دون إنشاء حساب. سجّل الدخول فقط عندما تريد حفظ شيء.
+
+🔔 تذكيرات الحلقات
+- احصل على إشعار عند صدور حلقات جديدة من أنمياتك المفضلة.
+
+📥 استيراد قائمتك
+- انقل قائمتك من MyAnimeList أو AniList مع الحالات والتقدم والتقييمات.
+
+🏆 نظام XP جديد
+- اكسب XP من الأنميات المكتملة والمراجعات والحلبة والقوائم، وارتقِ في الرتب.
+
+🌍 5 لغات جديدة
+- الفرنسية والإيطالية والبولندية والفيتنامية والتايلاندية.
+
+⭐ الجديد في بريميوم
+- إحصائياتي: توزيع الأنواع والاستوديوهات، استوديوك المفضل، ومقارنة تقييماتك بتقييمات المجتمع.
+- المظهر: سمات، إطارات للصورة الرمزية، لافتات للملف الشخصي، وواجهة لأفضل 10.
+- لك+: توصيات مبنية على قائمتك كاملة واختيارات الموسم.
+- وسوم وملاحظات لعناصر قائمتك.
+- إعدادات التذكير، عرض "أسبوعي"، الإضافة إلى تقويم الهاتف، النسخ الاحتياطي السحابي والتصدير.
+
+⚡ تحسينات
+- تحميل أسرع، تقويم أكثر موثوقية، وإصلاح العديد من الأخطاء.
 ```
 
-### 🇮🇩 Bahasa Indonesia (ID)
+### App Store — Promotional Text (137/170)
 ```text
-Pilih juaramu di Arena Anime baru! Pantau aktivitas komunitas, kalender rilis episode, dan jelajahi ribuan anime di MyAnimeDex.
+استكشف الأنمي بدون حساب، واحصل على تذكيرات بالحلقات الجديدة، واستورد قائمتك من MyAnimeList أو AniList. جديد بريميوم: إحصائيات وسمات ولك+!
 ```
 
-### 🇮🇳 हिन्दी (HI)
+---
+
+## 🇪🇸 Español (es)
+
+### Google Play — sürüm notları (417/500)
 ```text
-नए एनीमे एरिना में अपने चैंपियन को चुनें! कम्युनिटी पल्स, लाइव रिलीज़ कैलेंडर और हज़ारों एनीमे खोजें MyAnimeDex पर।
+Novedades en 1.0.16
+👀 Modo invitado: explora anime sin cuenta e inicia sesión solo para guardar.
+🔔 Recordatorios de nuevos episodios de tus anime favoritos.
+📥 Importa tu lista desde MyAnimeList o AniList.
+🏆 Gana XP también con reseñas, Arena y listas.
+🌍 Nuevos idiomas: francés, italiano, polaco, vietnamita y tailandés.
+⭐ Premium: Mis estadísticas, temas y marcos, Para ti+, copia en la nube.
+⚡ Más rápido y estable.
 ```
 
+### App Store — What's New (1084/4000)
+```text
+Novedades en MyAnimeDex 1.0.16
+
+👀 MODO INVITADO
+- Explora anime, el calendario de emisiones y la Arena sin crear una cuenta. Inicia sesión solo cuando quieras guardar algo.
+
+🔔 RECORDATORIOS DE EPISODIOS
+- Recibe un aviso cuando se estrenen nuevos episodios de tus anime favoritos.
+
+📥 IMPORTA TU LISTA
+- Trae tu lista desde MyAnimeList o AniList con estados, progreso y puntuaciones.
+
+🏆 NUEVO SISTEMA DE XP
+- Gana XP con anime completados, reseñas, la Arena y tus listas, y sube de rango.
+
+🌍 5 IDIOMAS NUEVOS
+- Francés, italiano, polaco, vietnamita y tailandés.
+
+⭐ NOVEDADES EN PREMIUM
+- Mis estadísticas: géneros y estudios, tu estudio favorito y cómo se comparan tus notas con las de la comunidad.
+- Apariencia: temas, marcos de avatar, banners de perfil y un escaparate Top 10.
+- Para ti+: recomendaciones a partir de toda tu lista y selección de temporada.
+- Etiquetas y notas en tus entradas.
+- Ajustes de recordatorios, vista Mi semana, añadir al calendario del móvil, copia en la nube y exportación.
+
+⚡ MEJORAS
+- Carga más rápida, un calendario más fiable y muchas correcciones.
+```
+
+### App Store — Promotional Text (161/170)
+```text
+Explora anime sin cuenta, recibe recordatorios de nuevos episodios e importa tu lista de MyAnimeList o AniList. Nuevo en Premium: estadísticas, temas y Para ti+.
+```
+
+---
+
+## 🇧🇷 Português (pt)
+
+### Google Play — sürüm notları (414/500)
+```text
+Novidades na 1.0.16
+👀 Modo convidado: explore animes sem conta e entre só para salvar.
+🔔 Lembretes de novos episódios dos seus animes favoritos.
+📥 Importe sua lista do MyAnimeList ou AniList.
+🏆 Ganhe XP também com avaliações, Arena e listas.
+🌍 Novos idiomas: francês, italiano, polonês, vietnamita e tailandês.
+⭐ Premium: Minhas estatísticas, temas e molduras, Para você+, backup na nuvem.
+⚡ Mais rápido e estável.
+```
+
+### App Store — What's New (1049/4000)
+```text
+Novidades no MyAnimeDex 1.0.16
+
+👀 MODO CONVIDADO
+- Explore animes, o calendário de lançamentos e a Arena sem criar conta. Entre só quando quiser salvar algo.
+
+🔔 LEMBRETES DE EPISÓDIOS
+- Receba um aviso quando sair episódio novo dos seus animes favoritos.
+
+📥 IMPORTE SUA LISTA
+- Traga sua lista do MyAnimeList ou AniList com status, progresso e notas.
+
+🏆 NOVO SISTEMA DE XP
+- Ganhe XP com animes concluídos, avaliações, Arena e listas, e suba de rank.
+
+🌍 5 NOVOS IDIOMAS
+- Francês, italiano, polonês, vietnamita e tailandês.
+
+⭐ NOVIDADES NO PREMIUM
+- Minhas estatísticas: gêneros e estúdios, estúdio favorito e suas notas comparadas às da comunidade.
+- Aparência: temas, molduras de avatar, banners de perfil e uma vitrine Top 10.
+- Para você+: recomendações com base na sua lista inteira e destaques da temporada.
+- Tags e notas nos itens da sua lista.
+- Ajustes de lembretes, visão Minha semana, adicionar ao calendário do celular, backup na nuvem e exportação.
+
+⚡ MELHORIAS
+- Carregamento mais rápido, calendário mais confiável e várias correções.
+```
+
+### App Store — Promotional Text (159/170)
+```text
+Explore animes sem conta, receba lembretes de novos episódios e importe sua lista do MyAnimeList ou AniList. Novo no Premium: estatísticas, temas e Para você+!
+```
+
+---
+
+## 🇮🇩 Bahasa Indonesia (id)
+
+### Google Play — sürüm notları (395/500)
+```text
+Yang baru di 1.0.16
+👀 Mode tamu: jelajahi anime tanpa akun, masuk hanya saat ingin menyimpan.
+🔔 Pengingat episode baru dari anime favoritmu.
+📥 Impor daftarmu dari MyAnimeList atau AniList.
+🏆 Dapatkan XP juga dari ulasan, Arena, dan daftar.
+🌍 Bahasa baru: Prancis, Italia, Polandia, Vietnam, Thailand.
+⭐ Premium: Statistik Saya, tema & bingkai, Untukmu+, cadangan cloud.
+⚡ Lebih cepat dan stabil.
+```
+
+### App Store — What's New (1017/4000)
+```text
+Yang baru di MyAnimeDex 1.0.16
+
+👀 MODE TAMU
+- Jelajahi anime, kalender tayang, dan Arena tanpa membuat akun. Masuk hanya saat kamu ingin menyimpan sesuatu.
+
+🔔 PENGINGAT EPISODE
+- Dapatkan notifikasi saat episode baru anime favoritmu tayang.
+
+📥 IMPOR DAFTARMU
+- Pindahkan daftarmu dari MyAnimeList atau AniList lengkap dengan status, progres, dan skor.
+
+🏆 SISTEM XP BARU
+- Kumpulkan XP dari anime yang selesai, ulasan, Arena, dan daftar, lalu naikkan peringkatmu.
+
+🌍 5 BAHASA BARU
+- Prancis, Italia, Polandia, Vietnam, dan Thailand.
+
+⭐ BARU DI PREMIUM
+- Statistik Saya: sebaran genre dan studio, studio favorit, serta perbandingan skormu dengan komunitas.
+- Tampilan: tema, bingkai avatar, banner profil, dan etalase Top 10.
+- Untukmu+: rekomendasi dari seluruh daftarmu dan pilihan musim ini.
+- Tag dan catatan untuk entri daftarmu.
+- Pengaturan pengingat, tampilan Mingguku, tambah ke kalender ponsel, cadangan cloud, dan ekspor.
+
+⚡ PENINGKATAN
+- Pemuatan lebih cepat, kalender lebih andal, dan banyak perbaikan bug.
+```
+
+### App Store — Promotional Text (157/170)
+```text
+Jelajahi anime tanpa akun, dapatkan pengingat episode baru, dan impor daftarmu dari MyAnimeList atau AniList. Baru di Premium: statistik, tema, dan Untukmu+!
+```
+
+---
+
+## 🇮🇳 हिन्दी (hi)
+
+### Google Play — sürüm notları (367/500)
+```text
+1.0.16 में नया
+👀 गेस्ट मोड: बिना अकाउंट के एनीमे देखें, सेव करना हो तभी साइन इन करें।
+🔔 पसंदीदा एनीमे के नए एपिसोड के रिमाइंडर।
+📥 MyAnimeList या AniList से अपनी लिस्ट इम्पोर्ट करें।
+🏆 अब रिव्यू, एरिना और लिस्ट से भी XP कमाएँ।
+🌍 नई भाषाएँ: फ़्रेंच, इतालवी, पोलिश, वियतनामी, थाई।
+⭐ प्रीमियम: मेरे आँकड़े, थीम और फ़्रेम, आपके लिए+, क्लाउड बैकअप।
+⚡ ज़्यादा तेज़ और स्थिर।
+```
+
+### App Store — What's New (883/4000)
+```text
+MyAnimeDex 1.0.16 में नया
+
+👀 गेस्ट मोड
+- बिना अकाउंट बनाए एनीमे, रिलीज़ कैलेंडर और एरिना देखें। कुछ सेव करना हो तभी साइन इन करें।
+
+🔔 एपिसोड रिमाइंडर
+- पसंदीदा एनीमे का नया एपिसोड आते ही सूचना पाएँ।
+
+📥 अपनी लिस्ट इम्पोर्ट करें
+- MyAnimeList या AniList से अपनी लिस्ट स्टेटस, प्रगति और स्कोर के साथ लाएँ।
+
+🏆 नया XP सिस्टम
+- पूरे किए गए एनीमे, रिव्यू, एरिना और लिस्ट से XP कमाएँ और रैंक बढ़ाएँ।
+
+🌍 5 नई भाषाएँ
+- फ़्रेंच, इतालवी, पोलिश, वियतनामी और थाई।
+
+⭐ प्रीमियम में नया
+- मेरे आँकड़े: जॉनर और स्टूडियो का ब्योरा, पसंदीदा स्टूडियो और कम्युनिटी से आपकी रेटिंग की तुलना।
+- दिखावट: थीम, अवतार फ़्रेम, प्रोफ़ाइल बैनर और टॉप 10 शोकेस।
+- आपके लिए+: आपकी पूरी लिस्ट पर आधारित सुझाव और सीज़न की पसंद।
+- लिस्ट एंट्री के लिए टैग और नोट्स।
+- रिमाइंडर सेटिंग्स, मेरा हफ़्ता व्यू, फ़ोन कैलेंडर में जोड़ना, क्लाउड बैकअप और एक्सपोर्ट।
+
+⚡ सुधार
+- तेज़ लोडिंग, ज़्यादा भरोसेमंद कैलेंडर और कई बग फ़िक्स।
+```
+
+### App Store — Promotional Text (148/170)
+```text
+बिना अकाउंट के एनीमे देखें, नए एपिसोड के रिमाइंडर पाएँ और MyAnimeList या AniList से लिस्ट इम्पोर्ट करें। प्रीमियम में नया: आँकड़े, थीम और आपके लिए+!
+```
+
+---
+
+## 🇫🇷 Français (fr) — yeni dil
+
+### Google Play — sürüm notları (454/500)
+```text
+Nouveautés de la 1.0.16
+👀 Mode invité : explore les anime sans compte, connecte-toi seulement pour sauvegarder.
+🔔 Rappels des nouveaux épisodes de tes anime favoris.
+📥 Importe ta liste depuis MyAnimeList ou AniList.
+🏆 Gagne aussi de l'XP avec tes avis, l'Arena et tes listes.
+🌍 MyAnimeDex parle désormais français, italien, polonais, vietnamien et thaï !
+⭐ Premium : Mes stats, thèmes et cadres, Pour toi+, sauvegarde cloud.
+⚡ Plus rapide et plus stable.
+```
+
+### App Store — What's New (1115/4000)
+```text
+Nouveautés de MyAnimeDex 1.0.16
+
+👀 MODE INVITÉ
+- Explore les anime, le calendrier de diffusion et l'Arena sans créer de compte. Connecte-toi seulement quand tu veux sauvegarder quelque chose.
+
+🔔 RAPPELS D'ÉPISODES
+- Reçois une notification dès qu'un nouvel épisode de tes anime favoris est diffusé.
+
+📥 IMPORTE TA LISTE
+- Récupère ta liste MyAnimeList ou AniList avec statuts, progression et notes.
+
+🏆 NOUVEAU SYSTÈME D'XP
+- Gagne de l'XP avec les anime terminés, tes avis, l'Arena et tes listes, et monte en rang.
+
+🌍 5 NOUVELLES LANGUES
+- Français, italien, polonais, vietnamien et thaï.
+
+⭐ NOUVEAU DANS PREMIUM
+- Mes stats : genres et studios, studio préféré et comparaison de tes notes avec la communauté.
+- Apparence : thèmes, cadres d'avatar, bannières de profil et une vitrine Top 10.
+- Pour toi+ : recommandations basées sur toute ta liste et sélection de la saison.
+- Tags et notes sur les entrées de ta liste.
+- Réglages des rappels, vue Ma semaine, ajout au calendrier du téléphone, sauvegarde cloud et export.
+
+⚡ AMÉLIORATIONS
+- Chargement plus rapide, calendrier plus fiable et de nombreuses corrections.
+```
+
+### App Store — Promotional Text (164/170)
+```text
+Explore les anime sans compte, reçois des rappels de nouveaux épisodes et importe ta liste MyAnimeList ou AniList. Nouveau en Premium : stats, thèmes et Pour toi+ !
+```
+
+---
+
+## 🇮🇹 Italiano (it) — yeni dil
+
+### Google Play — sürüm notları (418/500)
+```text
+Novità della 1.0.16
+👀 Modalità ospite: esplora gli anime senza account e accedi solo per salvare.
+🔔 Promemoria per i nuovi episodi dei tuoi anime preferiti.
+📥 Importa la tua lista da MyAnimeList o AniList.
+🏆 Guadagna XP anche con recensioni, Arena e liste.
+🌍 Nuove lingue: italiano, francese, polacco, vietnamita e thailandese.
+⭐ Premium: Statistiche, temi e cornici, Per te+, backup nel cloud.
+⚡ Più veloce e stabile.
+```
+
+### App Store — What's New (1057/4000)
+```text
+Novità di MyAnimeDex 1.0.16
+
+👀 MODALITÀ OSPITE
+- Esplora anime, calendario delle uscite e Arena senza creare un account. Accedi solo quando vuoi salvare qualcosa.
+
+🔔 PROMEMORIA EPISODI
+- Ricevi una notifica quando escono nuovi episodi dei tuoi anime preferiti.
+
+📥 IMPORTA LA TUA LISTA
+- Porta la tua lista da MyAnimeList o AniList con stati, progressi e voti.
+
+🏆 NUOVO SISTEMA XP
+- Guadagna XP con gli anime completati, le recensioni, l'Arena e le liste, e sali di grado.
+
+🌍 5 NUOVE LINGUE
+- Italiano, francese, polacco, vietnamita e thailandese.
+
+⭐ NOVITÀ PREMIUM
+- Statistiche: generi e studi, studio preferito e confronto dei tuoi voti con la community.
+- Aspetto: temi, cornici avatar, banner del profilo e una vetrina Top 10.
+- Per te+: consigli basati su tutta la tua lista e selezione di stagione.
+- Tag e note per le voci della tua lista.
+- Impostazioni promemoria, vista La mia settimana, aggiunta al calendario del telefono, backup nel cloud ed esportazione.
+
+⚡ MIGLIORAMENTI
+- Caricamento più veloce, calendario più affidabile e tante correzioni.
+```
+
+### App Store — Promotional Text (162/170)
+```text
+Esplora gli anime senza account, ricevi promemoria dei nuovi episodi e importa la tua lista da MyAnimeList o AniList. Novità Premium: statistiche, temi e Per te+!
+```
+
+---
+
+## 🇵🇱 Polski (pl) — yeni dil
+
+### Google Play — sürüm notları (387/500)
+```text
+Nowości w 1.0.16
+👀 Tryb gościa: przeglądaj anime bez konta i zaloguj się tylko, by zapisać.
+🔔 Przypomnienia o nowych odcinkach ulubionych anime.
+📥 Import listy z MyAnimeList lub AniList.
+🏆 XP także za recenzje, Arenę i listy.
+🌍 Nowe języki: polski, francuski, włoski, wietnamski i tajski.
+⭐ Premium: Moje statystyki, motywy i ramki, Dla ciebie+, kopia w chmurze.
+⚡ Szybciej i stabilniej.
+```
+
+### App Store — What's New (1018/4000)
+```text
+Nowości w MyAnimeDex 1.0.16
+
+👀 TRYB GOŚCIA
+- Przeglądaj anime, kalendarz emisji i Arenę bez zakładania konta. Zaloguj się tylko wtedy, gdy chcesz coś zapisać.
+
+🔔 PRZYPOMNIENIA O ODCINKACH
+- Otrzymuj powiadomienie, gdy pojawi się nowy odcinek ulubionego anime.
+
+📥 IMPORT LISTY
+- Przenieś swoją listę z MyAnimeList lub AniList ze statusami, postępem i ocenami.
+
+🏆 NOWY SYSTEM XP
+- Zdobywaj XP za ukończone anime, recenzje, Arenę i listy, i awansuj na wyższe rangi.
+
+🌍 5 NOWYCH JĘZYKÓW
+- Polski, francuski, włoski, wietnamski i tajski.
+
+⭐ NOWOŚCI W PREMIUM
+- Moje statystyki: gatunki i studia, ulubione studio oraz porównanie twoich ocen ze społecznością.
+- Wygląd: motywy, ramki awatara, banery profilu i gablota Top 10.
+- Dla ciebie+: rekomendacje na podstawie całej listy i wybór sezonu.
+- Tagi i notatki do pozycji na liście.
+- Ustawienia przypomnień, widok Mój tydzień, dodawanie do kalendarza w telefonie, kopia w chmurze i eksport.
+
+⚡ ULEPSZENIA
+- Szybsze ładowanie, bardziej niezawodny kalendarz i wiele poprawek.
+```
+
+### App Store — Promotional Text (165/170)
+```text
+Przeglądaj anime bez konta, dostawaj przypomnienia o nowych odcinkach i importuj listę z MyAnimeList lub AniList. Nowość w Premium: statystyki, motywy i Dla ciebie+!
+```
+
+---
+
+## 🇻🇳 Tiếng Việt (vi) — yeni dil
+
+### Google Play — sürüm notları (369/500)
+```text
+Có gì mới trong 1.0.16
+👀 Chế độ khách: khám phá anime không cần tài khoản, chỉ đăng nhập khi muốn lưu.
+🔔 Nhắc tập mới của anime yêu thích.
+📥 Nhập danh sách từ MyAnimeList hoặc AniList.
+🏆 Nhận XP từ đánh giá, Arena và danh sách.
+🌍 Ngôn ngữ mới: tiếng Việt, Pháp, Ý, Ba Lan và Thái.
+⭐ Premium: Thống kê, chủ đề và khung, For You+, sao lưu đám mây.
+⚡ Nhanh và ổn định hơn.
+```
+
+### App Store — What's New (963/4000)
+```text
+Có gì mới trong MyAnimeDex 1.0.16
+
+👀 CHẾ ĐỘ KHÁCH
+- Khám phá anime, lịch phát sóng và Arena mà không cần tạo tài khoản. Chỉ đăng nhập khi bạn muốn lưu lại.
+
+🔔 NHẮC TẬP MỚI
+- Nhận thông báo khi anime yêu thích của bạn ra tập mới.
+
+📥 NHẬP DANH SÁCH
+- Chuyển danh sách từ MyAnimeList hoặc AniList kèm trạng thái, tiến độ và điểm số.
+
+🏆 HỆ THỐNG XP MỚI
+- Nhận XP từ anime đã xem xong, đánh giá, Arena và danh sách để thăng hạng.
+
+🌍 5 NGÔN NGỮ MỚI
+- Tiếng Việt, tiếng Pháp, tiếng Ý, tiếng Ba Lan và tiếng Thái.
+
+⭐ MỚI TRONG PREMIUM
+- Thống kê: thể loại và studio, studio yêu thích và so sánh điểm của bạn với cộng đồng.
+- Giao diện: chủ đề, khung avatar, ảnh bìa hồ sơ và kệ Top 10.
+- For You+: gợi ý dựa trên toàn bộ danh sách và lựa chọn theo mùa.
+- Thẻ và ghi chú cho các mục trong danh sách.
+- Cài đặt nhắc nhở, chế độ xem Tuần của tôi, thêm vào lịch điện thoại, sao lưu đám mây và xuất dữ liệu.
+
+⚡ CẢI TIẾN
+- Tải nhanh hơn, lịch đáng tin cậy hơn và sửa nhiều lỗi.
+```
+
+### App Store — Promotional Text (149/170)
+```text
+Khám phá anime không cần tài khoản, nhận nhắc tập mới và nhập danh sách từ MyAnimeList hoặc AniList. Mới trong Premium: thống kê, chủ đề và For You+!
+```
+
+---
+
+## 🇹🇭 ไทย (th) — yeni dil
+
+### Google Play — sürüm notları (361/500)
+```text
+มีอะไรใหม่ใน 1.0.16
+👀 โหมดผู้เยี่ยมชม: สำรวจอนิเมะได้โดยไม่ต้องมีบัญชี เข้าสู่ระบบเมื่ออยากบันทึกเท่านั้น
+🔔 แจ้งเตือนตอนใหม่ของอนิเมะเรื่องโปรด
+📥 นำเข้ารายการจาก MyAnimeList หรือ AniList
+🏆 รับ XP จากรีวิว อารีน่า และรายการ
+🌍 ภาษาใหม่: ไทย ฝรั่งเศส อิตาลี โปแลนด์ และเวียดนาม
+⭐ Premium: สถิติของฉัน ธีมและกรอบ For You+ สำรองข้อมูลบนคลาวด์
+⚡ เร็วขึ้นและเสถียรขึ้น
+```
+
+### App Store — What's New (855/4000)
+```text
+มีอะไรใหม่ใน MyAnimeDex 1.0.16
+
+👀 โหมดผู้เยี่ยมชม
+- สำรวจอนิเมะ ปฏิทินออกอากาศ และอารีน่าได้โดยไม่ต้องสร้างบัญชี เข้าสู่ระบบเฉพาะเมื่ออยากบันทึกบางอย่าง
+
+🔔 แจ้งเตือนตอนใหม่
+- รับการแจ้งเตือนเมื่ออนิเมะเรื่องโปรดมีตอนใหม่
+
+📥 นำเข้ารายการ
+- ย้ายรายการจาก MyAnimeList หรือ AniList พร้อมสถานะ ความคืบหน้า และคะแนน
+
+🏆 ระบบ XP ใหม่
+- รับ XP จากอนิเมะที่ดูจบ รีวิว อารีน่า และรายการ แล้วเลื่อนแรงก์
+
+🌍 5 ภาษาใหม่
+- ไทย ฝรั่งเศส อิตาลี โปแลนด์ และเวียดนาม
+
+⭐ ใหม่ใน Premium
+- สถิติของฉัน: แนวและสตูดิโอ สตูดิโอที่ชอบ และเปรียบเทียบคะแนนของคุณกับชุมชน
+- การแสดงผล: ธีม กรอบอวาตาร์ แบนเนอร์โปรไฟล์ และตู้โชว์ Top 10
+- For You+: คำแนะนำจากรายการทั้งหมดของคุณและอนิเมะเด่นประจำซีซัน
+- แท็กและโน้ตสำหรับรายการ
+- ตั้งค่าการแจ้งเตือน มุมมองสัปดาห์ฉัน เพิ่มลงปฏิทินในโทรศัพท์ สำรองข้อมูลบนคลาวด์ และส่งออก
+
+⚡ การปรับปรุง
+- โหลดเร็วขึ้น ปฏิทินแม่นยำขึ้น และแก้ไขบั๊กมากมาย
+```
+
+### App Store — Promotional Text (135/170)
+```text
+สำรวจอนิเมะได้โดยไม่ต้องมีบัญชี รับแจ้งเตือนตอนใหม่ และนำเข้ารายการจาก MyAnimeList หรือ AniList ใหม่ใน Premium: สถิติ ธีม และ For You+!
+```
+
+---

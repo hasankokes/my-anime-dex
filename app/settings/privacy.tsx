@@ -6,6 +6,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 
+// Keep in sync with privacy.sections in lib/i18n.ts and web/privacy*.html
+const SECTIONS = ['collection', 'usage', 'thirdParty', 'ads', 'device', 'public', 'retention', 'children', 'rights', 'contact'] as const;
+
 export default function PrivacyScreen() {
     const router = useRouter();
     const { colors } = useTheme();
@@ -27,30 +30,14 @@ export default function PrivacyScreen() {
                     {t('privacy.intro')}
                 </Text>
 
-                <Text style={[styles.heading, { color: colors.text }]}>{t('privacy.sections.collection.title')}</Text>
-                <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    {t('privacy.sections.collection.content')}
-                </Text>
-
-                <Text style={[styles.heading, { color: colors.text }]}>{t('privacy.sections.usage.title')}</Text>
-                <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    {t('privacy.sections.usage.content')}
-                </Text>
-
-                <Text style={[styles.heading, { color: colors.text }]}>3. Third-Party Services</Text>
-                <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    We use third-party services like Jikan API for anime data. Please review their privacy policies as well.
-                </Text>
-
-                <Text style={[styles.heading, { color: colors.text }]}>{t('privacy.sections.security.title')}</Text>
-                <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    {t('privacy.sections.security.content')}
-                </Text>
-
-                <Text style={[styles.heading, { color: colors.text }]}>{t('privacy.sections.deletion.title')}</Text>
-                <Text style={[styles.paragraph, { color: colors.subtext }]}>
-                    {t('privacy.sections.deletion.content')}
-                </Text>
+                {SECTIONS.map((key) => (
+                    <React.Fragment key={key}>
+                        <Text style={[styles.heading, { color: colors.text }]}>{t(`privacy.sections.${key}.title`)}</Text>
+                        <Text style={[styles.paragraph, { color: colors.subtext }]}>
+                            {t(`privacy.sections.${key}.content`)}
+                        </Text>
+                    </React.Fragment>
+                ))}
 
                 <View style={{ height: 40 }} />
             </ScrollView>
