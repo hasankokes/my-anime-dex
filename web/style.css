@@ -645,6 +645,29 @@ footer {
     margin-bottom: 10px;
 }
 
+.privacy-section ul {
+    color: var(--text-secondary);
+    margin: 0 0 10px 20px;
+}
+
+.privacy-section li {
+    margin-bottom: 8px;
+}
+
+.privacy-section strong {
+    color: var(--text-primary);
+}
+
+.privacy-section a {
+    color: var(--accent-color);
+}
+
+.privacy-updated {
+    color: var(--text-secondary);
+    text-align: center;
+    margin: -24px 0 32px;
+}
+
 /* Mobile Menu Styles */
 .mobile-menu-toggle {
     display: none;

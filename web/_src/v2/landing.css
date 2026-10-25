@@ -27,21 +27,35 @@
   background: radial-gradient(closest-side, rgba(250, 204, 21, 0.28), rgba(250, 204, 21, 0.08) 45%, transparent 72%);
   pointer-events: none;
 }
+/* Device: titanium rim + black bezel around a real screen capture (shared by the hero and "New in") */
 .css-phone {
-  --w: 230px;
-  position: absolute; left: 50%; top: 50%; width: var(--w);
-  padding: 8px; border-radius: 40px; background: #050505;
-  box-shadow: inset 0 0 0 1px var(--border), 0 40px 80px rgba(0, 0, 0, 0.6);
-  transform: translate(-50%, -50%) perspective(1200px) rotateY(var(--ty, -12deg)) rotateX(var(--tx, 6deg));
-  transition: opacity 0.6s;
+  position: relative; aspect-ratio: 0.482; padding: 3px;
+  border-radius: 15.5% / 7.2%;
+  background: linear-gradient(135deg, #9a9aa1 0%, #3b3b40 12%, #1c1c1f 34%, #2b2b2f 62%, #a3a3aa 86%, #45454a 100%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7), 0 46px 90px -30px rgba(0, 0, 0, 0.85), 0 20px 40px -20px rgba(0, 0, 0, 0.6);
 }
-.css-screen { position: relative; aspect-ratio: 540 / 1174; border-radius: 32px; overflow: hidden; background: #0F0F11; }
+/* volume buttons (left) and side button (right) */
+.css-phone::before, .css-phone::after { content: ""; position: absolute; width: 3px; border-radius: 2px; }
+.css-phone::before {
+  left: -2px; top: 24%; height: 14%;
+  background: linear-gradient(to bottom, #6e6e74 0 43%, transparent 43% 57%, #6e6e74 57% 100%);
+}
+.css-phone::after { right: -2px; top: 28%; height: 10%; background: #6e6e74; }
+.css-bezel { height: 100%; padding: 2.6%; border-radius: 14.4% / 6.7%; background: #000; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05); }
+.css-screen { position: relative; height: 100%; border-radius: 12.4% / 5.7%; overflow: hidden; background: #0F0F11; }
 .css-screen img, .css-screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.gl-host { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s; }
-.gl-host canvas { display: block; width: 100%; height: 100%; cursor: grab; }
-.gl-host canvas:active { cursor: grabbing; }
-.hero-stage.gl-ready .gl-host { opacity: 1; }
-.hero-stage.gl-ready .css-phone { opacity: 0; }
+/* glass: a soft diagonal highlight over the screen */
+.css-screen::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.03) 24%, transparent 42%);
+}
+
+/* Hero placement: centred in the stage, sized by its height, tilting with the pointer */
+.hero-stage .css-phone {
+  position: absolute; left: 50%; top: 50%; height: 82%;
+  transform: translate(-50%, -50%) perspective(1400px) rotateY(var(--ty, -10deg)) rotateX(var(--tx, 4deg));
+  transition: transform 0.35s var(--ease-out);
+}
 
 .orbit { position: absolute; inset: 0; pointer-events: none; }
 .orbit > * {
@@ -56,12 +70,6 @@
 .orbit .o4 { right: 8%; top: 72%; display: flex; gap: 10px; align-items: center; width: auto; animation-delay: -4s; }
 .orbit .o5 { left: 22%; top: 82%; animation-delay: -5s; }
 @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
-.drag-hint {
-  position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
-  display: inline-flex; gap: 8px; align-items: center; white-space: nowrap;
-  color: var(--sub); font-size: 0.8125rem; opacity: 0; transition: opacity 0.6s;
-}
-.hero-stage.gl-ready .drag-hint { opacity: 1; }
 
 .dice.sm { width: 52px; height: 52px; }
 .dice.sm .cube i { border-radius: 11px; --p: radial-gradient(circle, #111827 0 4px, transparent 5px); }
@@ -187,7 +195,6 @@
 @media (min-width: 900px) {
   .hero { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }
   .hero-stage { height: min(78svh, 720px); margin: 0; }
-  .css-phone { --w: 300px; }
   .orbit .ui { font-size: 0.875rem; }
 }
 .has-3d .rig { left: 66%; }
@@ -298,7 +305,6 @@
 @media (min-width: 600px) and (max-width: 899px) and (orientation: landscape) {
   .hero { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: center; gap: 24px; padding-top: 16px; }
   .hero-stage { height: max(300px, calc(100svh - var(--nav-h) - 32px)); margin: 0; }
-  .css-phone { --w: 150px; }
   .orbit { display: none; }
 }
 
@@ -312,7 +318,6 @@
 @media (min-width: 1800px) {
   :root { --max: 1560px; }
   .hero-stage { height: min(80svh, 900px); }
-  .css-phone { --w: 360px; }
   .hero .lede, .step-body { font-size: 1.25rem; max-width: 38rem; }
   .has-3d .rig { --pw: clamp(260px, 38svh, 420px); }
   .has-3d .step-copy { width: min(540px, 34vw); }
@@ -320,8 +325,58 @@
   .orbit .ui { font-size: 1rem; }
 }
 
-/* The CSS phone (first paint, and the fallback) is sized by the stage height so it never spills */
-.css-phone { width: auto; height: 82%; aspect-ratio: 556 / 1190; }
-.css-screen { height: 100%; aspect-ratio: auto; }
 @media (max-width: 400px) { .orbit .o3, .orbit .o4 { display: none; } }
 .brand { min-height: 44px; }
+
+/* ---------- Hero rank card (the app's ranks: Senpai is violet) ---------- */
+.ui-rankpill {
+  display: inline-flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: 0.04em;
+  background: linear-gradient(90deg, #C4B5FD, #7C3AED); color: #fff; border-color: transparent;
+  box-shadow: 0 12px 30px -10px rgba(124, 58, 237, 0.6);
+}
+.ui-rankpill span { font-weight: 700; opacity: 0.85; letter-spacing: 0; }
+
+/* ---------- New in 1.0.16: one stage, three phones, the profile in front ---------- */
+.fresh { position: relative; max-width: var(--max); margin: 0 auto; padding: 104px var(--gutter) 24px; }
+.fresh-head { text-align: center; max-width: 760px; margin: 0 auto 64px; }
+.fresh-head .eyebrow { justify-content: center; }
+.fresh-head h2 { font-size: clamp(2rem, 5.6vw, 3.5rem); line-height: 1.08; margin-bottom: 16px; text-wrap: balance; }
+.fresh-head .lede { margin: 0 auto; text-wrap: pretty; }
+.fresh-stage { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto; column-gap: clamp(20px, 4vw, 64px); }
+.fresh-stage::before {
+  content: ""; position: absolute; left: 50%; top: 34%; width: min(760px, 90vw); aspect-ratio: 1.6; transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, rgba(250, 204, 21, 0.2), rgba(250, 204, 21, 0.05) 55%, transparent 75%);
+  pointer-events: none;
+}
+/* each item spans both rows of the stage, so the three captions share one top line */
+.fresh-item { position: relative; margin: 0; display: grid; grid-row: span 2; grid-template-rows: subgrid; justify-items: center; text-align: center; }
+.fresh-phone { align-self: center; }
+.fresh-phone { width: min(100%, 250px); }
+.f-look .fresh-phone { width: min(100%, 300px); z-index: 1; }
+.f-stats .fresh-phone { transform: perspective(1400px) rotateY(16deg) translateY(28px); }
+.f-week .fresh-phone { transform: perspective(1400px) rotateY(-16deg) translateY(28px); }
+.fresh-item figcaption { margin-top: 56px; max-width: 22rem; }
+.fresh-item h3 { font-size: 1.375rem; margin-bottom: 8px; }
+.fresh-item p { color: var(--sub); font-size: 0.9375rem; }
+.pill {
+  display: inline-block; margin-bottom: 10px; padding: 3px 12px; border-radius: 999px;
+  background: var(--primary); color: #111827; font-size: 0.75rem; font-weight: 700;
+}
+.pill-soft { background: rgba(250, 204, 21, 0.14); color: var(--primary); }
+
+/* Phones and small tablets: a swipeable row, the profile first */
+@media (max-width: 899px) {
+  .fresh { padding-top: 80px; }
+  .fresh-head { margin-bottom: 36px; }
+  .fresh-stage {
+    display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin: 0 calc(-1 * var(--gutter)); padding: 8px var(--gutter) 28px;
+  }
+  .fresh-stage::-webkit-scrollbar { display: none; }
+  .fresh-stage::before { top: 30%; }
+  .fresh-item { flex: 0 0 min(72vw, 300px); scroll-snap-align: center; grid-template-rows: auto auto; align-content: start; }
+  .f-look { order: -1; }
+  .fresh-phone, .f-look .fresh-phone { width: min(100%, 250px); }
+  .f-stats .fresh-phone, .f-week .fresh-phone { transform: none; }
+  .fresh-item figcaption { margin-top: 24px; }
+}

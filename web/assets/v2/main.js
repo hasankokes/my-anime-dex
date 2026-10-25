@@ -104,9 +104,8 @@
     if (!pointerQueued) { pointerQueued = true; requestAnimationFrame(onPointerFrame); }
   }, { passive: true });
 
-  // ---------- Hero: CSS phone first, WebGL phone when the visitor engages ----------
-  const heroStage = $('.hero-stage');
-  const heroScreen = $('.css-screen');
+  // ---------- Hero: the app loop plays in the CSS phone once the page has settled ----------
+  const heroScreen = $('.hero-stage .css-screen');
   const startCssVideo = () => {
     if (!allowVideo || !heroScreen || $('video', heroScreen)) return;
     const v = document.createElement('video');
@@ -117,30 +116,11 @@
     v.src = 'assets/clips/hero.mp4';
     play(v);
   };
-  let glRequested = false;
-  const startGL = () => {
-    if (glRequested) return;
-    glRequested = true;
-    import('./phone3d.js')
-      .then((m) => m.mountPhone($('.gl-host'), {
-        videoSrc: 'assets/clips/hero.mp4',
-        logoSrc: 'assets/img/icon-192.png',
-        pointer,
-        onReady: () => heroStage.classList.add('gl-ready'),
-      }))
-      .catch(() => startCssVideo());
-  };
-  const webgl = (() => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; } })();
-  if (heroStage) {
-    if (reduceMotion || lowEnd || !webgl) {
-      if (!reduceMotion) startCssVideo();
-    } else {
-      // never compete with first paint: the 3D phone loads on the first interaction,
-      // or after the page settles on desktops
-      const kick = () => { ['pointerdown', 'pointermove', 'touchstart', 'scroll', 'keydown'].forEach((t) => removeEventListener(t, kick)); startCssVideo(); setTimeout(startGL, 50); };
-      ['pointerdown', 'pointermove', 'touchstart', 'scroll', 'keydown'].forEach((t) => addEventListener(t, kick, { passive: true, once: true }));
-      if (finePointer) addEventListener('load', () => setTimeout(kick, 2500), { once: true });
-    }
+  if (heroScreen && allowVideo) {
+    // never compete with first paint: start on the first interaction or shortly after load
+    const kick = () => { ['pointerdown', 'pointermove', 'touchstart', 'scroll', 'keydown'].forEach((t) => removeEventListener(t, kick)); startCssVideo(); };
+    ['pointerdown', 'pointermove', 'touchstart', 'scroll', 'keydown'].forEach((t) => addEventListener(t, kick, { passive: true, once: true }));
+    addEventListener('load', () => setTimeout(kick, 1200), { once: true });
   }
 
   // ---------- Marquee (speeds up with scroll velocity) ----------
@@ -194,11 +174,12 @@
   };
   const centerOf = (el) => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
 
-  // ---------- XP (same curve as the app: 30 XP per level below 10, 50 after) ----------
+  // ---------- XP (demo pacing: 30 XP per level below 10, 50 after; ranks as in the app) ----------
   const RANKS = [
-    { name: 'BRONZE', color: '#CD7F32', min: 1 }, { name: 'SILVER', color: '#C0C0C0', min: 3 },
-    { name: 'GOLD', color: '#FFD700', min: 5 }, { name: 'PLATINUM', color: '#E5E4E2', min: 8 },
-    { name: 'DIAMOND', color: '#B9F2FF', min: 12 },
+    { name: 'ROOKIE', color: '#22C55E', min: 1 }, { name: 'VIEWER', color: '#0EA5E9', min: 3 },
+    { name: 'OTAKU', color: '#F97316', min: 6 }, { name: 'SENPAI', color: '#8B5CF6', min: 10 },
+    { name: 'SENSEI', color: '#EC4899', min: 15 }, { name: 'LEGEND', color: '#06B6D4', min: 25 },
+    { name: 'KAMI', color: '#EAB308', min: 40 },
   ];
   const levelOf = (xp) => (xp < 270 ? 1 + Math.floor(xp / 30) : 10 + Math.floor((xp - 270) / 50));
   const levelInfo = (xp) => {

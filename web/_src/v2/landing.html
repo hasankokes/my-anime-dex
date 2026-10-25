@@ -33,7 +33,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" media="print" onload="this.media='all'">
 <link rel="preload" as="image" href="assets/clips/home.webp" imagesrcset="assets/clips/home-300.webp 300w, assets/clips/home.webp 540w" imagesizes="(min-width: 900px) 300px, 230px" fetchpriority="high">
 <style>{{css}}</style>
-<script type="importmap">{"imports":{"three":"./assets/vendor/three/three.module.min.js","three/addons/":"./assets/vendor/three/addons/"}}</script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"MobileApplication","name":"MyAnimeDex","operatingSystem":"iOS, Android","applicationCategory":"EntertainmentApplication","inLanguage":"{{htmlLang}}","description":"{{description}}","image":"https://myanimedex.com/assets/img/og.jpg","url":"{{canonical}}","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":"{{featureList}}","installUrl":["https://apps.apple.com/app/id6758043488","https://play.google.com/store/apps/details?id=com.myanimedex.app"]}
 </script>
@@ -59,7 +58,7 @@
 </header>
 
 <main>
-  <!-- HERO: 3D phone (WebGL, lazy) over a CSS phone that is the first paint -->
+  <!-- HERO: CSS phone playing the app loop; tilts with the pointer -->
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-copy">
       <p class="eyebrow">{{heroEyebrow}}</p>
@@ -75,11 +74,12 @@
     <div class="hero-stage" aria-hidden="true">
       <div class="hero-glow"></div>
       <div class="css-phone">
-        <div class="css-screen">
-          <img src="assets/clips/home.webp" srcset="assets/clips/home-300.webp 300w, assets/clips/home.webp 540w" sizes="(min-width: 900px) 300px, 230px" width="540" height="1174" alt="" fetchpriority="high">
+        <div class="css-bezel">
+          <div class="css-screen">
+            <img src="assets/clips/home.webp" srcset="assets/clips/home-300.webp 300w, assets/clips/home.webp 540w" sizes="(min-width: 900px) 300px, 230px" width="540" height="1174" alt="" fetchpriority="high">
+          </div>
         </div>
       </div>
-      <div class="gl-host"></div>
       <div class="orbit">
         <div class="ui o1" data-depth="1.2"><span class="y">★</span> 9.07</div>
         <div class="ui o2 ui-track" data-depth="0.8">
@@ -87,11 +87,10 @@
           <div class="ui-row"><span class="y">Ep 8 / 10</span></div>
           <div class="bar"><i style="--w:80%"></i></div>
         </div>
-        <div class="ui o3" data-depth="1.5"><strong class="plat">PLATINUM</strong> 🏆</div>
+        <div class="ui o3 ui-rankpill" data-depth="1.5">SENPAI <span>Lv 12</span></div>
         <div class="ui o4 ui-cal" data-depth="1"><span class="y big">17:00</span><span class="tag">3h 7m</span></div>
         <div class="o5" data-depth="1.8"><div class="dice sm"><div class="cube"><i class="d1"></i><i class="d2"></i><i class="d3"></i><i class="d4"></i><i class="d5"></i><i class="d6"></i></div></div></div>
       </div>
-      <p class="drag-hint"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12 4 8l4-4v3h8V4l4 4-4 4V9H8v3Zm0 8-4-4 4-4v3h8v-3l4 4-4 4v-3H8v3Z"/></svg>{{dragHint}}</p>
     </div>
   </section>
 
@@ -187,7 +186,7 @@
               <div class="ui card-prof">
                 <div class="avatar"><img src="assets/img/logo-96.png" width="48" height="48" alt=""></div>
                 <div class="prof-main">
-                  <div class="ui-row"><strong class="rank-name">BRONZE</strong><span>🏆</span></div>
+                  <div class="ui-row"><strong class="rank-name">ROOKIE</strong><span>🏆</span></div>
                   <div class="muted"><span class="lvl-label">{{cardLevel}} 1 • 0/30 XP</span></div>
                   <div class="bar"><i class="fill" style="--w:0%"></i></div>
                 </div>
@@ -240,6 +239,29 @@
     </div>
   </section>
 
+  <!-- NEW IN 1.0.16: three phones on one stage, the profile in front -->
+  <section class="fresh" id="new" aria-labelledby="new-title">
+    <header class="fresh-head">
+      <p class="eyebrow">{{newKicker}}</p>
+      <h2 id="new-title">{{newTitle}}</h2>
+      <p class="lede">{{newLede}}</p>
+    </header>
+    <div class="fresh-stage">
+      <figure class="fresh-item f-stats">
+        <div class="css-phone fresh-phone"><div class="css-bezel"><div class="css-screen"><img src="assets/new/stats.webp" srcset="assets/new/stats-300.webp 300w, assets/new/stats.webp 540w" sizes="(min-width: 900px) 260px, 62vw" width="540" height="1174" alt="" loading="lazy" decoding="async"></div></div></div>
+        <figcaption><h3>{{n1Title}}</h3><span class="pill">{{n1Pill}}</span><p>{{n1Body}}</p></figcaption>
+      </figure>
+      <figure class="fresh-item f-look">
+        <div class="css-phone fresh-phone"><div class="css-bezel"><div class="css-screen"><img src="assets/new/profile.webp" srcset="assets/new/profile-300.webp 300w, assets/new/profile.webp 540w" sizes="(min-width: 900px) 300px, 62vw" width="540" height="1174" alt="" loading="lazy" decoding="async"></div></div></div>
+        <figcaption><h3>{{n2Title}}</h3><span class="pill">{{n2Pill}}</span><p>{{n2Body}}</p></figcaption>
+      </figure>
+      <figure class="fresh-item f-week">
+        <div class="css-phone fresh-phone"><div class="css-bezel"><div class="css-screen"><img src="assets/new/myweek.webp" srcset="assets/new/myweek-300.webp 300w, assets/new/myweek.webp 540w" sizes="(min-width: 900px) 260px, 62vw" width="540" height="1174" alt="" loading="lazy" decoding="async"></div></div></div>
+        <figcaption><h3>{{n3Title}}</h3><span class="pill pill-soft">{{n3Pill}}</span><p>{{n3Body}}</p></figcaption>
+      </figure>
+    </div>
+  </section>
+
   <section class="cta" id="download">
     <div class="cta-glow" aria-hidden="true"></div>
     <img src="assets/img/icon-192.png" width="112" height="112" alt="" loading="lazy" class="cta-logo">
@@ -269,7 +291,7 @@
 <!-- XP HUD: fills as the visitor plays with the demos -->
 <div class="hud" aria-live="polite" hidden>
   <div class="hud-ring"><span class="hud-lvl">1</span></div>
-  <div class="hud-main"><span class="hud-rank">BRONZE</span><span class="hud-xp">0/30 XP</span><div class="bar"><i class="fill" style="--w:0%"></i></div></div>
+  <div class="hud-main"><span class="hud-rank">ROOKIE</span><span class="hud-xp">0/30 XP</span><div class="bar"><i class="fill" style="--w:0%"></i></div></div>
 </div>
 <div class="toast" role="status" hidden><span class="toast-k">{{levelUp}}</span><strong class="toast-v"></strong></div>
 <canvas class="confetti" aria-hidden="true"></canvas>
