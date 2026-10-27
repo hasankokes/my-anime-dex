@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.myanimedex.app",
-      "buildNumber": "16",
+      "buildNumber": "17",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -102,7 +102,7 @@
         "expo-calendar",
         {
           "calendarPermission": "MyAnimeDex adds the airing times of the anime you follow to your calendar when you ask it to.",
-          "remindersPermission": false
+          "remindersPermission": "MyAnimeDex only adds anime airing times to your calendar and never reads your reminders."
         }
       ],
       [
