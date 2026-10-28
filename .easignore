@@ -1,22 +1,64 @@
-/node_modules/
+# .easignore replaces .gitignore for EAS uploads: anything not listed here is
+# packed into the build archive, even if git ignores it.
+# Check the result with:
+#   eas build:inspect --platform android --profile production --stage archive --output /tmp/eas-archive --force
+
+# Dependencies and generated files (EAS installs and prebuilds on its own).
+# Unanchored, so nested copies such as teaser/remotion/node_modules match too.
+node_modules/
+.expo/
+.expo-shared/
+web-build/
+.venv/
+__pycache__/
+*.tsbuildinfo
+
+# Native projects (CNG: EAS runs prebuild). The explicit build-output entries
+# below still apply if android/ or ios/ is ever committed.
 /android/
 /ios/
-/web/
-/.expo/
+android/build/
+android/app/build/
+android/app/.cxx/
+android/.gradle/
+ios/build/
+ios/Pods/
+ios/DerivedData/
+.gradle/
+Pods/
+DerivedData/
+
+# Build artifacts
+*.apk
+*.aab
+*.ipa
+*.xcarchive
+*.dSYM/
 
 # Not needed for the app build
+/web/
 /teaser/
 /dist/
 /docs/
 /scripts/
+supabase/.temp/
 *.log
 build_log.txt
 pixel.png
 
+# Editor / OS clutter
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+.claude/
+
 # Signing material stays local (EAS uses its own stored credentials).
-# .easignore replaces .gitignore for EAS uploads, so these must be listed here.
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
+
+# .env is intentionally NOT listed: the build reads EXPO_PUBLIC_* from it.
