@@ -1,2 +1,15 @@
 # Build sources for the landing pages are not part of the site
 /_src/*  /404  404!
+
+# Old share links (myanimedex.com/?list_id=<id>) -> the list page
+/  list_id=:id  /lists/:id  301
+
+# Share links: the app opens them when installed (see .well-known/); otherwise these preview pages
+/lists/*  /lists/index.html  200
+/a/*  /a/index.html  200
+
+# Anime pages AniList has no entry for (removed 2026-11-02)
+/anime/alien-stage  /anime/  301
+/anime/alien-stage/*  /anime/  301
+/anime/attack-on-titan-the-last-attack  /anime/  301
+/anime/attack-on-titan-the-last-attack/*  /anime/  301

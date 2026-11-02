@@ -381,6 +381,7 @@ export const translations = {
             leaveList: 'Leave List',
             confirmLeave: 'Are you sure you want to leave this list?',
         },
+        share: {"list": "Check out my anime list “%{title}” on MyAnimeDex", "anime": "Check out %{title} on MyAnimeDex", "arena": "%{name} won my Anime Arena championship!", "button": "Share", "more": "…and %{count} more"},
         lists: {
             by: 'by',
             items: 'items',
@@ -955,6 +956,7 @@ export const translations = {
             leaveList: 'Listeden Ayrıl',
             confirmLeave: 'Bu listeden ayrılmak istediğinizden emin misiniz?',
         },
+        share: {"list": "MyAnimeDex’teki anime listeme göz at: “%{title}”", "anime": "MyAnimeDex’te %{title} animesine göz at", "arena": "Anime Arena şampiyonum: %{name}!", "button": "Paylaş", "more": "…ve %{count} tane daha"},
         lists: {
             by: 'hazırlayan:',
             items: 'öge',
@@ -1529,6 +1531,7 @@ export const translations = {
             leaveList: 'リストから離脱',
             confirmLeave: 'このリストから離脱してもよろしいですか？',
         },
+        share: {"list": "MyAnimeDexのアニメリスト「%{title}」をチェックしてね", "anime": "MyAnimeDexで「%{title}」をチェック", "arena": "私のアニメアリーナのチャンピオンは%{name}！", "button": "共有", "more": "…ほか%{count}作品"},
         lists: {
             by: '作成者:',
             items: 'アイテム',
@@ -2103,6 +2106,7 @@ export const translations = {
             leaveList: 'Покинуть список',
             confirmLeave: 'Вы уверены, что хотите покинуть этот список?',
         },
+        share: {"list": "Мой список аниме «%{title}» в MyAnimeDex", "anime": "Посмотрите «%{title}» в MyAnimeDex", "arena": "%{name} — чемпион моей Аниме-Арены!", "button": "Поделиться", "more": "…и ещё %{count}"},
         lists: {
             by: 'автор:',
             items: 'элементов',
@@ -2822,6 +2826,7 @@ export const translations = {
             leaveList: 'Liste verlassen',
             confirmLeave: 'Sind Sie sicher, dass Sie diese Liste verlassen möchten?',
         },
+        share: {"list": "Schau dir meine Anime-Liste „%{title}“ auf MyAnimeDex an", "anime": "Schau dir %{title} auf MyAnimeDex an", "arena": "%{name} hat meine Anime-Arena gewonnen!", "button": "Teilen", "more": "…und %{count} weitere"},
         lists: {
             by: 'von',
             items: 'Elemente',
@@ -3396,6 +3401,7 @@ export const translations = {
             leaveList: 'مغادرة القائمة',
             confirmLeave: 'هل أنت متأكد أنك تريد مغادرة هذه القائمة؟',
         },
+        share: {"list": "شاهد قائمة الأنمي الخاصة بي “%{title}” على MyAnimeDex", "anime": "شاهد %{title} على MyAnimeDex", "arena": "%{name} فاز ببطولة ساحة الأنمي الخاصة بي!", "button": "مشاركة", "more": "…و%{count} أخرى"},
         lists: {
             by: 'بواسطة',
             items: 'عنصر',
@@ -3970,6 +3976,7 @@ export const translations = {
             leaveList: 'Abandonar Lista',
             confirmLeave: '¿Estás seguro de que quieres abandonar esta lista?',
         },
+        share: {"list": "Mira mi lista de anime “%{title}” en MyAnimeDex", "anime": "Mira %{title} en MyAnimeDex", "arena": "¡%{name} ganó mi Arena Anime!", "button": "Compartir", "more": "…y %{count} más"},
         lists: {
             by: 'por',
             items: 'elementos',
@@ -4544,6 +4551,7 @@ export const translations = {
             leaveList: 'Sair da Lista',
             confirmLeave: 'Tem certeza de que deseja sair desta lista?',
         },
+        share: {"list": "Confira minha lista de animes “%{title}” no MyAnimeDex", "anime": "Confira %{title} no MyAnimeDex", "arena": "%{name} venceu minha Arena Anime!", "button": "Compartilhar", "more": "…e mais %{count}"},
         lists: {
             by: 'por',
             items: 'itens',
@@ -5118,6 +5126,7 @@ export const translations = {
             leaveList: 'Tinggalkan Daftar',
             confirmLeave: 'Apakah Anda yakin ingin meninggalkan daftar ini?',
         },
+        share: {"list": "Lihat daftar animeku “%{title}” di MyAnimeDex", "anime": "Lihat %{title} di MyAnimeDex", "arena": "%{name} jadi juara Arena Anime-ku!", "button": "Bagikan", "more": "…dan %{count} lainnya"},
         lists: {
             by: 'oleh',
             items: 'item',
@@ -5547,6 +5556,7 @@ export const translations = {
             leaveList: 'सूची छोड़ें',
             confirmLeave: 'क्या आप वाकई इस सूची को छोड़ना चाहते हैं?',
         },
+        share: {"list": "MyAnimeDex पर मेरी एनीमे लिस्ट “%{title}” देखें", "anime": "MyAnimeDex पर %{title} देखें", "arena": "%{name} ने मेरा एनीमे एरीना जीत लिया!", "button": "शेयर करें", "more": "…और %{count} और"},
         lists: {
             by: 'द्वारा',
             items: 'आइटम',
@@ -6458,6 +6468,7 @@ export const translations = {
             "leaveList": "Quitter la liste",
             "confirmLeave": "Tu veux vraiment quitter cette liste ?"
         },
+        "share": {"list": "Découvre ma liste d’animés « %{title} » sur MyAnimeDex", "anime": "Découvre %{title} sur MyAnimeDex", "arena": "%{name} a gagné mon Arène Anime !", "button": "Partager", "more": "…et %{count} de plus"},
         "lists": {
             "by": "par",
             "items": "éléments",
@@ -7405,6 +7416,7 @@ export const translations = {
             "leaveList": "Lascia la lista",
             "confirmLeave": "Vuoi davvero lasciare questa lista?"
         },
+        "share": {"list": "Guarda la mia lista anime “%{title}” su MyAnimeDex", "anime": "Guarda %{title} su MyAnimeDex", "arena": "%{name} ha vinto la mia Arena Anime!", "button": "Condividi", "more": "…e altri %{count}"},
         "lists": {
             "by": "di",
             "items": "elementi",
@@ -8352,6 +8364,7 @@ export const translations = {
             "leaveList": "Opuść listę",
             "confirmLeave": "Na pewno chcesz opuścić tę listę?"
         },
+        "share": {"list": "Zobacz moją listę anime „%{title}” w MyAnimeDex", "anime": "Zobacz %{title} w MyAnimeDex", "arena": "%{name} wygrywa moją Arenę Anime!", "button": "Udostępnij", "more": "…i %{count} więcej"},
         "lists": {
             "by": "autor:",
             "items": "poz.",
@@ -9299,6 +9312,7 @@ export const translations = {
             "leaveList": "Rời danh sách",
             "confirmLeave": "Bạn có chắc muốn rời danh sách này?"
         },
+        "share": {"list": "Xem danh sách anime “%{title}” của mình trên MyAnimeDex", "anime": "Xem %{title} trên MyAnimeDex", "arena": "%{name} đã vô địch Đấu trường Anime của mình!", "button": "Chia sẻ", "more": "…và %{count} bộ khác"},
         "lists": {
             "by": "bởi",
             "items": "mục",
@@ -10246,6 +10260,7 @@ export const translations = {
             "leaveList": "ออกจากลิสต์",
             "confirmLeave": "แน่ใจไหมว่าจะออกจากลิสต์นี้?"
         },
+        "share": {"list": "ดูลิสต์อนิเมะ “%{title}” ของฉันบน MyAnimeDex", "anime": "ดู %{title} บน MyAnimeDex", "arena": "%{name} คือแชมป์อนิเมะอารีนาของฉัน!", "button": "แชร์", "more": "…และอีก %{count} เรื่อง"},
         "lists": {
             "by": "โดย",
             "items": "รายการ",

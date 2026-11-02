@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSCalendarsUsageDescription": "MyAnimeDex thêm giờ phát sóng của các anime bạn theo dõi vào lịch khi bạn yêu cầu.",
+    "NSCalendarsFullAccessUsageDescription": "MyAnimeDex thêm giờ phát sóng của các anime bạn theo dõi vào lịch khi bạn yêu cầu.",
+    "NSRemindersUsageDescription": "MyAnimeDex chỉ thêm giờ phát sóng anime vào lịch của bạn và không bao giờ đọc lời nhắc của bạn.",
+    "NSRemindersFullAccessUsageDescription": "MyAnimeDex chỉ thêm giờ phát sóng anime vào lịch của bạn và không bao giờ đọc lời nhắc của bạn.",
+    "NSCameraUsageDescription": "MyAnimeDex sử dụng camera để bạn có thể chụp ảnh đại diện.",
+    "NSPhotoLibraryUsageDescription": "MyAnimeDex sử dụng thư viện ảnh để bạn có thể chọn ảnh đại diện.",
+    "NSUserTrackingUsageDescription": "Mã định danh này sẽ được dùng để hiển thị quảng cáo phù hợp với bạn."
+  }
+}

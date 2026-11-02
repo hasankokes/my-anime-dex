@@ -14,7 +14,29 @@
       "buildNumber": "17",
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "infoPlist": {
+        "CFBundleLocalizations": [
+          "en",
+          "tr",
+          "ja",
+          "ru",
+          "de",
+          "ar",
+          "es",
+          "pt",
+          "id",
+          "hi",
+          "fr",
+          "it",
+          "pl",
+          "vi",
+          "th"
+        ]
+      },
+      "associatedDomains": [
+        "applinks:myanimedex.com"
+      ]
     },
     "android": {
       "package": "com.myanimedex.app",
@@ -46,6 +68,28 @@
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "myanimedex.com",
+              "pathPrefix": "/lists/"
+            },
+            {
+              "scheme": "https",
+              "host": "myanimedex.com",
+              "pathPrefix": "/a/"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
       ]
     },
     "splash": {
@@ -122,6 +166,22 @@
       "eas": {
         "projectId": "4bbd49c7-f9ae-485d-a3ac-254ec3571405"
       }
+    },
+    "locales": {
+      "tr": "./locales/tr.json",
+      "ja": "./locales/ja.json",
+      "ru": "./locales/ru.json",
+      "de": "./locales/de.json",
+      "ar": "./locales/ar.json",
+      "es": "./locales/es.json",
+      "pt": "./locales/pt.json",
+      "id": "./locales/id.json",
+      "hi": "./locales/hi.json",
+      "fr": "./locales/fr.json",
+      "it": "./locales/it.json",
+      "pl": "./locales/pl.json",
+      "vi": "./locales/vi.json",
+      "th": "./locales/th.json"
     }
   }
 }

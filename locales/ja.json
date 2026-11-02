@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSCalendarsUsageDescription": "MyAnimeDexは、ご希望に応じて、フォロー中のアニメの放送時間をカレンダーに追加します。",
+    "NSCalendarsFullAccessUsageDescription": "MyAnimeDexは、ご希望に応じて、フォロー中のアニメの放送時間をカレンダーに追加します。",
+    "NSRemindersUsageDescription": "MyAnimeDexはアニメの放送時間をカレンダーに追加するだけで、リマインダーを読み取ることはありません。",
+    "NSRemindersFullAccessUsageDescription": "MyAnimeDexはアニメの放送時間をカレンダーに追加するだけで、リマインダーを読み取ることはありません。",
+    "NSCameraUsageDescription": "MyAnimeDexは、プロフィール写真を撮影するためにカメラを使用します。",
+    "NSPhotoLibraryUsageDescription": "MyAnimeDexは、プロフィール写真を選択するために写真ライブラリを使用します。",
+    "NSUserTrackingUsageDescription": "この識別子は、あなたに合わせた広告を配信するために使用されます。"
+  }
+}

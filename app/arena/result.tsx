@@ -146,7 +146,7 @@ export default function ArenaResultScreen() {
         });
         analytics.track('arena_result_shared', { category: String(category || ''), method: 'image' });
       } else {
-        const result = await Share.share({ message: `${winnerName as string} won my Anime Arena championship! 🏆⚔️ #AnimeDex` });
+        const result = await Share.share({ message: `${t('share.arena', { name: winnerName as string })} 🏆 #MyAnimeDex\nhttps://myanimedex.com` });
         if (result.action === Share.sharedAction) {
           analytics.track('arena_result_shared', { category: String(category || ''), method: 'text' });
         }
@@ -220,9 +220,10 @@ export default function ArenaResultScreen() {
             <View style={styles.brandRow}>
               <Image source={require('../../assets/images/header-logo.png')} style={styles.logo} contentFit="contain" />
               <Text style={styles.brandText}>
-                ANIME<Text style={{ color: ARENA_GOLD }}>DEX</Text> ARENA
+                MYANIME<Text style={{ color: ARENA_GOLD }}>DEX</Text> ARENA
               </Text>
             </View>
+            <Text style={styles.brandUrl}>myanimedex.com</Text>
           </View>
         </ViewShot>
 
@@ -383,6 +384,7 @@ const styles = StyleSheet.create({
   },
   logo: { width: 22, height: 22 },
   brandText: { color: '#FFF', fontFamily: 'Poppins_700Bold', fontSize: 12, letterSpacing: 1.5 },
+  brandUrl: { color: 'rgba(255,255,255,0.6)', fontFamily: 'Poppins_500Medium', fontSize: 11, marginTop: 4 },
 
   controls: { gap: 10, marginTop: 16 },
   rateCard: { alignItems: 'center', paddingVertical: 10, borderRadius: 18, borderWidth: 1, gap: 4 },

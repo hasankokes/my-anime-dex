@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSCalendarsUsageDescription": "MyAnimeDex จะเพิ่มเวลาออกอากาศของอนิเมะที่คุณติดตามลงในปฏิทินเมื่อคุณสั่ง",
+    "NSCalendarsFullAccessUsageDescription": "MyAnimeDex จะเพิ่มเวลาออกอากาศของอนิเมะที่คุณติดตามลงในปฏิทินเมื่อคุณสั่ง",
+    "NSRemindersUsageDescription": "MyAnimeDex เพิ่มเฉพาะเวลาออกอากาศอนิเมะลงในปฏิทินของคุณ และไม่อ่านการเตือนความจำของคุณ",
+    "NSRemindersFullAccessUsageDescription": "MyAnimeDex เพิ่มเฉพาะเวลาออกอากาศอนิเมะลงในปฏิทินของคุณ และไม่อ่านการเตือนความจำของคุณ",
+    "NSCameraUsageDescription": "MyAnimeDex ใช้กล้องเพื่อให้คุณถ่ายรูปโปรไฟล์ได้",
+    "NSPhotoLibraryUsageDescription": "MyAnimeDex ใช้คลังรูปภาพเพื่อให้คุณเลือกรูปโปรไฟล์ได้",
+    "NSUserTrackingUsageDescription": "ตัวระบุนี้จะถูกใช้เพื่อแสดงโฆษณาที่ปรับให้เหมาะกับคุณ"
+  }
+}

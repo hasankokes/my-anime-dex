@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSCalendarsUsageDescription": "आपके कहने पर MyAnimeDex आपके फ़ॉलो किए गए एनीमे के प्रसारण समय आपके कैलेंडर में जोड़ता है।",
+    "NSCalendarsFullAccessUsageDescription": "आपके कहने पर MyAnimeDex आपके फ़ॉलो किए गए एनीमे के प्रसारण समय आपके कैलेंडर में जोड़ता है।",
+    "NSRemindersUsageDescription": "MyAnimeDex केवल एनीमे के प्रसारण समय आपके कैलेंडर में जोड़ता है और आपके रिमाइंडर कभी नहीं पढ़ता।",
+    "NSRemindersFullAccessUsageDescription": "MyAnimeDex केवल एनीमे के प्रसारण समय आपके कैलेंडर में जोड़ता है और आपके रिमाइंडर कभी नहीं पढ़ता।",
+    "NSCameraUsageDescription": "MyAnimeDex कैमरे का उपयोग करता है ताकि आप प्रोफ़ाइल फ़ोटो ले सकें।",
+    "NSPhotoLibraryUsageDescription": "MyAnimeDex आपकी फ़ोटो लाइब्रेरी का उपयोग करता है ताकि आप प्रोफ़ाइल फ़ोटो चुन सकें।",
+    "NSUserTrackingUsageDescription": "इस पहचानकर्ता का उपयोग आपको व्यक्तिगत विज्ञापन दिखाने के लिए किया जाएगा।"
+  }
+}

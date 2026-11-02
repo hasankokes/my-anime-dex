@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Share, Image, Modal, TextInput, TouchableWithoutFeedback, Platform, FlatList, KeyboardAvoidingView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import * as Linking from 'expo-linking';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
@@ -162,18 +161,17 @@ export default function ListDetailsScreen() {
     const handleShare = async () => {
         if (!list) return;
 
-        // Generate Web Link (which will redirect to app)
-        const webUrl = `https://myanimedex.com/?list_id=${list.id}`;
+        // One link for everyone: opens the app when installed (universal/app link),
+        // otherwise the list preview page on the website.
+        const webUrl = `https://myanimedex.com/lists/${list.id}`;
 
-        // Generate Direct App Link (Deep Link)
-        const appUrl = Linking.createURL(`/lists/${list.id}`);
-
-        // Create a text summary (All Items)
-        const allItems = items.map((item, index) =>
-            `${index + 1}. ${item.anime_title} ${item.user_score ? `(★${item.user_score})` : ''}`
+        const SHOWN = 10;
+        const topItems = items.slice(0, SHOWN).map((item, index) =>
+            `${index + 1}. ${item.anime_title}${item.user_score ? ` (★${item.user_score})` : ''}`
         ).join('\n');
+        const more = items.length > SHOWN ? `\n${t('share.more', { count: items.length - SHOWN })}` : '';
 
-        const message = `Check out my anime list "${list.title}"! 📺\n\n${list.description ? list.description + '\n\n' : ''}${allItems}\n\nView details:\nUse Link: ${webUrl}\nApp Link: ${appUrl}`;
+        const message = `${t('share.list', { title: list.title })}\n\n${list.description ? list.description + '\n\n' : ''}${topItems}${more}\n\n${webUrl}`;
 
         try {
             const result = await Share.share({

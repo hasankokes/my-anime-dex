@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSCalendarsUsageDescription": "MyAnimeDex, istediğinde takip ettiğin animelerin yayın saatlerini takvimine ekler.",
+    "NSCalendarsFullAccessUsageDescription": "MyAnimeDex, istediğinde takip ettiğin animelerin yayın saatlerini takvimine ekler.",
+    "NSRemindersUsageDescription": "MyAnimeDex yalnızca anime yayın saatlerini takvimine ekler, anımsatıcılarını asla okumaz.",
+    "NSRemindersFullAccessUsageDescription": "MyAnimeDex yalnızca anime yayın saatlerini takvimine ekler, anımsatıcılarını asla okumaz.",
+    "NSCameraUsageDescription": "MyAnimeDex, profil fotoğrafı çekebilmen için kamerayı kullanır.",
+    "NSPhotoLibraryUsageDescription": "MyAnimeDex, profil fotoğrafı seçebilmen için fotoğraf arşivini kullanır.",
+    "NSUserTrackingUsageDescription": "Bu tanımlayıcı, sana kişiselleştirilmiş reklamlar göstermek için kullanılacak."
+  }
+}

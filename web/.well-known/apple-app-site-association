@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["3N6CA2NLL6.com.myanimedex.app"],
+        "components": [
+          { "/": "/lists/*", "comment": "Shared lists" },
+          { "/": "/a/*", "comment": "Shared anime" }
+        ]
+      }
+    ]
+  }
+}

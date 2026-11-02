@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSCalendarsUsageDescription": "MyAnimeDex menambahkan jadwal tayang anime yang kamu ikuti ke kalendermu saat kamu memintanya.",
+    "NSCalendarsFullAccessUsageDescription": "MyAnimeDex menambahkan jadwal tayang anime yang kamu ikuti ke kalendermu saat kamu memintanya.",
+    "NSRemindersUsageDescription": "MyAnimeDex hanya menambahkan jadwal tayang anime ke kalendermu dan tidak pernah membaca pengingatmu.",
+    "NSRemindersFullAccessUsageDescription": "MyAnimeDex hanya menambahkan jadwal tayang anime ke kalendermu dan tidak pernah membaca pengingatmu.",
+    "NSCameraUsageDescription": "MyAnimeDex menggunakan kamera agar kamu bisa mengambil foto profil.",
+    "NSPhotoLibraryUsageDescription": "MyAnimeDex menggunakan galeri fotomu agar kamu bisa memilih foto profil.",
+    "NSUserTrackingUsageDescription": "Pengenal ini akan digunakan untuk menampilkan iklan yang dipersonalisasi untukmu."
+  }
+}

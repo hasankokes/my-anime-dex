@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSCalendarsUsageDescription": "MyAnimeDex по вашему запросу добавляет в календарь время выхода аниме, которые вы смотрите.",
+    "NSCalendarsFullAccessUsageDescription": "MyAnimeDex по вашему запросу добавляет в календарь время выхода аниме, которые вы смотрите.",
+    "NSRemindersUsageDescription": "MyAnimeDex только добавляет время выхода аниме в календарь и никогда не читает ваши напоминания.",
+    "NSRemindersFullAccessUsageDescription": "MyAnimeDex только добавляет время выхода аниме в календарь и никогда не читает ваши напоминания.",
+    "NSCameraUsageDescription": "MyAnimeDex использует камеру, чтобы вы могли сделать фото профиля.",
+    "NSPhotoLibraryUsageDescription": "MyAnimeDex использует медиатеку, чтобы вы могли выбрать фото профиля.",
+    "NSUserTrackingUsageDescription": "Этот идентификатор будет использоваться для показа вам персонализированной рекламы."
+  }
+}

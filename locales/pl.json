@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSCalendarsUsageDescription": "MyAnimeDex na Twoją prośbę dodaje do kalendarza godziny emisji obserwowanych anime.",
+    "NSCalendarsFullAccessUsageDescription": "MyAnimeDex na Twoją prośbę dodaje do kalendarza godziny emisji obserwowanych anime.",
+    "NSRemindersUsageDescription": "MyAnimeDex tylko dodaje godziny emisji anime do kalendarza i nigdy nie odczytuje Twoich przypomnień.",
+    "NSRemindersFullAccessUsageDescription": "MyAnimeDex tylko dodaje godziny emisji anime do kalendarza i nigdy nie odczytuje Twoich przypomnień.",
+    "NSCameraUsageDescription": "MyAnimeDex używa aparatu, aby można było zrobić zdjęcie profilowe.",
+    "NSPhotoLibraryUsageDescription": "MyAnimeDex używa biblioteki zdjęć, aby można było wybrać zdjęcie profilowe.",
+    "NSUserTrackingUsageDescription": "Ten identyfikator będzie używany do wyświetlania Ci spersonalizowanych reklam."
+  }
+}

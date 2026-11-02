@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSCalendarsUsageDescription": "يضيف MyAnimeDex مواعيد عرض الأنمي الذي تتابعه إلى تقويمك عندما تطلب ذلك.",
+    "NSCalendarsFullAccessUsageDescription": "يضيف MyAnimeDex مواعيد عرض الأنمي الذي تتابعه إلى تقويمك عندما تطلب ذلك.",
+    "NSRemindersUsageDescription": "يضيف MyAnimeDex مواعيد عرض الأنمي إلى تقويمك فقط ولا يقرأ تذكيراتك أبدًا.",
+    "NSRemindersFullAccessUsageDescription": "يضيف MyAnimeDex مواعيد عرض الأنمي إلى تقويمك فقط ولا يقرأ تذكيراتك أبدًا.",
+    "NSCameraUsageDescription": "يستخدم MyAnimeDex الكاميرا لتتمكن من التقاط صورة للملف الشخصي.",
+    "NSPhotoLibraryUsageDescription": "يستخدم MyAnimeDex مكتبة الصور لتتمكن من اختيار صورة للملف الشخصي.",
+    "NSUserTrackingUsageDescription": "سيُستخدم هذا المعرّف لعرض إعلانات مخصصة لك."
+  }
+}

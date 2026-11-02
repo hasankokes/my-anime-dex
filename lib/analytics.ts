@@ -54,6 +54,7 @@ export type AnalyticsEvent =
     | 'anime_unfavorited'
     | 'anime_episode_progress'
     | 'anime_trailer_played'
+    | 'anime_shared'
     | 'review_submitted'
     | 'review_deleted'
     // Discovery

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { PosterImage } from '../../components/PosterImage';
-import { ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList, KeyboardAvoidingView, View, Text, StyleSheet } from 'react-native';
+import { ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Modal, Alert, Platform, TextInput, FlatList, KeyboardAvoidingView, View, Text, StyleSheet, Share } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Anime, jikanApi } from '../../lib/jikan';
@@ -222,6 +222,18 @@ const AnimeDetailsScreen = () => {
   }, [authSession?.user?.id, reloadUserEntry]);
 
   // base: entry to build on (defaults to current state); forceValue: set instead of toggle
+  // The link opens this screen when the app is installed, otherwise a preview page on the website.
+  const shareAnime = async () => {
+    if (!anime) return;
+    const url = `https://myanimedex.com/a/${anime.mal_id}`;
+    try {
+      const result = await Share.share({ message: `${t('share.anime', { title: anime.title_english || anime.title })}\n${url}` });
+      if (result.action === Share.sharedAction) {
+        analytics.track('anime_shared', { anime_id: anime.mal_id.toString() });
+      }
+    } catch { }
+  };
+
   const toggleFavorite = async (base: any = userEntry, forceValue?: boolean) => {
     if (!anime) return;
     try {
@@ -486,6 +498,17 @@ const AnimeDetailsScreen = () => {
           >
             <BlurView intensity={80} tint={isDark ? "light" : "dark"} style={styles.blurButton}>
               <Ionicons name="arrow-back" size={24} color={isDark ? "#000" : "#FFF"} />
+            </BlurView>
+          </TouchableOpacity>
+
+          {/* Share Button */}
+          <TouchableOpacity
+            style={[styles.shareButton, { top: insets.top + 10 }]}
+            onPress={shareAnime}
+            accessibilityLabel={t('share.button')}
+          >
+            <BlurView intensity={80} tint={isDark ? "light" : "dark"} style={styles.blurButton}>
+              <Ionicons name="share-outline" size={22} color={isDark ? "#000" : "#FFF"} />
             </BlurView>
           </TouchableOpacity>
 
@@ -1114,6 +1137,12 @@ const styles = StyleSheet.create({
   favButton: {
     position: 'absolute',
     right: 20,
+    borderRadius: 22,
+    zIndex: 10,
+  },
+  shareButton: {
+    position: 'absolute',
+    right: 76,
     borderRadius: 22,
     zIndex: 10,
   },

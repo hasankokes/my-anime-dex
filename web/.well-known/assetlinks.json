@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.myanimedex.app",
+      "sha256_cert_fingerprints": [
+        "29:AE:E9:ED:F9:3C:33:3A:D2:AB:D8:E0:01:CA:F6:61:25:7D:B5:80:E2:5A:11:BD:2F:54:53:04:F2:4F:AF:C3",
+        "00:C7:16:4C:3B:E9:65:96:81:0D:8E:7E:B9:52:46:84:7C:C1:F8:B7:11:1F:13:7B:AA:0A:81:D8:49:47:38:49"
+      ]
+    }
+  }
+]

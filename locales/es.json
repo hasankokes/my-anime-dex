@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSCalendarsUsageDescription": "MyAnimeDex añade a tu calendario los horarios de emisión de los animes que sigues cuando se lo pides.",
+    "NSCalendarsFullAccessUsageDescription": "MyAnimeDex añade a tu calendario los horarios de emisión de los animes que sigues cuando se lo pides.",
+    "NSRemindersUsageDescription": "MyAnimeDex solo añade horarios de emisión de anime a tu calendario y nunca lee tus recordatorios.",
+    "NSRemindersFullAccessUsageDescription": "MyAnimeDex solo añade horarios de emisión de anime a tu calendario y nunca lee tus recordatorios.",
+    "NSCameraUsageDescription": "MyAnimeDex usa la cámara para que puedas hacerte una foto de perfil.",
+    "NSPhotoLibraryUsageDescription": "MyAnimeDex usa tu fototeca para que puedas elegir una foto de perfil.",
+    "NSUserTrackingUsageDescription": "Este identificador se usará para mostrarte anuncios personalizados."
+  }
+}
