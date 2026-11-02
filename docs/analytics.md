@@ -30,7 +30,7 @@ Properties on every event: `auth_status` (guest/authenticated), `is_premium`, `a
 | Journey | `first_open`, `session_summary` (`duration_s`, `screens_viewed`, `unique_screens`, `anime_viewed`, `actions`, `exit_screen`, `bounced`), `$autocapture` taps |
 | Walkthrough | `walkthrough_started`, `walkthrough_step_viewed` (`step`), `walkthrough_completed`, `walkthrough_skipped` (`step` where they skipped) |
 | Auth funnel | `auth_wall_hit` (`reason`), `login_viewed`, `login_method_selected` (`method`), `signup_submitted`, `login_failed` (`method`, `error`), `login_dismissed`, `signup_completed` / `login_completed` (`method`, `trigger_reason`), `logout`, `password_reset_requested` |
-| Anime | `anime_viewed` (`anime_id`, `genres`, `from_screen`), `anime_load_failed`, `anime_favorited`, `anime_unfavorited`, `anime_list_status_changed` (`from`, `to`), `anime_episode_progress`, `anime_trailer_played`, `review_submitted`, `review_deleted` |
+| Anime | `anime_viewed` (`anime_id`, `genres`, `from_screen`), `anime_load_failed`, `anime_favorited`, `anime_unfavorited`, `anime_list_status_changed` (`from`, `to`), `anime_episode_progress`, `anime_trailer_played`, `anime_shared` (share link `myanimedex.com/a/<id>`), `review_submitted`, `review_deleted` |
 | Discovery | `search_performed` (`source`), `search_result_clicked` (`position`), `home_section_clicked` (`section`: trending/fall/upcoming/grid/category_filter/for_you/dice/pulse/arena_fab), `dice_rolled`, `calendar_day_changed` (`day`: weekday, `day_offset`: 0 = today), `calendar_reminders_toggled` (`enabled`, `result`: enabled/denied/disabled), `calendar_reminder_opened` (tap on an episode notification), `discover_loaded` (`mode`: personal/blend/picks/popular, `items`, `continue_items`, `seeds`), `discover_item_clicked` (`position`, `reason`, `match`, `filter`, `section`: list/continue), `discover_item_saved`, `discover_item_hidden` (`position`, `reason`), `discover_filter_changed` (`filter`), `discover_genres_saved` (`count`) |
 | Lists | `list_created`, `list_deleted`, `list_item_added` (`source`), `list_item_removed`, `list_shared`, `list_collaborator_added` |
 | Arena | `arena_setup_started`, `arena_game_started`, `arena_game_completed`, `arena_game_abandoned` (`picks` / `total_picks`), `arena_result_shared` |
@@ -39,6 +39,24 @@ Properties on every event: `auth_status` (guest/authenticated), `is_premium`, `a
 | Money | `paywall_viewed` (`source`), `paywall_dismissed` (`seconds_open`), `purchase_started` / `_completed` / `_cancelled` / `_failed`, `restore_completed` / `_failed`, `ad_shown` / `ad_failed` (`trigger`; `ad_failed.error`: `not_loaded`, `expired`, or the AdMob show error code), `review_requested` (`trigger`: `list_add` / `completed` / `arena_win`, `request_count`; the OS may still not show the dialog), `review_store_opened` (manual "Rate the app" row) |
 | Premium | `paywall_viewed` also has `feature` (module that opened it), `paywall_plan_selected` (`plan`: `monthly` / `annual`), `premium_gate_viewed` / `premium_gate_tapped` (`feature`, `source`), `trial_reminder_scheduled`; modules: `stats_viewed`, `stats_card_updated`, `list_tags_updated`, `list_note_updated`, `list_filters_applied`, `appearance_viewed`, `cosmetic_selected` (`slot`, `cosmetic_id`), `top10_saved`, `discover_tab_changed`, `smart_recs_loaded`, `smart_rec_rejected`, `season_picks_loaded`, `calendar_view_changed`, `calendar_event_added` (`mode`, `result`), `reminder_settings_saved`, `list_imported` / `list_import_failed` (`source`: `mal` / `anilist`), `list_exported` (`format`), `backup_created`, `backup_restored` |
 | Content cards | `content_card_viewed` / `_dismissed` / `_cta` (`card_id`, `type`), `poll_voted`, `beta_signed_up` |
+
+## Website (myanimedex.com)
+
+Code: `web/assets/analytics.js`, loaded by every page (landing/contact templates in `web/_src/`, legal pages,
+`web/anime-template.html` and the generated anime pages). Same PostHog project as the app.
+
+- Cookieless: `persistence: 'memory'`, so nothing is stored in cookies or the browser and no consent banner is needed.
+  Each page load is a new anonymous visitor, so treat visitor counts as page loads. For real unique visitors, turn on
+  cookieless server hash mode in the project settings and switch to `cookieless_mode: 'always'`.
+- Off: autocapture, session replay, surveys, dead clicks. Contact form fields are never captured.
+- Runs only on `myanimedex.com`; `?ph_debug=1` turns it on anywhere (local preview) with console logging.
+- Every event has `site_locale` (`<html lang>`). Filter the app vs the site with `$lib` (`web` = site).
+
+| Event | Properties |
+|---|---|
+| `$pageview`, `$pageleave` | SDK defaults (`$pathname`, `$referrer`, UTM params) |
+| `web_store_clicked` | `store`: `ios` / `android`, `placement`: `hero` / `cta` / `nav` / `footer` / `body` |
+| `web_trailer_opened` | `placement` |
 
 ## Dashboard to build in PostHog ("New users")
 
