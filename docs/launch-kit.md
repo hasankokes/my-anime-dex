@@ -22,8 +22,10 @@ En yüksek etkili adım: "best MyAnimeList alternative" gibi sorguların neredey
    - **Name:** MyAnimeDex
    - **Website:** https://myanimedex.com
    - **Platforms:** iPhone, iPad, Android
-   - **License:** Freemium (free with optional Premium)
-   - **Categories / tags:** Anime / Manga Tracking, Episode Tracker, TV Show Tracker, Anime, Watchlist, Airing Calendar
+   - **License:** Proprietary (kaynak kodu açık değil)
+   - **Pricing / Cost:** Freemium (ücretsiz, isteğe bağlı Premium); ayrı fiyat alanı yoksa lisans listesinden Freemium
+   - **Ek işaretler:** Ad-supported, In-app purchases
+   - **Tags (önem sırasıyla, öneriden hazır olanı seç):** anime, anime-tracker ("Anime / Manga Tracking" uygulama türü), episode-tracker, tv-shows-tracker, watchlist, airing-schedule (yoksa calendar), episode-reminders (yoksa notifications), ranked-lists (yoksa lists), gamification, ad-supported. `manga` ekleme (manga takibi yok); `myanimelist` / `anilist` etiket değil, "Suggest alternative" ile eklenir.
    - **Short description:** Free anime tracker with an airing calendar, episode reminders and ranked lists. Import your MyAnimeList or AniList list in a minute.
    - **Description:**
 
