@@ -1,0 +1,20 @@
+/* Seasonal anime pages (/season/<season>-<year>/), on top of share.css */
+main.wide { max-width: 980px; }
+.updated { color: var(--sub); font-size: 0.875rem; margin: 0 0 14px; }
+.updated a { text-decoration: underline; }
+.lead { font-size: 1.0625rem; margin: 0 0 18px; }
+.days { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; margin-bottom: 8px; background: var(--bg); }
+.days a { min-height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--sub); font-size: 0.875rem; font-weight: 600; }
+.days a:hover { color: var(--text); border-color: var(--primary); }
+.days .other { margin-left: auto; color: var(--primary); }
+.day { scroll-margin-top: 64px; }
+.day h2 { font-size: 1.25rem; margin: 26px 0 12px; }
+.shows { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; }
+.show a { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: start; padding: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; height: 100%; }
+.show a:hover { border-color: var(--primary); }
+.show img { width: 64px; height: 92px; object-fit: cover; border-radius: 8px; background: #111; }
+.show .body { display: grid; gap: 3px; min-width: 0; }
+.show strong { font-size: 0.9375rem; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.show .when { color: var(--primary); font-size: 0.8125rem; font-weight: 600; }
+.show .meta, .show .genres { color: var(--sub); font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.show .score { color: var(--primary); font-size: 0.8125rem; font-weight: 700; }
