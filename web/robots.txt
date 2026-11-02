@@ -1,0 +1,9 @@
+# MyAnimeDex - https://myanimedex.com
+# Search engines and AI assistants (OAI-SearchBot, Claude-SearchBot,
+# PerplexityBot, Googlebot, Applebot, ...) are all welcome.
+
+User-agent: *
+Allow: /
+Disallow: /_src/
+
+Sitemap: https://myanimedex.com/sitemap.xml

@@ -1,0 +1,55 @@
+# MyAnimeDex
+
+> MyAnimeDex is a free anime tracker app for iPhone, iPad and Android. It tracks the episodes you watch, shows a weekly airing calendar in your time zone with episode reminders, and turns your watch history into ranked lists, XP and ranks. Available in 15 languages.
+
+## Key facts
+
+- Platforms: iOS 15.1 or later (iPhone, iPad) and Android. Free to download; optional Premium subscription; the free version shows ads.
+- Languages: English, Turkish, Japanese, Russian, German, Arabic, Spanish, Portuguese, Indonesian, Hindi, French, Italian, Polish, Vietnamese and Thai.
+- Anime data (titles, episodes, airing times, scores) comes from AniList.
+- Import: bring an existing list over from MyAnimeList or AniList, with statuses, progress and scores.
+- Guest mode: browse anime, the airing calendar and Arena without an account; sign in (Apple, Google or email) only to save.
+- Lists sync across devices.
+
+## Features
+
+- Episode tracking: tap + after each episode; a show moves to Completed after its last episode.
+- Airing calendar: weekly schedule in your own time zone, live countdowns, filter to your favorites, free reminders when a favorite airs.
+- Ranked lists: drag to reorder, add a score and a one-line take, share lists and build them together with friends.
+- Profile and XP: earn XP for completed anime, reviews, Arena and lists; climb ranks from Rookie to Kami; leaderboard.
+- Dice: picks an anime you have not added yet, with score, genres and synopsis.
+- Anime Arena: bracket tournaments in 20 categories (best opening, best villain, hidden gems and more) to crown a champion.
+- Reviews, favorites, filters and sorting; dark and light theme.
+- Premium: My Stats (genre and studio breakdown, ratings compared with the community), themes, avatar frames, profile banners, a Top 10 showcase, For You+ recommendations, tags and notes on list entries, reminder settings, My Week, add episodes to your phone calendar, cloud backup and export.
+
+## Download
+
+- [App Store](https://apps.apple.com/app/id6758043488): MyAnimeDex for iPhone and iPad
+- [Google Play](https://play.google.com/store/apps/details?id=com.myanimedex.app): MyAnimeDex for Android
+
+## Pages
+
+- [Home](https://myanimedex.com/): features, playable demos and download links
+- [Top 100 Anime](https://myanimedex.com/anime/): the highest-rated anime, one page each
+- [Anime seasons](https://myanimedex.com/season/): each season's anime with weekly air times in your time zone
+- [MyAnimeList alternative](https://myanimedex.com/myanimelist-alternative): how to import a MyAnimeList or AniList list into MyAnimeDex
+- [Contact](https://myanimedex.com/contact): support, bug reports and feature ideas
+- [Privacy Policy](https://myanimedex.com/privacy): what data the app and website collect
+- [Terms of Use](https://myanimedex.com/terms)
+- [Delete Account](https://myanimedex.com/delete-account): how to delete your account and data
+
+## Other languages
+
+- [Türkçe](https://myanimedex.com/tr)
+- [日本語](https://myanimedex.com/jp)
+- [Bahasa Indonesia](https://myanimedex.com/id)
+- [Español](https://myanimedex.com/es)
+- [Português (Brasil)](https://myanimedex.com/pt)
+- [Deutsch](https://myanimedex.com/de)
+- [Français](https://myanimedex.com/fr)
+- [Русский](https://myanimedex.com/ru)
+
+## Contact
+
+- Email: support@myanimedex.com
+- Instagram: [@myanimedex](https://www.instagram.com/myanimedex/)

@@ -380,3 +380,14 @@
   .f-stats .fresh-phone, .f-week .fresh-phone { transform: none; }
   .fresh-item figcaption { margin-top: 24px; }
 }
+
+/* FAQ */
+.faq { max-width: 860px; margin: 0 auto; padding: 96px var(--gutter) 24px; }
+.faq .fresh-head { margin-bottom: 36px; }
+.faq-list { display: grid; gap: 12px; }
+.faq-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 0 20px; }
+.faq-item summary { position: relative; list-style: none; cursor: pointer; padding: 18px 36px 18px 0; font-weight: 600; font-size: 1.0625rem; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 1.5rem; line-height: 1; }
+.faq-item[open] summary::after { content: "\2212"; }
+.faq-item p { margin: 0; padding: 0 0 18px; color: var(--sub); }

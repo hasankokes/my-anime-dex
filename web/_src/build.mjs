@@ -115,6 +115,12 @@ for (const [code, s] of Object.entries(strings)) {
     contactFile: s.contactFileName,
     description: esc(s.description),
     title: esc(s.title),
+    // FAQ: visible answers (in the initial HTML, so crawlers and AI assistants can read them) + FAQPage schema
+    faqHtml: s.faq.map((f) => `<details class="faq-item"><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join(''),
+    faqLd: JSON.stringify({
+      '@type': 'FAQPage',
+      mainEntity: s.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+    }).replace(/</g, '\\u003c'),
     ...Object.fromEntries(stills.map((_, i) => [`media${i}`, miniPhone(i)])),
   };
   const html = tpl.replace(/\{\{(\w+)\}\}/g, (m, k) => {

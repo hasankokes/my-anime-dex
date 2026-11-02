@@ -27,6 +27,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://graphql.anilist.co" crossorigin>
@@ -34,8 +35,9 @@
 <link rel="preload" as="image" href="assets/clips/home.webp" imagesrcset="assets/clips/home-300.webp 300w, assets/clips/home.webp 540w" imagesizes="(min-width: 900px) 300px, 230px" fetchpriority="high">
 <style>{{css}}</style>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"MobileApplication","name":"MyAnimeDex","operatingSystem":"iOS, Android","applicationCategory":"EntertainmentApplication","inLanguage":"{{htmlLang}}","description":"{{description}}","image":"https://myanimedex.com/assets/img/og.jpg","url":"{{canonical}}","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":"{{featureList}}","installUrl":["https://apps.apple.com/app/id6758043488","https://play.google.com/store/apps/details?id=com.myanimedex.app"]}
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://myanimedex.com/#org","name":"MyAnimeDex","url":"https://myanimedex.com/","logo":"https://myanimedex.com/assets/img/icon-512.png","email":"support@myanimedex.com","sameAs":["https://apps.apple.com/app/id6758043488","https://play.google.com/store/apps/details?id=com.myanimedex.app","https://www.instagram.com/myanimedex/"]},{"@type":"WebSite","@id":"https://myanimedex.com/#website","name":"MyAnimeDex","url":"https://myanimedex.com/","inLanguage":"{{htmlLang}}","publisher":{"@id":"https://myanimedex.com/#org"}},{"@type":"MobileApplication","@id":"https://myanimedex.com/#app","name":"MyAnimeDex","operatingSystem":"iOS, Android","applicationCategory":"EntertainmentApplication","inLanguage":"{{htmlLang}}","description":"{{description}}","image":"https://myanimedex.com/assets/img/og.jpg","url":"{{canonical}}","publisher":{"@id":"https://myanimedex.com/#org"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":"{{featureList}}","installUrl":["https://apps.apple.com/app/id6758043488","https://play.google.com/store/apps/details?id=com.myanimedex.app"]},{{faqLd}}]}
 </script>
+<script src="/assets/analytics.js" defer></script>
 </head>
 <body>
 <div class="fx-bg" aria-hidden="true"><div class="fx-spot"></div><div class="fx-grain"></div></div>
@@ -262,6 +264,14 @@
     </div>
   </section>
 
+  <section class="faq" id="faq" aria-labelledby="faq-title">
+    <header class="fresh-head">
+      <p class="eyebrow">{{faqKicker}}</p>
+      <h2 id="faq-title">{{faqTitle}}</h2>
+    </header>
+    <div class="faq-list">{{faqHtml}}</div>
+  </section>
+
   <section class="cta" id="download">
     <div class="cta-glow" aria-hidden="true"></div>
     <img src="assets/img/icon-192.png" width="112" height="112" alt="" loading="lazy" class="cta-logo">
@@ -278,6 +288,8 @@
   </div>
   <nav class="foot-links" aria-label="Footer">
     <a href="anime/index.html">{{footerTop100}}</a>
+    <a href="season/">{{footerSeasons}}</a>
+    <a href="myanimelist-alternative.html">{{footerImport}}</a>
     <a href="{{privacy}}">{{footerPrivacy}}</a>
     <a href="terms.html">{{footerTerms}}</a>
     <a href="{{deleteAccount}}">{{footerDelete}}</a>

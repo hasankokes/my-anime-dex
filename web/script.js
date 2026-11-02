@@ -35,6 +35,7 @@ function animateStats() {
 
     // Check if element is in view
     const statsSection = document.querySelector('.stats');
+    if (!statsSection) return; // only the old landing page has a stats row
     const rect = statsSection.getBoundingClientRect();
 
     if (rect.top < window.innerHeight && rect.bottom >= 0) {
